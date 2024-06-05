@@ -45,6 +45,16 @@ properties:
       calldata for this transaction. Commonly used as part of contract interaction.
     format: byte
     example: "U3dhZ2dlciByb2Nrcw=="
+  category_names:
+    type: array
+    description: The category names for transfer.
+    items:
+      type: string
+      example: 'Trading'
+  description:
+    type: string
+    description: The description for transfer.
+    example: 'Transfer from wallet'
   mpc_used_key_group:
     $ref: './mpc_signing_group.yaml'
   fee:

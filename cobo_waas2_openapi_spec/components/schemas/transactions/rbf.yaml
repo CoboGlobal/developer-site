@@ -1,0 +1,21 @@
+type: object
+description: The base data for drop or speedup transaction.
+required:
+  - request_id
+properties:
+  request_id:
+    type: string
+    description: Unique id of the request.
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+  category_names:
+    type: array
+    description: The category names for transfer.
+    items:
+      type: string
+      example: 'Trading'
+  description:
+    type: string
+    description: The description for transfer.
+    example: 'Transfer from wallet'
+  fee:
+    $ref: './fees/transaction_fee.yaml'

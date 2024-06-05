@@ -36,5 +36,15 @@ properties:
     description: Structured data to be signed, JSON encoded
     example: |
       {\"types\":{\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}]}}
+  category_names:
+    type: array
+    description: The category names for transfer.
+    items:
+      type: string
+      example: 'Trading'
+  description:
+    type: string
+    description: The description for transfer.
+    example: 'Transfer from wallet'
   mpc_used_key_group:
     $ref: './mpc_signing_group.yaml'

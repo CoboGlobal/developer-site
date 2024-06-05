@@ -2,4 +2,4 @@ description: The request body of fee to initiate transaction
 content:
   application/json:
     schema:
-      $ref: '../../schemas/transactions/rbf.yaml'
+      $ref: '../../schemas/transactions/resend.yaml'

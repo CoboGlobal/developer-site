@@ -8,6 +8,8 @@ post:
   description: Resend a transaction.
   security:
     - CoboAuth: []
+  requestBody:
+    $ref: "../../components/request_bodies/transactions/fee_request.yaml"
   responses:
     '201':
       $ref: "../../components/responses/transactions/create_transaction_request.yaml"

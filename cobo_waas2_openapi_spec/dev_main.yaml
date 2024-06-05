@@ -386,6 +386,10 @@ components:
       $ref: "./components/schemas/transactions/message_sign.yaml"
     EstimateFee:
       $ref: "./components/schemas/transactions/estimate_fee.yaml"
+    Rbf:
+      $ref: "./components/schemas/transactions/rbf.yaml"
+    Resend:
+      $ref: "./components/schemas/transactions/resend.yaml"
 
 
     WebhookEvent:
@@ -534,6 +538,8 @@ components:
       $ref: "./components/request_bodies/transactions/estimate_fee.yaml"
     feeRequestBody:
       $ref: "./components/request_bodies/transactions/fee_request.yaml"
+    resendRequestBody:
+      $ref: "./components/request_bodies/transactions/resend_request.yaml"
 
   responses:
     # misc

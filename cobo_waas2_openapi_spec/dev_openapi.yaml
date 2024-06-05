@@ -1146,6 +1146,8 @@ paths:
       description: Resend a transaction.
       security:
         - CoboAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/feeRequestBody'
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
@@ -3099,6 +3101,16 @@ components:
             calldata for this transaction. Commonly used as part of contract interaction.
           format: byte
           example: U3dhZ2dlciByb2Nrcw==
+        category_names:
+          type: array
+          description: The category names for transfer.
+          items:
+            type: string
+            example: Trading
+        description:
+          type: string
+          description: The description for transfer.
+          example: Transfer from wallet
         mpc_used_key_group:
           $ref: '#/components/schemas/MpcSigningGroup'
         fee:
@@ -3142,6 +3154,16 @@ components:
           description: 'Structured data to be signed, JSON encoded'
           example: |
             {\"types\":{\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}]}}
+        category_names:
+          type: array
+          description: The category names for transfer.
+          items:
+            type: string
+            example: Trading
+        description:
+          type: string
+          description: The description for transfer.
+          example: Transfer from wallet
         mpc_used_key_group:
           $ref: '#/components/schemas/MpcSigningGroup'
     EstimateFee:
@@ -3153,6 +3175,48 @@ components:
         mapping:
           Transfer: '#/components/schemas/Transfer'
           Call: '#/components/schemas/SmartContractCall'
+    Rbf:
+      type: object
+      description: The base data for drop or speedup transaction.
+      required:
+        - request_id
+      properties:
+        request_id:
+          type: string
+          description: Unique id of the request.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        category_names:
+          type: array
+          description: The category names for transfer.
+          items:
+            type: string
+            example: Trading
+        description:
+          type: string
+          description: The description for transfer.
+          example: Transfer from wallet
+        fee:
+          $ref: '#/components/schemas/TransactionFee'
+    Resend:
+      type: object
+      description: The base data for drop or speedup transaction.
+      required:
+        - request_id
+      properties:
+        request_id:
+          type: string
+          description: Unique id of the request.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        category_names:
+          type: array
+          description: The category names for transfer.
+          items:
+            type: string
+            example: Trading
+        description:
+          type: string
+          description: The description for transfer.
+          example: Transfer from wallet
     WebhookEvent:
       type: object
       description: The data for webhook event.
@@ -3931,7 +3995,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/TransactionFee'
+            $ref: '#/components/schemas/Rbf'
+    resendRequestBody:
+      description: The request body of fee to initiate transaction
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Resend'
   responses:
     badRequestError:
       description: Bad Request
