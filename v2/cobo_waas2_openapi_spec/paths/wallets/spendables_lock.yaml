@@ -14,7 +14,7 @@ post:
   requestBody:
     $ref: "../../components/request_bodies/wallets/lock_spendables.yaml"
   responses:
-    '200':
+    '201':
       $ref: "../../components/responses/wallets/lock_spendables.yaml"
     '400':
       $ref: "../../components/responses/errors/400_bad_request.yaml"

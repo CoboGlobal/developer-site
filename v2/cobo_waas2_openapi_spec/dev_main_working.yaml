@@ -828,6 +828,8 @@ components:
       $ref: "./components/responses/wallets/get_max_transferable_value.yaml"
     getAddressesResponse:
       $ref: "./components/responses/wallets/get_addresses.yaml"
+    getAddressResponse:
+      $ref: "./components/responses/wallets/get_a_address.yaml"
     createAddressResponse:
       $ref: "./components/responses/wallets/create_address.yaml"
     getAddressValidityResponse:
@@ -921,6 +923,8 @@ components:
       $ref: "./components/responses/stakings/list_stakings.yaml"
     listActivitiesResponse:
       $ref: "./components/responses/stakings/list_activities.yaml"
+    estimateStakingFeeResponse:
+      $ref: "./components/responses/stakings/estimate_fee.yaml"
 
   securitySchemes:
     CoboAuth:

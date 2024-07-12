@@ -380,7 +380,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/lockSpendablesBody'
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/lockSpendableResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
@@ -401,7 +401,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/lockSpendablesBody'
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/lockSpendableResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
@@ -463,7 +463,7 @@ paths:
       security:
         - CoboAuth: []
       parameters:
-        - $ref: '#/components/parameters/optionalTokenIdParam'
+        - $ref: '#/components/parameters/optionalChainIdListParam'
         - name: addresses
           in: query
           required: false
@@ -487,17 +487,12 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_address_by_id
+      operationId: get_address
       summary: Get address information
       description: |
         This operation retrieves the detailed information about a specified address within a wallet.
       security:
         - CoboAuth: []
-      parameters:
-        - $ref: '#/components/parameters/optionalTokenIdParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/beforeParam'
-        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getAddressesResponse'
@@ -510,11 +505,11 @@ paths:
       operationId: check_address_validity
       summary: Check address validity
       description: |
-        This operation verifies if a given address is valid for a specific token.
+        This operation verifies if a given address is valid for a specific chain.
       security:
         - CoboAuth: []
       parameters:
-        - $ref: '#/components/parameters/requiredTokenIdParam'
+        - $ref: '#/components/parameters/requiredChainIdParam'
         - $ref: '#/components/parameters/requiredAddressParam'
       responses:
         '200':
@@ -1945,7 +1940,7 @@ components:
         - $ref: '#/components/schemas/CreateSmartContractWallet'
         - $ref: '#/components/schemas/CreateExchangeWallet'
       discriminator:
-        propertyName: type
+        propertyName: wallet_type
         mapping:
           Custodial: '#/components/schemas/CreateCustodialWallet'
           MPC: '#/components/schemas/CreateMpcWallet'
@@ -2006,17 +2001,16 @@ components:
       description: The address information.
       required:
         - address
-        - token_id
+        - chain_id
       properties:
         address:
           type: string
           description: The wallet address.
           example: '0x0000000000000000000000000000000000000000'
-        token_id:
+        chain_id:
           type: string
-          description: 'The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
-          pattern: '^[A-Z]+(_[A-Z0-9]+)?$'
-          example: ETH_USDT
+          description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/v2/api-references/wallets/list-enabled-chains).'
+          example: ETH
         memo:
           type: string
           description: The memo code.
@@ -5809,14 +5803,13 @@ components:
           schema:
             type: object
             required:
-              - token_id
+              - chain_id
               - count
             properties:
-              token_id:
+              chain_id:
                 type: string
-                description: 'The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
-                pattern: '^[A-Z]+(_[A-Z0-9]+)?$'
-                example: ETH_USDT
+                description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/v2/api-references/wallets/list-enabled-chains).'
+                example: ETH
               count:
                 type: integer
                 maximum: 50
@@ -6358,6 +6351,14 @@ components:
                   $ref: '#/components/schemas/AddressInfo'
               pagination:
                 $ref: '#/components/schemas/Pagination'
+    getAddressResponse:
+      description: Successfully listed address info
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AddressInfo'
     createAddressResponse:
       description: The request was successful.
       content:
