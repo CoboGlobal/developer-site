@@ -4,4 +4,4 @@ description: The target key share group ID of the TSS request, which you can ret
 required: true
 schema:
   type: string
-example: '880311524363903326'
+example: 'a3a45e99-5a12-444f-867a-ffe0ebb1bb30'

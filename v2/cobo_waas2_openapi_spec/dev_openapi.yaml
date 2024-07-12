@@ -2203,14 +2203,14 @@ components:
       properties:
         group_id:
           type: string
-          example: '880311524363903326'
+          example: b33130a9-6e18-44a9-9e48-8b3b41921f0e
           description: The key share group ID.
         type:
           $ref: '#/components/schemas/KeyGroupType'
-        tss_group_ids:
+        tss_groups:
           type: array
           items:
-            $ref: '#/components/schemas/TSSGroupId'
+            $ref: '#/components/schemas/TSSGroups'
         key_holders:
           type: array
           items:
@@ -2389,11 +2389,11 @@ components:
           example: xpub661MyMwAqRbcG4vPNi58VQJrXW8D9VzmauuRq2rTY3oUVnKGuLTxQxvvoEXgLvZ7N9GQXQkWVgKn1rzEUUEm4NdvrBKUqjpNJEnn2UL4rYq
         curve:
           $ref: '#/components/schemas/CurveType'
-    TSSGroupId:
+    TSSGroups:
       type: object
       description: The data for the TSS group ID.
       properties:
-        group_id:
+        tss_group_id:
           type: string
           description: The TSS group ID.
           example: mMedDioOKhTlhGyQRzMv
@@ -2406,7 +2406,7 @@ components:
         request_id:
           type: string
           description: The TSS request ID.
-          example: YPdbyVaVGqXXjkUsohHw
+          example: '20240711114129000132315000003970'
         type:
           $ref: '#/components/schemas/TSSRequestType'
         status:
@@ -5346,7 +5346,7 @@ components:
       description: The key share group ID.
       schema:
         type: string
-      example: '880311524363903326'
+      example: e8257ac8-76b8-4d1e-a1f9-eec4cb931dce
     optionalKeyGroupTypeParam:
       name: key_group_type
       in: query
@@ -5395,7 +5395,7 @@ components:
       required: true
       schema:
         type: string
-      example: '880311524363903326'
+      example: a3a45e99-5a12-444f-867a-ffe0ebb1bb30
     tssRequestIdParam:
       name: tss_request_id
       in: path
@@ -5403,8 +5403,7 @@ components:
       description: 'The TSS request ID, which you can retrieve by calling [List TSS requests](/v2/api-references/wallets--mpc-wallets/list-tss-requests).'
       schema:
         type: string
-        format: uuid
-      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+      example: '20240711114129000132315000003970'
     vaultIdParam:
       name: vault_id
       in: path
@@ -5946,14 +5945,14 @@ components:
               target_key_group_id:
                 type: string
                 description: The target key share group ID.
-                example: '912503538189021590'
+                example: a1bf161f-8b60-4f61-9c35-6434b8654437
               source_key_group_id:
                 type: string
                 description: |
                   The source key share group ID.
 
                   **Note:** `source_key_share_group_id` is used only when `type` is set to either `KeyGenfromKeyGroup` or `Recovery`. This is to specify the key share group to be used as the source key share group to create key shares for the `target_key_share_group`.
-                example: '987654321098765432'
+                example: f5e2d18c-a36f-483e-986a-a2fd34d4189d
               detail_params:
                 type: object
                 properties:

@@ -3,14 +3,14 @@ description: The data for key share group information.
 properties:
   group_id:
     type: string
-    example: "880311524363903326"
+    example: "b33130a9-6e18-44a9-9e48-8b3b41921f0e"
     description: The key share group ID.
   type:
     $ref: "./key_group_type.yaml"
-  tss_group_ids:
+  tss_groups:
     type: array
     items:
-      $ref: "./tss_group_id.yaml"
+      $ref: "./tss_groups.yaml"
   key_holders:
     type: array
     items:

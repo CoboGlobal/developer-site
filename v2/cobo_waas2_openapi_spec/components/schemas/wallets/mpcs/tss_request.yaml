@@ -4,7 +4,7 @@ properties:
   request_id:
     type: string
     description: The TSS request ID.
-    example: "YPdbyVaVGqXXjkUsohHw"
+    example: "20240711114129000132315000003970"
   type:
     $ref: "./tss_request_type.yaml"
   status:

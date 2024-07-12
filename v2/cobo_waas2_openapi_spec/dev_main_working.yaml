@@ -328,8 +328,8 @@ components:
       $ref: "./components/schemas/wallets/mpcs/project.yaml"
     RootPubkey:
       $ref: "./components/schemas/wallets/mpcs/root_pubkey.yaml"
-    TSSGroupId:
-      $ref: "./components/schemas/wallets/mpcs/tss_group_id.yaml"
+    TSSGroups:
+      $ref: "./components/schemas/wallets/mpcs/tss_groups.yaml"
     TSSRequest:
       $ref: "./components/schemas/wallets/mpcs/tss_request.yaml"
     TSSRequestStatus:

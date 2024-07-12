@@ -4,5 +4,4 @@ required: true
 description: The TSS request ID, which you can retrieve by calling [List TSS requests](/v2/api-references/wallets--mpc-wallets/list-tss-requests).
 schema:
   type: string
-  format: uuid
-example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+example: '20240711114129000132315000003970'

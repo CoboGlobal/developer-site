@@ -4,4 +4,4 @@ required: true
 description: The key share group ID.
 schema:
   type: string
-example: '880311524363903326'
+example: 'e8257ac8-76b8-4d1e-a1f9-eec4cb931dce'
