@@ -4,7 +4,7 @@ content:
     schema:
       type: object
       required:
-        - group_type
+        - key_share_holder_group_type
         - node_count
         - threshold
         - key_share_holders
@@ -35,17 +35,5 @@ content:
         key_share_holders:
           type: array
           items:
-            type: object
-            description: When creating MainKeyGroup and SigningKeyGroup, the Cobo key share holder will be added automatically.
-            properties:
-              name:
-                type: string
-                description: Key share holder's name.
-                example: 'Key share holder name'
-              type:
-                $ref: '../../../schemas/wallets/mpcs/key_holder_type.yaml'
-              tss_node_id:
-                type: string
-                description: The TSS Node ID.
-                example: coboAbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefghi
+            $ref: '../../../schemas/wallets/mpcs/create_key_holder.yaml'
 

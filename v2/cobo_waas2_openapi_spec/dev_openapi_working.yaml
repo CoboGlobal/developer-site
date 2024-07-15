@@ -572,7 +572,7 @@ paths:
           $ref: '#/components/responses/getTokenBalancesResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
-  /wallets/mpc/cobo_key_holders:
+  /wallets/mpc/cobo_key_share_holders:
     get:
       tags:
         - Wallets - MPC Wallets
@@ -779,10 +779,10 @@ paths:
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
       requestBody:
-        $ref: '#/components/requestBodies/createKeyGroupBody'
+        $ref: '#/components/requestBodies/createKeyShareHolderGroupBody'
       responses:
         '201':
-          $ref: '#/components/responses/createKeyGroupsResponse'
+          $ref: '#/components/responses/createKeyShareHolderGroupsResponse'
         '401':
           $ref: '#/components/responses/unauthorizedError'
         '403':
@@ -800,10 +800,10 @@ paths:
         - CoboAuth: []
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/optionalKeyGroupTypeParam'
+        - $ref: '#/components/parameters/optionalKeyShareHolderGroupTypeParam'
       responses:
         '200':
-          $ref: '#/components/responses/getKeyGroupsResponse'
+          $ref: '#/components/responses/getKeyShareHolderGroupsResponse'
         '401':
           $ref: '#/components/responses/unauthorizedError'
         '403':
@@ -822,10 +822,10 @@ paths:
         - CoboAuth: []
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/keyGroupIdParam'
+        - $ref: '#/components/parameters/keyShareHolderGroupIdParam'
       responses:
         '200':
-          $ref: '#/components/responses/getKeyGroupResponse'
+          $ref: '#/components/responses/getKeyShareHolderGroupResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '404':
@@ -846,7 +846,7 @@ paths:
             - 'mpc_user_controlled_key_group:manage'
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/keyGroupIdParam'
+        - $ref: '#/components/parameters/keyShareHolderGroupIdParam'
       requestBody:
         content:
           application/json:
@@ -865,7 +865,7 @@ paths:
                   example: UpgradeToMainGroup
       responses:
         '200':
-          $ref: '#/components/responses/putKeyGroupResponse'
+          $ref: '#/components/responses/putKeyShareHolderGroupResponse'
         '401':
           $ref: '#/components/responses/unauthorizedError'
         '403':
@@ -885,7 +885,7 @@ paths:
             - 'mpc_user_controlled_key_group:manage'
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/keyGroupIdParam'
+        - $ref: '#/components/parameters/keyShareHolderGroupIdParam'
       responses:
         '204':
           description: Resource successfully deleted.
@@ -936,7 +936,7 @@ paths:
         - CoboAuth: []
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/requiredTargetKeyGroupIdParam'
+        - $ref: '#/components/parameters/requiredTargetKeyShareHolderGroupIdParam'
       responses:
         '200':
           description: Successfully retrieved TSS request.
@@ -2689,7 +2689,7 @@ components:
         - `SECP256K1`: The secp256k1 elliptic curve.
 
         - `ED25519`: The Ed25519 elliptic curve.
-    KeyGroup:
+    KeyShareHolderGroup:
       type: object
       description: The data for key share holder group information.
       properties:
@@ -2698,7 +2698,7 @@ components:
           example: b33130a9-6e18-44a9-9e48-8b3b41921f0e
           description: The key share group ID.
         type:
-          $ref: '#/components/schemas/KeyGroupType'
+          $ref: '#/components/schemas/KeyShareHolderGroupType'
         tss_key_share_groups:
           type: array
           items:
@@ -2706,7 +2706,7 @@ components:
         key_share_holders:
           type: array
           items:
-            $ref: '#/components/schemas/KeyHolder'
+            $ref: '#/components/schemas/KeyShareHolder'
         node_count:
           type: integer
           description: The number of key share holders in this key share group.
@@ -2716,13 +2716,13 @@ components:
           description: The number of key share holders required to approve each operation in this key share group.
           example: 2
         status:
-          $ref: '#/components/schemas/KeyGroupStatus'
+          $ref: '#/components/schemas/KeyShareHolderGroupStatus'
         create_timestamp:
           type: integer
           format: int64
           description: 'The key share group''s creation time in Unix timestamp format, measured in milliseconds.'
           example: 1718619403933
-    KeyGroupStatus:
+    KeyShareHolderGroupStatus:
       type: string
       enum:
         - New
@@ -2736,7 +2736,7 @@ components:
         - `Valid`: The key share group is valid.
 
         - `Unavailable`: The key share group is currently unavailable. This status appears when a key share holder uses [mobile co-signer](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/back-up-key-share-groups#mobile-co-signer) to change node. For example, when a key share holder changes to a new phone or loses their phone, and is in the process of setting up [Cobo Guard](https://manuals.cobo.com/en/guard/introduction) on their new phone.
-    KeyGroupType:
+    KeyShareHolderGroupType:
       type: string
       enum:
         - MainGroup
@@ -2753,7 +2753,7 @@ components:
         - `RecoveryGroup`: A [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
 
         **Note:** For `MainGroup` and `SigningGroup`, a Cobo key share holder will be added automatically.
-    KeyHolder:
+    KeyShareHolder:
       type: object
       description: The data for MPC Wallets' key share holder information.
       properties:
@@ -2762,7 +2762,7 @@ components:
           description: The key share holder name.
           example: Key share holder name
         type:
-          $ref: '#/components/schemas/KeyHolderType'
+          $ref: '#/components/schemas/KeyShareHolderType'
         tss_node_id:
           type: string
           description: Key share holder's TSS Node ID.
@@ -2775,8 +2775,8 @@ components:
 
             - `false`: The TSS Node is offline.
         status:
-          $ref: '#/components/schemas/KeyHolderStatus'
-    KeyHolderStatus:
+          $ref: '#/components/schemas/KeyShareHolderStatus'
+    KeyShareHolderStatus:
       type: string
       enum:
         - Valid
@@ -2793,7 +2793,7 @@ components:
         - `NotActivated`: The TSS Node has not been activated. This status is only applicable to [mobile co-signer](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/back-up-key-share-groups#mobile-co-signer) using the [Cobo Guard](https://manuals.cobo.com/en/guard/introduction).
 
         - `Changed`: The TSS Node has been changed. This happens when the key share holder sets up their [Cobo Guard](https://manuals.cobo.com/en/guard/introduction) on a new phone. This `Changed` status serves as a reminder for you to call [Create TSS request](/api-references/v2/wallets--mpc-wallet/create-a-tss-request-to-generate-key-secrets-for-a-tss-group) with the `KeyGenFromKeyGroup` and `Recovery` action `type` to finalize the setup of the key share holder's new phone. Once all set, the old TSS Node with the `Changed` status will be deleted.
-    KeyHolderType:
+    KeyShareHolderType:
       type: string
       enum:
         - Cobo
@@ -5840,7 +5840,7 @@ components:
         type: string
         description: The transaction hash of the UTXO.
       example: dd7e1cecf6bbde1844ee1815b780711a1e306a718bcd23cd64401b48ef88eb83
-    keyGroupIdParam:
+    keyShareHolderGroupIdParam:
       name: key_share_holder_group_id
       in: path
       required: true
@@ -5848,7 +5848,7 @@ components:
       schema:
         type: string
       example: e8257ac8-76b8-4d1e-a1f9-eec4cb931dce
-    optionalKeyGroupTypeParam:
+    optionalKeyShareHolderGroupTypeParam:
       name: key_share_holder_group_type
       in: query
       description: |
@@ -5862,7 +5862,7 @@ components:
         **Note:** If there's no value selected for `key_group_type`, all key share group types will be retrieved.
       required: false
       schema:
-        $ref: '#/components/schemas/KeyGroupType'
+        $ref: '#/components/schemas/KeyShareHolderGroupType'
     projectIdParam:
       name: project_id
       in: path
@@ -5889,7 +5889,7 @@ components:
         type: string
         format: uuid
       example: 'a3d8eae2-1740-4b5e-92f2-88c2b1e44c6b,b51f63a3-8a8e-4a34-ae9e-6f3e6b1fdf99'
-    requiredTargetKeyGroupIdParam:
+    requiredTargetKeyShareHolderGroupIdParam:
       name: target_key_share_holder_group_id
       in: query
       description: 'The target key share group ID of the TSS request, which you can retrieve by calling [List all key share groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).'
@@ -6347,20 +6347,20 @@ components:
                       type: integer
                       description: The output index of the UTXO.
                       example: 0
-    createKeyGroupBody:
+    createKeyShareHolderGroupBody:
       description: The request body to create a key share holder group.
       content:
         application/json:
           schema:
             type: object
             required:
-              - group_type
+              - key_share_holder_group_type
               - node_count
               - threshold
               - key_share_holders
             properties:
               key_share_holder_group_type:
-                $ref: '#/components/schemas/KeyGroupType'
+                $ref: '#/components/schemas/KeyShareHolderGroupType'
               node_count:
                 type: integer
                 description: |
@@ -6392,7 +6392,7 @@ components:
                       description: Key share holder's name.
                       example: Key share holder name
                     type:
-                      $ref: '#/components/schemas/KeyHolderType'
+                      $ref: '#/components/schemas/KeyShareHolderType'
                     tss_node_id:
                       type: string
                       description: The TSS Node ID.
@@ -6440,7 +6440,7 @@ components:
             type: object
             required:
               - type
-              - target_key_group_id
+              - target_key_share_holder_group_id
             properties:
               type:
                 $ref: '#/components/schemas/TSSRequestType'
@@ -6881,12 +6881,12 @@ components:
                   - `true`: The address is valid.
                   - `false`: the address is invalid.
                 example: true
-    createKeyGroupsResponse:
+    createKeyShareHolderGroupsResponse:
       description: mpc vault successfully created
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyGroup'
+            $ref: '#/components/schemas/KeyShareHolderGroup'
     createMpcProjectResponse:
       description: Successfully created project.
       content:
@@ -6908,21 +6908,21 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/KeyHolder'
-    getKeyGroupResponse:
+              $ref: '#/components/schemas/KeyShareHolder'
+    getKeyShareHolderGroupResponse:
       description: Successfully get mpc tss group
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyGroup'
-    getKeyGroupsResponse:
+            $ref: '#/components/schemas/KeyShareHolderGroup'
+    getKeyShareHolderGroupsResponse:
       description: Successfully listed key share groups.
       content:
         application/json:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/KeyGroup'
+              $ref: '#/components/schemas/KeyShareHolderGroup'
     getMpcProjectResponse:
       description: Successfully listed all vaults.
       content:
@@ -6957,18 +6957,18 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/MPCVault'
-    deleteKeyGroupResponse:
+    deleteKeyShareHolderGroupResponse:
       description: Successfully deleted the specified key share group.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyGroup'
-    putKeyGroupResponse:
+            $ref: '#/components/schemas/KeyShareHolderGroup'
+    putKeyShareHolderGroupResponse:
       description: Successfully modify mpc tss group
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyGroup'
+            $ref: '#/components/schemas/KeyShareHolderGroup'
     putTssRequestResponse:
       description: Successfully modified the TSS request.
       content:
