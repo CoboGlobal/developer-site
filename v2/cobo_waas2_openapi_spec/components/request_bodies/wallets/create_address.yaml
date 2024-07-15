@@ -4,14 +4,13 @@ content:
     schema:
       type: object
       required:
-        - token_id
+        - chain_id
         - count
       properties:
-        token_id:
+        chain_id:
           type: string
-          description: The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).
-          pattern: ^[A-Z]+(_[A-Z0-9]+)?$
-          example: 'ETH_USDT'
+          description: The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/v2/api-references/wallets/list-enabled-chains).
+          example: 'ETH'
         count:
           type: integer
           maximum: 50

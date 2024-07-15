@@ -32,7 +32,7 @@ get:
   security:
     - CoboAuth: []
   parameters:
-    - $ref: "../../components/parameters/wallets/token_id_optional.yaml"
+    - $ref: "../../components/parameters/wallets/chain_id_list_optional.yaml"
     - $ref: "../../components/parameters/wallets/address_list_optional.yaml"
     - $ref: "../../components/parameters/pagination/limit.yaml"
     - $ref: "../../components/parameters/pagination/before.yaml"

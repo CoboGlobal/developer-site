@@ -4,17 +4,12 @@ parameters:
 get:
   tags:
     - Wallets
-  operationId: get_address_by_id
+  operationId: get_address
   summary: Get address information
   description: |
     This operation retrieves the detailed information about a specified address within a wallet.
   security:
     - CoboAuth: []
-  parameters:
-    - $ref: "../../components/parameters/wallets/token_id_optional.yaml"
-    - $ref: "../../components/parameters/pagination/limit.yaml"
-    - $ref: "../../components/parameters/pagination/before.yaml"
-    - $ref: "../../components/parameters/pagination/after.yaml"
   responses:
     '200':
       $ref: "../../components/responses/wallets/get_addresses.yaml"
