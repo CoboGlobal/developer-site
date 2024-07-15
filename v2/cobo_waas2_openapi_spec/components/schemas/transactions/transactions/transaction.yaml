@@ -89,12 +89,12 @@ properties:
         $ref: './transaction_replacement_type.yaml'
       replaced_by_transaction_id:
         type: string
-        description: The ID of the replacement transaction that this transaction was replaced by.
+        description: The ID of the transaction that this transaction was replaced by.
         format: uuid
         example: "aff0e1cb-15b2-4e1f-9b9d-a9133715986f"
       replaced_by_transaction_hash:
         type: string
-        description: The hash of the replacement transaction that this transaction was replaced by.
+        description: The hash of the transaction that this transaction was replaced by.
         example: "239861be9a4afe080c359b7fe4a1d035945ec46256b1a0f44d1267c71de8ec28"
       replaced_type:
         $ref: './transaction_replacement_type.yaml'

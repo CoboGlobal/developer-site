@@ -2,7 +2,7 @@ name: destination_address
 in: query
 required: false
 description: |
-  The address of the transaction destination. If the address includes a memo, the format should be `address|memo`.
+  The address of the transaction destination. If the address includes a memo, use `|` to append the memo to the address. For example, if the address is `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku` and the memo is `82840924`, you need to provide `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku|82840924` as the property value.
 schema:
   description: A list of addresses, separated by comma.
   type: string

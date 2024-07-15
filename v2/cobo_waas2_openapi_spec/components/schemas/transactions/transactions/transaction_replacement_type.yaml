@@ -6,7 +6,8 @@ enum:
   - SpeedUp
 example: Resend
 description: | 
-  The transaction replacement type. Possible values include: 
+  The `replaced_by_type` property indicates the replacement type of the transaction that this transaction was replaced by, and the `replaced_type` property indicates the replacement type of the transaction that this transaction replaced.
+  Possible values include: 
     - `Cancel`: To cancel a transaction.
     - `Drop`: To drop a transaction.
     - `Resend`: To resend a transaction.

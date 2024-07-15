@@ -8,7 +8,9 @@ description: |
     - `TokenApproval`: A transaction that grants permission to access your tokens. 
     - `ContractCall`: A transaction that interacts with a smart contract.
     - `TransactionFeePayment`: A transaction that is initiated by Fee Station to pay your transaction fee.
+    - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
     - `RawMessage`: A transaction that signs a message. 
+    - `Multi-Sig`: A transaction that requires multiple signatures.
 schema:
   type: string
   description: A list of transaction types, separated by comma.

@@ -2891,12 +2891,12 @@ components:
               $ref: '#/components/schemas/ReplaceType'
             replaced_by_transaction_id:
               type: string
-              description: The ID of the replacement transaction that this transaction was replaced by.
+              description: The ID of the transaction that this transaction was replaced by.
               format: uuid
               example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
             replaced_by_transaction_hash:
               type: string
-              description: The hash of the replacement transaction that this transaction was replaced by.
+              description: The hash of the transaction that this transaction was replaced by.
               example: 239861be9a4afe080c359b7fe4a1d035945ec46256b1a0f44d1267c71de8ec28
             replaced_type:
               $ref: '#/components/schemas/ReplaceType'
@@ -3167,11 +3167,19 @@ components:
           - `RejectedRiskControlCheck`: The transaction is rejected because it failed the Risk Control check.
           - `PendingApproverCheck`: The transaction is pending approval from the approver.
           - `RejectedApproverAuth`: The transaction is rejected by the approver.
+          - `RejectedbyMobileCosigner`: The transaction is rejected by a mobile cosigner.
           - `RejectedCoboCheck`: The transaction is rejected because it failed the internal check by Cobo.
           - `RejectedWhiteList`: The transaction is rejected because the sender or receiver is not included in a whitelist.
           - `PendingWaitSigner`: The transaction is pending signature.
           - `FailedBySigner`: The transaction failed during the signing process.
           - `FailedBroadcasting`: The transaction failed to be broadcast to the blockchain network.
+          - `CanceledBySpender`: The transaction is canceled by a Spender.
+          - `CanceledByAPI`: The transaction is canceled by an API initiator.
+          - `Queue`: The transaction is queued to be added to the blockchain.
+          - `OnchainRejection`: The transaction is rejected from being added to the blockchain.
+          - `FailedOnChain`: The transaction failed due to insufficient confirmations.
+          - `PendingBlockConfirmations`: The transaction is awaiting the required number of confirmations.
+          - `ReplacedByNewTransaction`: The transaction has been replaced by a new transaction.
     TransactionTimeline:
       type: object
       description: The data for transaction timeline information.
@@ -3220,8 +3228,8 @@ components:
           - `Withdrawal`: A withdrawal transaction.
           - `TokenApproval`: A transaction that grants permission to access your tokens. 
           - `ContractCall`: A transaction that interacts with a smart contract.
-          - `TransactionFeePayment`: A transaction that is initiated from Fee Station to pay your transaction fees.
-          - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
+          - `TransactionFeePayment`: A transaction that is initiated from Fee Station to pay the transaction fees.
+          - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
           - `RawMessage`: A transaction that signs a message. 
           - `Multi-Sig`: A transaction that requires multiple signatures.
     MpcSigningGroup:
@@ -3838,7 +3846,8 @@ components:
         - SpeedUp
       example: Resend
       description: |
-        The transaction replacement type. Possible values include: 
+        The `replaced_by_type` property indicates the replacement type of the transaction that this transaction was replaced by, and the `replaced_type` property indicates the replacement type of the transaction that this transaction replaced.
+        Possible values include: 
           - `Cancel`: To cancel a transaction.
           - `Drop`: To drop a transaction.
           - `Resend`: To resend a transaction.
@@ -5520,7 +5529,9 @@ components:
           - `TokenApproval`: A transaction that grants permission to access your tokens. 
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `TransactionFeePayment`: A transaction that is initiated by Fee Station to pay your transaction fee.
+          - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
           - `RawMessage`: A transaction that signs a message. 
+          - `Multi-Sig`: A transaction that requires multiple signatures.
       schema:
         type: string
         description: 'A list of transaction types, separated by comma.'
@@ -5548,7 +5559,7 @@ components:
           - `Failed`: The transaction failed.
           - `Rejected`: The transaction is rejected.
       schema:
-        description: 'A list of transaction types, separated by comma.'
+        description: 'A list of transaction statuses, separated by comma.'
       example: 'Completed,Failed'
     optionalMinCreatedTimestampParam:
       name: min_created_timestamp
@@ -5630,7 +5641,7 @@ components:
       in: query
       required: false
       description: |
-        The address of the transaction destination. If the address includes a memo, the format should be `address|memo`.
+        The address of the transaction destination. If the address includes a memo, use `|` to append the memo to the address. For example, if the address is `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku` and the memo is `82840924`, you need to provide `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku|82840924` as the property value.
       schema:
         description: 'A list of addresses, separated by comma.'
         type: string

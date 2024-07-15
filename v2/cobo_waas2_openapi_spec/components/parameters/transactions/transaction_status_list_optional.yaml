@@ -13,5 +13,5 @@ description: |
     - `Failed`: The transaction failed.
     - `Rejected`: The transaction is rejected.
 schema:
-  description: A list of transaction types, separated by comma.
+  description: A list of transaction statuses, separated by comma.
 example: 'Completed,Failed'

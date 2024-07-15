@@ -15,7 +15,7 @@ description: |
     - `Withdrawal`: A withdrawal transaction.
     - `TokenApproval`: A transaction that grants permission to access your tokens. 
     - `ContractCall`: A transaction that interacts with a smart contract.
-    - `TransactionFeePayment`: A transaction that is initiated from Fee Station to pay your transaction fees.
-    - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
+    - `TransactionFeePayment`: A transaction that is initiated from Fee Station to pay the transaction fees.
+    - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
     - `RawMessage`: A transaction that signs a message. 
     - `Multi-Sig`: A transaction that requires multiple signatures.
