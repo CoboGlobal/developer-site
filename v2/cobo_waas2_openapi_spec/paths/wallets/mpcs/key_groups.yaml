@@ -26,7 +26,7 @@ post:
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: list_key_share_holder_group
+  operationId: list_key_share_holder_groups
   summary: List all key share holder groups
   description: |
     This operation retrieves all key share holder groups under a specified vault. You can filter the result by group type.
