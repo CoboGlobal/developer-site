@@ -7,7 +7,7 @@ required:
   - type
   - data
 properties:
-  id:
+  event_id:
     description: The event ID.
     type: string
     format: uuid
