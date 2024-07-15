@@ -501,7 +501,7 @@ paths:
         - CoboAuth: []
       responses:
         '200':
-          $ref: '#/components/responses/getAddressesResponse'
+          $ref: '#/components/responses/getAddressResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
   /wallets/address/check_validity:
