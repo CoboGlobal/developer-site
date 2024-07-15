@@ -763,12 +763,12 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '429':
           $ref: '#/components/responses/tooManyRequestError'
-  '/wallets/mpc/vaults/{vault_id}/key_groups':
+  '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups':
     post:
       tags:
         - Wallets - MPC Wallets
-      operationId: create_key_group
-      summary: Create key share group
+      operationId: create_key_share_holder_group
+      summary: Create key share holder group
       description: |
         This operation creates a key share group for a specified vault.
       security:
@@ -792,10 +792,10 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_key_group
-      summary: List all key share groups
+      operationId: list_key_share_holder_groups
+      summary: List all key share holder groups
       description: |
-        This operation retrieves all key share groups under a specified vault. You can filter the result by group type.
+        This operation retrieves all key share holder groups under a specified vault. You can filter the result by group type.
       security:
         - CoboAuth: []
       parameters:
@@ -810,14 +810,14 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '429':
           $ref: '#/components/responses/tooManyRequestError'
-  '/wallets/mpc/vaults/{vault_id}/key_groups/{key_share_group_id}':
+  '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}':
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: get_key_group
-      summary: Get key share group information
+      operationId: get_key_share_holder_group
+      summary: Get key share holder group information
       description: |
-        This operation retrieves detailed information about a specified key share group.
+        This operation retrieves detailed information about a specified key share holder group.
       security:
         - CoboAuth: []
       parameters:
@@ -835,8 +835,8 @@ paths:
     put:
       tags:
         - Wallets - MPC Wallets
-      operationId: update_key_group
-      summary: Update key share group
+      operationId: update_key_share_holder_group
+      summary: Update key share holder group
       description: |
         This operation updates a specified active [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups). For example, you can use this operation to upgrade a Signing Group to the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
       security:
@@ -853,9 +853,9 @@ paths:
             schema:
               type: object
               required:
-                - update_key_share_group_action
+                - update_key_share_holder_group_action
               properties:
-                update_key_share_group_action:
+                update_key_share_holder_group_action:
                   type: string
                   description: |
                     The available actions of key share group update. Possible values include:
@@ -875,9 +875,9 @@ paths:
     delete:
       tags:
         - Wallets - MPC Wallets
-      operationId: delete_key_group
-      summary: Delete key share group
-      description: This operation deletes a specified key share group.
+      operationId: delete_key_share_holder_group
+      summary: Delete key share holder group
+      description: This operation deletes a specified key share holder group.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -2691,19 +2691,19 @@ components:
         - `ED25519`: The Ed25519 elliptic curve.
     KeyGroup:
       type: object
-      description: The data for key share group information.
+      description: The data for key share holder group information.
       properties:
-        group_id:
+        key_share_holder_group_id:
           type: string
           example: b33130a9-6e18-44a9-9e48-8b3b41921f0e
           description: The key share group ID.
         type:
           $ref: '#/components/schemas/KeyGroupType'
-        tss_groups:
+        tss_key_share_groups:
           type: array
           items:
             $ref: '#/components/schemas/TSSGroups'
-        key_holders:
+        key_share_holders:
           type: array
           items:
             $ref: '#/components/schemas/KeyHolder'
@@ -2883,11 +2883,11 @@ components:
           $ref: '#/components/schemas/CurveType'
     TSSGroups:
       type: object
-      description: The data for the TSS group ID.
+      description: The data for the TSS key share group ID.
       properties:
-        tss_group_id:
+        tss_key_share_group_id:
           type: string
-          description: The TSS group ID.
+          description: The TSS key share group ID.
           example: mMedDioOKhTlhGyQRzMv
         curve:
           $ref: '#/components/schemas/CurveType'
@@ -3728,11 +3728,11 @@ components:
       type: object
       description: The information about the Signing Group of an MPC Wallet.
       properties:
-        used_key_group_id:
+        used_key_share_holder_group_id:
           type: string
           description: The ID of the Signing Group.
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
-        used_node_ids:
+        used_tss_node_ids:
           type: array
           items:
             type: string
@@ -4413,7 +4413,7 @@ components:
                         type: integer
                         description: The output index of the UTXO.
                         example: 0
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     SafeTransferSource:
       title: Smart Contract Wallets
@@ -5841,7 +5841,7 @@ components:
         description: The transaction hash of the UTXO.
       example: dd7e1cecf6bbde1844ee1815b780711a1e306a718bcd23cd64401b48ef88eb83
     keyGroupIdParam:
-      name: key_share_group_id
+      name: key_share_holder_group_id
       in: path
       required: true
       description: The key share group ID.
@@ -5849,7 +5849,7 @@ components:
         type: string
       example: e8257ac8-76b8-4d1e-a1f9-eec4cb931dce
     optionalKeyGroupTypeParam:
-      name: key_group_type
+      name: key_share_holder_group_type
       in: query
       description: |
         The selected key share group type to retrieve. Possible values include:
@@ -5890,7 +5890,7 @@ components:
         format: uuid
       example: 'a3d8eae2-1740-4b5e-92f2-88c2b1e44c6b,b51f63a3-8a8e-4a34-ae9e-6f3e6b1fdf99'
     requiredTargetKeyGroupIdParam:
-      name: target_key_group_id
+      name: target_key_share_holder_group_id
       in: query
       description: 'The target key share group ID of the TSS request, which you can retrieve by calling [List all key share groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).'
       required: true
@@ -6348,7 +6348,7 @@ components:
                       description: The output index of the UTXO.
                       example: 0
     createKeyGroupBody:
-      description: The request body to create a key share group.
+      description: The request body to create a key share holder group.
       content:
         application/json:
           schema:
@@ -6357,14 +6357,14 @@ components:
               - group_type
               - node_count
               - threshold
-              - key_holders
+              - key_share_holders
             properties:
-              group_type:
+              key_share_holder_group_type:
                 $ref: '#/components/schemas/KeyGroupType'
               node_count:
                 type: integer
                 description: |
-                  The number of key share holders in this key share group.
+                  The number of key share holders in this key share holder group.
 
                   **Notes:**
                   1. Currently, the available [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) are 2-2, 2-3, and 3-3 schemes (in the "threshold - node count" format), so you can only set `node_count` to 2 or 3. 
@@ -6381,7 +6381,7 @@ components:
 
                   2. Threshold must be less than or equal to node count.
                 example: 2
-              key_holders:
+              key_share_holders:
                 type: array
                 items:
                   type: object
@@ -6444,11 +6444,11 @@ components:
             properties:
               type:
                 $ref: '#/components/schemas/TSSRequestType'
-              target_key_group_id:
+              target_key_share_holder_group_id:
                 type: string
                 description: The target key share group ID.
                 example: a1bf161f-8b60-4f61-9c35-6434b8654437
-              source_key_group_id:
+              source_key_share_holder_group_id:
                 type: string
                 description: |
                   The source key share group ID.
@@ -6458,7 +6458,7 @@ components:
               detail_params:
                 type: object
                 properties:
-                  node_ids:
+                  tss_node_ids:
                     type: array
                     items:
                       type: string

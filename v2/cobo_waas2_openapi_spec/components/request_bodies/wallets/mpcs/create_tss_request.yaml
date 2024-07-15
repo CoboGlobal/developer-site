@@ -9,11 +9,11 @@ content:
       properties:
         type:
           $ref: '../../../schemas/wallets/mpcs/tss_request_type.yaml'
-        target_key_group_id:
+        target_key_share_holder_group_id:
           type: string
           description: The target key share group ID.
           example: "a1bf161f-8b60-4f61-9c35-6434b8654437"
-        source_key_group_id:
+        source_key_share_holder_group_id:
           type: string
           description: |
             The source key share group ID.

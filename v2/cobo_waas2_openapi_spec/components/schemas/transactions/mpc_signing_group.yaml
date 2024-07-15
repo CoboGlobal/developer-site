@@ -1,13 +1,13 @@
 type: object
 description: The information about the Signing Group of an MPC Wallet.
 properties:
-  used_key_group_id:
+  used_key_share_holder_group_id:
     type: string
     description: The ID of the Signing Group.
     example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
-  used_node_ids:
+  used_tss_node_ids:
     type: array
     items:
       type: string
-      example: cobo5yb7BNEBwwp5XXedbhnzQfvQtp132W4dH4Jz4x4eDp4KA 
+      example: cobo5yb7BNEBwwp5XXedbhnzQfvQtp132W4dH4Jz4x4eDp4KA
     description: The ID of the TSS Nodes that are required to participate in the signature.

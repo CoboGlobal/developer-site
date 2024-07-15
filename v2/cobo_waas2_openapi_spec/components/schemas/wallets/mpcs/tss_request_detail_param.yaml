@@ -1,6 +1,6 @@
 type: object
 properties:
-  node_ids:
+  tss_node_ids:
     type: array
     items:
       type: string
