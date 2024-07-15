@@ -4891,7 +4891,7 @@ components:
         - type
         - data
       properties:
-        id:
+        event_id:
           description: The event ID.
           type: string
           format: uuid
@@ -5017,7 +5017,7 @@ components:
           description: 'The time when the endpoint was registered, in Unix timestamp format, measured in seconds.'
           type: integer
           example: 1701396866
-        id:
+        endpoint_id:
           description: The webhook endpoint ID.
           type: string
           format: uuid
