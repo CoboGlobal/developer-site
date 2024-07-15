@@ -2,9 +2,9 @@ post:
   tags:
     - Wallets - MPC Wallets
   operationId: create_key_group
-  summary: Create key share group
+  summary: Create vault group
   description: |
-    This operation creates a key share group for a specified vault.
+    This operation creates a vault group for a specified vault.
   security:
     - CoboAuth: []
     - OAuth2:
@@ -27,9 +27,9 @@ get:
   tags:
     - Wallets - MPC Wallets
   operationId: list_key_group
-  summary: List all key share groups
+  summary: List all vault groups
   description: |
-    This operation retrieves all key share groups under a specified vault. You can filter the result by group type.
+    This operation retrieves all vault groups under a specified vault. You can filter the result by vault group type.
   security:
     - CoboAuth: []
   parameters:

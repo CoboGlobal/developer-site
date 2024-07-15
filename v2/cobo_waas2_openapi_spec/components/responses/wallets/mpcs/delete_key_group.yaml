@@ -1,4 +1,4 @@
-description: Successfully deleted the specified key share group.
+description: Successfully deleted the specified vault group.
 content:
   application/json:
     schema:

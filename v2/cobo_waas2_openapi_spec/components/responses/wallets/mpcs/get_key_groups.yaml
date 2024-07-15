@@ -1,4 +1,4 @@
-description: Successfully listed key share groups.
+description: Successfully listed vault groups.
 content:
   application/json:
     schema:

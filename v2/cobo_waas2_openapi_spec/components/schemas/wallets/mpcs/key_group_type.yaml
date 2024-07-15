@@ -6,7 +6,7 @@ enum: [
 ]
 example: "MainGroup"
 description: |
-  The type of key share group. Possible values include:
+  The type of vault group. Possible values include:
   
   - `MainGroup`: A [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
   

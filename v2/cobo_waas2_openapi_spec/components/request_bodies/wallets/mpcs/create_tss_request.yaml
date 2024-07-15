@@ -11,14 +11,14 @@ content:
           $ref: '../../../schemas/wallets/mpcs/tss_request_type.yaml'
         target_key_group_id:
           type: string
-          description: The target key share group ID.
+          description: The target vault group ID.
           example: "912503538189021590"
         source_key_group_id:
           type: string
           description: |
-            The source key share group ID.
+            The source vault group ID.
             
-            **Note:** `source_key_share_group_id` is used only when `type` is set to either `KeyGenfromKeyGroup` or `Recovery`. This is to specify the key share group to be used as the source key share group to create key shares for the `target_key_share_group`.
+            **Note:** `source_vault_group_id` is used only when `type` is set to either `KeyGenfromKeyGroup` or `Recovery`. This is to specify the vault group to be used as the source vault group to create key shares for the `target_vault_group`.
           example: "987654321098765432"
         detail_params:
           $ref: "../../../schemas/wallets/mpcs/tss_request_detail_param.yaml"

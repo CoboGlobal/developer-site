@@ -1,14 +1,14 @@
 name: key_group_type
 in: query
 description: |
-    The selected key share group type to retrieve. Possible values include:
-    - `MainKeyGroup`: Only [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
+    The selected vault group type to retrieve. Possible values include:
+    - `MainGroup`: Only [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
   
-    - `SigningKeyGroup`: Only [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
+    - `SigningGroup`: Only [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
   
-    - `RecoveryKeyGroup`: Only [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
+    - `RecoveryGroup`: Only [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
   
-    **Note:** If there's no value selected for `key_group_type`, all key share group types will be retrieved.
+    **Note:** If there's no value selected for `vault_group_type`, all vault group types will be retrieved.
 
 required: false
 schema:

@@ -1,4 +1,4 @@
-description: The request body to create a key share group.
+description: The request body to create a vault group.
 content:
   application/json:
     schema:
@@ -15,7 +15,7 @@ content:
         node_count:
           type: integer
           description: |
-            The number of key share holders in this key share group.
+            The number of key share holders in this vault group.
             
             **Notes:**
             1. Currently, the available [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) are 2-2, 2-3, and 3-3 schemes (in the "threshold - node count" format), so you can only set `node_count` to 2 or 3. 

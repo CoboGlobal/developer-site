@@ -1,7 +1,7 @@
 name: key_share_group_id
 in: path
 required: true
-description: The key share group ID.
+description: The vault group ID.
 schema:
   type: string
 example: '880311524363903326'
