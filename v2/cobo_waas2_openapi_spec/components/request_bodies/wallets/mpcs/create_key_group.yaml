@@ -7,7 +7,7 @@ content:
         - group_type
         - node_count
         - threshold
-        - key_holders
+        - key_share_holders
 
       properties:
         group_type:
@@ -32,7 +32,7 @@ content:
 
             2. Threshold must be less than or equal to node count.
           example: 2
-        key_holders:
+        key_share_holders:
           type: array
           items:
             type: object

@@ -1,4 +1,4 @@
-name: key_share_group_id
+name: key_share_holder_group_id
 in: path
 required: true
 description: The key share group ID.

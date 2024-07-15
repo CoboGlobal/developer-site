@@ -1,9 +1,9 @@
 type: object
-description: The data for the TSS group ID.
+description: The data for the TSS key share group ID.
 properties:
-  tss_group_id:
+  tss_key_share_group_id:
     type: string
-    description: The TSS group ID.
+    description: The TSS key share group ID.
     example: 'mMedDioOKhTlhGyQRzMv'
   curve:
     $ref: './curve_type.yaml'

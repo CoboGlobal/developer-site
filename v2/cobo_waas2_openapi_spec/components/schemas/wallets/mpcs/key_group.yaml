@@ -1,17 +1,17 @@
 type: object
-description: The data for key share group information.
+description: The data for key share holder group information.
 properties:
-  group_id:
+  key_share_holder_group_id:
     type: string
     example: "b33130a9-6e18-44a9-9e48-8b3b41921f0e"
     description: The key share group ID.
   type:
     $ref: "./key_group_type.yaml"
-  tss_groups:
+  tss_key_share_groups:
     type: array
     items:
       $ref: "./tss_groups.yaml"
-  key_holders:
+  key_share_holders:
     type: array
     items:
       $ref: "./key_holder.yaml"
