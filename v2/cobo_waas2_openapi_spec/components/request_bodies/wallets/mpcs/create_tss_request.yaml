@@ -5,7 +5,7 @@ content:
       type: object
       required:
         - type
-        - target_key_group_id
+        - target_key_share_holder_group_id
       properties:
         type:
           $ref: '../../../schemas/wallets/mpcs/tss_request_type.yaml'
