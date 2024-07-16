@@ -3422,7 +3422,6 @@ components:
       required:
         - source_type
         - wallet_id
-        - delegate
       properties:
         source_type:
           $ref: '#/components/schemas/TransactionSourceType'
