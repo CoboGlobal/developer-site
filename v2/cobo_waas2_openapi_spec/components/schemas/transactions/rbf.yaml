@@ -9,3 +9,5 @@ properties:
     example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
   fee:
     $ref: './fees/transaction_fee.yaml'
+  mpc_used_key_share_holder_group:
+    $ref: './mpc_signing_group.yaml'
