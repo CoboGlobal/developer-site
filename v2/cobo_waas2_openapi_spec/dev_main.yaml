@@ -132,12 +132,12 @@ paths:
     $ref: "./paths/wallets/wallet_addresses.yaml"
   /wallets/{wallet_id}/addresses/{address}:
     $ref: "./paths/wallets/wallet_address_by_id.yaml"
-  /wallets/address/check_validity:
-    $ref: "./paths/wallets/address_validity.yaml"
-  /wallets/{wallet_id}/tokens:
-    $ref: "./paths/wallets/wallet_token_balances.yaml"
   /wallets/{wallet_id}/addresses/{address}/tokens:
     $ref: "./paths/wallets/wallet_address_token_balances.yaml"
+  /wallets/{wallet_id}/tokens:
+    $ref: "./paths/wallets/wallet_token_balances.yaml"
+  /wallets/address/check_validity:
+    $ref: "./paths/wallets/address_validity.yaml"
 
   # mpc wallets
   /wallets/mpc/cobo_key_share_holders:

@@ -504,22 +504,29 @@ paths:
           $ref: '#/components/responses/getAddressResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
-  /wallets/address/check_validity:
+  '/wallets/{wallet_id}/addresses/{address}/tokens':
+    parameters:
+      - $ref: '#/components/parameters/walletIdParam'
+      - $ref: '#/components/parameters/addressParam'
     get:
       tags:
         - Wallets
-      operationId: check_address_validity
-      summary: Check address validity
+      operationId: get_wallet_address_token_balances
+      summary: List token balances by address
       description: |
-        This operation verifies if a given address is valid for a specific chain.
+        The operation retrieves a list of token balances for a specified address within an MPC Wallet. 
+
+        <Note>This operation is applicable to MPC Wallets only.</Note>
       security:
         - CoboAuth: []
       parameters:
-        - $ref: '#/components/parameters/requiredChainIdParam'
-        - $ref: '#/components/parameters/requiredAddressParam'
+        - $ref: '#/components/parameters/optionalTokenListIdParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
-          $ref: '#/components/responses/getAddressValidityResponse'
+          $ref: '#/components/responses/getTokenBalancesResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
   '/wallets/{wallet_id}/tokens':
@@ -547,29 +554,22 @@ paths:
           $ref: '#/components/responses/badRequestError'
         '404':
           $ref: '#/components/responses/notFoundError'
-  '/wallets/{wallet_id}/addresses/{address}/tokens':
-    parameters:
-      - $ref: '#/components/parameters/walletIdParam'
-      - $ref: '#/components/parameters/addressParam'
+  /wallets/address/check_validity:
     get:
       tags:
         - Wallets
-      operationId: get_wallet_address_token_balances
-      summary: List token balances by address
+      operationId: check_address_validity
+      summary: Check address validity
       description: |
-        The operation retrieves a list of token balances for a specified address within an MPC Wallet. 
-
-        <Note>This operation is applicable to MPC Wallets only.</Note>
+        This operation verifies if a given address is valid for a specific chain.
       security:
         - CoboAuth: []
       parameters:
-        - $ref: '#/components/parameters/optionalTokenListIdParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/beforeParam'
-        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/requiredChainIdParam'
+        - $ref: '#/components/parameters/requiredAddressParam'
       responses:
         '200':
-          $ref: '#/components/responses/getTokenBalancesResponse'
+          $ref: '#/components/responses/getAddressValidityResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
   /wallets/mpc/cobo_key_share_holders:
