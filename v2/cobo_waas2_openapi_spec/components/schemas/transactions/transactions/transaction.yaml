@@ -31,7 +31,7 @@ properties:
     $ref: './transaction_sub_status.yaml'
   failed_reason:
     type: string
-    description: The reason why the transaction failed.
+    description: The reason why the transaction failed. This property only applies to approval failures and signature failures.
     example: "Rejected by signer Cobo TSS"
   chain_id:
     type: string
