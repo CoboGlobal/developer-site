@@ -20,7 +20,7 @@ post:
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: list_mpc_vault
+  operationId: list_mpc_vaults
   summary: List all vaults
   description: |
     This operation retrieves a list of all vaults.
@@ -30,6 +30,9 @@ get:
     - CoboAuth: []
   parameters:
     - $ref: "../../../components/parameters/wallets/mpcs/project_id_optional.yaml"
+    - $ref: "../../../components/parameters/pagination/limit.yaml"
+    - $ref: "../../../components/parameters/pagination/before.yaml"
+    - $ref: "../../../components/parameters/pagination/after.yaml"
   responses:
     '200':
       $ref: "../../../components/responses/wallets/mpcs/get_vaults.yaml"

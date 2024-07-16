@@ -3,8 +3,8 @@ parameters:
 post:
   tags:
     - Wallets
-  operationId: generate_wallet_address
-  summary: Generate new addresses in wallet
+  operationId: create_address
+  summary: Create addresses in wallet
   description: | 
     This operation generates one or more addresses within a specified wallet.
     
@@ -32,7 +32,7 @@ get:
   security:
     - CoboAuth: []
   parameters:
-    - $ref: "../../components/parameters/wallets/token_id_optional.yaml"
+    - $ref: "../../components/parameters/wallets/chain_id_list_optional.yaml"
     - $ref: "../../components/parameters/wallets/address_list_optional.yaml"
     - $ref: "../../components/parameters/pagination/limit.yaml"
     - $ref: "../../components/parameters/pagination/before.yaml"

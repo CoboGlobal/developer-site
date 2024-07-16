@@ -4,9 +4,9 @@ content:
     schema:
       type: object
       required:
-        - update_key_share_group_action
+        - update_key_share_holder_group_action
       properties:
-        update_key_share_group_action:
+        update_key_share_holder_group_action:
           type: string
           description: |
             The available actions of vault group update. Possible values include:

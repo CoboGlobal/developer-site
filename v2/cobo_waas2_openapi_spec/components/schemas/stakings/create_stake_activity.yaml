@@ -2,7 +2,6 @@ type: object
 required:
   - amount
   - fee
-  - request_id
   - wallet_id
   - address
   - pool_id

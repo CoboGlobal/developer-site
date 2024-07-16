@@ -4,7 +4,7 @@ title: MPC Wallets
 required:
   - source_type
   - wallet_id
-  - mpc_used_key_group
+  - mpc_used_key_share_holder_group
 properties:
   source_type:
     $ref: './source_type.yaml'
@@ -13,14 +13,14 @@ properties:
     description: The wallet ID.
     format: uuid
     example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
-  mpc_used_key_group:
+  mpc_used_key_share_holder_group:
     $ref: '../../mpc_signing_group.yaml'
   account_input:
     type: object
     properties:
       address:
         type: string
-        description: The wallet address. 
+        description: The wallet address.
         example: "19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku"
   utxo_inputs:
     type: array

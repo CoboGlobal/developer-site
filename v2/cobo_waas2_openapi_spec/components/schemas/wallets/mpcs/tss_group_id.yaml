@@ -1,9 +1,0 @@
-type: object
-description: The data for the TSS group ID.
-properties:
-  group_id:
-    type: string
-    description: The TSS group ID.
-    example: 'mMedDioOKhTlhGyQRzMv'
-  curve:
-    $ref: './curve_type.yaml'

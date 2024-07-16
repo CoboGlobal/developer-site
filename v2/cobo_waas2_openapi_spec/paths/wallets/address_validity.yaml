@@ -4,11 +4,11 @@ get:
   operationId: check_address_validity
   summary: Check address validity
   description: |
-    This operation verifies if a given address is valid for a specific token.
+    This operation verifies if a given address is valid for a specific chain.
   security:
     - CoboAuth: []
   parameters:
-    - $ref: "../../components/parameters/wallets/token_id_required.yaml"
+    - $ref: "../../components/parameters/wallets/chain_id_required.yaml"
     - $ref: "../../components/parameters/wallets/address_required.yaml"
   responses:
     '200':

@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets
-  operationId: get_wallet_token_balances
+  operationId: list_token_balances_for_wallet
   summary: List token balances by wallet
   description: |
     The operation retrieves a list of token balances within a specified wallet.

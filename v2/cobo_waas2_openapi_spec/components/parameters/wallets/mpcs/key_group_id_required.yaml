@@ -1,0 +1,7 @@
+name: key_share_holder_group_id
+in: query
+description: The key share holder group ID of the TSS request, which you can retrieve by calling [List all key share groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).
+required: true
+schema:
+  type: string
+example: 'a3a45e99-5a12-444f-867a-ffe0ebb1bb30'

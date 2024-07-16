@@ -1,23 +1,23 @@
 type: object
-description: The data for vault group information.
+description: The data for key share holder group information.
 properties:
-  group_id:
+  key_share_holder_group_id:
     type: string
-    example: "880311524363903326"
-    description: The vault group ID.
+    example: "b33130a9-6e18-44a9-9e48-8b3b41921f0e"
+    description: The key share group ID.
   type:
     $ref: "./key_group_type.yaml"
-  tss_group_ids:
+  tss_key_share_groups:
     type: array
     items:
-      $ref: "./tss_group_id.yaml"
-  key_holders:
+      $ref: "./tss_groups.yaml"
+  key_share_holders:
     type: array
     items:
       $ref: "./key_holder.yaml"
   node_count:
     type: integer
-    description: The number of key share holders in this vault group.
+    description: The number of key share holders in this key share group.
     example: 3
   threshold:
     type: integer
@@ -28,5 +28,5 @@ properties:
   create_timestamp:
     type: integer
     format: int64
-    description: The vault group's creation time in Unix timestamp format, measured in milliseconds.
+    description: The key share group's creation time in Unix timestamp format, measured in milliseconds.
     example: 1718619403933

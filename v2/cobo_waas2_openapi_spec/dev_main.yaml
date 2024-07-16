@@ -120,27 +120,27 @@ paths:
     $ref: "./paths/wallets/wallet_by_id.yaml"
   /wallets/{wallet_id}/delete:
     $ref: "./paths/wallets/wallet_by_id_delete.yaml"
-  /wallets/{wallet_id}/spendables:
-    $ref: "./paths/wallets/spendables.yaml"
-  /wallets/{wallet_id}/spendables/lock:
-    $ref: "./paths/wallets/spendables_lock.yaml"
-  /wallets/{wallet_id}/spendables/unlock:
-    $ref: "./paths/wallets/spendables_unlock.yaml"
+  /wallets/{wallet_id}/utxos:
+    $ref: "./paths/wallets/utxos.yaml"
+  /wallets/{wallet_id}/utxos/lock:
+    $ref: "./paths/wallets/utxos_lock.yaml"
+  /wallets/{wallet_id}/utxos/unlock:
+    $ref: "./paths/wallets/utxos_unlock.yaml"
   /wallets/{wallet_id}/max_transferable_value:
     $ref: "./paths/wallets/max_transferable_value.yaml"
   /wallets/{wallet_id}/addresses:
     $ref: "./paths/wallets/wallet_addresses.yaml"
   /wallets/{wallet_id}/addresses/{address}:
     $ref: "./paths/wallets/wallet_address_by_id.yaml"
-  /wallets/address/check_validity:
-    $ref: "./paths/wallets/address_validity.yaml"
-  /wallets/{wallet_id}/tokens:
-    $ref: "./paths/wallets/wallet_token_balances.yaml"
   /wallets/{wallet_id}/addresses/{address}/tokens:
     $ref: "./paths/wallets/wallet_address_token_balances.yaml"
+  /wallets/{wallet_id}/tokens:
+    $ref: "./paths/wallets/wallet_token_balances.yaml"
+  /wallets/check_address_validity:
+    $ref: "./paths/wallets/address_validity.yaml"
 
   # mpc wallets
-  /wallets/mpc/cobo_key_holders:
+  /wallets/mpc/cobo_key_share_holders:
     $ref: "./paths/wallets/mpcs/cobo_key_holders.yaml"
   /wallets/mpc/projects:
     $ref: "./paths/wallets/mpcs/projects.yaml"
@@ -150,9 +150,9 @@ paths:
     $ref: "./paths/wallets/mpcs/mpc_vaults.yaml"
   /wallets/mpc/vaults/{vault_id}:
     $ref: "./paths/wallets/mpcs/mpc_vault.yaml"
-  /wallets/mpc/vaults/{vault_id}/key_groups:
+  /wallets/mpc/vaults/{vault_id}/key_share_holder_groups:
     $ref: './paths/wallets/mpcs/key_groups.yaml'
-  /wallets/mpc/vaults/{vault_id}/key_groups/{key_share_group_id}:
+  /wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}:
     $ref: './paths/wallets/mpcs/key_group.yaml'
   /wallets/mpc/vaults/{vault_id}/tss_requests:
     $ref: './paths/wallets/mpcs/tss_requests.yaml'
@@ -176,8 +176,8 @@ paths:
 #    $ref: "./paths/wallets/exchanges/subaccounts_by_apikey.yaml"
 
   # transactions
-  /transactions/fee_rates:
-    $ref: "./paths/transactions/fee_rates.yaml"
+#  /transactions/fee_rates:
+#    $ref: "./paths/transactions/fee_rates.yaml"
   /transactions/estimate_fee:
     $ref: "./paths/transactions/estimate_fee.yaml"
   /transactions/transfer:
@@ -309,17 +309,19 @@ components:
     # mpc wallets
     CurveType:
       $ref: "./components/schemas/wallets/mpcs/curve_type.yaml"
-    KeyGroup:
+    KeyShareHolderGroup:
       $ref: "./components/schemas/wallets/mpcs/key_group.yaml"
-    KeyGroupStatus:
+    KeyShareHolderGroupStatus:
       $ref: "./components/schemas/wallets/mpcs/key_group_status.yaml"
-    KeyGroupType:
+    KeyShareHolderGroupType:
       $ref: "./components/schemas/wallets/mpcs/key_group_type.yaml"
-    KeyHolder:
+    CreateKeyShareHolder:
+      $ref: "./components/schemas/wallets/mpcs/create_key_holder.yaml"
+    KeyShareHolder:
       $ref: "./components/schemas/wallets/mpcs/key_holder.yaml"
-    KeyHolderStatus:
+    KeyShareHolderStatus:
       $ref: "./components/schemas/wallets/mpcs/key_holder_status.yaml"
-    KeyHolderType:
+    KeyShareHolderType:
       $ref: "./components/schemas/wallets/mpcs/key_holder_type.yaml"
     MPCVault:
       $ref: "./components/schemas/wallets/mpcs/mpc_vault.yaml"
@@ -329,8 +331,8 @@ components:
       $ref: "./components/schemas/wallets/mpcs/project.yaml"
     RootPubkey:
       $ref: "./components/schemas/wallets/mpcs/root_pubkey.yaml"
-    TSSGroupId:
-      $ref: "./components/schemas/wallets/mpcs/tss_group_id.yaml"
+    TSSGroups:
+      $ref: "./components/schemas/wallets/mpcs/tss_groups.yaml"
     TSSRequest:
       $ref: "./components/schemas/wallets/mpcs/tss_request.yaml"
     TSSRequestStatus:
@@ -627,9 +629,9 @@ components:
       $ref: "./components/parameters/wallets/utxo_tx_hash_optional.yaml"
 
     # mpc wallets
-    keyGroupIdParam:
+    keyShareHolderGroupIdParam:
       $ref: "./components/parameters/wallets/mpcs/key_share_group_id_path.yaml"
-    optionalKeyGroupTypeParam:
+    optionalKeyShareHolderGroupTypeParam:
       $ref: "./components/parameters/wallets/mpcs/key_group_type_optional.yaml"
     projectIdParam:
       $ref: "./components/parameters/wallets/mpcs/project_id_path.yaml"
@@ -637,8 +639,8 @@ components:
       $ref: "./components/parameters/wallets/mpcs/project_id_optional.yaml"
     optionalProjectIdListQueryParam:
       $ref: "./components/parameters/wallets/mpcs/project_id_list_optional.yaml"
-    requiredTargetKeyGroupIdParam:
-      $ref: "./components/parameters/wallets/mpcs/target_key_group_id_required.yaml"
+    requiredKeyShareHolderGroupIdParam:
+      $ref: "./components/parameters/wallets/mpcs/key_group_id_required.yaml"
     tssRequestIdParam:
       $ref: "./components/parameters/wallets/mpcs/tss_request_id_path.yaml"
     vaultIdParam:
@@ -733,11 +735,11 @@ components:
       $ref: "./components/request_bodies/wallets/update_wallet.yaml"
     createAddressBody:
       $ref: "./components/request_bodies/wallets/create_address.yaml"
-    lockSpendablesBody:
-      $ref: "./components/request_bodies/wallets/lock_spendables.yaml"
+    lockUtxosBody:
+      $ref: "./components/request_bodies/wallets/lock_utxos.yaml"
 
     # mpc wallets
-    createKeyGroupBody:
+    createKeyShareHolderGroupBody:
       $ref: "./components/request_bodies/wallets/mpcs/create_key_group.yaml"
     createMpcProjectBody:
       $ref: "./components/request_bodies/wallets/mpcs/create_project.yaml"
@@ -821,21 +823,23 @@ components:
       $ref: "./components/responses/wallets/update_wallet.yaml"
     deleteWalletResponse:
       $ref: "./components/responses/wallets/delete_wallet.yaml"
-    spendableListResponse:
-      $ref: "./components/responses/wallets/get_spendable_list.yaml"
-    lockSpendableResponse:
-      $ref: "./components/responses/wallets/lock_spendables.yaml"
+    listUtxoResponse:
+      $ref: "./components/responses/wallets/get_utxo_list.yaml"
+    lockUtxoResponse:
+      $ref: "./components/responses/wallets/lock_utxos.yaml"
     maxTransferableValueResponse:
       $ref: "./components/responses/wallets/get_max_transferable_value.yaml"
     getAddressesResponse:
       $ref: "./components/responses/wallets/get_addresses.yaml"
+    getAddressResponse:
+      $ref: "./components/responses/wallets/get_a_address.yaml"
     createAddressResponse:
       $ref: "./components/responses/wallets/create_address.yaml"
     getAddressValidityResponse:
       $ref: "./components/responses/wallets/get_a_address_validity.yaml"
 
     # mpc wallets
-    createKeyGroupsResponse:
+    createKeyShareHolderGroupsResponse:
       $ref: "./components/responses/wallets/mpcs/create_key_group.yaml"
     createMpcProjectResponse:
       $ref: "./components/responses/wallets/mpcs/create_project.yaml"
@@ -845,9 +849,9 @@ components:
       $ref: "./components/responses/wallets/mpcs/create_vault.yaml"
     getCoboKeyHoldersResponse:
       $ref: "./components/responses/wallets/mpcs/get_cobo_key_holder.yaml"
-    getKeyGroupResponse:
+    getKeyShareHolderGroupResponse:
       $ref: "./components/responses/wallets/mpcs/get_key_group.yaml"
-    getKeyGroupsResponse:
+    getKeyShareHolderGroupsResponse:
       $ref: "./components/responses/wallets/mpcs/get_key_groups.yaml"
     getMpcProjectResponse:
       $ref: "./components/responses/wallets/mpcs/get_project.yaml"
@@ -859,9 +863,9 @@ components:
       $ref: "./components/responses/wallets/mpcs/get_vault.yaml"
     getMpcVaultsResponse:
       $ref: "./components/responses/wallets/mpcs/get_vaults.yaml"
-    deleteKeyGroupResponse:
+    deleteKeyShareHolderGroupResponse:
       $ref: "./components/responses/wallets/mpcs/delete_key_group.yaml"
-    putKeyGroupResponse:
+    putKeyShareHolderGroupResponse:
       $ref: "./components/responses/wallets/mpcs/put_key_group.yaml"
     putTssRequestResponse:
       $ref: "./components/responses/wallets/mpcs/put_tss_request.yaml"

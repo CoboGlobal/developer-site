@@ -1,9 +1,15 @@
 type: string
 enum: [
+  "StakeInProgress",
   "Active",
-  "StakingProcessing",
-  "UnStakingProcessing",
+  "Rejected",
+  "LimitExceeded",
+  "Invalid",
+  "UnstakeInProgress",
   "Withdrawable",
+  "WithdrawInProgress",
+  "Closed"
 ]
-example: 'Success'
+
+example: 'Active'
 description: The status of staking amount.

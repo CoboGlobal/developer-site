@@ -1,7 +1,0 @@
-name: target_key_group_id
-in: query
-description: The target vault group ID of the TSS request, which you can retrieve by calling [List all vault groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).
-required: true
-schema:
-  type: string
-example: '880311524363903326'

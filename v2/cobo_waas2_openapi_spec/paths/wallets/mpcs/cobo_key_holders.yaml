@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: list_cobo_key_holder
+  operationId: list_cobo_key_holders
   summary: List all Cobo key share holders
   description: | 
     This operation retrieves a list of all Cobo key share holders and their information. 

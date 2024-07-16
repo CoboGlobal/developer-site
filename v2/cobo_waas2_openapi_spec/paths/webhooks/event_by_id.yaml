@@ -7,7 +7,7 @@ get:
   summary: Retrieve event information
   description: |
     This operation retrieves the information of a webhook event by the event ID.
-  operationId: get_webhook_event
+  operationId: get_webhook_event_by_id
   responses:
     '200':
       $ref: "../../components/responses/webhooks/get_webhook_event.yaml"

@@ -3,7 +3,7 @@ parameters:
 post:
   tags:
     - Wallets
-  operationId: unlock_spendable_list
+  operationId: unlock_utxos
   summary: Unlock UTXOs
   description: |
     This operation unlocks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.
@@ -12,9 +12,9 @@ post:
   security:
     - CoboAuth: []
   requestBody:
-    $ref: "../../components/request_bodies/wallets/lock_spendables.yaml"
+    $ref: "../../components/request_bodies/wallets/lock_utxos.yaml"
   responses:
-    '200':
-      $ref: "../../components/responses/wallets/lock_spendables.yaml"
+    '201':
+      $ref: "../../components/responses/wallets/lock_utxos.yaml"
     '400':
       $ref: "../../components/responses/errors/400_bad_request.yaml"

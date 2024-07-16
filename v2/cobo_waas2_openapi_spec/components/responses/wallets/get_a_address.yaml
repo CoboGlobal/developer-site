@@ -1,5 +1,7 @@
-description: Successfully listed addresses
+description: Successfully listed address info
 content:
   application/json:
     schema:
+      type: array
+      items:
         $ref: '../../schemas/wallets/addresses/address_info.yaml'

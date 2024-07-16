@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: get_mpc_project
+  operationId: get_mpc_project_by_id
   summary: Get project information
   description: |
     This operation retrieves detailed information about a project.
@@ -21,7 +21,7 @@ get:
 put:
   tags:
     - Wallets - MPC Wallets
-  operationId: update_mpc_project
+  operationId: update_mpc_project_by_id
   summary: Update project name
   description: |
     This operation updates a project's name.

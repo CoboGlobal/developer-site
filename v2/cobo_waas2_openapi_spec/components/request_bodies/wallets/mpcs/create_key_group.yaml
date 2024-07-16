@@ -1,21 +1,21 @@
-description: The request body to create a vault group.
+description: The request body to create a key share holder group.
 content:
   application/json:
     schema:
       type: object
       required:
-        - group_type
+        - key_share_holder_group_type
         - node_count
         - threshold
-        - key_holders
+        - key_share_holders
 
       properties:
-        group_type:
+        key_share_holder_group_type:
           $ref: '../../../schemas/wallets/mpcs/key_group_type.yaml'
         node_count:
           type: integer
           description: |
-            The number of key share holders in this vault group.
+            The number of key share holders in this key share holder group.
             
             **Notes:**
             1. Currently, the available [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) are 2-2, 2-3, and 3-3 schemes (in the "threshold - node count" format), so you can only set `node_count` to 2 or 3. 
@@ -32,20 +32,8 @@ content:
 
             2. Threshold must be less than or equal to node count.
           example: 2
-        key_holders:
+        key_share_holders:
           type: array
           items:
-            type: object
-            description: When creating MainKeyGroup and SigningKeyGroup, the Cobo key share holder will be added automatically.
-            properties:
-              name:
-                type: string
-                description: Key share holder's name.
-                example: 'Key share holder name'
-              type:
-                $ref: '../../../schemas/wallets/mpcs/key_holder_type.yaml'
-              tss_node_id:
-                type: string
-                description: The TSS Node ID.
-                example: coboAbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefghi
+            $ref: '../../../schemas/wallets/mpcs/create_key_holder.yaml'
 

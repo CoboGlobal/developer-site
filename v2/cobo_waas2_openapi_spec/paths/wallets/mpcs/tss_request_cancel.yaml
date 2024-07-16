@@ -1,7 +1,7 @@
 post:
   tags:
     - Wallets - MPC Wallets
-  operationId: cancel_tss_request
+  operationId: cancel_tss_request_by_id
   summary: Cancel TSS request
   description:  |
     This operation cancels a TSS request.

@@ -14,7 +14,7 @@ post:
   requestBody:
     $ref: "../../components/request_bodies/transactions/estimate_fee.yaml"
   responses:
-    '200':
+    '201':
       $ref: "../../components/responses/transactions/get_estimation_fee.yaml"
     '400':
       $ref: "../../components/responses/errors/400_bad_request.yaml"

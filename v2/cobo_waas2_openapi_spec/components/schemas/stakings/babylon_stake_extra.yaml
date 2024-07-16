@@ -4,7 +4,7 @@ allOf:
     description: The stake extra for babylon.
     required:
       - finality_provider_public_key
-      - lock_time
+      - stake_block_time
     properties:
         finality_provider_public_key:
           description: The public key of finality provider.

@@ -1,4 +1,4 @@
-name: key_group_type
+name: key_share_holder_group_type
 in: query
 description: |
     The selected vault group type to retrieve. Possible values include:

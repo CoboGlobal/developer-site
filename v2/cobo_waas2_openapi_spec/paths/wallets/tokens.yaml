@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets
-  operationId: get_tokens
+  operationId: list_supported_tokens
   summary: List supported tokens
   description: |
     This operation retrieves all tokens supported by a specific wallet type or subtype. 

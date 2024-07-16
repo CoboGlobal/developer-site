@@ -26,7 +26,7 @@ post:
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: list_tss_request
+  operationId: list_tss_requests
   summary: List TSS requests
   description: |
     This operation retrieves a list of TSS requests and their details.
@@ -34,7 +34,10 @@ get:
     - CoboAuth: []
   parameters:
     - $ref: "../../../components/parameters/wallets/mpcs/vault_id_path.yaml"
-    - $ref: "../../../components/parameters/wallets/mpcs/target_key_group_id_required.yaml"
+    - $ref: "../../../components/parameters/wallets/mpcs/key_group_id_required.yaml"
+    - $ref: "../../../components/parameters/pagination/limit.yaml"
+    - $ref: "../../../components/parameters/pagination/before.yaml"
+    - $ref: "../../../components/parameters/pagination/after.yaml"
   responses:
     '200':
       $ref: "../../../components/responses/wallets/mpcs/get_tss_requests.yaml"

@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: get_tss_request
+  operationId: get_tss_request_by_id
   summary: Get TSS request
   description: |
     This operation retrieves detailed information about a TSS request.
