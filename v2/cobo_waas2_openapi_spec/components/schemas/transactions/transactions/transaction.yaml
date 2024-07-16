@@ -44,7 +44,6 @@ properties:
     $ref: './destinations/transaction_destination.yaml'
   fee:
     $ref: './fees/transaction_fee.yaml'
-    nullable: True
   initiator:
     type: string
     description: The transaction initiator. 

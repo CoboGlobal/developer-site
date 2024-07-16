@@ -136,7 +136,7 @@ paths:
     $ref: "./paths/wallets/wallet_address_token_balances.yaml"
   /wallets/{wallet_id}/tokens:
     $ref: "./paths/wallets/wallet_token_balances.yaml"
-  /wallets/address/check_validity:
+  /wallets/check_address_validity:
     $ref: "./paths/wallets/address_validity.yaml"
 
   # mpc wallets
