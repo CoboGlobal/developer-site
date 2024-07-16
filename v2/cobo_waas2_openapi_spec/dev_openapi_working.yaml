@@ -5291,6 +5291,20 @@ components:
         - Undelegate
       example: Stake
       description: The type of activity.
+    AmountStatus:
+      type: string
+      enum:
+        - StakeInProgress
+        - Active
+        - Rejected
+        - LimitExceeded
+        - Invalid
+        - UnstakeInProgress
+        - Withdrawable
+        - WithdrawInProgress
+        - Closed
+      example: Active
+      description: The status of staking amount.
     AmountDetails:
       type: array
       description: The staking amount details.
@@ -5301,19 +5315,7 @@ components:
           - amount
         properties:
           status:
-            type: string
-            enum:
-              - StakeInProgress
-              - Active
-              - Rejected
-              - LimitExceeded
-              - Invalid
-              - UnstakeInProgress
-              - Withdrawable
-              - WithdrawInProgress
-              - Closed
-            example: Active
-            description: The status of staking amount.
+            $ref: '#/components/schemas/AmountStatus'
           amount:
             type: string
             example: '100.00'

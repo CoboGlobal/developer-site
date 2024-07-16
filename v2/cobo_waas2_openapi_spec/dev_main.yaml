@@ -539,6 +539,8 @@ components:
       $ref: "./components/schemas/stakings/activity_status.yaml"
     ActivityType:
       $ref: "./components/schemas/stakings/activity_type.yaml"
+    AmountStatus:
+      $ref: "./components/schemas/stakings/amount_status.yaml"
     AmountDetails:
       $ref: "./components/schemas/stakings/amount_details.yaml"
     BabylonValidator:
