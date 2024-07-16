@@ -905,7 +905,7 @@ paths:
         - $ref: '#/components/parameters/keyShareHolderGroupIdParam'
       responses:
         '201':
-          description: Resource successfully deleted.
+          $ref: '#/components/responses/deleteKeyShareHolderGroupResponse'
         '401':
           $ref: '#/components/responses/unauthorizedError'
         '403':

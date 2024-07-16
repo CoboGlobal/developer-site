@@ -14,7 +14,7 @@ post:
     - $ref: "../../../components/parameters/wallets/mpcs/key_share_group_id_path.yaml"
   responses:
     '201':
-      description: Resource successfully deleted.
+      $ref: "../../../components/responses/wallets/mpcs/delete_key_group.yaml"
     '401':
       $ref: "../../../components/responses/errors/401_unauthorized.yaml"
     '403':
