@@ -55,25 +55,21 @@ properties:
     format: int32
     description: The number of confirmations this transaction has received.
     example: 12
-    nullable: True
   confirming_threshold:
     type: integer
     format: int32
     description: The minimum number of confirmations required to deem a transaction secure. The common threshold is 6 for a Bitcoin transaction. 
     example: 15
-    nullable: True
   block_number:
     type: integer
     format: int64
     description: The block number.
     example: 123
-    nullable: True
   block_time:
     type: integer
     format: int64
     description: The time when the block was created, in Unix timestamp format, measured in milliseconds.
     example: 1717740319
-    nullable: True
   block_hash:
     type: string
     description: The block hash.
@@ -82,7 +78,6 @@ properties:
     type: integer
     description: The transaction nonce. 
     example: 9
-    nullable: True
   transaction_hash:
     type: string
     description: The transaction hash.

@@ -33,4 +33,3 @@ properties:
           The wallet address of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).
       mpc_used_key_share_holder_group:
         $ref: '../../mpc_signing_group.yaml'
-    nullable: true
