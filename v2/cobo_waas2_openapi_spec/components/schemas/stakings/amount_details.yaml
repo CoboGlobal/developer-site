@@ -7,9 +7,7 @@ items:
       - amount
     properties:
       status:
-        type: string
-        example: 'active'
-        description: The staking status.
+        $ref: '../../schemas/stakings/amount_status.yaml'
       amount:
         type: string
         example: '100.00'
@@ -18,7 +16,6 @@ items:
         type: string
         example: '0011039d-27fb-49ba-b172-6e0aa80e37ec'
         description: The related staking activity ID.
-
 
 
 
