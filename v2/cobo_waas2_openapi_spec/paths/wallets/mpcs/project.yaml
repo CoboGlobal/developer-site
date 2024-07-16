@@ -12,12 +12,10 @@ get:
   responses:
     '200':
       $ref: "../../../components/responses/wallets/mpcs/get_project.yaml"
-    '400':
+    '4XX':
       $ref: "../../../components/responses/errors/400_bad_request.yaml"
-    '404':
-      $ref: "../../../components/responses/errors/404_not_found.yaml"
-    '503':
-      $ref: "../../../components/responses/errors/503_service_unavailable.yaml"
+    '5XX':
+      $ref: "../../../components/responses/errors/500_internal_server_error.yaml"
 put:
   tags:
     - Wallets - MPC Wallets
@@ -36,10 +34,8 @@ put:
   responses:
     '200':
       $ref: "../../../components/responses/wallets/mpcs/get_project.yaml"
-    '400':
+    '4XX':
       $ref: "../../../components/responses/errors/400_bad_request.yaml"
-    '404':
-      $ref: "../../../components/responses/errors/404_not_found.yaml"
-    '503':
-      $ref: "../../../components/responses/errors/503_service_unavailable.yaml"
+    '5XX':
+      $ref: "../../../components/responses/errors/500_internal_server_error.yaml"
 

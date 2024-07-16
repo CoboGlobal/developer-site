@@ -798,6 +798,8 @@ components:
       $ref: "./components/responses/errors/404_not_found.yaml"
     tooManyRequestError:
       $ref: "./components/responses/errors/429_too_many_request.yaml"
+    internalServerError:
+      $ref: "./components/responses/errors/500_internal_server_error.yaml"
     serviceUnavailableError:
       $ref: "./components/responses/errors/503_service_unavailable.yaml"
 
