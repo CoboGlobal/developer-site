@@ -621,6 +621,10 @@ paths:
         This operation retrieves a list of all projects.
       security:
         - CoboAuth: []
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getMpcProjectsResponse'
@@ -708,6 +712,9 @@ paths:
         - CoboAuth: []
       parameters:
         - $ref: '#/components/parameters/optionalProjectIdQueryParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getMpcVaultsResponse'
@@ -801,6 +808,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
         - $ref: '#/components/parameters/optionalKeyShareHolderGroupTypeParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getKeyShareHolderGroupsResponse'
@@ -936,16 +946,24 @@ paths:
         - CoboAuth: []
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/requiredTargetKeyShareHolderGroupIdParam'
+        - $ref: '#/components/parameters/requiredKeyShareHolderGroupIdParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           description: Successfully retrieved TSS request.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TSSRequest'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TSSRequest'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/badRequestError'
         '404':
@@ -2899,6 +2917,14 @@ components:
           type: string
           description: The TSS request ID.
           example: '20240711114129000132315000003970'
+        source_key_share_holder_group_id:
+          type: string
+          description: The Source key share holder group ID.
+          example: fc1965d0-ed70-4542-877b-e5a4b7b26320
+        target_key_share_holder_group_id:
+          type: string
+          description: The Target key share holder group ID.
+          example: fd9519ae-507b-4605-b108-04d4e5ffcdd3
         type:
           $ref: '#/components/schemas/TSSRequestType'
         status:
@@ -3896,7 +3922,7 @@ components:
               type: string
               format: uuid
               example: 123e4567-e89b-12d3-a456-426614174000
-              description: 'The wallet ID of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}). '
+              description: 'The wallet ID of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).'
             wallet_type:
               type: string
               example: MPC
@@ -5059,7 +5085,7 @@ components:
           description: The stake extra for babylon.
           required:
             - finality_provider_public_key
-            - lock_time
+            - stake_block_time
           properties:
             finality_provider_public_key:
               description: The public key of finality provider.
@@ -5167,7 +5193,6 @@ components:
       required:
         - amount
         - fee
-        - request_id
         - wallet_id
         - address
         - pool_id
@@ -5263,8 +5288,20 @@ components:
         properties:
           status:
             type: string
-            example: active
-            description: The staking status.
+            enum:
+              - StakeInProgress
+              - Active
+              - Rejected
+              - LimitExceeded
+              - Invalid
+              - UnstakeInProgress
+              - Withdrawable
+              - Active
+              - WithdrawInProgress
+              - Closed
+              - Withdrawable
+            example: Active
+            description: The status of staking amount.
           amount:
             type: string
             example: '100.00'
@@ -5392,6 +5429,7 @@ components:
         - token_id
         - est_apr
         - supported_wallet_types
+        - supported_wallet_subtypes
       properties:
         id:
           description: The unique protocol id.
@@ -5417,6 +5455,13 @@ components:
             $ref: '#/components/schemas/WalletType'
           example:
             - MPC
+        supported_wallet_subtypes:
+          description: The list of available wallet types.
+          type: array
+          items:
+            $ref: '#/components/schemas/WalletSubtype'
+          example:
+            - Org-Controlled
         token_id:
           description: The unique token id.
           type: string
@@ -5896,10 +5941,10 @@ components:
         type: string
         format: uuid
       example: 'a3d8eae2-1740-4b5e-92f2-88c2b1e44c6b,b51f63a3-8a8e-4a34-ae9e-6f3e6b1fdf99'
-    requiredTargetKeyShareHolderGroupIdParam:
-      name: target_key_share_holder_group_id
+    requiredKeyShareHolderGroupIdParam:
+      name: key_share_holder_group_id
       in: query
-      description: 'The target key share group ID of the TSS request, which you can retrieve by calling [List all key share groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).'
+      description: 'The key share holder group ID of the TSS request, which you can retrieve by calling [List all key share groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).'
       required: true
       schema:
         type: string
@@ -6927,9 +6972,14 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/KeyShareHolderGroup'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KeyShareHolderGroup'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     getMpcProjectResponse:
       description: Successfully listed all vaults.
       content:
@@ -6941,9 +6991,14 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/MPCProject'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MPCProject'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     getTssRequestResponse:
       description: Successfully retrieved TSS request.
       content:
@@ -6961,9 +7016,14 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/MPCVault'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MPCVault'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     deleteKeyShareHolderGroupResponse:
       description: Successfully deleted the specified key share group.
       content:

@@ -8,6 +8,7 @@ required:
   - token_id
   - est_apr
   - supported_wallet_types
+  - supported_wallet_subtypes
 properties:
   id:
     description: The unique protocol id.
@@ -32,6 +33,12 @@ properties:
     items:
       $ref: '../../schemas/wallets/bases/wallet_type.yaml'
     example: ['MPC']
+  supported_wallet_subtypes:
+    description: The list of available wallet types.
+    type: array
+    items:
+      $ref: '../../schemas/wallets/bases/wallet_subtype.yaml'
+    example: ['Org-Controlled']
   token_id:
     description: The unique token id.
     type: string

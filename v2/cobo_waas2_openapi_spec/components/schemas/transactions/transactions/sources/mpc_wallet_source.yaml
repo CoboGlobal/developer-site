@@ -20,7 +20,7 @@ properties:
     properties:
       address:
         type: string
-        description: The wallet address. 
+        description: The wallet address.
         example: "19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku"
   utxo_inputs:
     type: array

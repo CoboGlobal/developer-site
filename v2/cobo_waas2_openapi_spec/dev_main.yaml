@@ -639,8 +639,8 @@ components:
       $ref: "./components/parameters/wallets/mpcs/project_id_optional.yaml"
     optionalProjectIdListQueryParam:
       $ref: "./components/parameters/wallets/mpcs/project_id_list_optional.yaml"
-    requiredTargetKeyShareHolderGroupIdParam:
-      $ref: "./components/parameters/wallets/mpcs/target_key_group_id_required.yaml"
+    requiredKeyShareHolderGroupIdParam:
+      $ref: "./components/parameters/wallets/mpcs/key_group_id_required.yaml"
     tssRequestIdParam:
       $ref: "./components/parameters/wallets/mpcs/tss_request_id_path.yaml"
     vaultIdParam:
