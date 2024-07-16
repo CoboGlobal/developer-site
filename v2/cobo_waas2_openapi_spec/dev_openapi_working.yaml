@@ -440,7 +440,7 @@ paths:
     post:
       tags:
         - Wallets
-      operationId: create_wallet_address
+      operationId: create_address
       summary: Create addresses in wallet
       description: |
         This operation generates one or more addresses within a specified wallet.
@@ -511,7 +511,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: list_wallet_address_token_balances
+      operationId: list_token_balances_for_address
       summary: List token balances by address
       description: |
         The operation retrieves a list of token balances for a specified address within an MPC Wallet. 
@@ -533,7 +533,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: list_wallet_token_balances
+      operationId: list_token_balances_for_wallet
       summary: List token balances by wallet
       description: |
         The operation retrieves a list of token balances within a specified wallet.
@@ -5281,10 +5281,8 @@ components:
               - Invalid
               - UnstakeInProgress
               - Withdrawable
-              - Active
               - WithdrawInProgress
               - Closed
-              - Withdrawable
             example: Active
             description: The status of staking amount.
           amount:

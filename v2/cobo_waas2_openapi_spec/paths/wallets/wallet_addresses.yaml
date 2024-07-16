@@ -3,7 +3,7 @@ parameters:
 post:
   tags:
     - Wallets
-  operationId: create_wallet_address
+  operationId: create_address
   summary: Create addresses in wallet
   description: | 
     This operation generates one or more addresses within a specified wallet.
