@@ -3848,6 +3848,8 @@ components:
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         fee:
           $ref: '#/components/schemas/TransactionTransferFee'
+        mpc_used_key_share_holder_group:
+          $ref: '#/components/schemas/MpcSigningGroup'
     TransactionResend:
       type: object
       description: The information about the request to resend transactions.
