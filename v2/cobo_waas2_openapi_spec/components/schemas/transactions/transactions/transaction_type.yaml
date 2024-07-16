@@ -6,8 +6,8 @@ enum:
   - ContractCall
   - TransactionFeePayment
   - TransactionFeeRefund
-  - RawMessage
-  - Multi-Sig
+  - MessageSign
+  - MultiSig
 example: Deposit
 description: |
   The transaction type. Possible values include: 
@@ -17,5 +17,5 @@ description: |
     - `ContractCall`: A transaction that interacts with a smart contract.
     - `TransactionFeePayment`: A transaction that is initiated from Fee Station to pay the transaction fees.
     - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
-    - `RawMessage`: A transaction that signs a message. 
-    - `Multi-Sig`: A transaction that requires multiple signatures.
+    - `MessageSign`: A transaction that signs a message. 
+    - `MultiSig`: A transaction that requires multiple signatures.
