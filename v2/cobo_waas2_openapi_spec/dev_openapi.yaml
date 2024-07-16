@@ -3134,6 +3134,7 @@ components:
         - Completed
         - Failed
         - Rejected
+        - Pending
       example: Submitted
       description: |
         The transaction status. Possible values include: 
@@ -3146,6 +3147,7 @@ components:
           - `Completed`: The transaction is completed.
           - `Failed`: The transaction failed.
           - `Rejected`: The transaction is rejected.
+          - `Pending`: The transaction is pending.
     TransactionSubStatus:
       type: string
       enum:
@@ -5604,6 +5606,7 @@ components:
           - `Completed`: The transaction is completed.
           - `Failed`: The transaction failed.
           - `Rejected`: The transaction is rejected.
+          - `Pending`: The transaction is pending.
       schema:
         description: 'A list of transaction statuses, separated by comma.'
       example: 'Completed,Failed'

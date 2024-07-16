@@ -10,6 +10,7 @@ enum:
   - Completed
   - Failed
   - Rejected
+  - Pending
 example: Submitted
 description: |
   The transaction status. Possible values include: 
@@ -22,4 +23,5 @@ description: |
     - `Completed`: The transaction is completed.
     - `Failed`: The transaction failed.
     - `Rejected`: The transaction is rejected.
+    - `Pending`: The transaction is pending.
 
