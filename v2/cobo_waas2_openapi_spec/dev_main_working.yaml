@@ -154,6 +154,8 @@ paths:
     $ref: './paths/wallets/mpcs/key_groups.yaml'
   /wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}:
     $ref: './paths/wallets/mpcs/key_group.yaml'
+  /wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}/delete:
+    $ref: './paths/wallets/mpcs/key_group_delete.yaml'
   /wallets/mpc/vaults/{vault_id}/tss_requests:
     $ref: './paths/wallets/mpcs/tss_requests.yaml'
   /wallets/mpc/vaults/{vault_id}/tss_requests/{tss_request_id}:

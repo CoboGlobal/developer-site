@@ -1,0 +1,6 @@
+name: vault_type
+in: query
+description: The Vault type.
+required: true
+schema:
+  $ref: '../../../schemas/wallets/mpcs/mpc_vault_type.yaml'
