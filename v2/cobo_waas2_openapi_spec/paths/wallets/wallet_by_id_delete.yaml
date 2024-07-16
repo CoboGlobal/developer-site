@@ -12,7 +12,7 @@ post:
   security:
     - CoboAuth: []
   responses:
-    '200':
+    '201':
       $ref: "../../components/responses/wallets/delete_wallet.yaml"
     '400':
       $ref: "../../components/responses/errors/400_bad_request.yaml"

@@ -45,26 +45,3 @@ put:
       $ref: "../../../components/responses/errors/403_forbidden.yaml"
     '429':
       $ref: "../../../components/responses/errors/429_too_many_request.yaml"
-delete:
-  tags:
-    - Wallets - MPC Wallets
-  operationId: delete_key_share_holder_group_by_id
-  summary: Delete key share holder group
-  description: This operation deletes a specified key share holder group.
-  security:
-    - CoboAuth: []
-    - OAuth2:
-        - mpc_organization_controlled_key_group:manage
-        - mpc_user_controlled_key_group:manage
-  parameters:
-    - $ref: "../../../components/parameters/wallets/mpcs/vault_id_path.yaml"
-    - $ref: "../../../components/parameters/wallets/mpcs/key_share_group_id_path.yaml"
-  responses:
-    '204':
-      description: Resource successfully deleted.
-    '401':
-      $ref: "../../../components/responses/errors/401_unauthorized.yaml"
-    '403':
-      $ref: "../../../components/responses/errors/403_forbidden.yaml"
-    '429':
-      $ref: "../../../components/responses/errors/429_too_many_request.yaml"

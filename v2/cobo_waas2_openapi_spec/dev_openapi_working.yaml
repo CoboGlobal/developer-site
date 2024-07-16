@@ -338,7 +338,7 @@ paths:
       security:
         - CoboAuth: []
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/deleteWalletResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
@@ -711,6 +711,12 @@ paths:
       security:
         - CoboAuth: []
       parameters:
+        - name: vault_type
+          in: query
+          description: The Vault type.
+          required: true
+          schema:
+            $ref: '#/components/schemas/MPCVaultType'
         - $ref: '#/components/parameters/optionalProjectIdQueryParam'
         - $ref: '#/components/parameters/limitParam'
         - $ref: '#/components/parameters/beforeParam'
@@ -882,7 +888,8 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '429':
           $ref: '#/components/responses/tooManyRequestError'
-    delete:
+  '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}/delete':
+    post:
       tags:
         - Wallets - MPC Wallets
       operationId: delete_key_share_holder_group_by_id
@@ -897,8 +904,8 @@ paths:
         - $ref: '#/components/parameters/vaultIdParam'
         - $ref: '#/components/parameters/keyShareHolderGroupIdParam'
       responses:
-        '204':
-          description: Resource successfully deleted.
+        '201':
+          $ref: '#/components/responses/deleteKeyShareHolderGroupResponse'
         '401':
           $ref: '#/components/responses/unauthorizedError'
         '403':
@@ -3755,7 +3762,6 @@ components:
         - TransactionFeeRefund
         - MessageSign
         - MultiSig
-        - AutoFueling
       example: Deposit
       description: |
         The transaction type. Possible values include: 
@@ -3767,7 +3773,6 @@ components:
           - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
           - `MessageSign`: A transaction that signs a message. 
           - `MultiSig`: A transaction that requires multiple signatures.
-          - `AutoFueling`: TDB
     MpcSigningGroup:
       type: object
       description: The information about the Signing Group of an MPC Wallet.
@@ -6094,7 +6099,6 @@ components:
           - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
           - `MessageSign`: A transaction that signs a message. 
           - `MultiSig`: A transaction that requires multiple signatures.
-          - `AutoFueling`: TDB
       schema:
         type: string
         description: 'A list of transaction types, separated by comma.'
@@ -7034,11 +7038,21 @@ components:
               pagination:
                 $ref: '#/components/schemas/Pagination'
     deleteKeyShareHolderGroupResponse:
-      description: Successfully deleted the specified key share group.
+      description: Successfully deleted the specified key share holder group.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyShareHolderGroup'
+            type: object
+            required:
+              - submitted
+            properties:
+              submitted:
+                type: boolean
+                example: true
+                description: |
+                  Whether the request to delete the key share holder group has been successfully submitted.
+                  - `true`: The request to delete the key share holder group has been successfully submitted.
+                  - `false`: The request to delete the key share holder group has not been submitted.
     putKeyShareHolderGroupResponse:
       description: Successfully modify mpc tss group
       content:
