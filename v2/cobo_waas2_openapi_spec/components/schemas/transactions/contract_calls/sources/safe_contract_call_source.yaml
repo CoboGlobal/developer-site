@@ -24,5 +24,5 @@ allOf:
             example: '0x1234567890123456789012345678901234567890'
             description: >-
               The wallet address of the Delegate. This is required for initiating a transfer from a Smart Contract Wallet (Safe{Wallet}).
-          mpc_used_key_group:
+          mpc_used_key_share_holder_group:
             $ref: '../../mpc_signing_group.yaml'

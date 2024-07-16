@@ -13,7 +13,7 @@ properties:
     description: The wallet ID.
     format: uuid
     example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
-  delegate: 
+  delegate:
     type: object
     properties:
       wallet_id:
@@ -21,7 +21,7 @@ properties:
         format: uuid
         example: '123e4567-e89b-12d3-a456-426614174000'
         description: >-
-          The wallet ID of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}). 
+          The wallet ID of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).
       wallet_type:
         type: string
         example: 'MPC'
@@ -32,5 +32,5 @@ properties:
         example: '0x1234567890123456789012345678901234567890'
         description: >-
           The wallet address of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).
-      mpc_used_key_group:
+      mpc_used_key_share_holder_group:
         $ref: '../../mpc_signing_group.yaml'
