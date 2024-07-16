@@ -554,7 +554,7 @@ paths:
           $ref: '#/components/responses/badRequestError'
         '404':
           $ref: '#/components/responses/notFoundError'
-  /wallets/address/check_validity:
+  /wallets/check_address_validity:
     get:
       tags:
         - Wallets
@@ -3378,7 +3378,6 @@ components:
               ExchangeWallet: '#/components/schemas/TransactionExchangeWalletDestination'
         fee:
           $ref: '#/components/schemas/TransactionFee'
-          nullable: true
         initiator:
           type: string
           description: The transaction initiator.
@@ -3759,6 +3758,7 @@ components:
         - TransactionFeeRefund
         - MessageSign
         - MultiSig
+        - AutoFueling
       example: Deposit
       description: |
         The transaction type. Possible values include: 
@@ -3770,6 +3770,7 @@ components:
           - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
           - `MessageSign`: A transaction that signs a message. 
           - `MultiSig`: A transaction that requires multiple signatures.
+          - `AutoFueling`: TDB
     MpcSigningGroup:
       type: object
       description: The information about the Signing Group of an MPC Wallet.
@@ -6095,6 +6096,7 @@ components:
           - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
           - `MessageSign`: A transaction that signs a message. 
           - `MultiSig`: A transaction that requires multiple signatures.
+          - `AutoFueling`: TDB
       schema:
         type: string
         description: 'A list of transaction types, separated by comma.'
