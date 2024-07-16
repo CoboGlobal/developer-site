@@ -3348,7 +3348,7 @@ components:
       required:
         - source_type
         - wallet_id
-        - mpc_used_key_group
+        - mpc_used_key_share_holder_group
       properties:
         source_type:
           $ref: '#/components/schemas/TransactionSourceType'
@@ -3357,7 +3357,7 @@ components:
           description: The wallet ID.
           format: uuid
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
-        mpc_used_key_group:
+        mpc_used_key_share_holder_group:
           $ref: '#/components/schemas/MpcSigningGroup'
         account_input:
           type: object
@@ -3407,7 +3407,7 @@ components:
               type: string
               example: '0x1234567890123456789012345678901234567890'
               description: 'The wallet address of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).'
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     TransactionExchangeWalletSource:
       type: object
@@ -3921,7 +3921,7 @@ components:
                         type: integer
                         description: The output index of the UTXO.
                         example: 0
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     SafeTransferSource:
       title: Smart Contract Wallets
@@ -4155,7 +4155,7 @@ components:
               type: string
               description: The wallet address.
               example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
         destination:
           type: object
@@ -4296,7 +4296,7 @@ components:
         - $ref: '#/components/schemas/BaseContractCallSource'
         - type: object
           properties:
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     SafeContractCallSource:
       title: Smart Contract Wallets
@@ -4322,7 +4322,7 @@ components:
                   type: string
                   example: '0x1234567890123456789012345678901234567890'
                   description: 'The wallet address of the Delegate. This is required for initiating a transfer from a Smart Contract Wallet (Safe{Wallet}).'
-                mpc_used_key_group:
+                mpc_used_key_share_holder_group:
                   $ref: '#/components/schemas/MpcSigningGroup'
     ContractCallSource:
       oneOf:
