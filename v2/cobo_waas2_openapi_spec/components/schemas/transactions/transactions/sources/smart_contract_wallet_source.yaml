@@ -4,7 +4,6 @@ title: Smart Contract Wallets
 required:
   - source_type
   - wallet_id
-  - delegate
 properties:
   source_type:
     $ref: './source_type.yaml'
