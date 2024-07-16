@@ -8,7 +8,7 @@ post:
   description: |
     This operation accelerates a specified transaction. 
 
-    Speeding up a transaction will trigger an RBF transaction which is a new version of the original transaction. It shares the same inputs but has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be accelerated if its status is either `Broadcasting` or `Confirming`.
+    Speeding up a transaction will trigger an RBF transaction which is a new version of the original transaction. It shares the same inputs but has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be accelerated if its status is either `Broadcasting`.
     
     A transaction request for tracking is returned upon successful operation.
 
