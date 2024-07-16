@@ -2859,7 +2859,6 @@ components:
               ExchangeWallet: '#/components/schemas/TransactionExchangeWalletDestination'
         fee:
           $ref: '#/components/schemas/TransactionFee'
-          nullable: true
         initiator:
           type: string
           description: The transaction initiator.
@@ -2871,25 +2870,21 @@ components:
           format: int32
           description: The number of confirmations this transaction has received.
           example: 12
-          nullable: true
         confirming_threshold:
           type: integer
           format: int32
           description: The minimum number of confirmations required to deem a transaction secure. The common threshold is 6 for a Bitcoin transaction.
           example: 15
-          nullable: true
         block_number:
           type: integer
           format: int64
           description: The block number.
           example: 123
-          nullable: true
         block_time:
           type: integer
           format: int64
           description: 'The time when the block was created, in Unix timestamp format, measured in milliseconds.'
           example: 1717740319
-          nullable: true
         block_hash:
           type: string
           description: The block hash.
@@ -2898,7 +2893,6 @@ components:
           type: integer
           description: The transaction nonce.
           example: 9
-          nullable: true
         transaction_hash:
           type: string
           description: The transaction hash.
@@ -3427,7 +3421,6 @@ components:
               description: 'The wallet address of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).'
             mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
-          nullable: true
     TransactionExchangeWalletSource:
       type: object
       description: The information about the transaction source.
