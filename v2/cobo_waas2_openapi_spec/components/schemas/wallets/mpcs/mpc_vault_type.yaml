@@ -1,11 +1,11 @@
 type: string
 enum: [
-    "OrgControlled",
-    "UserControlled",
+    "Org-Controlled",
+    "User-Controlled",
 ]
-example: "OrgControlled"
+example: "Org-Controlled"
 description: |
   The vault type. Possible values include:
-  - `OrgControlled`: This vault is a collection of [Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#organization-controlled-wallets).
+  - `Org-Controlled`: This vault is a collection of [Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#organization-controlled-wallets).
   
-  - `UserControlled`: This vault is a collection of [User-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#user-controlled-wallets).
+  - `User-Controlled`: This vault is a collection of [User-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#user-controlled-wallets).
