@@ -3378,6 +3378,7 @@ components:
               ExchangeWallet: '#/components/schemas/TransactionExchangeWalletDestination'
         fee:
           $ref: '#/components/schemas/TransactionFee'
+          nullable: true
         initiator:
           type: string
           description: The transaction initiator.
@@ -3389,21 +3390,25 @@ components:
           format: int32
           description: The number of confirmations this transaction has received.
           example: 12
+          nullable: true
         confirming_threshold:
           type: integer
           format: int32
           description: The minimum number of confirmations required to deem a transaction secure. The common threshold is 6 for a Bitcoin transaction.
           example: 15
+          nullable: true
         block_number:
           type: integer
           format: int64
           description: The block number.
           example: 123
+          nullable: true
         block_time:
           type: integer
           format: int64
           description: 'The time when the block was created, in Unix timestamp format, measured in milliseconds.'
           example: 1717740319
+          nullable: true
         block_hash:
           type: string
           description: The block hash.
@@ -3412,6 +3417,7 @@ components:
           type: integer
           description: The transaction nonce.
           example: 9
+          nullable: true
         transaction_hash:
           type: string
           description: The transaction hash.
@@ -3751,8 +3757,8 @@ components:
         - ContractCall
         - TransactionFeePayment
         - TransactionFeeRefund
-        - RawMessage
-        - Multi-Sig
+        - MessageSign
+        - MultiSig
       example: Deposit
       description: |
         The transaction type. Possible values include: 
@@ -3762,8 +3768,8 @@ components:
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `TransactionFeePayment`: A transaction that is initiated from Fee Station to pay the transaction fees.
           - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
-          - `RawMessage`: A transaction that signs a message. 
-          - `Multi-Sig`: A transaction that requires multiple signatures.
+          - `MessageSign`: A transaction that signs a message. 
+          - `MultiSig`: A transaction that requires multiple signatures.
     MpcSigningGroup:
       type: object
       description: The information about the Signing Group of an MPC Wallet.
@@ -3914,7 +3920,6 @@ components:
       required:
         - source_type
         - wallet_id
-        - delegate
       properties:
         source_type:
           $ref: '#/components/schemas/TransactionSourceType'
@@ -3941,6 +3946,7 @@ components:
               description: 'The wallet address of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).'
             mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
+          nullable: true
     TransactionExchangeWalletSource:
       type: object
       description: The information about the transaction source.
@@ -6087,8 +6093,8 @@ components:
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `TransactionFeePayment`: A transaction that is initiated by Fee Station to pay your transaction fee.
           - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
-          - `RawMessage`: A transaction that signs a message. 
-          - `Multi-Sig`: A transaction that requires multiple signatures.
+          - `MessageSign`: A transaction that signs a message. 
+          - `MultiSig`: A transaction that requires multiple signatures.
       schema:
         type: string
         description: 'A list of transaction types, separated by comma.'
