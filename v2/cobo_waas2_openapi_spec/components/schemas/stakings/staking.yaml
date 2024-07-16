@@ -5,6 +5,7 @@ required:
   - wallet_id
   - address
   - pool_id
+  - token_id
   - amounts
   - status
   - validator_info
@@ -43,6 +44,10 @@ properties:
     description: The unique pool id.
     type: string
     example: 'babylon_btc'
+  token_id:
+    description: The token id.
+    type: string
+    example: 'BTC'
   pos_chain:
     description: The pos chain of the stake.
     type: string
