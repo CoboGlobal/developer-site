@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets
-  operationId: get_chains
+  operationId: list_supported_chains
   summary: List supported chains
   description: |
     This operation retrieves all chains supported by a specific wallet type or subtype. 

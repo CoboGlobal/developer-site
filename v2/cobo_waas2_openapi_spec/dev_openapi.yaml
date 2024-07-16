@@ -93,7 +93,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_chains
+      operationId: list_supported_chains
       summary: List supported chains
       description: |
         This operation retrieves all chains supported by a specific wallet type or subtype. 
@@ -134,7 +134,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_tokens
+      operationId: list_supported_tokens
       summary: List supported tokens
       description: |
         This operation retrieves all tokens supported by a specific wallet type or subtype. 
@@ -176,7 +176,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_enabled_chains
+      operationId: list_enabled_chains
       summary: List enabled chains
       description: |
         This operation retrieves all the chains that can be used by your organization. 
@@ -199,7 +199,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_enabled_tokens
+      operationId: list_enabled_tokens
       summary: List enabled tokens
       description: |
         This operation retrieves all the tokens that can be used by your organization. 
@@ -338,16 +338,16 @@ paths:
           $ref: '#/components/responses/badRequestError'
         '404':
           $ref: '#/components/responses/notFoundError'
-  '/wallets/{wallet_id}/spendables':
+  '/wallets/{wallet_id}/utxos':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
     get:
       tags:
         - Wallets
-      operationId: get_spendable_list
-      summary: List spendable UTXOs
+      operationId: list_utxos
+      summary: List UTXOs
       description: |
-        The operation retrieves a list of spendable unspent transaction outputs (UTXOs) for a specified wallet and token.
+        The operation retrieves a list of unspent transaction outputs (UTXOs) for a specified wallet and token.
 
         <Note>This operation is applicable to MPC Wallets only.</Note>
       security:
@@ -360,16 +360,16 @@ paths:
         - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
-          $ref: '#/components/responses/spendableListResponse'
+          $ref: '#/components/responses/listUtxoResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
-  '/wallets/{wallet_id}/spendables/lock':
+  '/wallets/{wallet_id}/utxos/lock':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
     post:
       tags:
         - Wallets
-      operationId: lock_spendable_list
+      operationId: lock_utxos
       summary: Lock UTXOs
       description: |
         This operation locks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.
@@ -378,19 +378,19 @@ paths:
       security:
         - CoboAuth: []
       requestBody:
-        $ref: '#/components/requestBodies/lockSpendablesBody'
+        $ref: '#/components/requestBodies/lockUtxosBody'
       responses:
         '201':
-          $ref: '#/components/responses/lockSpendableResponse'
+          $ref: '#/components/responses/lockUtxoResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
-  '/wallets/{wallet_id}/spendables/unlock':
+  '/wallets/{wallet_id}/utxos/unlock':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
     post:
       tags:
         - Wallets
-      operationId: unlock_spendable_list
+      operationId: unlock_utxos
       summary: Unlock UTXOs
       description: |
         This operation unlocks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.
@@ -399,10 +399,10 @@ paths:
       security:
         - CoboAuth: []
       requestBody:
-        $ref: '#/components/requestBodies/lockSpendablesBody'
+        $ref: '#/components/requestBodies/lockUtxosBody'
       responses:
         '201':
-          $ref: '#/components/responses/lockSpendableResponse'
+          $ref: '#/components/responses/lockUtxoResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
   '/wallets/{wallet_id}/max_transferable_value':
@@ -434,8 +434,8 @@ paths:
     post:
       tags:
         - Wallets
-      operationId: generate_wallet_address
-      summary: Generate new addresses in wallet
+      operationId: create_address
+      summary: Create addresses in wallet
       description: |
         This operation generates one or more addresses within a specified wallet.
 
@@ -505,7 +505,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_wallet_address_token_balances
+      operationId: list_token_balances_for_address
       summary: List token balances by address
       description: |
         The operation retrieves a list of token balances for a specified address within an MPC Wallet. 
@@ -527,7 +527,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_wallet_token_balances
+      operationId: list_token_balances_for_wallet
       summary: List token balances by wallet
       description: |
         The operation retrieves a list of token balances within a specified wallet.
@@ -548,7 +548,7 @@ paths:
           $ref: '#/components/responses/badRequestError'
         '404':
           $ref: '#/components/responses/notFoundError'
-  /wallets/address/check_validity:
+  /wallets/check_address_validity:
     get:
       tags:
         - Wallets
@@ -570,7 +570,7 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_cobo_key_holder
+      operationId: list_cobo_key_holders
       summary: List all Cobo key share holders
       description: |
         This operation retrieves a list of all Cobo key share holders and their information. 
@@ -609,7 +609,7 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_mpc_project
+      operationId: list_mpc_projects
       summary: List all projects
       description: |
         This operation retrieves a list of all projects.
@@ -632,7 +632,7 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: get_mpc_project
+      operationId: get_mpc_project_by_id
       summary: Get project information
       description: |
         This operation retrieves detailed information about a project.
@@ -652,7 +652,7 @@ paths:
     put:
       tags:
         - Wallets - MPC Wallets
-      operationId: update_mpc_project
+      operationId: update_mpc_project_by_id
       summary: Update project name
       description: |
         This operation updates a project's name.
@@ -696,7 +696,7 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_mpc_vault
+      operationId: list_mpc_vaults
       summary: List all vaults
       description: |
         This operation retrieves a list of all vaults.
@@ -722,7 +722,7 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: get_mpc_vault
+      operationId: get_mpc_vault_by_id
       summary: Get vault information
       description: |
         This operation retrieves detailed information about a vault.
@@ -742,7 +742,7 @@ paths:
     put:
       tags:
         - Wallets - MPC Wallets
-      operationId: modify_mpc_vault
+      operationId: update_mpc_vault_by_id
       summary: Update vault name
       description: |
         This operation updates a vault's name.
@@ -818,7 +818,7 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: get_key_share_holder_group
+      operationId: get_key_share_holder_group_by_id
       summary: Get key share holder group information
       description: |
         This operation retrieves detailed information about a specified key share holder group.
@@ -839,7 +839,7 @@ paths:
     put:
       tags:
         - Wallets - MPC Wallets
-      operationId: update_key_share_holder_group
+      operationId: update_key_share_holder_group_by_id
       summary: Update key share holder group
       description: |
         This operation updates a specified active [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups). For example, you can use this operation to upgrade a Signing Group to the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
@@ -879,7 +879,7 @@ paths:
     delete:
       tags:
         - Wallets - MPC Wallets
-      operationId: delete_key_share_holder_group
+      operationId: delete_key_share_holder_group_by_id
       summary: Delete key share holder group
       description: This operation deletes a specified key share holder group.
       security:
@@ -932,7 +932,7 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_tss_request
+      operationId: list_tss_requests
       summary: List TSS requests
       description: |
         This operation retrieves a list of TSS requests and their details.
@@ -968,7 +968,7 @@ paths:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: get_tss_request
+      operationId: get_tss_request_by_id
       summary: Get TSS request
       description: |
         This operation retrieves detailed information about a TSS request.
@@ -993,7 +993,7 @@ paths:
     post:
       tags:
         - Wallets - MPC Wallets
-      operationId: cancel_tss_request
+      operationId: cancel_tss_request_by_id
       summary: Cancel TSS request
       description: |
         This operation cancels a TSS request.
@@ -1014,27 +1014,6 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '429':
           $ref: '#/components/responses/tooManyRequestError'
-  /transactions/fee_rates:
-    get:
-      tags:
-        - Transactions
-      operationId: list_fee_rates
-      summary: Get fee rates
-      description: |
-        This operation retrieves current transaction fee rates on the blockchain based on the specified chain ID.
-
-        The response can contain different properties based on the transaction fee model used by the chain, including EIP-1559 fee model, legacy fee model, UTXO fee model, and fixed fee model.
-      security:
-        - CoboAuth: []
-      parameters:
-        - $ref: '#/components/parameters/requiredChainIdParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/getChainFeeResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
   /transactions/estimate_fee:
     post:
       tags:
@@ -1364,7 +1343,7 @@ paths:
         - Developers - Webhooks
       summary: Update webhook endpoint
       description: This operation updates the information of a specified webhook endpoint.
-      operationId: update_webhook_endpoint
+      operationId: update_webhook_endpoint_by_id
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1438,7 +1417,7 @@ paths:
       summary: Retrieve event information
       description: |
         This operation retrieves the information of a webhook event by the event ID.
-      operationId: get_webhook_event
+      operationId: get_webhook_event_by_id
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEventResponse'
@@ -1460,7 +1439,7 @@ paths:
       summary: List event logs
       description: |
         This operation retrieves a list of webhook event logs by event ID. Each retry will generate a separate event log.
-      operationId: get_webhook_event_logs
+      operationId: get_webhook_event_logs_by_id
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEventLogsResponse'
@@ -1482,7 +1461,7 @@ paths:
       summary: Retry event
       description: |
         This operation retries delivering a webhook event with the specified event ID. You can only retry delivering a webhook event in the `Retrying` or `Failed` status.
-      operationId: retry_webhook_event
+      operationId: retry_webhook_event_by_id
       security:
         - CoboAuth: []
         - OAuth2:
@@ -4253,6 +4232,8 @@ components:
           example: ETH_USDT
         destination:
           $ref: '#/components/schemas/TransferDestination'
+        fee_type:
+          $ref: '#/components/schemas/FeeType'
     EstimateFeeContractCall:
       type: object
       description: The information about a transaction that interacts with a smart contract
@@ -4295,6 +4276,8 @@ components:
                 The data that is used to invoke a specific function or method within the specified contract at the destination address.
               format: byte
               example: U3dhZ2dlciByb2Nrcw==
+        fee_type:
+          $ref: '#/components/schemas/FeeType'
     BaseContractCallSource:
       type: object
       description: The information about the transaction source.
@@ -4805,10 +4788,8 @@ components:
               - Invalid
               - UnstakeInProgress
               - Withdrawable
-              - Active
               - WithdrawInProgress
               - Closed
-              - Withdrawable
             example: Active
             description: The status of staking amount.
           amount:
@@ -5878,16 +5859,16 @@ components:
                 example: 1
               encoding:
                 $ref: '#/components/schemas/AddressEncoding'
-    lockSpendablesBody:
+    lockUtxosBody:
       description: The request body of the Lock/Unlock UTXOs operation.
       content:
         application/json:
           schema:
             type: object
             required:
-              - spendables
+              - utxos
             properties:
-              spendables:
+              utxos:
                 type: array
                 items:
                   type: object
@@ -6352,7 +6333,7 @@ components:
                   Whether the request to delete the wallet has been successfully submitted.
                   - `true`: The request to delete the wallet has been successfully submitted.
                   - `false`: The request to delete the wallet has not been submitted.
-    spendableListResponse:
+    listUtxoResponse:
       description: The request was successful.
       content:
         application/json:
@@ -6365,7 +6346,7 @@ components:
                   $ref: '#/components/schemas/UTXO'
               pagination:
                 $ref: '#/components/schemas/Pagination'
-    lockSpendableResponse:
+    lockUtxoResponse:
       description: The request was successful.
       content:
         application/json:
@@ -6592,9 +6573,7 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/EstimationFee'
+            $ref: '#/components/schemas/EstimationFee'
     transactionFeeResponse:
       description: Successful get a transaction detail
       content:

@@ -4,7 +4,7 @@ parameters:
 get:
   tags:
     - Wallets
-  operationId: get_wallet_address_token_balances
+  operationId: list_token_balances_for_address
   summary: List token balances by address
   description: |
     The operation retrieves a list of token balances for a specified address within an MPC Wallet. 

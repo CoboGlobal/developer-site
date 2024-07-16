@@ -7,7 +7,7 @@ get:
   summary: List event logs
   description: |
     This operation retrieves a list of webhook event logs by event ID. Each retry will generate a separate event log.
-  operationId: get_webhook_event_logs
+  operationId: get_webhook_event_logs_by_id
   responses:
     '200':
       $ref: "../../components/responses/webhooks/get_webhook_event_logs.yaml"

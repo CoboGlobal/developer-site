@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets
-  operationId: get_enabled_tokens
+  operationId: list_enabled_tokens
   summary: List enabled tokens
   description: |
     This operation retrieves all the tokens that can be used by your organization. 

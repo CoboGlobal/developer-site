@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets
-  operationId: get_enabled_chains
+  operationId: list_enabled_chains
   summary: List enabled chains
   description: |
     This operation retrieves all the chains that can be used by your organization. 

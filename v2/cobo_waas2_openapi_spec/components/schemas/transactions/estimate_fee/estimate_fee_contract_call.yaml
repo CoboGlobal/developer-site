@@ -39,3 +39,5 @@ properties:
            The data that is used to invoke a specific function or method within the specified contract at the destination address.
         format: byte
         example: "U3dhZ2dlciByb2Nrcw=="
+  fee_type:
+    $ref: '../fees/fee_type.yaml'

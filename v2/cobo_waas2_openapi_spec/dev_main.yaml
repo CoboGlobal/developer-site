@@ -120,12 +120,12 @@ paths:
     $ref: "./paths/wallets/wallet_by_id.yaml"
   /wallets/{wallet_id}/delete:
     $ref: "./paths/wallets/wallet_by_id_delete.yaml"
-  /wallets/{wallet_id}/spendables:
-    $ref: "./paths/wallets/spendables.yaml"
-  /wallets/{wallet_id}/spendables/lock:
-    $ref: "./paths/wallets/spendables_lock.yaml"
-  /wallets/{wallet_id}/spendables/unlock:
-    $ref: "./paths/wallets/spendables_unlock.yaml"
+  /wallets/{wallet_id}/utxos:
+    $ref: "./paths/wallets/utxos.yaml"
+  /wallets/{wallet_id}/utxos/lock:
+    $ref: "./paths/wallets/utxos_lock.yaml"
+  /wallets/{wallet_id}/utxos/unlock:
+    $ref: "./paths/wallets/utxos_unlock.yaml"
   /wallets/{wallet_id}/max_transferable_value:
     $ref: "./paths/wallets/max_transferable_value.yaml"
   /wallets/{wallet_id}/addresses:
@@ -136,7 +136,7 @@ paths:
     $ref: "./paths/wallets/wallet_address_token_balances.yaml"
   /wallets/{wallet_id}/tokens:
     $ref: "./paths/wallets/wallet_token_balances.yaml"
-  /wallets/address/check_validity:
+  /wallets/check_address_validity:
     $ref: "./paths/wallets/address_validity.yaml"
 
   # mpc wallets
@@ -176,8 +176,8 @@ paths:
 #    $ref: "./paths/wallets/exchanges/subaccounts_by_apikey.yaml"
 
   # transactions
-  /transactions/fee_rates:
-    $ref: "./paths/transactions/fee_rates.yaml"
+#  /transactions/fee_rates:
+#    $ref: "./paths/transactions/fee_rates.yaml"
   /transactions/estimate_fee:
     $ref: "./paths/transactions/estimate_fee.yaml"
   /transactions/transfer:
@@ -735,8 +735,8 @@ components:
       $ref: "./components/request_bodies/wallets/update_wallet.yaml"
     createAddressBody:
       $ref: "./components/request_bodies/wallets/create_address.yaml"
-    lockSpendablesBody:
-      $ref: "./components/request_bodies/wallets/lock_spendables.yaml"
+    lockUtxosBody:
+      $ref: "./components/request_bodies/wallets/lock_utxos.yaml"
 
     # mpc wallets
     createKeyShareHolderGroupBody:
@@ -823,10 +823,10 @@ components:
       $ref: "./components/responses/wallets/update_wallet.yaml"
     deleteWalletResponse:
       $ref: "./components/responses/wallets/delete_wallet.yaml"
-    spendableListResponse:
-      $ref: "./components/responses/wallets/get_spendable_list.yaml"
-    lockSpendableResponse:
-      $ref: "./components/responses/wallets/lock_spendables.yaml"
+    listUtxoResponse:
+      $ref: "./components/responses/wallets/get_utxo_list.yaml"
+    lockUtxoResponse:
+      $ref: "./components/responses/wallets/lock_utxos.yaml"
     maxTransferableValueResponse:
       $ref: "./components/responses/wallets/get_max_transferable_value.yaml"
     getAddressesResponse:

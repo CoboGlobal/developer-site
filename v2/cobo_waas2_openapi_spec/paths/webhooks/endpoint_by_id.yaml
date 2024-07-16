@@ -16,7 +16,7 @@ put:
     - Developers - Webhooks
   summary: Update webhook endpoint
   description: This operation updates the information of a specified webhook endpoint.
-  operationId: update_webhook_endpoint
+  operationId: update_webhook_endpoint_by_id
   security:
     - CoboAuth: []
     - OAuth2:

@@ -3,10 +3,10 @@ parameters:
 get:
   tags:
     - Wallets
-  operationId: get_spendable_list
-  summary: List spendable UTXOs
+  operationId: list_utxos
+  summary: List UTXOs
   description: |
-    The operation retrieves a list of spendable unspent transaction outputs (UTXOs) for a specified wallet and token.
+    The operation retrieves a list of unspent transaction outputs (UTXOs) for a specified wallet and token.
     
     <Note>This operation is applicable to MPC Wallets only.</Note>
   security:
@@ -19,6 +19,6 @@ get:
     - $ref: "../../components/parameters/pagination/after.yaml"
   responses:
     '200':
-      $ref: "../../components/responses/wallets/get_spendable_list.yaml"
+      $ref: "../../components/responses/wallets/get_utxo_list.yaml"
     '400':
       $ref: "../../components/responses/errors/400_bad_request.yaml"

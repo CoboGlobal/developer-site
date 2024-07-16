@@ -20,7 +20,7 @@ post:
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: list_mpc_vault
+  operationId: list_mpc_vaults
   summary: List all vaults
   description: |
     This operation retrieves a list of all vaults.
