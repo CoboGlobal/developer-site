@@ -8,6 +8,7 @@ enum:
   - TransactionFeeRefund
   - MessageSign
   - MultiSig
+  - AutoFueling
 example: Deposit
 description: |
   The transaction type. Possible values include: 
@@ -19,3 +20,4 @@ description: |
     - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
     - `MessageSign`: A transaction that signs a message. 
     - `MultiSig`: A transaction that requires multiple signatures.
+    - `AutoFueling`: TDB

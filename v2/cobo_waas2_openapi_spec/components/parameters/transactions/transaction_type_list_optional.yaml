@@ -11,6 +11,7 @@ description: |
     - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
     - `MessageSign`: A transaction that signs a message. 
     - `MultiSig`: A transaction that requires multiple signatures.
+    - `AutoFueling`: TDB
 schema:
   type: string
   description: A list of transaction types, separated by comma.
