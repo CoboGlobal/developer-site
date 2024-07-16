@@ -1034,7 +1034,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/estimateFeeBody'
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/estimateFeeResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
@@ -4568,7 +4568,7 @@ components:
           description: The stake extra for babylon.
           required:
             - finality_provider_public_key
-            - lock_time
+            - stake_block_time
           properties:
             finality_provider_public_key:
               description: The public key of finality provider.
@@ -4676,7 +4676,6 @@ components:
       required:
         - amount
         - fee
-        - request_id
         - wallet_id
         - address
         - pool_id
@@ -4772,8 +4771,20 @@ components:
         properties:
           status:
             type: string
-            example: active
-            description: The staking status.
+            enum:
+              - StakeInProgress
+              - Active
+              - Rejected
+              - LimitExceeded
+              - Invalid
+              - UnstakeInProgress
+              - Withdrawable
+              - Active
+              - WithdrawInProgress
+              - Closed
+              - Withdrawable
+            example: Active
+            description: The status of staking amount.
           amount:
             type: string
             example: '100.00'
@@ -4901,6 +4912,7 @@ components:
         - token_id
         - est_apr
         - supported_wallet_types
+        - supported_wallet_subtypes
       properties:
         id:
           description: The unique protocol id.
@@ -4926,6 +4938,13 @@ components:
             $ref: '#/components/schemas/WalletType'
           example:
             - MPC
+        supported_wallet_subtypes:
+          description: The list of available wallet types.
+          type: array
+          items:
+            $ref: '#/components/schemas/WalletSubtype'
+          example:
+            - Org-Controlled
         token_id:
           description: The unique token id.
           type: string
