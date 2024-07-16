@@ -26,7 +26,7 @@ post:
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: list_tss_request
+  operationId: list_tss_requests
   summary: List TSS requests
   description: |
     This operation retrieves a list of TSS requests and their details.

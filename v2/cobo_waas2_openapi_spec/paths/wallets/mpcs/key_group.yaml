@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: get_key_share_holder_group
+  operationId: get_key_share_holder_group_by_id
   summary: Get key share holder group information
   description: |
     This operation retrieves detailed information about a specified key share holder group.
@@ -22,7 +22,7 @@ get:
 put:
   tags:
     - Wallets - MPC Wallets
-  operationId: update_key_share_holder_group
+  operationId: update_key_share_holder_group_by_id
   summary: Update key share holder group
   description: | 
     This operation updates a specified active [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups). For example, you can use this operation to upgrade a Signing Group to the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
@@ -48,7 +48,7 @@ put:
 delete:
   tags:
     - Wallets - MPC Wallets
-  operationId: delete_key_share_holder_group
+  operationId: delete_key_share_holder_group_by_id
   summary: Delete key share holder group
   description: This operation deletes a specified key share holder group.
   security:

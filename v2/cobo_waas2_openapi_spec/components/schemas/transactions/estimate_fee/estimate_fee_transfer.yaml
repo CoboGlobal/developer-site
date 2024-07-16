@@ -22,3 +22,5 @@ properties:
     example: 'ETH_USDT'
   destination:
     $ref: '../transfers/destinations/transfer_destination.yaml'
+  fee_type:
+    $ref: '../fees/fee_type.yaml'

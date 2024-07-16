@@ -1,7 +1,7 @@
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: get_mpc_vault
+  operationId: get_mpc_vault_by_id
   summary: Get vault information
   description: |
     This operation retrieves detailed information about a vault.
@@ -21,7 +21,7 @@ get:
 put:
   tags:
     - Wallets - MPC Wallets
-  operationId: modify_mpc_vault
+  operationId: update_mpc_vault_by_id
   summary: Update vault name
   description: |
     This operation updates a vault's name.

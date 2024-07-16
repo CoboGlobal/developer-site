@@ -4,9 +4,9 @@ content:
     schema:
       type: object
       required:
-        - spendables
+        - utxos
       properties:
-        spendables:
+        utxos:
           type: array
           items:
             type: object

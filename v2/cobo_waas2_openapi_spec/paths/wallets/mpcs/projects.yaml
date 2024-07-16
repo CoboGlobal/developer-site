@@ -19,7 +19,7 @@ post:
 get:
   tags:
     - Wallets - MPC Wallets
-  operationId: list_mpc_project
+  operationId: list_mpc_projects
   summary: List all projects
   description: |
     This operation retrieves a list of all projects.

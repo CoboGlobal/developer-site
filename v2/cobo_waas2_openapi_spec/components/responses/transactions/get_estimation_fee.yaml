@@ -2,7 +2,5 @@ description: The request was successful.
 content:
   application/json:
     schema:
-      type: array
-      items:
-        $ref: '../../schemas/transactions/fees/estimation_fee.yaml'
+      $ref: '../../schemas/transactions/fees/estimation_fee.yaml'
 
