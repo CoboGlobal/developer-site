@@ -615,6 +615,10 @@ paths:
         This operation retrieves a list of all projects.
       security:
         - CoboAuth: []
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getMpcProjectsResponse'
@@ -702,6 +706,9 @@ paths:
         - CoboAuth: []
       parameters:
         - $ref: '#/components/parameters/optionalProjectIdQueryParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getMpcVaultsResponse'
@@ -795,6 +802,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
         - $ref: '#/components/parameters/optionalKeyShareHolderGroupTypeParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getKeyShareHolderGroupsResponse'
@@ -930,16 +940,24 @@ paths:
         - CoboAuth: []
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/requiredTargetKeyShareHolderGroupIdParam'
+        - $ref: '#/components/parameters/requiredKeyShareHolderGroupIdParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           description: Successfully retrieved TSS request.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TSSRequest'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TSSRequest'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/badRequestError'
         '404':
@@ -2415,6 +2433,14 @@ components:
           type: string
           description: The TSS request ID.
           example: '20240711114129000132315000003970'
+        source_key_share_holder_group_id:
+          type: string
+          description: The Source key share holder group ID.
+          example: fc1965d0-ed70-4542-877b-e5a4b7b26320
+        target_key_share_holder_group_id:
+          type: string
+          description: The Target key share holder group ID.
+          example: fd9519ae-507b-4605-b108-04d4e5ffcdd3
         type:
           $ref: '#/components/schemas/TSSRequestType'
         status:
@@ -3356,7 +3382,7 @@ components:
       required:
         - source_type
         - wallet_id
-        - mpc_used_key_group
+        - mpc_used_key_share_holder_group
       properties:
         source_type:
           $ref: '#/components/schemas/TransactionSourceType'
@@ -3365,7 +3391,7 @@ components:
           description: The wallet ID.
           format: uuid
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
-        mpc_used_key_group:
+        mpc_used_key_share_holder_group:
           $ref: '#/components/schemas/MpcSigningGroup'
         account_input:
           type: object
@@ -3406,7 +3432,7 @@ components:
               type: string
               format: uuid
               example: 123e4567-e89b-12d3-a456-426614174000
-              description: 'The wallet ID of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}). '
+              description: 'The wallet ID of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).'
             wallet_type:
               type: string
               example: MPC
@@ -3415,7 +3441,7 @@ components:
               type: string
               example: '0x1234567890123456789012345678901234567890'
               description: 'The wallet address of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).'
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     TransactionExchangeWalletSource:
       type: object
@@ -4163,7 +4189,7 @@ components:
               type: string
               description: The wallet address.
               example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
         destination:
           type: object
@@ -4304,7 +4330,7 @@ components:
         - $ref: '#/components/schemas/BaseContractCallSource'
         - type: object
           properties:
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     SafeContractCallSource:
       title: Smart Contract Wallets
@@ -4330,7 +4356,7 @@ components:
                   type: string
                   example: '0x1234567890123456789012345678901234567890'
                   description: 'The wallet address of the Delegate. This is required for initiating a transfer from a Smart Contract Wallet (Safe{Wallet}).'
-                mpc_used_key_group:
+                mpc_used_key_share_holder_group:
                   $ref: '#/components/schemas/MpcSigningGroup'
     ContractCallSource:
       oneOf:
@@ -5424,10 +5450,10 @@ components:
         type: string
         format: uuid
       example: 'a3d8eae2-1740-4b5e-92f2-88c2b1e44c6b,b51f63a3-8a8e-4a34-ae9e-6f3e6b1fdf99'
-    requiredTargetKeyShareHolderGroupIdParam:
-      name: target_key_share_holder_group_id
+    requiredKeyShareHolderGroupIdParam:
+      name: key_share_holder_group_id
       in: query
-      description: 'The target key share group ID of the TSS request, which you can retrieve by calling [List all key share groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).'
+      description: 'The key share holder group ID of the TSS request, which you can retrieve by calling [List all key share groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).'
       required: true
       schema:
         type: string
@@ -6443,9 +6469,14 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/KeyShareHolderGroup'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KeyShareHolderGroup'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     getMpcProjectResponse:
       description: Successfully listed all vaults.
       content:
@@ -6457,9 +6488,14 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/MPCProject'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MPCProject'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     getTssRequestResponse:
       description: Successfully retrieved TSS request.
       content:
@@ -6477,9 +6513,14 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/MPCVault'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MPCVault'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     deleteKeyShareHolderGroupResponse:
       description: Successfully deleted the specified key share group.
       content:

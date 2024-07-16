@@ -25,6 +25,10 @@ get:
     This operation retrieves a list of all projects.
   security:
     - CoboAuth: []
+  parameters:
+    - $ref: "../../../components/parameters/pagination/limit.yaml"
+    - $ref: "../../../components/parameters/pagination/before.yaml"
+    - $ref: "../../../components/parameters/pagination/after.yaml"
   responses:
     '200':
       $ref: "../../../components/responses/wallets/mpcs/get_projects.yaml"

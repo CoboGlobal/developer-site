@@ -2,7 +2,12 @@ description: Successfully listed all vaults.
 content:
   application/json:
     schema:
-      type: array
-      items:
-        $ref: '../../../schemas/wallets/mpcs/mpc_vault.yaml'
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../../schemas/wallets/mpcs/mpc_vault.yaml'
+        pagination:
+          $ref: '../../../schemas/pagination/metadata.yaml'
 

@@ -2,7 +2,11 @@ description: Successfully retrieved TSS request.
 content:
   application/json:
     schema:
-      type: array
-      items:
-        $ref: '../../../schemas/wallets/mpcs/tss_request.yaml'
-
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '../../../schemas/wallets/mpcs/tss_request.yaml'
+        pagination:
+          $ref: '../../../schemas/pagination/metadata.yaml'
