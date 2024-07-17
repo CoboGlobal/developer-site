@@ -1,0 +1,42 @@
+---
+title: "Error codes and status codes"
+---
+
+This article explains the common error codes and HTTP status codes you may encounter when using the Cobo WaaS 2.0 API and how to resolve the errors. 
+
+### Error codes
+
+| **Error code** | **Description**                                           | **Solution**                                                 |
+| -------------- | --------------------------------------------------------- | ------------------------------------------------------------ |
+| 2000           | Internal error.                                           | Try again later.                                             |
+| 2002           | Unsupported HTTP method.                                  | Use a supported HTTP method.                                 |
+| 2003           | Missing required parameters.                              | Provide the required parameters.                             |
+| 2006           | Illegal parameter format or value.                        | Provide valid parameters.                                    |
+| 2010           | Rate limit exceeded.                                      | Try again later.                                             |
+| 2021           | Missing request handler.                                  | Provide required handlers.                                   |
+| 2022           | Missing required request headers.                         | Provide required headers.                                    |
+| 2023           | API signature validation failed.                          | Use a valid API signature.                                   |
+| 2024           | API key authentication failed.                            | Use a valid API key.                                         |
+| 2025           | Forbidden access to resources.                            | Check the permission of your API key.                        |
+| 2026           | Too many requests.                                        | Try again later.                                             |
+| 2028           | Resource not found.                                       | Check the request URL.                                       |
+| 2029           | Invalid status property.                                  | Check the value of the status property.                      |
+| 2040           | Duplicate key.                                            | Use a unique key.                                            |
+| 2050           | No available pricing plan or the usage limit is exceeded. | Purchase a pricing plan or upgrade an existing one. To learn more about pricing plans, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
+
+### HTTP status codes
+
+| **Status code** | **Description**        | **Solution**                                    |
+| --------------- | ---------------------- | ----------------------------------------------- |
+| 200             | OK.                    | N/A              |
+| 400             | Bad request.           | Check the request parameters.                   |
+| 401             | Unauthorized.          | Check the API key, API signature, or timestamp. |
+| 403             | Forbidden.             | Ensure you have the required permissions.       |
+| 404             | Not Found.             | Check the requestURL.                           |
+| 405             | Method Not Allowed.    | Use a supported HTTP method.                    |
+| 406             | Not Acceptable.        | Ensure the request content format is JSON.      |
+| 429             | Too Many Requests.     | Reduce request frequency and try again later.   |
+| 500             | Internal Server Error. | Try again later.                                |
+| 502             | Bad Gateway.           | Check the connectivity and try again later.     |
+| 503             | Service Unavailable.   | Try again later.                                |
+
