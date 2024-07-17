@@ -1,0 +1,6 @@
+oneOf:
+  - $ref: 'transaction_event_data.yaml'
+discriminator:
+  propertyName: data_type
+  mapping:
+    Transaction: '#/components/schemas/TransactionEventData'

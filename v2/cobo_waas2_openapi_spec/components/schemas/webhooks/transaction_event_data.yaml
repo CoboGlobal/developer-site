@@ -1,0 +1,3 @@
+allOf:
+  - $ref: 'event_data_type.yaml'
+  - $ref: '../transactions/transactions/transaction.yaml'

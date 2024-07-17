@@ -4953,7 +4953,7 @@ components:
         type:
           $ref: '#/components/schemas/WebhookEventType'
         data:
-          $ref: '#/components/schemas/Transaction'
+          $ref: '#/components/schemas/WebhookEventData'
         status:
           $ref: '#/components/schemas/WebhookEventStatus'
         next_retry_timestamp:
@@ -4965,6 +4965,29 @@ components:
           description: The number of retries left. This field is only present if the event status is `Retrying`.
           type: integer
           example: 3
+    WebhookEventDataType:
+      type: object
+      description: The event data type.
+      required:
+        - data_type
+      properties:
+        data_type:
+          type: string
+          enum:
+            - Transaction
+          description: The model of data.
+          example: Transaction
+    WebhookEventData:
+      oneOf:
+        - $ref: '#/components/schemas/TransactionEventData'
+      discriminator:
+        propertyName: data_type
+        mapping:
+          Transaction: '#/components/schemas/TransactionEventData'
+    TransactionEventData:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - $ref: '#/components/schemas/Transaction'
     WebhookEventType:
       type: string
       enum:
