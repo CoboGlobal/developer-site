@@ -1,7 +1,6 @@
 name: source_address
 in: query
 required: false
-description: The address of the transaction source.
+description: A list of addresses, separated by comma. The address of the transaction source.
 schema:
-  description: A list of addresses, separated by comma.
   type: string

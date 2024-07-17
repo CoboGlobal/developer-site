@@ -16,6 +16,7 @@ get:
     - $ref: "../../components/parameters/transactions/transaction_hash_optional.yaml"
     - $ref: "../../components/parameters/transactions/transaction_type_list_optional.yaml"
     - $ref: "../../components/parameters/transactions/transaction_status_list_optional.yaml"
+    - $ref: "../../components/parameters/wallets/wallet_id_list_optional.yaml"
     - $ref: "../../components/parameters/transactions/source_type_list_optional.yaml"
     - $ref: "../../components/parameters/transactions/source_wallet_id_list_optional.yaml"
     - $ref: "../../components/parameters/transactions/source_address_list_optional.yaml"

@@ -1353,20 +1353,21 @@ paths:
         - name: transaction_id
           in: query
           required: false
-          description: The transaction ID.
+          description: 'A list of transaction ID, separated by comma. The transaction ID.'
           schema:
             type: string
             format: uuid
-          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+          example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
         - name: transaction_hash
           in: query
           required: false
-          description: The transaction hash.
+          description: 'A list of transaction hash, separated by comma. The transaction hash.'
           schema:
             type: string
           example: 239861be9a4afe080c359b7fe4a1d035945ec46256b1a0f44d1267c71de8ec28
         - $ref: '#/components/parameters/optionalTransactionTypeListParam'
         - $ref: '#/components/parameters/optionalTransactionStatusListParam'
+        - $ref: '#/components/parameters/optionalWalletListIdParam'
         - $ref: '#/components/parameters/optionalTransactionSourceTypeListParam'
         - $ref: '#/components/parameters/optionalTransactionSourceAddressListParam'
         - $ref: '#/components/parameters/optionalTransactionSourceWalletIdListParam'
@@ -3328,6 +3329,10 @@ components:
           type: string
           description: The request ID that is used to track a withdrawal request. The request ID is provided by you and must be unique within your organization.
           example: web_send_by_user_327_1610444045047
+        wallet_id:
+          type: string
+          description: The wallet ID of the transaction.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         type:
           $ref: '#/components/schemas/TransactionType'
         status:
@@ -5704,7 +5709,7 @@ components:
         type: string
       example: USDT
     optionalAssetIdListParam:
-      name: asset_ids
+      name: asset_id
       in: query
       required: false
       description: 'A list of asset IDs, separated by comma. (This concept applies to Exchange Wallets only) An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
@@ -5745,7 +5750,7 @@ components:
         type: string
       example: ETH
     optionalChainIdListParam:
-      name: chain_ids
+      name: chain_id
       in: query
       required: false
       description: 'A list of chain IDs, separated by comma. The chain ID is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
@@ -5770,7 +5775,7 @@ components:
         type: string
       example: ETH_USDT
     optionalTokenListIdParam:
-      name: token_ids
+      name: token_id
       in: query
       required: false
       description: 'A list of token IDs, separated by comma. The token ID is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
@@ -5983,9 +5988,8 @@ components:
     optionalProjectIdListQueryParam:
       name: project_id
       in: query
-      description: The MPC project ID.
+      description: 'A list of MPC project IDs, separated by comma. The MPC project ID.'
       schema:
-        description: 'A list of MPC project IDs, separated by comma.'
         type: string
         format: uuid
       example: 'a3d8eae2-1740-4b5e-92f2-88c2b1e44c6b,b51f63a3-8a8e-4a34-ae9e-6f3e6b1fdf99'
@@ -6027,9 +6031,8 @@ components:
       name: vault_id
       in: query
       required: false
-      description: The vault ID.
+      description: 'A list of vault IDs, separated by comma. The vault ID.'
       schema:
-        description: 'A list of vault IDs, separated by comma.'
         type: string
         format: uuid
       example: 'f5c3f9e8-1d8a-44b2-9284-94bf76b7b017,ab2e3f55-472e-4a98-86d1-446d2f9e839e'
@@ -6098,10 +6101,10 @@ components:
       name: cobo_id
       in: query
       required: false
-      description: 'The Cobo ID, which can be used to track a transaction.'
+      description: 'A list of Cobo IDs, separated by comma. The Cobo ID, which can be used to track a transaction.'
       schema:
         type: string
-      example: '20231213122855000000000000000000'
+      example: '20231213122855000000000000000000,20231213122955000000000000000000'
     optionalTransactionTypeParam:
       name: type
       in: query
@@ -6114,7 +6117,7 @@ components:
       in: query
       required: false
       description: |
-        The transaction type. Possible values include: 
+        A list of transaction types, separated by comma. The transaction type. Possible values include: 
           - `Deposit`: A deposit transaction.
           - `Withdrawal`: A withdrawal transaction.
           - `TokenApproval`: A transaction that grants permission to access your tokens. 
@@ -6125,7 +6128,6 @@ components:
           - `MultiSig`: A transaction to a Smart Contract Wallet (Safe{Wallet}) that requires one or multiple signatures to be executed.
       schema:
         type: string
-        description: 'A list of transaction types, separated by comma.'
       example: 'Deposit,Withdrawal'
     optionalTransactionStatusParam:
       name: status
@@ -6139,7 +6141,7 @@ components:
       in: query
       required: false
       description: |
-        The transaction status. Possible values include: 
+        A list of transaction statuses, separated by comma. The transaction status. Possible values include: 
           - `Submitted`: The transaction is submitted.
           - `PendingScreening`: The transaction is pending screening by Risk Control. 
           - `PendingAuthorization`: The transaction is pending approvals.
@@ -6151,7 +6153,7 @@ components:
           - `Rejected`: The transaction is rejected.
           - `Pending`: The transaction is pending.
       schema:
-        description: 'A list of transaction statuses, separated by comma.'
+        type: string
       example: 'Completed,Failed'
     optionalMinCreatedTimestampParam:
       name: min_created_timestamp
@@ -6174,7 +6176,7 @@ components:
       in: query
       required: false
       description: |
-        The type of transaction source. Possible values include:
+        A list of transaction sources, separated by comma. The type of transaction source. Possible values include:
           - `Address`: An external address.
           - `CustodialWallet`: A Custodial Wallet.
           - `MPCWallet`: An MPC Wallet.
@@ -6182,15 +6184,14 @@ components:
           - `ExchangeWallet`: An Exchange Wallet.
           - `FeeStation`: A Fee Station.
       schema:
-        description: 'A list of transaction sources, separated by comma.'
+        type: string
       example: 'Deposit,Withdrawal'
     optionalTransactionSourceAddressListParam:
       name: source_wallet_id
       in: query
       required: false
-      description: The wallet ID of the transaction source.
+      description: 'A list of wallet IDs, separated by comma. The wallet ID of the transaction source.'
       schema:
-        description: 'A list of wallet IDs, separated by comma.'
         type: string
         format: uuid
       example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
@@ -6198,16 +6199,15 @@ components:
       name: source_address
       in: query
       required: false
-      description: The address of the transaction source.
+      description: 'A list of addresses, separated by comma. The address of the transaction source.'
       schema:
-        description: 'A list of addresses, separated by comma.'
         type: string
     optionalTransactionDestinationTypeListParam:
       name: destination_type
       in: query
       required: false
       description: |
-        The transaction destination type. Possible values include:
+        A list of destination types, separated by comma. The transaction destination type. Possible values include:
           - `Address`: An external address. 
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `MessageSign`: A transaction that signs a message. 
@@ -6216,15 +6216,14 @@ components:
           - `SafeWallet`: A Smart Contract Wallets (Safe{Wallet}).
           - `ExchangeWallet`: An Exchange Wallet.
       schema:
-        description: 'A list of destination types, separated by comma.'
+        type: string
       example: 'ContractCall,MessageSign'
     optionalTransactionDestinationAddressListParam:
       name: destination_wallet_id
       in: query
       required: false
-      description: The wallet ID of the transaction destination.
+      description: 'A list of wallet IDs, separated by comma. The wallet ID of the transaction destination.'
       schema:
-        description: 'A list of wallet IDs, separated by comma.'
         type: string
         format: uuid
       example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
@@ -6233,9 +6232,8 @@ components:
       in: query
       required: false
       description: |
-        The address of the transaction destination. If the address includes a memo, use `|` to append the memo to the address. For example, if the address is `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku` and the memo is `82840924`, you need to provide `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku|82840924` as the property value.
+        A list of addresses, separated by comma. The address of the transaction destination. If the address includes a memo, use `|` to append the memo to the address. For example, if the address is `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku` and the memo is `82840924`, you need to provide `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku|82840924` as the property value.
       schema:
-        description: 'A list of addresses, separated by comma.'
         type: string
     transactionIdParam:
       name: transaction_id

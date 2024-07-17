@@ -1,7 +1,7 @@
 name: transaction_hash
 in: query
 required: false
-description: The transaction hash.
+description: A list of transaction hash, separated by comma. The transaction hash.
 schema:
   type: string
 example: '239861be9a4afe080c359b7fe4a1d035945ec46256b1a0f44d1267c71de8ec28'

@@ -1,4 +1,4 @@
-name: chain_ids
+name: chain_id
 in: query
 required: false
 description: A list of chain IDs, separated by comma. The chain ID is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).
