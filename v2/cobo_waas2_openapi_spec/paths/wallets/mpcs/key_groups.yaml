@@ -4,7 +4,7 @@ post:
   operationId: create_key_share_holder_group
   summary: Create key share holder group
   description: |
-    This operation creates a key share group for a specified vault.
+    This operation creates a key share holder group for a specified vault.
   security:
     - CoboAuth: []
     - OAuth2:
