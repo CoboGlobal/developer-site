@@ -4969,9 +4969,9 @@ components:
       type: object
       description: The event data type.
       required:
-        - data_model
+        - data_type
       properties:
-        data_model:
+        data_type:
           type: string
           enum:
             - Transaction
@@ -4981,7 +4981,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/TransactionEventData'
       discriminator:
-        propertyName: data_model
+        propertyName: data_type
         mapping:
           Transaction: '#/components/schemas/TransactionEventData'
     TransactionEventData:

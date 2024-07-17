@@ -1,9 +1,9 @@
 type: object
 description: The event data type.
 required:
-  - data_model
+  - data_type
 properties:
-  data_model:
+  data_type:
     type: string
     enum:
       - Transaction
