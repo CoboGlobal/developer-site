@@ -2411,7 +2411,7 @@ components:
       type: object
       description: The data for the TSS request information.
       properties:
-        request_id:
+        tss_request_id:
           type: string
           description: The TSS request ID.
           example: '20240711114129000132315000003970'
