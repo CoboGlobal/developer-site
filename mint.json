@@ -78,6 +78,11 @@
       "name": "API References",
       "url": "v2/api-references",
       "version": "Version 2.0"
+    },
+    {
+      "name": "Developer Tools",
+      "url": "v2/developer-tools",
+      "version": "Version 2.0"
     }
   ],
   "navigation": [
@@ -487,7 +492,16 @@
     {
       "group": "Overview",
       "pages": [
-        "v2/api-references/overview/introduction"
+        "v2/api-references/overview/introduction",
+        "v2/api-references/overview/changelog",
+        "v2/api-references/overview/cobo-auth"
+      ],
+      "version": "Version 2.0"
+    },
+    {
+      "group": "Troubleshoot",
+      "pages": [
+        "v2/api-references/development/error-codes"
       ],
       "version": "Version 2.0"
     },
