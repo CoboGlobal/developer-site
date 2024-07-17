@@ -2,7 +2,7 @@ name: destination_types
 in: query
 required: false
 description: | 
-  A list of destination types, separated by comma. The transaction destination type. Possible values include:
+  A list of transaction destination types, separated by comma. Possible values include:
     - `Address`: An external address. 
     - `ContractCall`: A transaction that interacts with a smart contract.
     - `MessageSign`: A transaction that signs a message. 

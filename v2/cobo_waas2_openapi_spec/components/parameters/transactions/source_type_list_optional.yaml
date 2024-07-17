@@ -2,7 +2,7 @@ name: source_types
 in: query
 required: false
 description: | 
-  A list of transaction sources, separated by comma. The type of transaction source. Possible values include:
+  A list of transaction source types, separated by comma. Possible values include:
     - `Address`: An external address.
     - `CustodialWallet`: A Custodial Wallet.
     - `MPCWallet`: An MPC Wallet.
