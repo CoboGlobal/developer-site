@@ -2824,7 +2824,6 @@ components:
         chain_id:
           type: string
           description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
-          pattern: '^[A-Z]+$'
           example: ETH
         source:
           oneOf:
@@ -4165,7 +4164,6 @@ components:
         chain_id:
           type: string
           description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
-          pattern: '^[A-Z]+$'
           example: ETH
         source:
           description: The information about the transaction source.
