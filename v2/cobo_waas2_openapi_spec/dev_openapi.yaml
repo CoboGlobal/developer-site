@@ -1143,7 +1143,7 @@ paths:
         - name: transaction_ids
           in: query
           required: false
-          description: 'A list of transaction ID, separated by comma. The transaction ID.'
+          description: 'A list of transaction IDs, separated by comma.'
           schema:
             type: string
             format: uuid
@@ -1151,7 +1151,7 @@ paths:
         - name: transaction_hashes
           in: query
           required: false
-          description: 'A list of transaction hash, separated by comma. The transaction hash.'
+          description: 'A list of transaction hashes, separated by comma.'
           schema:
             type: string
           example: 239861be9a4afe080c359b7fe4a1d035945ec46256b1a0f44d1267c71de8ec28
@@ -2818,7 +2818,7 @@ components:
           example: web_send_by_user_327_1610444045047
         wallet_id:
           type: string
-          description: The wallet ID of the transaction.
+          description: 'For deposit transactions, this property represents the wallet ID of the transaction destination. For transactions of other types, this property represents the wallet ID of the transaction source.'
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         type:
           $ref: '#/components/schemas/TransactionType'
@@ -5204,7 +5204,7 @@ components:
       name: asset_ids
       in: query
       required: false
-      description: 'A list of asset IDs, separated by comma. (This concept applies to Exchange Wallets only) An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
+      description: '(This concept applies to Exchange Wallets only) A list of asset IDs, separated by comma. An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
       schema:
         type: string
         description: 'A list of asset IDs, separated by comma.'
@@ -5480,7 +5480,7 @@ components:
     optionalProjectIdListQueryParam:
       name: project_ids
       in: query
-      description: 'A list of MPC project IDs, separated by comma. The MPC project ID.'
+      description: 'A list of MPC project IDs, separated by comma.'
       schema:
         type: string
         format: uuid
@@ -5523,7 +5523,7 @@ components:
       name: vault_ids
       in: query
       required: false
-      description: 'A list of vault IDs, separated by comma. The vault ID.'
+      description: 'A list of vault IDs, separated by comma.'
       schema:
         type: string
         format: uuid
@@ -5593,7 +5593,7 @@ components:
       name: cobo_ids
       in: query
       required: false
-      description: 'A list of Cobo IDs, separated by comma. The Cobo ID, which can be used to track a transaction.'
+      description: 'A list of Cobo IDs, separated by comma. A Cobo ID can be used to track a transaction.'
       schema:
         type: string
       example: '20231213122855000000000000000000,20231213122955000000000000000000'
@@ -5609,7 +5609,7 @@ components:
       in: query
       required: false
       description: |
-        A list of transaction types, separated by comma. The transaction type. Possible values include: 
+        A list of transaction types, separated by comma. Possible values include: 
           - `Deposit`: A deposit transaction.
           - `Withdrawal`: A withdrawal transaction.
           - `TokenApproval`: A transaction that grants permission to access your tokens. 
@@ -5633,7 +5633,7 @@ components:
       in: query
       required: false
       description: |
-        A list of transaction statuses, separated by comma. The transaction status. Possible values include: 
+        A list of transaction statuses, separated by comma. Possible values include: 
           - `Submitted`: The transaction is submitted.
           - `PendingScreening`: The transaction is pending screening by Risk Control. 
           - `PendingAuthorization`: The transaction is pending approvals.
@@ -5668,7 +5668,7 @@ components:
       in: query
       required: false
       description: |
-        A list of transaction sources, separated by comma. The type of transaction source. Possible values include:
+        A list of transaction source types, separated by comma. Possible values include:
           - `Address`: An external address.
           - `CustodialWallet`: A Custodial Wallet.
           - `MPCWallet`: An MPC Wallet.
@@ -5682,7 +5682,7 @@ components:
       name: source_wallet_ids
       in: query
       required: false
-      description: 'A list of wallet IDs, separated by comma. The wallet ID of the transaction source.'
+      description: 'A list of wallet IDs of the transaction sources, separated by comma.'
       schema:
         type: string
         format: uuid
@@ -5691,7 +5691,7 @@ components:
       name: source_addresses
       in: query
       required: false
-      description: 'A list of addresses, separated by comma. The address of the transaction source.'
+      description: 'A list of addresses of the transaction source, separated by comma.'
       schema:
         type: string
     optionalTransactionDestinationTypeListParam:
@@ -5699,7 +5699,7 @@ components:
       in: query
       required: false
       description: |
-        A list of destination types, separated by comma. The transaction destination type. Possible values include:
+        A list of transaction destination types, separated by comma. Possible values include:
           - `Address`: An external address. 
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `MessageSign`: A transaction that signs a message. 
@@ -5714,7 +5714,7 @@ components:
       name: destination_wallet_ids
       in: query
       required: false
-      description: 'A list of wallet IDs, separated by comma. The wallet ID of the transaction destination.'
+      description: 'A list of wallet IDs of the transaction destinations, separated by comma.'
       schema:
         type: string
         format: uuid
@@ -5724,7 +5724,7 @@ components:
       in: query
       required: false
       description: |
-        A list of addresses, separated by comma. The address of the transaction destination. If the address includes a memo, use `|` to append the memo to the address. For example, if the address is `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku` and the memo is `82840924`, you need to provide `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku|82840924` as the property value.
+        A list of addresses of the transaction destination, separated by comma. If the address includes a memo, use `|` to append the memo to the address. For example, if the address is `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku` and the memo is `82840924`, you need to provide `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku|82840924` as the property value.
       schema:
         type: string
     transactionIdParam:
