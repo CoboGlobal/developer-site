@@ -1139,7 +1139,7 @@ paths:
         - name: transaction_ids
           in: query
           required: false
-          description: 'A list of transaction ID, separated by comma.'
+          description: 'A list of transaction IDs, separated by comma.'
           schema:
             type: string
             format: uuid
@@ -5200,7 +5200,7 @@ components:
       name: asset_ids
       in: query
       required: false
-      description: 'A list of asset IDs, separated by comma. (This concept applies to Exchange Wallets only) An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
+      description: '(This concept applies to Exchange Wallets only) A list of asset IDs, separated by comma. An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
       schema:
         type: string
         description: 'A list of asset IDs, separated by comma.'
@@ -5589,7 +5589,7 @@ components:
       name: cobo_ids
       in: query
       required: false
-      description: 'A list of Cobo IDs, separated by comma, which can be used to track a transaction.'
+      description: 'A list of Cobo IDs, separated by comma. A Cobo ID can be used to track a transaction.'
       schema:
         type: string
       example: '20231213122855000000000000000000,20231213122955000000000000000000'
