@@ -1,6 +1,10 @@
 name: vault_type
 in: query
-description: The Vault type.
+description: |
+  The vault type. Possible values include:
+  - `Org-Controlled`: This vault is a collection of [Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#organization-controlled-wallets).
+  
+  - `User-Controlled`: This vault is a collection of [User-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#user-controlled-wallets).
 required: true
 schema:
   $ref: '../../../schemas/wallets/mpcs/mpc_vault_type.yaml'

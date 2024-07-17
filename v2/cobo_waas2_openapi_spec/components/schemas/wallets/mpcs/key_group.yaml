@@ -4,7 +4,7 @@ properties:
   key_share_holder_group_id:
     type: string
     example: "b33130a9-6e18-44a9-9e48-8b3b41921f0e"
-    description: The key share group ID.
+    description: The key share holder group ID.
   type:
     $ref: "./key_group_type.yaml"
   tss_key_share_groups:
@@ -17,16 +17,16 @@ properties:
       $ref: "./key_holder.yaml"
   node_count:
     type: integer
-    description: The number of key share holders in this key share group.
+    description: The number of key share holders in this key share holder group.
     example: 3
   threshold:
     type: integer
-    description: The number of key share holders required to approve each operation in this key share group.
+    description: The number of key share holders required to approve each operation in this key share holder group.
     example: 2
   status:
     $ref: "./key_group_status.yaml"
   create_timestamp:
     type: integer
     format: int64
-    description: The key share group's creation time in Unix timestamp format, measured in milliseconds.
+    description: The key share holder group's creation time in Unix timestamp format, measured in milliseconds.
     example: 1718619403933

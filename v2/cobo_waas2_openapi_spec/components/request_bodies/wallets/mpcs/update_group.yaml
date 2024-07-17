@@ -9,7 +9,7 @@ content:
         update_key_share_holder_group_action:
           type: string
           description: |
-            The available actions of vault group update. Possible values include:
+            The available actions of key share holder group update. Possible values include:
             - `UpgradeToMainGroup`: This upgrades an active [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) to the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups). The original Main Group will be permanently deleted.
           enum: [
             "UpgradeToMainGroup",

@@ -7,11 +7,11 @@ properties:
     example: "20240711114129000132315000003970"
   source_key_share_holder_group_id:
     type: string
-    description: The Source key share holder group ID.
+    description: The source key share holder group ID.
     example: "fc1965d0-ed70-4542-877b-e5a4b7b26320"
   target_key_share_holder_group_id:
     type: string
-    description: The Target key share holder group ID.
+    description: The target key share holder group ID.
     example: "fd9519ae-507b-4605-b108-04d4e5ffcdd3"
   type:
     $ref: "./tss_request_type.yaml"

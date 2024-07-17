@@ -6546,7 +6546,7 @@ components:
                 description: |
                   The source key share group ID.
 
-                  **Note:** `source_key_share_group_id` is used only when `type` is set to either `KeyGenfromKeyGroup` or `Recovery`. This is to specify the key share group to be used as the source key share group to create key shares for the `target_key_share_group`.
+                  **Note:** `source_key_share_group_id` is used only when `type` is set to either `KeyGenfromKeyGroup` or `Recovery`. This is to specify the key share holder group to be used as the source key share holder group to create key shares for the `target_key_share_group`.
                 example: f5e2d18c-a36f-483e-986a-a2fd34d4189d
               detail_params:
                 type: object
