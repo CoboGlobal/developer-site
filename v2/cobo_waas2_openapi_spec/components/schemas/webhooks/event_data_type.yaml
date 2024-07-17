@@ -1,0 +1,11 @@
+type: object
+description: The event data type.
+required:
+  - data_model
+properties:
+  data_model:
+    type: string
+    enum:
+      - Transaction
+    description: The model of data.
+    example: 'Transaction'

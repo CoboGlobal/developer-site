@@ -507,6 +507,12 @@ components:
     # webhook
     WebhookEvent:
       $ref: "./components/schemas/webhooks/event.yaml"
+    WebhookEventDataType:
+      $ref: "./components/schemas/webhooks/event_data_type.yaml"
+    WebhookEventData:
+      $ref: "./components/schemas/webhooks/event_data.yaml"
+    TransactionEventData:
+      $ref: "./components/schemas/webhooks/transaction_event_data.yaml"
     WebhookEventType:
       $ref: "./components/schemas/webhooks/event_type.yaml"
     WebhookEventStatus:
