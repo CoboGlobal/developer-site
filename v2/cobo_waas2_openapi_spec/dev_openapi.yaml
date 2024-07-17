@@ -1736,7 +1736,6 @@ components:
         token_id:
           type: string
           description: 'The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
-          pattern: '^[A-Z]+(_[A-Z0-9]+)?$'
           example: BTC
         balance:
           type: object
@@ -1773,7 +1772,6 @@ components:
         asset_id:
           type: string
           description: '(This concept applies to Exchange Wallets only) The asset ID. An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
-          pattern: '^[A-Z0-9]+$'
           example: USDT
         balance:
           $ref: '#/components/schemas/TokenBalance/properties/balance'
@@ -2824,7 +2822,6 @@ components:
         chain_id:
           type: string
           description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
-          pattern: '^[A-Z]+$'
           example: ETH
         source:
           oneOf:
@@ -4163,7 +4160,6 @@ components:
         chain_id:
           type: string
           description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
-          pattern: '^[A-Z]+$'
           example: ETH
         source:
           description: The information about the transaction source.
