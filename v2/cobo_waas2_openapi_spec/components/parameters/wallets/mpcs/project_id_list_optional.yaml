@@ -1,6 +1,6 @@
 name: project_ids
 in: query
-description: A list of MPC project IDs, separated by comma. The MPC project ID.
+description: A list of MPC project IDs, separated by comma.
 schema:
   type: string
   format: uuid

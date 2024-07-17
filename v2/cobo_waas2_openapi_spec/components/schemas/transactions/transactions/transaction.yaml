@@ -25,7 +25,7 @@ properties:
     example: "web_send_by_user_327_1610444045047"
   wallet_id:
     type: string
-    description: The wallet ID of the transaction.
+    description: For deposit transactions, this property represents the wallet ID of the transaction destination. For transactions of other types, this property represents the wallet ID of the transaction source.
     example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
   type:
     $ref: './transaction_type.yaml'

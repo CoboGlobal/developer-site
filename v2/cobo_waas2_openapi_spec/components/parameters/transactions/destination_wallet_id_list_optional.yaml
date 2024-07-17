@@ -1,7 +1,7 @@
 name: destination_wallet_ids
 in: query
 required: false
-description: A list of wallet IDs, separated by comma. The wallet ID of the transaction destination.
+description: A list of wallet IDs of the transaction destinations, separated by comma. 
 schema:
   type: string
   format: uuid

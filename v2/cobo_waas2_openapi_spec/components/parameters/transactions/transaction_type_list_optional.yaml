@@ -2,7 +2,7 @@ name: types
 in: query
 required: false
 description: |
-  A list of transaction types, separated by comma. The transaction type. Possible values include: 
+  A list of transaction types, separated by comma. Possible values include: 
     - `Deposit`: A deposit transaction.
     - `Withdrawal`: A withdrawal transaction.
     - `TokenApproval`: A transaction that grants permission to access your tokens. 
