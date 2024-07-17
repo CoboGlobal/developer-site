@@ -117,8 +117,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getChainsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/chains/{chain_id}':
     parameters:
       - $ref: '#/components/parameters/chainIdParam'
@@ -134,8 +136,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getChainByIdResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/tokens:
     get:
       tags:
@@ -159,8 +163,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokensResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/tokens/{token_id}':
     parameters:
       - $ref: '#/components/parameters/tokenIdParam'
@@ -176,8 +182,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokenByIdResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/enabled_chains:
     get:
       tags:
@@ -199,8 +207,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getChainsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/enabled_tokens:
     get:
       tags:
@@ -223,8 +233,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokensResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets:
     post:
       tags:
@@ -244,14 +256,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createWalletResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets
@@ -274,12 +282,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWalletsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -295,10 +301,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWalletByIdResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Wallets
@@ -319,10 +325,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/updateWalletResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/delete':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -340,10 +346,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/deleteWalletResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/utxos':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -367,8 +373,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listUtxoResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/utxos/lock':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -388,8 +396,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/lockUtxoResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/utxos/unlock':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -409,8 +419,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/lockUtxoResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/max_transferable_value':
     get:
       tags:
@@ -432,8 +444,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/maxTransferableValueResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/addresses':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -457,8 +471,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createAddressResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets
@@ -484,8 +500,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getAddressesResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/addresses/{address}':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -502,8 +520,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getAddressResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/addresses/{address}/tokens':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -527,8 +547,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokenBalancesResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/tokens':
     get:
       tags:
@@ -550,10 +572,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokenBalancesResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/check_address_validity:
     get:
       tags:
@@ -570,8 +592,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getAddressValidityResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/mpc/cobo_key_share_holders:
     get:
       tags:
@@ -587,12 +611,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getCoboKeyHoldersResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/mpc/projects:
     post:
       tags:
@@ -610,8 +632,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createMpcProjectResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets - MPC Wallets
@@ -628,12 +652,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getMpcProjectsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/projects/{project_id}':
     get:
       tags:
@@ -649,12 +671,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getMpcProjectResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Wallets - MPC Wallets
@@ -673,12 +693,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getMpcProjectResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/mpc/vaults:
     post:
       tags:
@@ -697,8 +715,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createMpcVaultResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets - MPC Wallets
@@ -724,12 +744,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getMpcVaultsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}':
     get:
       tags:
@@ -745,12 +763,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getMpcVaultResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Wallets - MPC Wallets
@@ -770,12 +786,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/putVaultResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups':
     post:
       tags:
@@ -796,12 +810,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createKeyShareHolderGroupsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets - MPC Wallets
@@ -820,12 +832,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getKeyShareHolderGroupsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}':
     get:
       tags:
@@ -842,12 +852,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getKeyShareHolderGroupResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Wallets - MPC Wallets
@@ -882,12 +890,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/putKeyShareHolderGroupResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}/delete':
     post:
       tags:
@@ -906,12 +912,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/deleteKeyShareHolderGroupResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/tss_requests':
     post:
       tags:
@@ -936,12 +940,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TSSRequest'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets - MPC Wallets
@@ -971,12 +973,10 @@ paths:
                       $ref: '#/components/schemas/TSSRequest'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/tss_requests/{tss_request_id}':
     get:
       tags:
@@ -996,12 +996,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTssRequestResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/tss_requests/{tss_request_id}/cancel':
     post:
       tags:
@@ -1021,12 +1019,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/putTssRequestResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/exchanges/settings:
     get:
       tags:
@@ -1231,10 +1227,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getChainFeeResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions/estimate_fee:
     post:
       tags:
@@ -1254,10 +1250,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/estimateFeeResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions/transfer:
     post:
       tags:
@@ -1283,8 +1279,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions/contract_call:
     post:
       tags:
@@ -1307,8 +1305,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions/message_sign:
     post:
       tags:
@@ -1331,8 +1331,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions:
     get:
       tags:
@@ -1384,12 +1386,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTransactionsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1405,8 +1405,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTransactionByIdResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}/resend':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1428,8 +1430,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}/cancel':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1451,8 +1455,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}/drop':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1464,7 +1470,7 @@ paths:
       description: |
         This operation drops a specified transaction. 
 
-        Dropping a transaction will trigger a Replace-By-Fee (RBF) transaction which is a new version of the original transaction. For EVM chains, this RBF transaction has a transfer amount of `0` and the sending address is the same as the receiving address. It has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be dropped if its status is `Broadcasting` or `Confirming`.
+        Dropping a transaction will trigger a Replace-By-Fee (RBF) transaction which is a new version of the original transaction. For EVM chains, this RBF transaction has a transfer amount of `0` and the sending address is the same as the receiving address. It has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be dropped if its status is `Broadcasting`.
 
         A transaction request for tracking is returned upon successful operation.
       security:
@@ -1474,8 +1480,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}/speedup':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1487,7 +1495,7 @@ paths:
       description: |
         This operation accelerates a specified transaction. 
 
-        Speeding up a transaction will trigger an RBF transaction which is a new version of the original transaction. It shares the same inputs but has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be accelerated if its status is either `Broadcasting` or `Confirming`.
+        Speeding up a transaction will trigger an RBF transaction which is a new version of the original transaction. It shares the same inputs but has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be accelerated if its status is either `Broadcasting`.
 
         A transaction request for tracking is returned upon successful operation.
       security:
@@ -1497,8 +1505,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /oauth/token:
     get:
       tags:
@@ -1618,12 +1628,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listWebhookEndpointsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     post:
       tags:
         - Developers - Webhooks
@@ -1639,8 +1647,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createWebhookEndpointResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}':
     parameters:
       - $ref: '#/components/parameters/endpointIdParam'
@@ -1653,8 +1663,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEndpointResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Developers - Webhooks
@@ -1670,10 +1682,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/updateWebhookEndpointResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /webhooks/events/definitions:
     get:
       tags:
@@ -1684,10 +1696,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEventDefinitionsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}/events':
     get:
       tags:
@@ -1718,12 +1730,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listWebhookEventsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}/events/{event_id}':
     parameters:
       - $ref: '#/components/parameters/webhookEventIdParam'
@@ -1738,14 +1748,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEventResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}/events/{event_id}/logs':
     parameters:
       - $ref: '#/components/parameters/webhookEventIdParam'
@@ -1760,14 +1766,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEventLogsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}/events/{event_id}/retry':
     parameters:
       - $ref: '#/components/parameters/webhookEventIdParam'
@@ -1786,14 +1788,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/retryWebhookEventResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /stakings/pools:
     get:
       tags:
@@ -2257,7 +2255,6 @@ components:
         token_id:
           type: string
           description: 'The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
-          pattern: '^[A-Z]+(_[A-Z0-9]+)?$'
           example: BTC
         balance:
           type: object
@@ -2294,7 +2291,6 @@ components:
         asset_id:
           type: string
           description: '(This concept applies to Exchange Wallets only) The asset ID. An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
-          pattern: '^[A-Z0-9]+$'
           example: USDT
         balance:
           $ref: '#/components/schemas/TokenBalance/properties/balance'
@@ -2395,6 +2391,10 @@ components:
           required:
             - vault_id
           properties:
+            project_id:
+              type: string
+              example: 0111039d-27fb-49ba-b172-6e0aa80e37ec
+              description: The project ID.
             vault_id:
               type: string
               description: The ID of the owning vault.
@@ -2873,14 +2873,14 @@ components:
     MPCVaultType:
       type: string
       enum:
-        - OrgControlled
-        - UserControlled
-      example: OrgControlled
+        - Org-Controlled
+        - User-Controlled
+      example: Org-Controlled
       description: |
         The vault type. Possible values include:
-        - `OrgControlled`: This vault is a collection of [Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#organization-controlled-wallets).
+        - `Org-Controlled`: This vault is a collection of [Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#organization-controlled-wallets).
 
-        - `UserControlled`: This vault is a collection of [User-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#user-controlled-wallets).
+        - `User-Controlled`: This vault is a collection of [User-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#user-controlled-wallets).
     MPCProject:
       type: object
       description: The data for project information.
@@ -2934,7 +2934,7 @@ components:
       type: object
       description: The data for the TSS request information.
       properties:
-        request_id:
+        tss_request_id:
           type: string
           description: The TSS request ID.
           example: '20240711114129000132315000003970'
@@ -3340,12 +3340,11 @@ components:
           $ref: '#/components/schemas/TransactionSubStatus'
         failed_reason:
           type: string
-          description: The reason why the transaction failed.
+          description: The reason why the transaction failed. This property only applies to approval failures and signature failures.
           example: Rejected by signer Cobo TSS
         chain_id:
           type: string
           description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
-          pattern: '^[A-Z]+$'
           example: ETH
         source:
           oneOf:
@@ -3715,10 +3714,10 @@ components:
           - `FailedBySigner`: The transaction failed during the signing process.
           - `FailedBroadcasting`: The transaction failed to be broadcast to the blockchain network.
           - `CanceledBySpender`: The transaction is canceled by a Spender.
-          - `CanceledByAPI`: The transaction is canceled by an API initiator.
-          - `Queue`: The transaction is queued to be added to the blockchain.
+          - `CanceledByAPI`: The transaction is canceled by a [Cancel transaction](/developers/v2/api-references/transactions/cancel-transaction) operation.
+          - `Queue`: The transaction is queued to be processed by Cobo Portal.
           - `OnchainRejection`: The transaction is rejected from being added to the blockchain.
-          - `FailedOnChain`: The transaction failed due to insufficient confirmations.
+          - `FailedOnChain`: The transaction failed on the blockchain.
           - `PendingBlockConfirmations`: The transaction is awaiting the required number of confirmations.
           - `ReplacedByNewTransaction`: The transaction has been replaced by a new transaction.
     TransactionTimeline:
@@ -3770,9 +3769,9 @@ components:
           - `TokenApproval`: A transaction that grants permission to access your tokens. 
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `TransactionFeePayment`: A transaction that is initiated from Fee Station to pay the transaction fees.
-          - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
+          - `TransactionFeeRefund`: A transaction that refunds transaction fees to Fee Station.
           - `MessageSign`: A transaction that signs a message. 
-          - `MultiSig`: A transaction that requires multiple signatures.
+          - `MultiSig`: A transaction to a Smart Contract Wallet (Safe{Wallet}) that requires one or multiple signatures to be executed.
     MpcSigningGroup:
       type: object
       description: The information about the Signing Group of an MPC Wallet.
@@ -3923,6 +3922,7 @@ components:
       required:
         - source_type
         - wallet_id
+        - address
       properties:
         source_type:
           $ref: '#/components/schemas/TransactionSourceType'
@@ -3931,6 +3931,10 @@ components:
           description: The wallet ID.
           format: uuid
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        address:
+          type: string
+          description: The wallet address.
+          example: '0x1234567890123456789012345678901234567890'
         delegate:
           type: object
           properties:
@@ -4384,7 +4388,6 @@ components:
     ReplaceType:
       type: string
       enum:
-        - Cancel
         - Drop
         - Resend
         - SpeedUp
@@ -4392,7 +4395,6 @@ components:
       description: |
         The `replaced_by_type` property indicates the replacement type of the transaction that this transaction was replaced by, and the `replaced_type` property indicates the replacement type of the transaction that this transaction replaced.
         Possible values include: 
-          - `Cancel`: To cancel a transaction.
           - `Drop`: To drop a transaction.
           - `Resend`: To resend a transaction.
           - `SpeedUp`: To speed up a transaction.
@@ -4567,10 +4569,10 @@ components:
                     type: string
                     description: The script of the output. It is a programmable code fragment that defines the conditions under which the UTXO can be spent.
                     example: 76a914fb37342f6275b13936799def06f2DEMO
-            change_address:
-              type: string
-              description: The address used to receive the remaining funds or change from the transaction.
-              example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sDEMO
+        change_address:
+          type: string
+          description: The address used to receive the remaining funds or change from the transaction.
+          example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sDEMO
         force_internal:
           type: boolean
           description: |
@@ -4681,7 +4683,6 @@ components:
         chain_id:
           type: string
           description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
-          pattern: '^[A-Z]+$'
           example: ETH
         source:
           description: The information about the transaction source.
@@ -4956,7 +4957,7 @@ components:
         type:
           $ref: '#/components/schemas/WebhookEventType'
         data:
-          $ref: '#/components/schemas/Transaction'
+          $ref: '#/components/schemas/WebhookEventData'
         status:
           $ref: '#/components/schemas/WebhookEventStatus'
         next_retry_timestamp:
@@ -4968,6 +4969,29 @@ components:
           description: The number of retries left. This field is only present if the event status is `Retrying`.
           type: integer
           example: 3
+    WebhookEventDataType:
+      type: object
+      description: The event data type.
+      required:
+        - data_type
+      properties:
+        data_type:
+          type: string
+          enum:
+            - Transaction
+          description: The model of data.
+          example: Transaction
+    WebhookEventData:
+      oneOf:
+        - $ref: '#/components/schemas/TransactionEventData'
+      discriminator:
+        propertyName: data_type
+        mapping:
+          Transaction: '#/components/schemas/TransactionEventData'
+    TransactionEventData:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - $ref: '#/components/schemas/Transaction'
     WebhookEventType:
       type: string
       enum:
@@ -6100,9 +6124,9 @@ components:
           - `TokenApproval`: A transaction that grants permission to access your tokens. 
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `TransactionFeePayment`: A transaction that is initiated by Fee Station to pay your transaction fee.
-          - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
+          - `TransactionFeeRefund`: A transaction that refunds transaction fees to Fee Station.
           - `MessageSign`: A transaction that signs a message. 
-          - `MultiSig`: A transaction that requires multiple signatures.
+          - `MultiSig`: A transaction to a Smart Contract Wallet (Safe{Wallet}) that requires one or multiple signatures to be executed.
       schema:
         type: string
         description: 'A list of transaction types, separated by comma.'
@@ -6738,6 +6762,12 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
     tooManyRequestError:
       description: Too many requests.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    internalServerError:
+      description: Internal server error.
       content:
         application/json:
           schema:

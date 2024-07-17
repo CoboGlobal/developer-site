@@ -25,7 +25,7 @@ properties:
   type:
      $ref: 'event_type.yaml'
   data:
-     $ref: '../transactions/transactions/transaction.yaml'
+     $ref: '../webhooks/event_data.yaml'
   status:
       $ref: 'event_status.yaml'
   next_retry_timestamp:

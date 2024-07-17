@@ -20,5 +20,7 @@ get:
   responses:
     '200':
       $ref: "../../components/responses/wallets/get_utxo_list.yaml"
-    '400':
+    '4XX':
       $ref: "../../components/responses/errors/400_bad_request.yaml"
+    '5XX':
+      $ref: "../../components/responses/errors/500_internal_server_error.yaml"
