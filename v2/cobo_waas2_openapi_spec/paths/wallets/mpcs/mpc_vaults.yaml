@@ -15,8 +15,10 @@ post:
   responses:
     '201':
       $ref: "../../../components/responses/wallets/mpcs/create_vault.yaml"
-    '400':
+    '4XX':
       $ref: "../../../components/responses/errors/400_bad_request.yaml"
+    '5XX':
+      $ref: "../../../components/responses/errors/500_internal_server_error.yaml"
 get:
   tags:
     - Wallets - MPC Wallets
@@ -29,6 +31,7 @@ get:
   security:
     - CoboAuth: []
   parameters:
+    - $ref: "../../../components/parameters/wallets/mpcs/vault_type_required.yaml"
     - $ref: "../../../components/parameters/wallets/mpcs/project_id_optional.yaml"
     - $ref: "../../../components/parameters/pagination/limit.yaml"
     - $ref: "../../../components/parameters/pagination/before.yaml"
@@ -36,9 +39,7 @@ get:
   responses:
     '200':
       $ref: "../../../components/responses/wallets/mpcs/get_vaults.yaml"
-    '401':
-      $ref: "../../../components/responses/errors/401_unauthorized.yaml"
-    '403':
-      $ref: "../../../components/responses/errors/403_forbidden.yaml"
-    '429':
-      $ref: "../../../components/responses/errors/429_too_many_request.yaml"
+    '4XX':
+      $ref: "../../../components/responses/errors/400_bad_request.yaml"
+    '5XX':
+      $ref: "../../../components/responses/errors/500_internal_server_error.yaml"

@@ -18,7 +18,6 @@ properties:
     items:
       type: object
       properties:
-        # todo: vout
         tx_hash:
           type: string
           description: The transaction hash of UTXO that are consumed in the transaction.

@@ -18,7 +18,7 @@ get:
   responses:
     '200':
       $ref: "../../components/responses/wallets/get_token_balances.yaml"
-    '400':
+    '4XX':
       $ref: "../../components/responses/errors/400_bad_request.yaml"
-    '404':
-      $ref: "../../components/responses/errors/404_not_found.yaml"
+    '5XX':
+      $ref: "../../components/responses/errors/500_internal_server_error.yaml"

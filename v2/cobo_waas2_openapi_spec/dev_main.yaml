@@ -154,6 +154,8 @@ paths:
     $ref: './paths/wallets/mpcs/key_groups.yaml'
   /wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}:
     $ref: './paths/wallets/mpcs/key_group.yaml'
+  /wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}/delete:
+    $ref: './paths/wallets/mpcs/key_group_delete.yaml'
   /wallets/mpc/vaults/{vault_id}/tss_requests:
     $ref: './paths/wallets/mpcs/tss_requests.yaml'
   /wallets/mpc/vaults/{vault_id}/tss_requests/{tss_request_id}:
@@ -505,6 +507,12 @@ components:
     # webhook
     WebhookEvent:
       $ref: "./components/schemas/webhooks/event.yaml"
+    WebhookEventDataType:
+      $ref: "./components/schemas/webhooks/event_data_type.yaml"
+    WebhookEventData:
+      $ref: "./components/schemas/webhooks/event_data.yaml"
+    TransactionEventData:
+      $ref: "./components/schemas/webhooks/transaction_event_data.yaml"
     WebhookEventType:
       $ref: "./components/schemas/webhooks/event_type.yaml"
     WebhookEventStatus:
@@ -539,6 +547,8 @@ components:
       $ref: "./components/schemas/stakings/activity_status.yaml"
     ActivityType:
       $ref: "./components/schemas/stakings/activity_type.yaml"
+    AmountStatus:
+      $ref: "./components/schemas/stakings/amount_status.yaml"
     AmountDetails:
       $ref: "./components/schemas/stakings/amount_details.yaml"
     BabylonValidator:
@@ -795,6 +805,8 @@ components:
       $ref: "./components/responses/errors/404_not_found.yaml"
     tooManyRequestError:
       $ref: "./components/responses/errors/429_too_many_request.yaml"
+    internalServerError:
+      $ref: "./components/responses/errors/500_internal_server_error.yaml"
     serviceUnavailableError:
       $ref: "./components/responses/errors/503_service_unavailable.yaml"
 

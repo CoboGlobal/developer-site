@@ -20,8 +20,10 @@ post:
   responses:
     '201':
       $ref: "../../components/responses/wallets/create_address.yaml"
-    '400':
+    '4XX':
       $ref: "../../components/responses/errors/400_bad_request.yaml"
+    '5XX':
+      $ref: "../../components/responses/errors/500_internal_server_error.yaml"
 get:
   tags:
     - Wallets
@@ -40,5 +42,7 @@ get:
   responses:
     '200':
       $ref: "../../components/responses/wallets/get_addresses.yaml"
-    '400':
+    '4XX':
       $ref: "../../components/responses/errors/400_bad_request.yaml"
+    '5XX':
+      $ref: "../../components/responses/errors/500_internal_server_error.yaml"

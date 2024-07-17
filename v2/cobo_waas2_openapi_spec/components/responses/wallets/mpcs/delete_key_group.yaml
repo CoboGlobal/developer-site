@@ -1,5 +1,15 @@
-description: Successfully deleted the specified vault group.
+description: Successfully deleted the specified key share holder group.
 content:
   application/json:
     schema:
-      $ref: '../../../schemas/wallets/mpcs/key_group.yaml'
+      type: object
+      required:
+        - submitted
+      properties:
+        submitted:
+          type: boolean
+          example: true
+          description: |
+            Whether the request to delete the key share holder group has been successfully submitted.
+            - `true`: The request to delete the key share holder group has been successfully submitted.
+            - `false`: The request to delete the key share holder group has not been submitted.

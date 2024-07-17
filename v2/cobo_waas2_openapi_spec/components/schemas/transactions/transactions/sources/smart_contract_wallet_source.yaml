@@ -4,7 +4,7 @@ title: Smart Contract Wallets
 required:
   - source_type
   - wallet_id
-  - delegate
+  - address
 properties:
   source_type:
     $ref: './source_type.yaml'
@@ -13,6 +13,10 @@ properties:
     description: The wallet ID.
     format: uuid
     example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+  address:
+    type: string
+    description: The wallet address.
+    example: "0x1234567890123456789012345678901234567890"
   delegate:
     type: object
     properties:

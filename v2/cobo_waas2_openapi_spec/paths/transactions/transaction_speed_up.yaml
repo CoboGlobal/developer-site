@@ -8,7 +8,7 @@ post:
   description: |
     This operation accelerates a specified transaction. 
 
-    Speeding up a transaction will trigger an RBF transaction which is a new version of the original transaction. It shares the same inputs but has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be accelerated if its status is either `Broadcasting` or `Confirming`.
+    Speeding up a transaction will trigger an RBF transaction which is a new version of the original transaction. It shares the same inputs but has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be accelerated if its status is either `Broadcasting`.
     
     A transaction request for tracking is returned upon successful operation.
 
@@ -19,5 +19,7 @@ post:
   responses:
     '201':
       $ref: "../../components/responses/transactions/create_transaction_request.yaml"
-    '404':
-      $ref: "../../components/responses/errors/404_not_found.yaml"
+    '4XX':
+      $ref: "../../components/responses/errors/400_bad_request.yaml"
+    '5XX':
+      $ref: "../../components/responses/errors/500_internal_server_error.yaml"
