@@ -1,7 +1,7 @@
-name: cobo_id
+name: cobo_ids
 in: query
 required: false
-description: The Cobo ID, which can be used to track a transaction.
+description: A list of Cobo IDs, separated by comma. The Cobo ID, which can be used to track a transaction.
 schema:
   type: string
-example: '20231213122855000000000000000000'
+example: '20231213122855000000000000000000,20231213122955000000000000000000'
