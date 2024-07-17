@@ -1,0 +1,26 @@
+---
+title: "Introduction"
+---
+
+The Cobo Wallet-as-a-Service (WaaS) 2.0 API enables you to access Cobo's full suite of crypto wallet technologies with powerful and flexible access controls. The RESTful SaaS API provides a variety of capabilities, including managing wallets and addresses, making transactions, and configuring webhook endpoints.
+
+## HTTP hosts
+The WaaS service offers several HTTP hosts for different use cases: 
+
+- Development environment: `https://api.dev.cobo.com`
+- Production environment: `https://api.cobo.com`
+
+## Authentication
+To ensure secure access to your crypto assets, the WaaS service requires you to use an EdDSA signature to sign each of your API requests, except for publicly accessible API operations. For more details, see [Authentication](cobo-auth).
+
+## Pagination
+
+Some endpoints support pagination which allows you to retrieve data in manageable chunks. You can control the page size and navigate through the dataset using three query parameters:
+
+- `before`: This parameter specifies an object ID that acts as a starting point for retrieving data in reverse chronological order. You can set this parameter to the value of `pagination.before` in the response of the previous request.
+- `after`: This parameter specifies an object ID that acts as a starting point for retrieving data in chronological order. You can set this parameter to the value of `pagination.after` in the response of the previous request.
+- `limit`: This parameter defines the maximum number of objects you want to receive in each response.
+
+## Webhook events
+
+To receive important event notifications, you can register a webhook endpoint and subscribe to the relevant events. When a subscribed event occurs, the WaaS service will send an HTTP POST request to the registered webhook endpoint, providing the event data in JSON format. To learn more about how to subscribe to webhook events, see [Register a webhook event](https://manuals.cobo.com/en/portal/developer-console/webhooks-create).

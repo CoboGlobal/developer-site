@@ -93,7 +93,7 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_chains
+      operationId: list_supported_chains
       summary: List supported chains
       description: |
         This operation retrieves all chains supported by a specific wallet type or subtype. 
@@ -111,8 +111,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getChainsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/chains/{chain_id}':
     parameters:
       - $ref: '#/components/parameters/chainIdParam'
@@ -128,13 +130,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getChainByIdResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/tokens:
     get:
       tags:
         - Wallets
-      operationId: get_tokens
+      operationId: list_supported_tokens
       summary: List supported tokens
       description: |
         This operation retrieves all tokens supported by a specific wallet type or subtype. 
@@ -153,8 +157,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokensResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/tokens/{token_id}':
     parameters:
       - $ref: '#/components/parameters/tokenIdParam'
@@ -170,13 +176,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokenByIdResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/enabled_chains:
     get:
       tags:
         - Wallets
-      operationId: get_enabled_chains
+      operationId: list_enabled_chains
       summary: List enabled chains
       description: |
         This operation retrieves all the chains that can be used by your organization. 
@@ -193,13 +201,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getChainsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/enabled_tokens:
     get:
       tags:
         - Wallets
-      operationId: get_enabled_tokens
+      operationId: list_enabled_tokens
       summary: List enabled tokens
       description: |
         This operation retrieves all the tokens that can be used by your organization. 
@@ -217,8 +227,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokensResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets:
     post:
       tags:
@@ -238,14 +250,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createWalletResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets
@@ -268,12 +276,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWalletsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -289,10 +295,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWalletByIdResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Wallets
@@ -313,10 +319,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/updateWalletResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/delete':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -332,22 +338,22 @@ paths:
       security:
         - CoboAuth: []
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/deleteWalletResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-  '/wallets/{wallet_id}/spendables':
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/wallets/{wallet_id}/utxos':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
     get:
       tags:
         - Wallets
-      operationId: get_spendable_list
-      summary: List spendable UTXOs
+      operationId: list_utxos
+      summary: List UTXOs
       description: |
-        The operation retrieves a list of spendable unspent transaction outputs (UTXOs) for a specified wallet and token.
+        The operation retrieves a list of unspent transaction outputs (UTXOs) for a specified wallet and token.
 
         <Note>This operation is applicable to MPC Wallets only.</Note>
       security:
@@ -360,16 +366,18 @@ paths:
         - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
-          $ref: '#/components/responses/spendableListResponse'
-        '400':
+          $ref: '#/components/responses/listUtxoResponse'
+        4XX:
           $ref: '#/components/responses/badRequestError'
-  '/wallets/{wallet_id}/spendables/lock':
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/wallets/{wallet_id}/utxos/lock':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
     post:
       tags:
         - Wallets
-      operationId: lock_spendable_list
+      operationId: lock_utxos
       summary: Lock UTXOs
       description: |
         This operation locks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.
@@ -378,19 +386,21 @@ paths:
       security:
         - CoboAuth: []
       requestBody:
-        $ref: '#/components/requestBodies/lockSpendablesBody'
+        $ref: '#/components/requestBodies/lockUtxosBody'
       responses:
-        '200':
-          $ref: '#/components/responses/lockSpendableResponse'
-        '400':
+        '201':
+          $ref: '#/components/responses/lockUtxoResponse'
+        4XX:
           $ref: '#/components/responses/badRequestError'
-  '/wallets/{wallet_id}/spendables/unlock':
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/wallets/{wallet_id}/utxos/unlock':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
     post:
       tags:
         - Wallets
-      operationId: unlock_spendable_list
+      operationId: unlock_utxos
       summary: Unlock UTXOs
       description: |
         This operation unlocks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.
@@ -399,12 +409,14 @@ paths:
       security:
         - CoboAuth: []
       requestBody:
-        $ref: '#/components/requestBodies/lockSpendablesBody'
+        $ref: '#/components/requestBodies/lockUtxosBody'
       responses:
-        '200':
-          $ref: '#/components/responses/lockSpendableResponse'
-        '400':
+        '201':
+          $ref: '#/components/responses/lockUtxoResponse'
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/max_transferable_value':
     get:
       tags:
@@ -426,16 +438,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/maxTransferableValueResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/addresses':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
     post:
       tags:
         - Wallets
-      operationId: generate_wallet_address
-      summary: Generate new addresses in wallet
+      operationId: create_address
+      summary: Create addresses in wallet
       description: |
         This operation generates one or more addresses within a specified wallet.
 
@@ -451,8 +465,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createAddressResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets
@@ -463,7 +479,7 @@ paths:
       security:
         - CoboAuth: []
       parameters:
-        - $ref: '#/components/parameters/optionalTokenIdParam'
+        - $ref: '#/components/parameters/optionalChainIdListParam'
         - name: addresses
           in: query
           required: false
@@ -478,8 +494,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getAddressesResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/addresses/{address}':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -487,45 +505,51 @@ paths:
     get:
       tags:
         - Wallets
-      operationId: get_address_by_id
+      operationId: get_address
       summary: Get address information
       description: |
         This operation retrieves the detailed information about a specified address within a wallet.
       security:
         - CoboAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/getAddressResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/wallets/{wallet_id}/addresses/{address}/tokens':
+    parameters:
+      - $ref: '#/components/parameters/walletIdParam'
+      - $ref: '#/components/parameters/addressParam'
+    get:
+      tags:
+        - Wallets
+      operationId: list_token_balances_for_address
+      summary: List token balances by address
+      description: |
+        The operation retrieves a list of token balances for a specified address within an MPC Wallet. 
+
+        <Note>This operation is applicable to MPC Wallets only.</Note>
+      security:
+        - CoboAuth: []
       parameters:
-        - $ref: '#/components/parameters/optionalTokenIdParam'
+        - $ref: '#/components/parameters/optionalTokenListIdParam'
         - $ref: '#/components/parameters/limitParam'
         - $ref: '#/components/parameters/beforeParam'
         - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
-          $ref: '#/components/responses/getAddressesResponse'
-        '400':
+          $ref: '#/components/responses/getTokenBalancesResponse'
+        4XX:
           $ref: '#/components/responses/badRequestError'
-  /wallets/address/check_validity:
-    get:
-      tags:
-        - Wallets
-      operationId: check_address_validity
-      summary: Check address validity
-      description: |
-        This operation verifies if a given address is valid for a specific token.
-      security:
-        - CoboAuth: []
-      parameters:
-        - $ref: '#/components/parameters/requiredTokenIdParam'
-        - $ref: '#/components/parameters/requiredAddressParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/getAddressValidityResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/tokens':
     get:
       tags:
         - Wallets
-      operationId: get_wallet_token_balances
+      operationId: list_token_balances_for_wallet
       summary: List token balances by wallet
       description: |
         The operation retrieves a list of token balances within a specified wallet.
@@ -542,40 +566,35 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTokenBalancesResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-  '/wallets/{wallet_id}/addresses/{address}/tokens':
-    parameters:
-      - $ref: '#/components/parameters/walletIdParam'
-      - $ref: '#/components/parameters/addressParam'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /wallets/check_address_validity:
     get:
       tags:
         - Wallets
-      operationId: get_wallet_address_token_balances
-      summary: List token balances by address
+      operationId: check_address_validity
+      summary: Check address validity
       description: |
-        The operation retrieves a list of token balances for a specified address within an MPC Wallet. 
-
-        <Note>This operation is applicable to MPC Wallets only.</Note>
+        This operation verifies if a given address is valid for a specific chain.
       security:
         - CoboAuth: []
       parameters:
-        - $ref: '#/components/parameters/optionalTokenListIdParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/beforeParam'
-        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/requiredChainIdParam'
+        - $ref: '#/components/parameters/requiredAddressParam'
       responses:
         '200':
-          $ref: '#/components/responses/getTokenBalancesResponse'
-        '400':
+          $ref: '#/components/responses/getAddressValidityResponse'
+        4XX:
           $ref: '#/components/responses/badRequestError'
-  /wallets/mpc/cobo_key_holders:
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /wallets/mpc/cobo_key_share_holders:
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_cobo_key_holder
+      operationId: list_cobo_key_holders
       summary: List all Cobo key share holders
       description: |
         This operation retrieves a list of all Cobo key share holders and their information. 
@@ -586,12 +605,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getCoboKeyHoldersResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/mpc/projects:
     post:
       tags:
@@ -609,31 +626,35 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createMpcProjectResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_mpc_project
+      operationId: list_mpc_projects
       summary: List all projects
       description: |
         This operation retrieves a list of all projects.
       security:
         - CoboAuth: []
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getMpcProjectsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/projects/{project_id}':
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: get_mpc_project
+      operationId: get_mpc_project_by_id
       summary: Get project information
       description: |
         This operation retrieves detailed information about a project.
@@ -644,16 +665,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getMpcProjectResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Wallets - MPC Wallets
-      operationId: update_mpc_project
+      operationId: update_mpc_project_by_id
       summary: Update project name
       description: |
         This operation updates a project's name.
@@ -668,12 +687,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getMpcProjectResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /wallets/mpc/vaults:
     post:
       tags:
@@ -692,12 +709,14 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createMpcVaultResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_mpc_vault
+      operationId: list_mpc_vaults
       summary: List all vaults
       description: |
         This operation retrieves a list of all vaults.
@@ -706,21 +725,32 @@ paths:
       security:
         - CoboAuth: []
       parameters:
+        - name: vault_type
+          in: query
+          description: |
+            The vault type. Possible values include:
+            - `Org-Controlled`: This vault is a collection of [Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#organization-controlled-wallets).
+
+            - `User-Controlled`: This vault is a collection of [User-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#user-controlled-wallets).
+          required: true
+          schema:
+            $ref: '#/components/schemas/MPCVaultType'
         - $ref: '#/components/parameters/optionalProjectIdQueryParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           $ref: '#/components/responses/getMpcVaultsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}':
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: get_mpc_vault
+      operationId: get_mpc_vault_by_id
       summary: Get vault information
       description: |
         This operation retrieves detailed information about a vault.
@@ -731,16 +761,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getMpcVaultResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Wallets - MPC Wallets
-      operationId: modify_mpc_vault
+      operationId: update_mpc_vault_by_id
       summary: Update vault name
       description: |
         This operation updates a vault's name.
@@ -756,20 +784,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/putVaultResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
-  '/wallets/mpc/vaults/{vault_id}/key_groups':
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups':
     post:
       tags:
         - Wallets - MPC Wallets
-      operationId: create_key_group
-      summary: Create key share group
+      operationId: create_key_share_holder_group
+      summary: Create key share holder group
       description: |
-        This operation creates a key share group for a specified vault.
+        This operation creates a key share holder group for a specified vault.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -778,64 +804,61 @@ paths:
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
       requestBody:
-        $ref: '#/components/requestBodies/createKeyGroupBody'
+        $ref: '#/components/requestBodies/createKeyShareHolderGroupBody'
       responses:
         '201':
-          $ref: '#/components/responses/createKeyGroupsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
-    get:
-      tags:
-        - Wallets - MPC Wallets
-      operationId: list_key_group
-      summary: List all key share groups
-      description: |
-        This operation retrieves all key share groups under a specified vault. You can filter the result by group type.
-      security:
-        - CoboAuth: []
-      parameters:
-        - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/optionalKeyGroupTypeParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/getKeyGroupsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
-  '/wallets/mpc/vaults/{vault_id}/key_groups/{key_share_group_id}':
-    get:
-      tags:
-        - Wallets - MPC Wallets
-      operationId: get_key_group
-      summary: Get key share group information
-      description: |
-        This operation retrieves detailed information about a specified key share group.
-      security:
-        - CoboAuth: []
-      parameters:
-        - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/keyGroupIdParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/getKeyGroupResponse'
-        '400':
+          $ref: '#/components/responses/createKeyShareHolderGroupsResponse'
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Wallets - MPC Wallets
+      operationId: list_key_share_holder_groups
+      summary: List all key share holder groups
+      description: |
+        This operation retrieves all key share holder groups under a specified vault. You can filter the result by group type.
+      security:
+        - CoboAuth: []
+      parameters:
+        - $ref: '#/components/parameters/vaultIdParam'
+        - $ref: '#/components/parameters/optionalKeyShareHolderGroupTypeParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/getKeyShareHolderGroupsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}':
+    get:
+      tags:
+        - Wallets - MPC Wallets
+      operationId: get_key_share_holder_group_by_id
+      summary: Get key share holder group information
+      description: |
+        This operation retrieves detailed information about a specified key share holder group.
+      security:
+        - CoboAuth: []
+      parameters:
+        - $ref: '#/components/parameters/vaultIdParam'
+        - $ref: '#/components/parameters/keyShareHolderGroupIdParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/getKeyShareHolderGroupResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Wallets - MPC Wallets
-      operationId: update_key_group
-      summary: Update key share group
+      operationId: update_key_share_holder_group_by_id
+      summary: Update key share holder group
       description: |
         This operation updates a specified active [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups). For example, you can use this operation to upgrade a Signing Group to the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
       security:
@@ -845,38 +868,37 @@ paths:
             - 'mpc_user_controlled_key_group:manage'
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/keyGroupIdParam'
+        - $ref: '#/components/parameters/keyShareHolderGroupIdParam'
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required:
-                - update_key_share_group_action
+                - update_key_share_holder_group_action
               properties:
-                update_key_share_group_action:
+                update_key_share_holder_group_action:
                   type: string
                   description: |
-                    The available actions of key share group update. Possible values include:
+                    The available actions of key share holder group update. Possible values include:
                     - `UpgradeToMainGroup`: This upgrades an active [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) to the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups). The original Main Group will be permanently deleted.
                   enum:
                     - UpgradeToMainGroup
                   example: UpgradeToMainGroup
       responses:
         '200':
-          $ref: '#/components/responses/putKeyGroupResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
-    delete:
+          $ref: '#/components/responses/putKeyShareHolderGroupResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/wallets/mpc/vaults/{vault_id}/key_share_holder_groups/{key_share_holder_group_id}/delete':
+    post:
       tags:
         - Wallets - MPC Wallets
-      operationId: delete_key_group
-      summary: Delete key share group
-      description: This operation deletes a specified key share group.
+      operationId: delete_key_share_holder_group_by_id
+      summary: Delete key share holder group
+      description: This operation deletes a specified key share holder group.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -884,16 +906,14 @@ paths:
             - 'mpc_user_controlled_key_group:manage'
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/keyGroupIdParam'
+        - $ref: '#/components/parameters/keyShareHolderGroupIdParam'
       responses:
-        '204':
-          description: Resource successfully deleted.
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        '201':
+          $ref: '#/components/responses/deleteKeyShareHolderGroupResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/tss_requests':
     post:
       tags:
@@ -918,16 +938,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TSSRequest'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: list_tss_request
+      operationId: list_tss_requests
       summary: List TSS requests
       description: |
         This operation retrieves a list of TSS requests and their details.
@@ -935,27 +953,33 @@ paths:
         - CoboAuth: []
       parameters:
         - $ref: '#/components/parameters/vaultIdParam'
-        - $ref: '#/components/parameters/requiredTargetKeyGroupIdParam'
+        - $ref: '#/components/parameters/requiredKeyShareHolderGroupIdParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
       responses:
         '200':
           description: Successfully retrieved TSS request.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TSSRequest'
-        '400':
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TSSRequest'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/tss_requests/{tss_request_id}':
     get:
       tags:
         - Wallets - MPC Wallets
-      operationId: get_tss_request
+      operationId: get_tss_request_by_id
       summary: Get TSS request
       description: |
         This operation retrieves detailed information about a TSS request.
@@ -970,17 +994,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTssRequestResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '503':
-          $ref: '#/components/responses/serviceUnavailableError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/mpc/vaults/{vault_id}/tss_requests/{tss_request_id}/cancel':
     post:
       tags:
         - Wallets - MPC Wallets
-      operationId: cancel_tss_request
+      operationId: cancel_tss_request_by_id
       summary: Cancel TSS request
       description: |
         This operation cancels a TSS request.
@@ -995,33 +1017,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/putTssRequestResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
-  /transactions/fee_rates:
-    get:
-      tags:
-        - Transactions
-      operationId: list_fee_rates
-      summary: Get fee rates
-      description: |
-        This operation retrieves current transaction fee rates on the blockchain based on the specified chain ID.
-
-        The response can contain different properties based on the transaction fee model used by the chain, including EIP-1559 fee model, legacy fee model, UTXO fee model, and fixed fee model.
-      security:
-        - CoboAuth: []
-      parameters:
-        - $ref: '#/components/parameters/requiredChainIdParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/getChainFeeResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions/estimate_fee:
     post:
       tags:
@@ -1039,12 +1038,12 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/estimateFeeBody'
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/estimateFeeResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions/transfer:
     post:
       tags:
@@ -1070,8 +1069,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions/contract_call:
     post:
       tags:
@@ -1094,8 +1095,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions/message_sign:
     post:
       tags:
@@ -1118,8 +1121,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /transactions:
     get:
       tags:
@@ -1135,34 +1140,33 @@ paths:
       parameters:
         - $ref: '#/components/parameters/optionalRequestIdParam'
         - $ref: '#/components/parameters/optionalCoboIdParam'
-        - name: transaction_id
+        - name: transaction_ids
           in: query
           required: false
-          description: The transaction ID.
+          description: 'A list of transaction IDs, separated by comma.'
           schema:
             type: string
             format: uuid
-          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
-        - name: transaction_hash
+          example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
+        - name: transaction_hashes
           in: query
           required: false
-          description: The transaction hash.
+          description: 'A list of transaction hashes, separated by comma.'
           schema:
             type: string
           example: 239861be9a4afe080c359b7fe4a1d035945ec46256b1a0f44d1267c71de8ec28
         - $ref: '#/components/parameters/optionalTransactionTypeListParam'
         - $ref: '#/components/parameters/optionalTransactionStatusListParam'
-        - $ref: '#/components/parameters/optionalTransactionSourceTypeListParam'
-        - $ref: '#/components/parameters/optionalTransactionSourceAddressListParam'
-        - $ref: '#/components/parameters/optionalTransactionSourceWalletIdListParam'
-        - $ref: '#/components/parameters/optionalTransactionDestinationTypeListParam'
-        - $ref: '#/components/parameters/optionalTransactionDestinationAddressListParam'
-        - $ref: '#/components/parameters/optionalTransactionDestinationWalletIdListParam'
+        - $ref: '#/components/parameters/optionalWalletListIdParam'
         - $ref: '#/components/parameters/optionalChainIdListParam'
         - $ref: '#/components/parameters/optionalTokenListIdParam'
         - $ref: '#/components/parameters/optionalAssetIdListParam'
-        - $ref: '#/components/parameters/optionalVaultIdListQueryParam'
-        - $ref: '#/components/parameters/optionalProjectIdListQueryParam'
+        - $ref: '#/components/parameters/optionalTransactionSourceTypeListParam'
+        - $ref: '#/components/parameters/optionalTransactionSourceWalletIdListParam'
+        - $ref: '#/components/parameters/optionalTransactionDestinationTypeListParam'
+        - $ref: '#/components/parameters/optionalTransactionDestinationWalletIdListParam'
+        - $ref: '#/components/parameters/optionalVaultIdQueryParam'
+        - $ref: '#/components/parameters/optionalProjectIdQueryParam'
         - $ref: '#/components/parameters/optionalMinCreatedTimestampParam'
         - $ref: '#/components/parameters/optionalMaxCreatedTimestampParam'
         - $ref: '#/components/parameters/limitParam'
@@ -1171,12 +1175,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTransactionsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1192,8 +1194,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getTransactionByIdResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}/resend':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1215,8 +1219,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}/cancel':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1238,8 +1244,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}/drop':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1251,7 +1259,7 @@ paths:
       description: |
         This operation drops a specified transaction. 
 
-        Dropping a transaction will trigger a Replace-By-Fee (RBF) transaction which is a new version of the original transaction. For EVM chains, this RBF transaction has a transfer amount of `0` and the sending address is the same as the receiving address. It has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be dropped if its status is `Broadcasting` or `Confirming`.
+        Dropping a transaction will trigger a Replace-By-Fee (RBF) transaction which is a new version of the original transaction. For EVM chains, this RBF transaction has a transfer amount of `0` and the sending address is the same as the receiving address. It has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be dropped if its status is `Broadcasting`.
 
         A transaction request for tracking is returned upon successful operation.
       security:
@@ -1261,8 +1269,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/transactions/{transaction_id}/speedup':
     parameters:
       - $ref: '#/components/parameters/transactionIdParam'
@@ -1274,7 +1284,7 @@ paths:
       description: |
         This operation accelerates a specified transaction. 
 
-        Speeding up a transaction will trigger an RBF transaction which is a new version of the original transaction. It shares the same inputs but has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be accelerated if its status is either `Broadcasting` or `Confirming`.
+        Speeding up a transaction will trigger an RBF transaction which is a new version of the original transaction. It shares the same inputs but has a higher transaction fee to incentivize miners to prioritize its confirmation over the previous one. A transaction can be accelerated if its status is either `Broadcasting`.
 
         A transaction request for tracking is returned upon successful operation.
       security:
@@ -1284,8 +1294,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createTransactionRequestResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /webhooks/endpoints:
     get:
       tags:
@@ -1309,12 +1321,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listWebhookEndpointsResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     post:
       tags:
         - Developers - Webhooks
@@ -1330,8 +1340,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createWebhookEndpointResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}':
     parameters:
       - $ref: '#/components/parameters/endpointIdParam'
@@ -1344,14 +1356,16 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEndpointResponse'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       tags:
         - Developers - Webhooks
       summary: Update webhook endpoint
       description: This operation updates the information of a specified webhook endpoint.
-      operationId: update_webhook_endpoint
+      operationId: update_webhook_endpoint_by_id
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1361,10 +1375,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/updateWebhookEndpointResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /webhooks/events/definitions:
     get:
       tags:
@@ -1375,10 +1389,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEventDefinitionsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}/events':
     get:
       tags:
@@ -1409,12 +1423,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listWebhookEventsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}/events/{event_id}':
     parameters:
       - $ref: '#/components/parameters/webhookEventIdParam'
@@ -1425,18 +1437,14 @@ paths:
       summary: Retrieve event information
       description: |
         This operation retrieves the information of a webhook event by the event ID.
-      operationId: get_webhook_event
+      operationId: get_webhook_event_by_id
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEventResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}/events/{event_id}/logs':
     parameters:
       - $ref: '#/components/parameters/webhookEventIdParam'
@@ -1447,18 +1455,14 @@ paths:
       summary: List event logs
       description: |
         This operation retrieves a list of webhook event logs by event ID. Each retry will generate a separate event log.
-      operationId: get_webhook_event_logs
+      operationId: get_webhook_event_logs_by_id
       responses:
         '200':
           $ref: '#/components/responses/getWebhookEventLogsResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/webhooks/endpoints/{endpoint_id}/events/{event_id}/retry':
     parameters:
       - $ref: '#/components/parameters/webhookEventIdParam'
@@ -1469,7 +1473,7 @@ paths:
       summary: Retry event
       description: |
         This operation retries delivering a webhook event with the specified event ID. You can only retry delivering a webhook event in the `Retrying` or `Failed` status.
-      operationId: retry_webhook_event
+      operationId: retry_webhook_event_by_id
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1477,14 +1481,10 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/retryWebhookEventResponse'
-        '400':
+        4XX:
           $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
 components:
   schemas:
     Pagination:
@@ -1739,7 +1739,6 @@ components:
         token_id:
           type: string
           description: 'The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
-          pattern: '^[A-Z]+(_[A-Z0-9]+)?$'
           example: BTC
         balance:
           type: object
@@ -1776,7 +1775,6 @@ components:
         asset_id:
           type: string
           description: '(This concept applies to Exchange Wallets only) The asset ID. An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
-          pattern: '^[A-Z0-9]+$'
           example: USDT
         balance:
           $ref: '#/components/schemas/TokenBalance/properties/balance'
@@ -1877,6 +1875,10 @@ components:
           required:
             - vault_id
           properties:
+            project_id:
+              type: string
+              example: 0111039d-27fb-49ba-b172-6e0aa80e37ec
+              description: The project ID.
             vault_id:
               type: string
               description: The ID of the owning vault.
@@ -1945,7 +1947,7 @@ components:
         - $ref: '#/components/schemas/CreateSmartContractWallet'
         - $ref: '#/components/schemas/CreateExchangeWallet'
       discriminator:
-        propertyName: type
+        propertyName: wallet_type
         mapping:
           Custodial: '#/components/schemas/CreateCustodialWallet'
           MPC: '#/components/schemas/CreateMpcWallet'
@@ -2006,17 +2008,16 @@ components:
       description: The address information.
       required:
         - address
-        - token_id
+        - chain_id
       properties:
         address:
           type: string
           description: The wallet address.
           example: '0x0000000000000000000000000000000000000000'
-        token_id:
+        chain_id:
           type: string
-          description: 'The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
-          pattern: '^[A-Z]+(_[A-Z0-9]+)?$'
-          example: ETH_USDT
+          description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/v2/api-references/wallets/list-enabled-chains).'
+          example: ETH
         memo:
           type: string
           description: The memo code.
@@ -2197,40 +2198,40 @@ components:
         - `SECP256K1`: The secp256k1 elliptic curve.
 
         - `ED25519`: The Ed25519 elliptic curve.
-    KeyGroup:
+    KeyShareHolderGroup:
       type: object
-      description: The data for key share group information.
+      description: The data for key share holder group information.
       properties:
-        group_id:
+        key_share_holder_group_id:
           type: string
-          example: '880311524363903326'
-          description: The key share group ID.
+          example: b33130a9-6e18-44a9-9e48-8b3b41921f0e
+          description: The key share holder group ID.
         type:
-          $ref: '#/components/schemas/KeyGroupType'
-        tss_group_ids:
+          $ref: '#/components/schemas/KeyShareHolderGroupType'
+        tss_key_share_groups:
           type: array
           items:
-            $ref: '#/components/schemas/TSSGroupId'
-        key_holders:
+            $ref: '#/components/schemas/TSSGroups'
+        key_share_holders:
           type: array
           items:
-            $ref: '#/components/schemas/KeyHolder'
+            $ref: '#/components/schemas/KeyShareHolder'
         node_count:
           type: integer
-          description: The number of key share holders in this key share group.
+          description: The number of key share holders in this key share holder group.
           example: 3
         threshold:
           type: integer
-          description: The number of key share holders required to approve each operation in this key share group.
+          description: The number of key share holders required to approve each operation in this key share holder group.
           example: 2
         status:
-          $ref: '#/components/schemas/KeyGroupStatus'
+          $ref: '#/components/schemas/KeyShareHolderGroupStatus'
         create_timestamp:
           type: integer
           format: int64
-          description: 'The key share group''s creation time in Unix timestamp format, measured in milliseconds.'
+          description: 'The key share holder group''s creation time in Unix timestamp format, measured in milliseconds.'
           example: 1718619403933
-    KeyGroupStatus:
+    KeyShareHolderGroupStatus:
       type: string
       enum:
         - New
@@ -2238,13 +2239,13 @@ components:
         - Unavailable
       example: Valid
       description: |
-        The status of the key share group. Possible values include:
-        - `New`: The key share group has been newly created. The status will become `Valid` after you call [Create TSS request](/api-references/v2/wallets--mpc-wallet/create-a-tss-request-to-generate-key-secrets-for-a-tss-group) and specifying this key share group as the target key share group.
+        The status of the key share holder group. Possible values include:
+        - `New`: The key share holder group has been newly created. The status will become `Valid` after you call [Create TSS request](/api-references/v2/wallets--mpc-wallet/create-a-tss-request-to-generate-key-secrets-for-a-tss-group) and specifying this key share holder group as the target key share holder group.
 
-        - `Valid`: The key share group is valid.
+        - `Valid`: The key share holder group is valid.
 
-        - `Unavailable`: The key share group is currently unavailable. This status appears when a key share holder uses [mobile co-signer](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/back-up-key-share-groups#mobile-co-signer) to change node. For example, when a key share holder changes to a new phone or loses their phone, and is in the process of setting up [Cobo Guard](https://manuals.cobo.com/en/guard/introduction) on their new phone.
-    KeyGroupType:
+        - `Unavailable`: The key share holder group is currently unavailable. This status appears when a key share holder uses [mobile co-signer](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/back-up-key-share-groups#mobile-co-signer) to change node. For example, when a key share holder changes to a new phone or loses their phone, and is in the process of setting up [Cobo Guard](https://manuals.cobo.com/en/guard/introduction) on their new phone.
+    KeyShareHolderGroupType:
       type: string
       enum:
         - MainGroup
@@ -2252,7 +2253,7 @@ components:
         - RecoveryGroup
       example: MainGroup
       description: |
-        The type of key share group. Possible values include:
+        The type of key share holder group. Possible values include:
 
         - `MainGroup`: A [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
 
@@ -2261,7 +2262,21 @@ components:
         - `RecoveryGroup`: A [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
 
         **Note:** For `MainGroup` and `SigningGroup`, a Cobo key share holder will be added automatically.
-    KeyHolder:
+    CreateKeyShareHolder:
+      type: object
+      description: 'When creating MainKeyGroup and SigningKeyGroup, the Cobo key share holder will be added automatically.'
+      properties:
+        name:
+          type: string
+          description: Key share holder's name.
+          example: Key share holder name
+        type:
+          $ref: '#/components/schemas/KeyShareHolderType'
+        tss_node_id:
+          type: string
+          description: The TSS Node ID.
+          example: coboAbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefghi
+    KeyShareHolder:
       type: object
       description: The data for MPC Wallets' key share holder information.
       properties:
@@ -2270,7 +2285,7 @@ components:
           description: The key share holder name.
           example: Key share holder name
         type:
-          $ref: '#/components/schemas/KeyHolderType'
+          $ref: '#/components/schemas/KeyShareHolderType'
         tss_node_id:
           type: string
           description: Key share holder's TSS Node ID.
@@ -2283,8 +2298,8 @@ components:
 
             - `false`: The TSS Node is offline.
         status:
-          $ref: '#/components/schemas/KeyHolderStatus'
-    KeyHolderStatus:
+          $ref: '#/components/schemas/KeyShareHolderStatus'
+    KeyShareHolderStatus:
       type: string
       enum:
         - Valid
@@ -2301,7 +2316,7 @@ components:
         - `NotActivated`: The TSS Node has not been activated. This status is only applicable to [mobile co-signer](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/back-up-key-share-groups#mobile-co-signer) using the [Cobo Guard](https://manuals.cobo.com/en/guard/introduction).
 
         - `Changed`: The TSS Node has been changed. This happens when the key share holder sets up their [Cobo Guard](https://manuals.cobo.com/en/guard/introduction) on a new phone. This `Changed` status serves as a reminder for you to call [Create TSS request](/api-references/v2/wallets--mpc-wallet/create-a-tss-request-to-generate-key-secrets-for-a-tss-group) with the `KeyGenFromKeyGroup` and `Recovery` action `type` to finalize the setup of the key share holder's new phone. Once all set, the old TSS Node with the `Changed` status will be deleted.
-    KeyHolderType:
+    KeyShareHolderType:
       type: string
       enum:
         - Cobo
@@ -2342,14 +2357,14 @@ components:
     MPCVaultType:
       type: string
       enum:
-        - OrgControlled
-        - UserControlled
-      example: OrgControlled
+        - Org-Controlled
+        - User-Controlled
+      example: Org-Controlled
       description: |
         The vault type. Possible values include:
-        - `OrgControlled`: This vault is a collection of [Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#organization-controlled-wallets).
+        - `Org-Controlled`: This vault is a collection of [Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#organization-controlled-wallets).
 
-        - `UserControlled`: This vault is a collection of [User-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#user-controlled-wallets).
+        - `User-Controlled`: This vault is a collection of [User-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#user-controlled-wallets).
     MPCProject:
       type: object
       description: The data for project information.
@@ -2389,13 +2404,13 @@ components:
           example: xpub661MyMwAqRbcG4vPNi58VQJrXW8D9VzmauuRq2rTY3oUVnKGuLTxQxvvoEXgLvZ7N9GQXQkWVgKn1rzEUUEm4NdvrBKUqjpNJEnn2UL4rYq
         curve:
           $ref: '#/components/schemas/CurveType'
-    TSSGroupId:
+    TSSGroups:
       type: object
-      description: The data for the TSS group ID.
+      description: The data for the TSS key share group ID.
       properties:
-        group_id:
+        tss_key_share_group_id:
           type: string
-          description: The TSS group ID.
+          description: The TSS key share group ID.
           example: mMedDioOKhTlhGyQRzMv
         curve:
           $ref: '#/components/schemas/CurveType'
@@ -2403,10 +2418,18 @@ components:
       type: object
       description: The data for the TSS request information.
       properties:
-        request_id:
+        tss_request_id:
           type: string
           description: The TSS request ID.
-          example: YPdbyVaVGqXXjkUsohHw
+          example: '20240711114129000132315000003970'
+        source_key_share_holder_group_id:
+          type: string
+          description: The source key share holder group ID.
+          example: fc1965d0-ed70-4542-877b-e5a4b7b26320
+        target_key_share_holder_group_id:
+          type: string
+          description: The target key share holder group ID.
+          example: fd9519ae-507b-4605-b108-04d4e5ffcdd3
         type:
           $ref: '#/components/schemas/TSSRequestType'
         status:
@@ -2440,9 +2463,9 @@ components:
       example: KeyGen
       description: |
         The TSS request type. Possible values include:
-        - `KeyGen`: This is a key generation request to create a [root extended public key](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/tss-node-deployment#tss-node-on-cobo-portal-and-mpc-root-extended-public-key) and key shares for your [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) after you've created the Main Group with [Create key share group](/developers/v2/api-references/wallets--mpc-wallets/create-key-share-group). You only need to do this once per [Organization](https://manuals.cobo.com/en/portal/organization/introduction).
+        - `KeyGen`: This is a key generation request to create a [root extended public key](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/tss-node-deployment#tss-node-on-cobo-portal-and-mpc-root-extended-public-key) and key shares for your [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) after you've created the Main Group with [Create key share holder group](/developers/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group). You only need to do this once per [Organization](https://manuals.cobo.com/en/portal/organization/introduction).
 
-        - `KeyGenFromKeyGroup`: This is a request to use the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) to create key shares for your [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) or [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) after you've created these key share groups with [Create key share group](/developers/v2/api-references/wallets--mpc-wallets/create-key-share-group).
+        - `KeyGenFromKeyGroup`: This is a request to use the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) to create key shares for your [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) or [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) after you've created these key share holder groups with [Create key share holder group](/developers/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group).
 
         - `Recovery`: This is a request to create key shares using the [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) for a key share holder in the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) if their key share has been lost (e.g. by losing their phone).
     FeeType:
@@ -2793,6 +2816,10 @@ components:
           type: string
           description: The request ID that is used to track a withdrawal request. The request ID is provided by you and must be unique within your organization.
           example: web_send_by_user_327_1610444045047
+        wallet_id:
+          type: string
+          description: 'For deposit transactions, this property represents the wallet ID of the transaction destination. For transactions of other types, this property represents the wallet ID of the transaction source.'
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         type:
           $ref: '#/components/schemas/TransactionType'
         status:
@@ -2801,12 +2828,11 @@ components:
           $ref: '#/components/schemas/TransactionSubStatus'
         failed_reason:
           type: string
-          description: The reason why the transaction failed.
+          description: The reason why the transaction failed. This property only applies to approval failures and signature failures.
           example: Rejected by signer Cobo TSS
         chain_id:
           type: string
           description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
-          pattern: '^[A-Z]+$'
           example: ETH
         source:
           oneOf:
@@ -3116,6 +3142,7 @@ components:
         - Completed
         - Failed
         - Rejected
+        - Pending
       example: Submitted
       description: |
         The transaction status. Possible values include: 
@@ -3128,6 +3155,7 @@ components:
           - `Completed`: The transaction is completed.
           - `Failed`: The transaction failed.
           - `Rejected`: The transaction is rejected.
+          - `Pending`: The transaction is pending.
     TransactionSubStatus:
       type: string
       enum:
@@ -3174,10 +3202,10 @@ components:
           - `FailedBySigner`: The transaction failed during the signing process.
           - `FailedBroadcasting`: The transaction failed to be broadcast to the blockchain network.
           - `CanceledBySpender`: The transaction is canceled by a Spender.
-          - `CanceledByAPI`: The transaction is canceled by an API initiator.
-          - `Queue`: The transaction is queued to be added to the blockchain.
+          - `CanceledByAPI`: The transaction is canceled by a [Cancel transaction](/developers/v2/api-references/transactions/cancel-transaction) operation.
+          - `Queue`: The transaction is queued to be processed by Cobo Portal.
           - `OnchainRejection`: The transaction is rejected from being added to the blockchain.
-          - `FailedOnChain`: The transaction failed due to insufficient confirmations.
+          - `FailedOnChain`: The transaction failed on the blockchain.
           - `PendingBlockConfirmations`: The transaction is awaiting the required number of confirmations.
           - `ReplacedByNewTransaction`: The transaction has been replaced by a new transaction.
     TransactionTimeline:
@@ -3219,8 +3247,8 @@ components:
         - ContractCall
         - TransactionFeePayment
         - TransactionFeeRefund
-        - RawMessage
-        - Multi-Sig
+        - MessageSign
+        - MultiSig
       example: Deposit
       description: |
         The transaction type. Possible values include: 
@@ -3229,18 +3257,18 @@ components:
           - `TokenApproval`: A transaction that grants permission to access your tokens. 
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `TransactionFeePayment`: A transaction that is initiated from Fee Station to pay the transaction fees.
-          - `TransactionFeeRefund`: A transaction that refunds the transaction fees to Fee Station, if a transaction fails after Fee Station has paid the fees.
-          - `RawMessage`: A transaction that signs a message. 
-          - `Multi-Sig`: A transaction that requires multiple signatures.
+          - `TransactionFeeRefund`: A transaction that refunds transaction fees to Fee Station.
+          - `MessageSign`: A transaction that signs a message. 
+          - `MultiSig`: A transaction to a Smart Contract Wallet (Safe{Wallet}) that requires one or multiple signatures to be executed.
     MpcSigningGroup:
       type: object
       description: The information about the Signing Group of an MPC Wallet.
       properties:
-        used_key_group_id:
+        used_key_share_holder_group_id:
           type: string
           description: The ID of the Signing Group.
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
-        used_node_ids:
+        used_tss_node_ids:
           type: array
           items:
             type: string
@@ -3348,7 +3376,7 @@ components:
       required:
         - source_type
         - wallet_id
-        - mpc_used_key_group
+        - mpc_used_key_share_holder_group
       properties:
         source_type:
           $ref: '#/components/schemas/TransactionSourceType'
@@ -3357,7 +3385,7 @@ components:
           description: The wallet ID.
           format: uuid
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
-        mpc_used_key_group:
+        mpc_used_key_share_holder_group:
           $ref: '#/components/schemas/MpcSigningGroup'
         account_input:
           type: object
@@ -3382,7 +3410,7 @@ components:
       required:
         - source_type
         - wallet_id
-        - delegate
+        - address
       properties:
         source_type:
           $ref: '#/components/schemas/TransactionSourceType'
@@ -3391,6 +3419,10 @@ components:
           description: The wallet ID.
           format: uuid
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        address:
+          type: string
+          description: The wallet address.
+          example: '0x1234567890123456789012345678901234567890'
         delegate:
           type: object
           properties:
@@ -3398,7 +3430,7 @@ components:
               type: string
               format: uuid
               example: 123e4567-e89b-12d3-a456-426614174000
-              description: 'The wallet ID of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}). '
+              description: 'The wallet ID of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).'
             wallet_type:
               type: string
               example: MPC
@@ -3407,7 +3439,7 @@ components:
               type: string
               example: '0x1234567890123456789012345678901234567890'
               description: 'The wallet address of the Delegate. This is required for initiating a transfer from Smart Contract Wallets (Safe{Wallet}).'
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     TransactionExchangeWalletSource:
       type: object
@@ -3827,6 +3859,8 @@ components:
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         fee:
           $ref: '#/components/schemas/TransactionTransferFee'
+        mpc_used_key_share_holder_group:
+          $ref: '#/components/schemas/MpcSigningGroup'
     TransactionResend:
       type: object
       description: The information about the request to resend transactions.
@@ -3837,10 +3871,11 @@ components:
           type: string
           description: The request ID that is used to track a withdrawal request. The request ID is provided by you and must be unique within your organization.
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        mpc_used_key_share_holder_group:
+          $ref: '#/components/schemas/MpcSigningGroup'
     ReplaceType:
       type: string
       enum:
-        - Cancel
         - Drop
         - Resend
         - SpeedUp
@@ -3848,7 +3883,6 @@ components:
       description: |
         The `replaced_by_type` property indicates the replacement type of the transaction that this transaction was replaced by, and the `replaced_type` property indicates the replacement type of the transaction that this transaction replaced.
         Possible values include: 
-          - `Cancel`: To cancel a transaction.
           - `Drop`: To drop a transaction.
           - `Resend`: To resend a transaction.
           - `SpeedUp`: To speed up a transaction.
@@ -3921,7 +3955,7 @@ components:
                         type: integer
                         description: The output index of the UTXO.
                         example: 0
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     SafeTransferSource:
       title: Smart Contract Wallets
@@ -4023,10 +4057,10 @@ components:
                     type: string
                     description: The script of the output. It is a programmable code fragment that defines the conditions under which the UTXO can be spent.
                     example: 76a914fb37342f6275b13936799def06f2DEMO
-            change_address:
-              type: string
-              description: The address used to receive the remaining funds or change from the transaction.
-              example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sDEMO
+        change_address:
+          type: string
+          description: The address used to receive the remaining funds or change from the transaction.
+          example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sDEMO
         force_internal:
           type: boolean
           description: |
@@ -4137,7 +4171,6 @@ components:
         chain_id:
           type: string
           description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
-          pattern: '^[A-Z]+$'
           example: ETH
         source:
           description: The information about the transaction source.
@@ -4155,7 +4188,7 @@ components:
               type: string
               description: The wallet address.
               example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
         destination:
           type: object
@@ -4219,6 +4252,8 @@ components:
           example: ETH_USDT
         destination:
           $ref: '#/components/schemas/TransferDestination'
+        fee_type:
+          $ref: '#/components/schemas/FeeType'
     EstimateFeeContractCall:
       type: object
       description: The information about a transaction that interacts with a smart contract
@@ -4261,6 +4296,8 @@ components:
                 The data that is used to invoke a specific function or method within the specified contract at the destination address.
               format: byte
               example: U3dhZ2dlciByb2Nrcw==
+        fee_type:
+          $ref: '#/components/schemas/FeeType'
     BaseContractCallSource:
       type: object
       description: The information about the transaction source.
@@ -4296,7 +4333,7 @@ components:
         - $ref: '#/components/schemas/BaseContractCallSource'
         - type: object
           properties:
-            mpc_used_key_group:
+            mpc_used_key_share_holder_group:
               $ref: '#/components/schemas/MpcSigningGroup'
     SafeContractCallSource:
       title: Smart Contract Wallets
@@ -4322,7 +4359,7 @@ components:
                   type: string
                   example: '0x1234567890123456789012345678901234567890'
                   description: 'The wallet address of the Delegate. This is required for initiating a transfer from a Smart Contract Wallet (Safe{Wallet}).'
-                mpc_used_key_group:
+                mpc_used_key_share_holder_group:
                   $ref: '#/components/schemas/MpcSigningGroup'
     ContractCallSource:
       oneOf:
@@ -4390,7 +4427,7 @@ components:
         - type
         - data
       properties:
-        id:
+        event_id:
           description: The event ID.
           type: string
           format: uuid
@@ -4408,7 +4445,7 @@ components:
         type:
           $ref: '#/components/schemas/WebhookEventType'
         data:
-          $ref: '#/components/schemas/Transaction'
+          $ref: '#/components/schemas/WebhookEventData'
         status:
           $ref: '#/components/schemas/WebhookEventStatus'
         next_retry_timestamp:
@@ -4420,6 +4457,29 @@ components:
           description: The number of retries left. This field is only present if the event status is `Retrying`.
           type: integer
           example: 3
+    WebhookEventDataType:
+      type: object
+      description: The event data type.
+      required:
+        - data_type
+      properties:
+        data_type:
+          type: string
+          enum:
+            - Transaction
+          description: The model of data.
+          example: Transaction
+    WebhookEventData:
+      oneOf:
+        - $ref: '#/components/schemas/TransactionEventData'
+      discriminator:
+        propertyName: data_type
+        mapping:
+          Transaction: '#/components/schemas/TransactionEventData'
+    TransactionEventData:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - $ref: '#/components/schemas/Transaction'
     WebhookEventType:
       type: string
       enum:
@@ -4516,7 +4576,7 @@ components:
           description: 'The time when the endpoint was registered, in Unix timestamp format, measured in seconds.'
           type: integer
           example: 1701396866
-        id:
+        endpoint_id:
           description: The webhook endpoint ID.
           type: string
           format: uuid
@@ -4560,7 +4620,7 @@ components:
           description: The stake extra for babylon.
           required:
             - finality_provider_public_key
-            - lock_time
+            - stake_block_time
           properties:
             finality_provider_public_key:
               description: The public key of finality provider.
@@ -4605,6 +4665,7 @@ components:
         - status
         - created_at
         - updated_at
+        - token_id
       properties:
         id:
           description: The unique id of the activity.
@@ -4628,6 +4689,10 @@ components:
           type: string
           example: babylon_btc
           description: The id of the staking pool.
+        token_id:
+          type: string
+          example: BTC
+          description: The id of the token.
         staking_id:
           type: string
           example: 0011039d-27fb-49ba-b172-6e0aa80e37ec
@@ -4668,7 +4733,6 @@ components:
       required:
         - amount
         - fee
-        - request_id
         - wallet_id
         - address
         - pool_id
@@ -4753,6 +4817,20 @@ components:
         - Undelegate
       example: Stake
       description: The type of activity.
+    AmountStatus:
+      type: string
+      enum:
+        - StakeInProgress
+        - Active
+        - Rejected
+        - LimitExceeded
+        - Invalid
+        - UnstakeInProgress
+        - Withdrawable
+        - WithdrawInProgress
+        - Closed
+      example: Active
+      description: The status of staking amount.
     AmountDetails:
       type: array
       description: The staking amount details.
@@ -4763,9 +4841,7 @@ components:
           - amount
         properties:
           status:
-            type: string
-            example: active
-            description: The staking status.
+            $ref: '#/components/schemas/AmountStatus'
           amount:
             type: string
             example: '100.00'
@@ -4893,6 +4969,7 @@ components:
         - token_id
         - est_apr
         - supported_wallet_types
+        - supported_wallet_subtypes
       properties:
         id:
           description: The unique protocol id.
@@ -4918,6 +4995,13 @@ components:
             $ref: '#/components/schemas/WalletType'
           example:
             - MPC
+        supported_wallet_subtypes:
+          description: The list of available wallet types.
+          type: array
+          items:
+            $ref: '#/components/schemas/WalletSubtype'
+          example:
+            - Org-Controlled
         token_id:
           description: The unique token id.
           type: string
@@ -4935,6 +5019,7 @@ components:
         - wallet_id
         - address
         - pool_id
+        - token_id
         - amounts
         - status
         - validator_info
@@ -4973,6 +5058,10 @@ components:
           description: The unique pool id.
           type: string
           example: babylon_btc
+        token_id:
+          description: The token id.
+          type: string
+          example: BTC
         pos_chain:
           description: The pos chain of the stake.
           type: string
@@ -5115,7 +5204,7 @@ components:
       name: asset_ids
       in: query
       required: false
-      description: 'A list of asset IDs, separated by comma. (This concept applies to Exchange Wallets only) An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
+      description: '(This concept applies to Exchange Wallets only) A list of asset IDs, separated by comma. An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
       schema:
         type: string
         description: 'A list of asset IDs, separated by comma.'
@@ -5348,29 +5437,29 @@ components:
         type: string
         description: The transaction hash of the UTXO.
       example: dd7e1cecf6bbde1844ee1815b780711a1e306a718bcd23cd64401b48ef88eb83
-    keyGroupIdParam:
-      name: key_share_group_id
+    keyShareHolderGroupIdParam:
+      name: key_share_holder_group_id
       in: path
       required: true
-      description: The key share group ID.
+      description: The key share holder group ID.
       schema:
         type: string
-      example: '880311524363903326'
-    optionalKeyGroupTypeParam:
-      name: key_group_type
+      example: e8257ac8-76b8-4d1e-a1f9-eec4cb931dce
+    optionalKeyShareHolderGroupTypeParam:
+      name: key_share_holder_group_type
       in: query
       description: |
-        The selected key share group type to retrieve. Possible values include:
-        - `MainKeyGroup`: Only [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
+        The selected key share holder group type to retrieve. Possible values include:
+        - `MainGroup`: Only [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
 
-        - `SigningKeyGroup`: Only [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
+        - `SigningGroup`: Only [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
 
-        - `RecoveryKeyGroup`: Only [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
+        - `RecoveryGroup`: Only [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) will be retrieved.
 
-        **Note:** If there's no value selected for `key_group_type`, all key share group types will be retrieved.
+        **Note:** If there's no value selected for `key_share_holder_group_type`, all key share holder group types will be retrieved.
       required: false
       schema:
-        $ref: '#/components/schemas/KeyGroupType'
+        $ref: '#/components/schemas/KeyShareHolderGroupType'
     projectIdParam:
       name: project_id
       in: path
@@ -5383,28 +5472,27 @@ components:
     optionalProjectIdQueryParam:
       name: project_id
       in: query
-      description: 'The project ID, which you can retrieve by calling [List all projects](/developers/v2/api-references/wallets--mpc-wallets/list-all-projects). This parameter is applicable to MPC Wallets only.'
+      description: 'The project ID, which you can retrieve by calling [List all projects](/developers/v2/api-references/wallets--mpc-wallets/list-all-projects). This parameter is applicable to [MPC Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction) only.'
       schema:
         type: string
         format: uuid
       example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     optionalProjectIdListQueryParam:
-      name: project_id
+      name: project_ids
       in: query
-      description: The MPC project ID.
+      description: 'A list of MPC project IDs, separated by comma.'
       schema:
-        description: 'A list of MPC project IDs, separated by comma.'
         type: string
         format: uuid
       example: 'a3d8eae2-1740-4b5e-92f2-88c2b1e44c6b,b51f63a3-8a8e-4a34-ae9e-6f3e6b1fdf99'
-    requiredTargetKeyGroupIdParam:
-      name: target_key_group_id
+    requiredKeyShareHolderGroupIdParam:
+      name: key_share_holder_group_id
       in: query
-      description: 'The target key share group ID of the TSS request, which you can retrieve by calling [List all key share groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-groups).'
+      description: 'The key share holder group ID of the TSS request, which you can retrieve by calling [List all key share holder groups](/developers/v2/api-references/wallets--mpc-wallets/list-all-key-share-holder-groups).'
       required: true
       schema:
         type: string
-      example: '880311524363903326'
+      example: a3a45e99-5a12-444f-867a-ffe0ebb1bb30
     tssRequestIdParam:
       name: tss_request_id
       in: path
@@ -5412,8 +5500,7 @@ components:
       description: 'The TSS request ID, which you can retrieve by calling [List TSS requests](/developers/v2/api-references/wallets--mpc-wallets/list-tss-requests).'
       schema:
         type: string
-        format: uuid
-      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+      example: '20240711114129000132315000003970'
     vaultIdParam:
       name: vault_id
       in: path
@@ -5433,12 +5520,11 @@ components:
         format: uuid
       example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     optionalVaultIdListQueryParam:
-      name: vault_id
+      name: vault_ids
       in: query
       required: false
-      description: The vault ID.
+      description: 'A list of vault IDs, separated by comma.'
       schema:
-        description: 'A list of vault IDs, separated by comma.'
         type: string
         format: uuid
       example: 'f5c3f9e8-1d8a-44b2-9284-94bf76b7b017,ab2e3f55-472e-4a98-86d1-446d2f9e839e'
@@ -5504,13 +5590,13 @@ components:
         type: string
       example: web_send_by_user_327_1610444045047
     optionalCoboIdParam:
-      name: cobo_id
+      name: cobo_ids
       in: query
       required: false
-      description: 'The Cobo ID, which can be used to track a transaction.'
+      description: 'A list of Cobo IDs, separated by comma. A Cobo ID can be used to track a transaction.'
       schema:
         type: string
-      example: '20231213122855000000000000000000'
+      example: '20231213122855000000000000000000,20231213122955000000000000000000'
     optionalTransactionTypeParam:
       name: type
       in: query
@@ -5519,22 +5605,21 @@ components:
       schema:
         $ref: '#/components/schemas/TransactionType'
     optionalTransactionTypeListParam:
-      name: type
+      name: types
       in: query
       required: false
       description: |
-        The transaction type. Possible values include: 
+        A list of transaction types, separated by comma. Possible values include: 
           - `Deposit`: A deposit transaction.
           - `Withdrawal`: A withdrawal transaction.
           - `TokenApproval`: A transaction that grants permission to access your tokens. 
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `TransactionFeePayment`: A transaction that is initiated by Fee Station to pay your transaction fee.
-          - `TransactionFeeRefund`: A transaction that refunds transaction fees from Fee Station.
-          - `RawMessage`: A transaction that signs a message. 
-          - `Multi-Sig`: A transaction that requires multiple signatures.
+          - `TransactionFeeRefund`: A transaction that refunds transaction fees to Fee Station.
+          - `MessageSign`: A transaction that signs a message. 
+          - `MultiSig`: A transaction to a Smart Contract Wallet (Safe{Wallet}) that requires one or multiple signatures to be executed.
       schema:
         type: string
-        description: 'A list of transaction types, separated by comma.'
       example: 'Deposit,Withdrawal'
     optionalTransactionStatusParam:
       name: status
@@ -5544,11 +5629,11 @@ components:
       schema:
         $ref: '#/components/schemas/TransactionStatus'
     optionalTransactionStatusListParam:
-      name: status
+      name: statuses
       in: query
       required: false
       description: |
-        The transaction status. Possible values include: 
+        A list of transaction statuses, separated by comma. Possible values include: 
           - `Submitted`: The transaction is submitted.
           - `PendingScreening`: The transaction is pending screening by Risk Control. 
           - `PendingAuthorization`: The transaction is pending approvals.
@@ -5558,8 +5643,9 @@ components:
           - `Completed`: The transaction is completed.
           - `Failed`: The transaction failed.
           - `Rejected`: The transaction is rejected.
+          - `Pending`: The transaction is pending.
       schema:
-        description: 'A list of transaction statuses, separated by comma.'
+        type: string
       example: 'Completed,Failed'
     optionalMinCreatedTimestampParam:
       name: min_created_timestamp
@@ -5578,11 +5664,11 @@ components:
         type: integer
       example: 1635744000
     optionalTransactionSourceTypeListParam:
-      name: source_type
+      name: source_types
       in: query
       required: false
       description: |
-        The type of transaction source. Possible values include:
+        A list of transaction source types, separated by comma. Possible values include:
           - `Address`: An external address.
           - `CustodialWallet`: A Custodial Wallet.
           - `MPCWallet`: An MPC Wallet.
@@ -5590,32 +5676,30 @@ components:
           - `ExchangeWallet`: An Exchange Wallet.
           - `FeeStation`: A Fee Station.
       schema:
-        description: 'A list of transaction sources, separated by comma.'
+        type: string
       example: 'Deposit,Withdrawal'
     optionalTransactionSourceAddressListParam:
-      name: source_wallet_id
+      name: source_wallet_ids
       in: query
       required: false
-      description: The wallet ID of the transaction source.
+      description: 'A list of wallet IDs of the transaction sources, separated by comma.'
       schema:
-        description: 'A list of wallet IDs, separated by comma.'
         type: string
         format: uuid
       example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
     optionalTransactionSourceWalletIdListParam:
-      name: source_address
+      name: source_addresses
       in: query
       required: false
-      description: The address of the transaction source.
+      description: 'A list of addresses of the transaction source, separated by comma.'
       schema:
-        description: 'A list of addresses, separated by comma.'
         type: string
     optionalTransactionDestinationTypeListParam:
-      name: destination_type
+      name: destination_types
       in: query
       required: false
       description: |
-        The transaction destination type. Possible values include:
+        A list of transaction destination types, separated by comma. Possible values include:
           - `Address`: An external address. 
           - `ContractCall`: A transaction that interacts with a smart contract.
           - `MessageSign`: A transaction that signs a message. 
@@ -5624,26 +5708,24 @@ components:
           - `SafeWallet`: A Smart Contract Wallets (Safe{Wallet}).
           - `ExchangeWallet`: An Exchange Wallet.
       schema:
-        description: 'A list of destination types, separated by comma.'
+        type: string
       example: 'ContractCall,MessageSign'
     optionalTransactionDestinationAddressListParam:
-      name: destination_wallet_id
+      name: destination_wallet_ids
       in: query
       required: false
-      description: The wallet ID of the transaction destination.
+      description: 'A list of wallet IDs of the transaction destinations, separated by comma.'
       schema:
-        description: 'A list of wallet IDs, separated by comma.'
         type: string
         format: uuid
       example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
     optionalTransactionDestinationWalletIdListParam:
-      name: destination_address
+      name: destination_addresses
       in: query
       required: false
       description: |
-        The address of the transaction destination. If the address includes a memo, use `|` to append the memo to the address. For example, if the address is `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku` and the memo is `82840924`, you need to provide `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku|82840924` as the property value.
+        A list of addresses of the transaction destination, separated by comma. If the address includes a memo, use `|` to append the memo to the address. For example, if the address is `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku` and the memo is `82840924`, you need to provide `19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku|82840924` as the property value.
       schema:
-        description: 'A list of addresses, separated by comma.'
         type: string
     transactionIdParam:
       name: transaction_id
@@ -5810,14 +5892,13 @@ components:
           schema:
             type: object
             required:
-              - token_id
+              - chain_id
               - count
             properties:
-              token_id:
+              chain_id:
                 type: string
-                description: 'The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
-                pattern: '^[A-Z]+(_[A-Z0-9]+)?$'
-                example: ETH_USDT
+                description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/v2/api-references/wallets/list-enabled-chains).'
+                example: ETH
               count:
                 type: integer
                 maximum: 50
@@ -5827,16 +5908,16 @@ components:
                 example: 1
               encoding:
                 $ref: '#/components/schemas/AddressEncoding'
-    lockSpendablesBody:
+    lockUtxosBody:
       description: The request body of the Lock/Unlock UTXOs operation.
       content:
         application/json:
           schema:
             type: object
             required:
-              - spendables
+              - utxos
             properties:
-              spendables:
+              utxos:
                 type: array
                 items:
                   type: object
@@ -5857,24 +5938,24 @@ components:
                       type: integer
                       description: The output index of the UTXO.
                       example: 0
-    createKeyGroupBody:
-      description: The request body to create a key share group.
+    createKeyShareHolderGroupBody:
+      description: The request body to create a key share holder group.
       content:
         application/json:
           schema:
             type: object
             required:
-              - group_type
+              - key_share_holder_group_type
               - node_count
               - threshold
-              - key_holders
+              - key_share_holders
             properties:
-              group_type:
-                $ref: '#/components/schemas/KeyGroupType'
+              key_share_holder_group_type:
+                $ref: '#/components/schemas/KeyShareHolderGroupType'
               node_count:
                 type: integer
                 description: |
-                  The number of key share holders in this key share group.
+                  The number of key share holders in this key share holder group.
 
                   **Notes:**
                   1. Currently, the available [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) are 2-2, 2-3, and 3-3 schemes (in the "threshold - node count" format), so you can only set `node_count` to 2 or 3. 
@@ -5891,22 +5972,10 @@ components:
 
                   2. Threshold must be less than or equal to node count.
                 example: 2
-              key_holders:
+              key_share_holders:
                 type: array
                 items:
-                  type: object
-                  description: 'When creating MainKeyGroup and SigningKeyGroup, the Cobo key share holder will be added automatically.'
-                  properties:
-                    name:
-                      type: string
-                      description: Key share holder's name.
-                      example: Key share holder name
-                    type:
-                      $ref: '#/components/schemas/KeyHolderType'
-                    tss_node_id:
-                      type: string
-                      description: The TSS Node ID.
-                      example: coboAbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefghi
+                  $ref: '#/components/schemas/CreateKeyShareHolder'
     createMpcProjectBody:
       description: The request body to create a project.
       content:
@@ -5950,25 +6019,25 @@ components:
             type: object
             required:
               - type
-              - target_key_group_id
+              - target_key_share_holder_group_id
             properties:
               type:
                 $ref: '#/components/schemas/TSSRequestType'
-              target_key_group_id:
+              target_key_share_holder_group_id:
                 type: string
-                description: The target key share group ID.
-                example: '912503538189021590'
-              source_key_group_id:
+                description: The target key share holder group ID.
+                example: a1bf161f-8b60-4f61-9c35-6434b8654437
+              source_key_share_holder_group_id:
                 type: string
                 description: |
-                  The source key share group ID.
+                  The source key share holder group ID.
 
-                  **Note:** `source_key_share_group_id` is used only when `type` is set to either `KeyGenfromKeyGroup` or `Recovery`. This is to specify the key share group to be used as the source key share group to create key shares for the `target_key_share_group`.
-                example: '987654321098765432'
+                  **Note:** `source_key_share_holder_group_id` is used only when `type` is set to either `KeyGenfromKeyGroup` or `Recovery`. This is to specify the key share holder group to be used as the source key share holder group to create key shares for the `target_key_share_holder_group`.
+                example: f5e2d18c-a36f-483e-986a-a2fd34d4189d
               detail_params:
                 type: object
                 properties:
-                  node_ids:
+                  tss_node_ids:
                     type: array
                     items:
                       type: string
@@ -5976,9 +6045,9 @@ components:
                       - cobo1AbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefgh
                       - cobo2AbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefgh
                     description: |
-                      The TSS Node IDs participating in creating a new key share group when `type` is set to either `KeyGenFromKeyGroup` or `Recovery`. 
+                      The TSS Node IDs participating in creating a new key share holder group when `type` is set to either `KeyGenFromKeyGroup` or `Recovery`. 
 
-                      **Note:** In any [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) such as the 2-2, 2-3, and 3-3 schemes (in the "threshold - node count" format), for `node_ids`, you only need to fill in 1 Cobo TSS Node ID and enough non-Cobo TSS Node IDs to satisfy the number of approvers specified in `threshold`. To obtain the Cobo TSS Node ID, run [List all Cobo key share holders](/developers/v2/api-references/wallets--mpc-wallets/list-all-cobo-key-share-holders).
+                      **Note:** In any [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) such as the 2-2, 2-3, and 3-3 schemes (in the "threshold - node count" format), for `tss_node_ids`, you only need to fill in 1 Cobo TSS Node ID and enough non-Cobo TSS Node IDs to satisfy the number of approvers specified in `threshold`. To obtain the Cobo TSS Node ID, run [List all Cobo key share holders](/developers/v2/api-references/wallets--mpc-wallets/list-all-cobo-key-share-holders).
     createMpcVaultBody:
       description: The request body to create a vault.
       content:
@@ -6183,6 +6252,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    internalServerError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     serviceUnavailableError:
       description: Unknown internal error.
       content:
@@ -6313,7 +6388,7 @@ components:
                   Whether the request to delete the wallet has been successfully submitted.
                   - `true`: The request to delete the wallet has been successfully submitted.
                   - `false`: The request to delete the wallet has not been submitted.
-    spendableListResponse:
+    listUtxoResponse:
       description: The request was successful.
       content:
         application/json:
@@ -6326,7 +6401,7 @@ components:
                   $ref: '#/components/schemas/UTXO'
               pagination:
                 $ref: '#/components/schemas/Pagination'
-    lockSpendableResponse:
+    lockUtxoResponse:
       description: The request was successful.
       content:
         application/json:
@@ -6359,6 +6434,14 @@ components:
                   $ref: '#/components/schemas/AddressInfo'
               pagination:
                 $ref: '#/components/schemas/Pagination'
+    getAddressResponse:
+      description: Successfully listed address info
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AddressInfo'
     createAddressResponse:
       description: The request was successful.
       content:
@@ -6383,12 +6466,12 @@ components:
                   - `true`: The address is valid.
                   - `false`: the address is invalid.
                 example: true
-    createKeyGroupsResponse:
+    createKeyShareHolderGroupsResponse:
       description: mpc vault successfully created
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyGroup'
+            $ref: '#/components/schemas/KeyShareHolderGroup'
     createMpcProjectResponse:
       description: Successfully created project.
       content:
@@ -6410,21 +6493,26 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/KeyHolder'
-    getKeyGroupResponse:
+              $ref: '#/components/schemas/KeyShareHolder'
+    getKeyShareHolderGroupResponse:
       description: Successfully get mpc tss group
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyGroup'
-    getKeyGroupsResponse:
-      description: Successfully listed key share groups.
+            $ref: '#/components/schemas/KeyShareHolderGroup'
+    getKeyShareHolderGroupsResponse:
+      description: Successfully listed key share holder groups.
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/KeyGroup'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KeyShareHolderGroup'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     getMpcProjectResponse:
       description: Successfully listed all vaults.
       content:
@@ -6436,9 +6524,14 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/MPCProject'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MPCProject'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     getTssRequestResponse:
       description: Successfully retrieved TSS request.
       content:
@@ -6456,21 +6549,36 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/MPCVault'
-    deleteKeyGroupResponse:
-      description: Successfully deleted the specified key share group.
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MPCVault'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    deleteKeyShareHolderGroupResponse:
+      description: Successfully deleted the specified key share holder group.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyGroup'
-    putKeyGroupResponse:
+            type: object
+            required:
+              - submitted
+            properties:
+              submitted:
+                type: boolean
+                example: true
+                description: |
+                  Whether the request to delete the key share holder group has been successfully submitted.
+                  - `true`: The request to delete the key share holder group has been successfully submitted.
+                  - `false`: The request to delete the key share holder group has not been submitted.
+    putKeyShareHolderGroupResponse:
       description: Successfully modify mpc tss group
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/KeyGroup'
+            $ref: '#/components/schemas/KeyShareHolderGroup'
     putTssRequestResponse:
       description: Successfully modified the TSS request.
       content:
@@ -6530,9 +6638,7 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/EstimationFee'
+            $ref: '#/components/schemas/EstimationFee'
     transactionFeeResponse:
       description: Successful get a transaction detail
       content:

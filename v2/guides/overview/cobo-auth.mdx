@@ -1,0 +1,122 @@
+---
+title: "Authentication"
+---
+
+This article explains how to authenticate your API requests to the WaaS service using Cobo Auth. 
+
+<Note>If you are using Cobo's WaaS SDKs, you can skip this topic because the SDKs already encapsulate the authentication mechanism for you.</Note>
+
+To ensure secure access to your crypto assets, the WaaS service requires you to use an EdDSA signature to sign each of your API requests, except for publicly accessible API operations.
+
+You need to provide your API key, a nonce, and an API signature as request headers:
+
+```
+headers = {
+
+  "Biz-Api-Key": {YOUR_API_KEY}.hex(),
+
+  "Biz-Api-Nonce": {Nonce},
+
+  "Biz-Api-Signature": {YOUR_API_SIGNATURE}.hex(),
+
+}
+```
+
+- Biz-Api-Key: The public key you generate in [Generate an API key](#generate-an-api-key).
+- Biz-Api-Nonce: A nonce is the current time in Unix timestamp format, measured in milliseconds. 
+- Biz-Api-Signature: The API signature. To learn how to calculate an API signature, see [Calculate an API Signature](#calculate-the-api-signaturez).
+
+
+## API key
+
+The API key is used to identify the client making the API request. It is associated with a certain level of access to the API’s resources. Different API keys can be assigned with different permissions, allowing you to control what actions the client can perform.
+
+### Generate an API key
+
+This section introduces how to generate an API key using the Ed25519 algorithm.
+You can use either OpenSSL or the Python library to generate an Ed25519 key pair. The public key will be used as an API key, and the private key will be used as an API secret to sign an API request.
+
+#### Use OpenSSL
+
+In a terminal window, run the following OpenSSL commands:
+
+```shell
+# Generate a private key and save it in the `private.key.pem` file.
+openssl genpkey -algorithm ed25519 -out private_key.pem
+
+# Extract the public key from the private key and save it in the `public.key.pem` file.
+openssl pkey -in private_key.pem -pubout -out public_key.pem
+
+# Export the private key in hexadecimal format.
+openssl pkey -in private_key.pem -text | grep 'priv:' -A 3 | tail -n +2 | tr -d ':\n '
+
+# Export the public key in hexadecimal format.
+openssl pkey -pubin -in public_key.pem -text | grep 'pub:' -A 3 | tail -n +2 | tr -d ':\n '
+```
+
+The private key is saved in the `private.key.pem` file, and the public key is saved in the `public.key.pem` file.
+
+#### Use the Python library
+
+1. Install the ed25519 Python library. In a terminal window, run the following command:
+
+    ```shell
+    pip install ed25519
+    ```
+2. Generate a key pair. Import the function from the Python library to generate a key pair as follows:
+
+    ```python
+    from ed25519.keys import create_keypair
+
+    # Create a key pair
+    sk, vk = create_keypair()
+
+    # Print the private key in hexadecimal format.
+    print("private key:", sk.to_seed().hex())
+
+    # Print the public key in hexadecimal format.
+    print("public key:", vk.to_bytes().hex())
+    ```
+
+### Register the API key
+
+After generating an API key, you need to register the key and configure related permissions on Cobo Portal. To learn how to register an API key, see [Register an API key](https://manuals.cobo.com/en/portal/developer-console/create-api-key). 
+
+## Nonce
+
+A nonce is the current time in Unix timestamp format, measured in milliseconds. 
+
+## Calculate the API signature
+
+The following steps introduce how to calculate an API signature.
+
+1. First, concatenate a string based on your request as follows:
+
+    str_to_sign = `{METHOD}|{PATH}|{TIMESTAMP}|{PARAMS}|{BODY}`
+
+    | **Field** | **Description**                                              | **Example**                                                  |
+    | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+    | METHOD    | The HTTP method.                                             | `GET`                                                          |
+    | PATH      | The API endpoint.                                            | `/v2/transactions/transfer`                                    |
+    | TIMESTAMP | The current time in Unix timestamp format, measured in milliseconds. This value must be the same as the nonce in the request header. | `1718587017026`                                                |
+    | PARAMS    | (If applicable) The query parameters.                        | `chain_id=ETH&limit=10  `                                      |
+    | BODY      | (If applicable) The raw request body in string format.       | `{"name":"Default","wallet_subtype":"Asset","wallet_type":"Custodial"}` |
+
+
+2. Use the `hashlib` library to perform SHA-256 hashing twice on the string as follows:
+
+    ```python
+    import hashlib
+    content_hash = hashlib.sha256(hashlib.sha256(str_to_sign.encode()).digest()).digest()
+    ```
+
+3. Use the private key of your API key to sign the string as follows:
+
+    ```python
+    # Create an Ed25519 signing Key. Replace `api_secret` with your private key.
+    sk = ed25519.SigningKey(sk_s=bytes.fromhex(api_secret))
+    # Sign the hashed message
+    signature = sk.sign(content_hash)
+    ```
+
+Now you've calculated an API signature.

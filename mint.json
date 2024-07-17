@@ -75,8 +75,18 @@
       "version": "Version 1.0"
     },
     {
+      "name": "Guides",
+      "url": "v2/guides",
+      "version": "Version 2.0"
+    },
+    {
       "name": "API References",
       "url": "v2/api-references",
+      "version": "Version 2.0"
+    },
+    {
+      "name": "Developer Tools",
+      "url": "v2/developer-tools",
       "version": "Version 2.0"
     }
   ],
@@ -485,7 +495,9 @@
     {
       "group": "Overview",
       "pages": [
-        "v2/guides/waas-overview"
+        "v2/guides/overview/introduction",
+        "v2/guides/overview/changelog",
+        "v2/guides/overview/cobo-auth"
       ],
       "version": "Version 2.0"
     },
@@ -497,9 +509,9 @@
       "version": "Version 2.0"
     },
     {
-      "group": "Overview",
+      "group": "Troubleshoot",
       "pages": [
-        "v2/api-references/overview/introduction"
+        "v2/guides/troubleshoot/error-codes"
       ],
       "version": "Version 2.0"
     },
@@ -520,16 +532,16 @@
             "v2/api-references/wallets/get-wallet-information",
             "v2/api-references/wallets/update-wallet",
             "v2/api-references/wallets/delete-wallet",
-            "v2/api-references/wallets/list-spendable-utxos",
+            "v2/api-references/wallets/list-utxos",
             "v2/api-references/wallets/lock-utxos",
             "v2/api-references/wallets/unlock-utxos",
             "v2/api-references/wallets/get-maximum-transferable-value",
             "v2/api-references/wallets/list-wallet-addresses",
-            "v2/api-references/wallets/generate-new-addresses-in-wallet",
+            "v2/api-references/wallets/create-addresses-in-wallet",
             "v2/api-references/wallets/get-address-information",
-            "v2/api-references/wallets/check-address-validity",
+            "v2/api-references/wallets/list-token-balances-by-address",
             "v2/api-references/wallets/list-token-balances-by-wallet",
-            "v2/api-references/wallets/list-token-balances-by-address"
+            "v2/api-references/wallets/check-address-validity"
           ],
           "version": "Version 2.0"
         },
@@ -545,11 +557,11 @@
             "v2/api-references/wallets--mpc-wallets/create-vault",
             "v2/api-references/wallets--mpc-wallets/get-vault-information",
             "v2/api-references/wallets--mpc-wallets/update-vault-name",
-            "v2/api-references/wallets--mpc-wallets/list-all-key-share-groups",
-            "v2/api-references/wallets--mpc-wallets/create-key-share-group",
-            "v2/api-references/wallets--mpc-wallets/get-key-share-group-information",
-            "v2/api-references/wallets--mpc-wallets/update-key-share-group",
-            "v2/api-references/wallets--mpc-wallets/delete-key-share-group",
+            "v2/api-references/wallets--mpc-wallets/list-all-key-share-holder-groups",
+            "v2/api-references/wallets--mpc-wallets/create-key-share-holder-group",
+            "v2/api-references/wallets--mpc-wallets/get-key-share-holder-group-information",
+            "v2/api-references/wallets--mpc-wallets/update-key-share-holder-group",
+            "v2/api-references/wallets--mpc-wallets/delete-key-share-holder-group",
             "v2/api-references/wallets--mpc-wallets/list-tss-requests",
             "v2/api-references/wallets--mpc-wallets/create-tss-request",
             "v2/api-references/wallets--mpc-wallets/get-tss-request",
@@ -566,7 +578,6 @@
         {
           "group": "Transaction operations",
           "pages": [
-            "v2/api-references/transactions/get-fee-rates",
             "v2/api-references/transactions/estimate-transaction-fee",
             "v2/api-references/transactions/transfer-token",
             "v2/api-references/transactions/call-smart-contract",
@@ -601,6 +612,13 @@
           ],
           "version": "Version 2.0"
         }
+      ],
+      "version": "Version 2.0"
+    },
+    {
+      "group": "WaaS SDKs",
+      "pages": [
+        "v2/developer-tools/quickstart-python"
       ],
       "version": "Version 2.0"
     }
