@@ -7,6 +7,7 @@ required:
   - status
   - created_at
   - updated_at
+  - token_id
 properties:
   id:
     description: The unique id of the activity.
@@ -30,6 +31,10 @@ properties:
     type: string
     example: 'babylon_btc'
     description: The id of the staking pool.
+  token_id:
+    type: string
+    example: 'BTC'
+    description: The id of the token.
   staking_id:
     type: string
     example: '0011039d-27fb-49ba-b172-6e0aa80e37ec'
