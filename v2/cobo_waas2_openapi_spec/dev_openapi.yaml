@@ -1136,7 +1136,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/optionalRequestIdParam'
         - $ref: '#/components/parameters/optionalCoboIdParam'
-        - name: transaction_id
+        - name: transaction_ids
           in: query
           required: false
           description: 'A list of transaction ID, separated by comma. The transaction ID.'
@@ -1144,7 +1144,7 @@ paths:
             type: string
             format: uuid
           example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
-        - name: transaction_hash
+        - name: transaction_hashes
           in: query
           required: false
           description: 'A list of transaction hash, separated by comma. The transaction hash.'
@@ -1153,13 +1153,13 @@ paths:
           example: 239861be9a4afe080c359b7fe4a1d035945ec46256b1a0f44d1267c71de8ec28
         - $ref: '#/components/parameters/optionalTransactionTypeListParam'
         - $ref: '#/components/parameters/optionalTransactionStatusListParam'
-        - $ref: '#/components/parameters/optionalWalletListIdParam'
         - $ref: '#/components/parameters/optionalTransactionSourceTypeListParam'
         - $ref: '#/components/parameters/optionalTransactionSourceAddressListParam'
         - $ref: '#/components/parameters/optionalTransactionSourceWalletIdListParam'
         - $ref: '#/components/parameters/optionalTransactionDestinationTypeListParam'
         - $ref: '#/components/parameters/optionalTransactionDestinationAddressListParam'
         - $ref: '#/components/parameters/optionalTransactionDestinationWalletIdListParam'
+        - $ref: '#/components/parameters/optionalWalletListIdParam'
         - $ref: '#/components/parameters/optionalChainIdListParam'
         - $ref: '#/components/parameters/optionalTokenListIdParam'
         - $ref: '#/components/parameters/optionalAssetIdListParam'
@@ -5190,7 +5190,7 @@ components:
         type: string
       example: USDT
     optionalAssetIdListParam:
-      name: asset_id
+      name: asset_ids
       in: query
       required: false
       description: 'A list of asset IDs, separated by comma. (This concept applies to Exchange Wallets only) An asset is a digital representation of a valuable resource on a blockchain network. Exchange Wallets group your holdings by asset, even if the same asset exists on different blockchains. For example, if your Exchange Wallet has 1 USDT on Ethereum and 1 USDT on TRON, then your asset balance is 2 USDT.'
@@ -5231,7 +5231,7 @@ components:
         type: string
       example: ETH
     optionalChainIdListParam:
-      name: chain_id
+      name: chain_ids
       in: query
       required: false
       description: 'A list of chain IDs, separated by comma. The chain ID is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](/developers/v2/api-references/wallets/list-enabled-chains).'
@@ -5256,7 +5256,7 @@ components:
         type: string
       example: ETH_USDT
     optionalTokenListIdParam:
-      name: token_id
+      name: token_ids
       in: query
       required: false
       description: 'A list of token IDs, separated by comma. The token ID is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](/developers/v2/api-references/wallets/list-enabled-tokens).'
@@ -5467,7 +5467,7 @@ components:
         format: uuid
       example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     optionalProjectIdListQueryParam:
-      name: project_id
+      name: project_ids
       in: query
       description: 'A list of MPC project IDs, separated by comma. The MPC project ID.'
       schema:
@@ -5509,7 +5509,7 @@ components:
         format: uuid
       example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     optionalVaultIdListQueryParam:
-      name: vault_id
+      name: vault_ids
       in: query
       required: false
       description: 'A list of vault IDs, separated by comma. The vault ID.'
@@ -5579,7 +5579,7 @@ components:
         type: string
       example: web_send_by_user_327_1610444045047
     optionalCoboIdParam:
-      name: cobo_id
+      name: cobo_ids
       in: query
       required: false
       description: 'A list of Cobo IDs, separated by comma. The Cobo ID, which can be used to track a transaction.'
@@ -5594,7 +5594,7 @@ components:
       schema:
         $ref: '#/components/schemas/TransactionType'
     optionalTransactionTypeListParam:
-      name: type
+      name: types
       in: query
       required: false
       description: |
@@ -5618,7 +5618,7 @@ components:
       schema:
         $ref: '#/components/schemas/TransactionStatus'
     optionalTransactionStatusListParam:
-      name: status
+      name: statuses
       in: query
       required: false
       description: |
@@ -5653,7 +5653,7 @@ components:
         type: integer
       example: 1635744000
     optionalTransactionSourceTypeListParam:
-      name: source_type
+      name: source_types
       in: query
       required: false
       description: |
@@ -5668,7 +5668,7 @@ components:
         type: string
       example: 'Deposit,Withdrawal'
     optionalTransactionSourceAddressListParam:
-      name: source_wallet_id
+      name: source_wallet_ids
       in: query
       required: false
       description: 'A list of wallet IDs, separated by comma. The wallet ID of the transaction source.'
@@ -5677,14 +5677,14 @@ components:
         format: uuid
       example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
     optionalTransactionSourceWalletIdListParam:
-      name: source_address
+      name: source_addresses
       in: query
       required: false
       description: 'A list of addresses, separated by comma. The address of the transaction source.'
       schema:
         type: string
     optionalTransactionDestinationTypeListParam:
-      name: destination_type
+      name: destination_types
       in: query
       required: false
       description: |
@@ -5700,7 +5700,7 @@ components:
         type: string
       example: 'ContractCall,MessageSign'
     optionalTransactionDestinationAddressListParam:
-      name: destination_wallet_id
+      name: destination_wallet_ids
       in: query
       required: false
       description: 'A list of wallet IDs, separated by comma. The wallet ID of the transaction destination.'
@@ -5709,7 +5709,7 @@ components:
         format: uuid
       example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3'
     optionalTransactionDestinationWalletIdListParam:
-      name: destination_address
+      name: destination_addresses
       in: query
       required: false
       description: |

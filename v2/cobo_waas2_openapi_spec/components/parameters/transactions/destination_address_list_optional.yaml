@@ -1,4 +1,4 @@
-name: destination_address
+name: destination_addresses
 in: query
 required: false
 description: |

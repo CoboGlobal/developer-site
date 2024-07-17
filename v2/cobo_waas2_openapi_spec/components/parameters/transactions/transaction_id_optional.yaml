@@ -1,4 +1,4 @@
-name: transaction_id
+name: transaction_ids
 in: query
 required: false
 description: A list of transaction ID, separated by comma. The transaction ID.

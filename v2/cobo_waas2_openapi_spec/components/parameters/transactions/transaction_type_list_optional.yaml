@@ -1,4 +1,4 @@
-name: type
+name: types
 in: query
 required: false
 description: |

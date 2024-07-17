@@ -1,4 +1,4 @@
-name: cobo_id
+name: cobo_ids
 in: query
 required: false
 description: A list of Cobo IDs, separated by comma. The Cobo ID, which can be used to track a transaction.

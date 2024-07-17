@@ -1,4 +1,4 @@
-name: destination_type
+name: destination_types
 in: query
 required: false
 description: | 

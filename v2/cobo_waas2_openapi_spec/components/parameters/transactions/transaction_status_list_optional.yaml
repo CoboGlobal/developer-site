@@ -1,4 +1,4 @@
-name: status
+name: statuses
 in: query
 required: false
 description: |

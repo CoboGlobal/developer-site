@@ -1,4 +1,4 @@
-name: transaction_hash
+name: transaction_hashes
 in: query
 required: false
 description: A list of transaction hash, separated by comma. The transaction hash.

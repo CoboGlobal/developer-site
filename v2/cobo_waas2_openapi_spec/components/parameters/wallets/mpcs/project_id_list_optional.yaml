@@ -1,4 +1,4 @@
-name: project_id
+name: project_ids
 in: query
 description: A list of MPC project IDs, separated by comma. The MPC project ID.
 schema:

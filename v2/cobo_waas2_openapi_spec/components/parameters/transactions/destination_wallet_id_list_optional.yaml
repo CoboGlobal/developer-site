@@ -1,4 +1,4 @@
-name: destination_wallet_id
+name: destination_wallet_ids
 in: query
 required: false
 description: A list of wallet IDs, separated by comma. The wallet ID of the transaction destination.

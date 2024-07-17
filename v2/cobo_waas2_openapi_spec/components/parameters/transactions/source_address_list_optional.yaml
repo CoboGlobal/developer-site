@@ -1,4 +1,4 @@
-name: source_address
+name: source_addresses
 in: query
 required: false
 description: A list of addresses, separated by comma. The address of the transaction source.

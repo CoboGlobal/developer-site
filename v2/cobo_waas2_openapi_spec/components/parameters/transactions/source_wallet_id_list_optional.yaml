@@ -1,4 +1,4 @@
-name: source_wallet_id
+name: source_wallet_ids
 in: query
 required: false
 description: A list of wallet IDs, separated by comma. The wallet ID of the transaction source.
