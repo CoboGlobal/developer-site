@@ -2,7 +2,7 @@
 title: "Introduction"
 ---
 
-The Cobo Wallet-as-a-Service (WaaS) 2.0 API enables you to access Cobo's full suite of crypto wallet technologies with powerful and flexible access controls. The RESTful SaaS API over HTTPS provides a variety of capabilities, including managing wallets and addresses, making transactions, and configuring webhook endpoints.
+The Cobo Wallet-as-a-Service (WaaS) 2.0 API enables you to access Cobo's full suite of crypto wallet technologies with powerful and flexible access controls. The RESTful SaaS API provides a variety of capabilities, including managing wallets and addresses, making transactions, and configuring webhook endpoints.
 
 ## HTTP hosts
 The WaaS service offers several HTTP hosts for different use cases: 
@@ -11,7 +11,7 @@ The WaaS service offers several HTTP hosts for different use cases:
 - Production environment: `https://api.cobo.com`
 
 ## Authentication
-To ensure secure access to your crypto assets via the WaaS 2.0 API, the WaaS service validates the use of EdDSA signatures for authentication in all API calls. For more details, see [Authentication](cobo-auth).
+To ensure secure access to your crypto assets, the WaaS service requires you to use an EdDSA signature to sign each of your API requests, except for publicly accessible API operations. For more details, see [Authentication](cobo-auth).
 
 ## Pagination
 
