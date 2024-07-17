@@ -1,9 +1,8 @@
-name: vault_id
+name: vault_ids
 in: query
 required: false
-description: The vault ID.
+description: A list of vault IDs, separated by comma. The vault ID.
 schema:
-  description: A list of vault IDs, separated by comma.
   type: string
   format: uuid
 example: 'f5c3f9e8-1d8a-44b2-9284-94bf76b7b017,ab2e3f55-472e-4a98-86d1-446d2f9e839e'
