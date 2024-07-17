@@ -1872,6 +1872,10 @@ components:
           required:
             - vault_id
           properties:
+            project_id:
+              type: string
+              example: 0111039d-27fb-49ba-b172-6e0aa80e37ec
+              description: The project ID.
             vault_id:
               type: string
               description: The ID of the owning vault.
@@ -4046,10 +4050,10 @@ components:
                     type: string
                     description: The script of the output. It is a programmable code fragment that defines the conditions under which the UTXO can be spent.
                     example: 76a914fb37342f6275b13936799def06f2DEMO
-            change_address:
-              type: string
-              description: The address used to receive the remaining funds or change from the transaction.
-              example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sDEMO
+        change_address:
+          type: string
+          description: The address used to receive the remaining funds or change from the transaction.
+          example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sDEMO
         force_internal:
           type: boolean
           description: |
