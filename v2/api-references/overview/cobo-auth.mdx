@@ -2,13 +2,9 @@
 title: "Authentication"
 ---
 
-# Introduction
-
 This article explains how to authenticate your API requests to the WaaS service using Cobo Auth. 
 
-To authenticate your API request, add the authentication information to the request headers.
-
-**Note**: If you are using Cobo's WaaS SDKs, you can skip this topic because the SDKs already encapsulate the authentication mechanism for you.
+<Note>If you are using Cobo's WaaS SDKs, you can skip this topic because the SDKs already encapsulate the authentication mechanism for you.</Note>
 
 To ensure secure access to your crypto assets, the WaaS service requires you to use an EdDSA signature to sign each of your API requests, except for publicly accessible API operations.
 
@@ -28,14 +24,11 @@ headers = {
 
 ## API key
 
-A unique identifier used to authenticate and authorize API requests. An API key allows an organization to initiate specific actions such as withdrawals. 
+The API key is used to identify the client making the API request. It is associated with a certain level of access to the API’s resources. Different API keys can be assigned with different permissions, allowing you to control what actions the client can perform.
 
 ### Generate an API key
 
-The API key is used to identify the client making the API request. It is associated with a certain level of access to the API’s resources. Different API keys can be assigned with different permissions, allowing you to control what actions the client can perform.
-
 This section introduces how to generate an API key using the Ed25519 algorithm.
-
 You can use either OpenSSL or the Python library to generate an Ed25519 key pair. The public key will be used as an API key, and the private key will be used as an API secret to sign an API request.
 
 #### Use OpenSSL
@@ -90,27 +83,27 @@ After generating an API key, you need to register the key and configure related 
 
 A nonce is the current time in Unix timestamp format, measured in milliseconds. 
 
-## API signature
+## Calculate the API signature
 
 The following steps introduce how to calculate an API signature.
 
 1. First, concatenate a string based on your request as follows:
-    str_to_sign = {METHOD}|{PATH}|{TIMESTAMP}|{PARAMS}|{BODY} 
+
+    str_to_sign = `{METHOD}|{PATH}|{TIMESTAMP}|{PARAMS}|{BODY}`
 
     | **Field** | **Description**                                              | **Example**                                                  |
     | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-    | METHOD    | The HTTP method.                                             | GET                                                          |
-    | PATH      | The API endpoint.                                            | /v2/transactions/transfer                                    |
-    | TIMESTAMP | The current time in Unix timestamp format, measured in milliseconds. This value must be the same as the nonce in the request header. | 1718587017026                                                |
-    | PARAMS    | (If applicable) The query parameters.                        | chain_id=ETH&limit=10                                        |
-    | BODY      | (If applicable) The raw request body in string format.       | {"name":"Default","wallet_subtype":"Asset","wallet_type":"Custodial"} |
+    | METHOD    | The HTTP method.                                             | `GET`                                                          |
+    | PATH      | The API endpoint.                                            | `/v2/transactions/transfer`                                    |
+    | TIMESTAMP | The current time in Unix timestamp format, measured in milliseconds. This value must be the same as the nonce in the request header. | `1718587017026`                                                |
+    | PARAMS    | (If applicable) The query parameters.                        | `chain_id=ETH&limit=10  `                                      |
+    | BODY      | (If applicable) The raw request body in string format.       | `{"name":"Default","wallet_subtype":"Asset","wallet_type":"Custodial"}` |
 
 
 2. Use the `hashlib` library to perform SHA-256 hashing twice on the string as follows:
 
     ```python
     import hashlib
-
     content_hash = hashlib.sha256(hashlib.sha256(str_to_sign.encode()).digest()).digest()
     ```
 
@@ -119,7 +112,6 @@ The following steps introduce how to calculate an API signature.
     ```python
     # Create an Ed25519 signing Key. Replace `api_secret` with your private key.
     sk = ed25519.SigningKey(sk_s=bytes.fromhex(api_secret))
-
     # Sign the hashed message
     signature = sk.sign(content_hash)
     ```

@@ -2,7 +2,7 @@
 title: "Introduction"
 ---
 
-Cobo Wallet-as-a-Service (WaaS) 2.0 API enables you to access Cobo's full suite of crypto wallet technologies with powerful and flexible access controls. The RESTful SaaS API over HTTPS provides a variety of capabilities, including managing wallets and addresses, making transactions, and configuring webhook endpoints.
+The Cobo Wallet-as-a-Service (WaaS) 2.0 API enables you to access Cobo's full suite of crypto wallet technologies with powerful and flexible access controls. The RESTful SaaS API over HTTPS provides a variety of capabilities, including managing wallets and addresses, making transactions, and configuring webhook endpoints.
 
 ## HTTP hosts
 The WaaS service offers several HTTP hosts for different use cases: 
@@ -11,25 +11,14 @@ The WaaS service offers several HTTP hosts for different use cases:
 - Production environment: `https://api.cobo.com`
 
 ## Authentication
-To ensure secure access to your crypto assets via the WaaS 2.0 API, the WaaS service validates the use of EDDSA signatures for authentication in all API calls. Access to the API is denied without proper authentication. You need to provide an API key, a nonce, and an API signature in the request header.
-
-## Query and path parameters
-A path parameter is a variable segment embedded directly within the request URL. It allows you to specify a specific resource or data point within the API. For example, the `transactions` endpoint has a path parameter `transaction_id`. To retrieve information for a transaction with ID `a239861be9a4afe080c359b7fe4a1d`, you can use the request URL `https://api.dev.cobo.com/v2/transactions/a239861be9a4afe080c359b7fe4a1d`.
-
-A query parameter is a key-value pair appended to the end of a request URL after a question mark. It allows you to filter the response of an API request. For example, the `supported_chains` endpoint supports a query parameter `wallet_type`. To filter the chains supported by Custodial Wallets, you can use the request URL `https://api.dev.cobo.com/v2/wallets/supported_chains?wallet_type=Custodial`.
-
-## Sorting
-
-Some API operations support the `sort_by` and `direction` parameters, which enable you to sort the result based on a specified field in ascending or descending order.
-
-For example, if you want to sort the transactions by the status field in descending order, you can append the sorting parameters to the request URL as `https://api.dev.cobo.com/v2/transactions?sort_by=status&direction=DESC`.
+To ensure secure access to your crypto assets via the WaaS 2.0 API, the WaaS service validates the use of EdDSA signatures for authentication in all API calls. For more details, see [Authentication](cobo-auth).
 
 ## Pagination
 
 Some endpoints support pagination which allows you to retrieve data in manageable chunks. You can control the page size and navigate through the dataset using three query parameters:
 
-- `before`: This parameter specifies an object ID that acts as a starting point for retrieving data in reverse chronological order. 
-- `after`: This parameter specifies an object ID that acts as a starting point for retrieving data in chronological order.
+- `before`: This parameter specifies an object ID that acts as a starting point for retrieving data in reverse chronological order. You can set this parameter to the value of `pagination.before` in the response of the previous request.
+- `after`: This parameter specifies an object ID that acts as a starting point for retrieving data in chronological order. You can set this parameter to the value of `pagination.after` in the response of the previous request.
 - `limit`: This parameter defines the maximum number of objects you want to receive in each response.
 
 ## Webhook events

@@ -501,7 +501,7 @@
     {
       "group": "Troubleshoot",
       "pages": [
-        "v2/api-references/development/error-codes"
+        "v2/api-references/troubleshoot/error-codes"
       ],
       "version": "Version 2.0"
     },
@@ -602,6 +602,13 @@
           ],
           "version": "Version 2.0"
         }
+      ],
+      "version": "Version 2.0"
+    },
+    {
+      "group": "WaaS SDK",
+      "pages": [
+        "v2/developer-tools/quickstart-python"
       ],
       "version": "Version 2.0"
     }
