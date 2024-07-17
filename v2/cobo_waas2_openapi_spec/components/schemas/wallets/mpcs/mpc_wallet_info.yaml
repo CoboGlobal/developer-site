@@ -5,6 +5,10 @@ allOf:
     required:
       - vault_id
     properties:
+      project_id:
+        type: string
+        example: "0111039d-27fb-49ba-b172-6e0aa80e37ec"
+        description: The project ID.
       vault_id:
         type: string
         description: The ID of the owning vault.
