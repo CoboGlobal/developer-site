@@ -1,8 +1,8 @@
-name: destination_type
+name: destination_types
 in: query
 required: false
 description: | 
-  The transaction destination type. Possible values include:
+  A list of destination types, separated by comma. The transaction destination type. Possible values include:
     - `Address`: An external address. 
     - `ContractCall`: A transaction that interacts with a smart contract.
     - `MessageSign`: A transaction that signs a message. 
@@ -11,5 +11,5 @@ description: |
     - `SafeWallet`: A Smart Contract Wallets (Safe{Wallet}).
     - `ExchangeWallet`: An Exchange Wallet.
 schema:
-  description: A list of destination types, separated by comma.
+  type: string
 example: 'ContractCall,MessageSign'

@@ -1,8 +1,8 @@
-name: status
+name: statuses
 in: query
 required: false
 description: |
-  The transaction status. Possible values include: 
+  A list of transaction statuses, separated by comma. The transaction status. Possible values include: 
     - `Submitted`: The transaction is submitted.
     - `PendingScreening`: The transaction is pending screening by Risk Control. 
     - `PendingAuthorization`: The transaction is pending approvals.
@@ -14,5 +14,5 @@ description: |
     - `Rejected`: The transaction is rejected.
     - `Pending`: The transaction is pending.
 schema:
-  description: A list of transaction statuses, separated by comma.
+  type: string
 example: 'Completed,Failed'
