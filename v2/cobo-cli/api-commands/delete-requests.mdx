@@ -1,0 +1,60 @@
+---
+title: "DELETE Requests"
+---
+
+The `cobo delete` command allows you to make DELETE requests to Cobo API
+endpoints. This command is useful for removing resources from the Cobo WaaS 2
+API.
+
+## Usage
+
+```bash
+$ cobo delete <path> [options]
+```
+
+## Options
+
+- `-d, --describe`: Display operation description
+- `-l, --list`: List all API operations for this method
+
+## Examples
+
+### List all DELETE operations
+
+To see a list of all available DELETE operations:
+
+```bash
+$ cobo delete -l
+```
+
+### Delete a webhook endpoint
+
+To delete a specific webhook endpoint:
+
+```bash
+$ cobo delete /webhooks/{webhook_id} --webhook_id your_webhook_id
+```
+
+### Remove a key share holder
+
+To remove a key share holder from a group:
+
+```bash
+$ cobo delete /wallets/mpc/key_share_holder_groups/{group_id}/key_share_holders/{holder_id} --group_id your_group_id --holder_id your_holder_id
+```
+
+### Get operation description
+
+To see the description of a specific DELETE operation:
+
+```bash
+$ cobo delete /webhooks/{webhook_id} -d
+```
+
+## API Reference
+
+For a complete list of available DELETE endpoints and their parameters, refer to the [Cobo WaaS 2 API Documentation](https://www.cobo.com/developers/v2/api-references/).
+
+<Note>
+Remember to authenticate your requests by logging in or setting up your API keys before making API calls.
+</Note>

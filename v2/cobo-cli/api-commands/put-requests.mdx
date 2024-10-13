@@ -1,0 +1,59 @@
+---
+title: "PUT Requests"
+---
+
+The `cobo put` command allows you to make PUT requests to Cobo API endpoints.
+This command is useful for updating existing resources in the Cobo WaaS 2 API.
+
+## Usage
+
+```bash
+$ cobo put <path> [options]
+```
+
+## Options
+
+- `-d, --describe`: Display operation description
+- `-l, --list`: List all API operations for this method
+
+## Examples
+
+### List all PUT operations
+
+To see a list of all available PUT operations:
+
+```bash
+$ cobo put -l
+```
+
+### Update wallet information
+
+To update information for a specific wallet:
+
+```bash
+$ cobo put /wallets/{wallet_id} --wallet_id your_wallet_id --name "Updated Wallet Name"
+```
+
+### Update transaction status
+
+To update the status of a transaction:
+
+```bash
+$ cobo put /transactions/{transaction_id} --transaction_id your_transaction_id --status Completed
+```
+
+### Get operation description
+
+To see the description of a specific PUT operation:
+
+```bash
+$ cobo put /wallets/{wallet_id} -d
+```
+
+## API Reference
+
+For a complete list of available PUT endpoints and their parameters, refer to the [Cobo WaaS 2 API Documentation](https://www.cobo.com/developers/v2/api-references/).
+
+<Note>
+Remember to authenticate your requests by logging in or setting up your API keys before making API calls.
+</Note>

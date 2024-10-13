@@ -1,0 +1,99 @@
+---
+title: "Key Management"
+---
+
+This guide explains how to generate and manage API and APP keys using the Cobo
+CLI. Proper key management is crucial for secure access to Cobo WaaS 2.0
+services and efficient application development.
+
+## Generate Keys
+
+To generate a new API or APP key pair, use the `keys generate` command:
+
+```bash
+$ cobo keys generate [OPTIONS]
+```
+
+### Options
+
+- `--key-type`: Specify the type of key to generate (API or APP). Default is API.
+- `--alg`: Specify the key generation algorithm. Default is ed25519.
+- `--force`: Force replacement of existing keys.
+
+### Examples
+
+Generate a new API key pair:
+
+```bash
+$ cobo keys generate
+```
+
+Generate a new APP key pair:
+
+```bash
+$ cobo keys generate --key-type APP
+```
+
+Generate a new API key pair with a specific algorithm:
+
+```bash
+$ cobo keys generate --alg rsa
+```
+
+Force replacement of existing API keys:
+
+```bash
+$ cobo keys generate --force
+```
+
+## Key Storage
+
+Generated keys are securely stored in your environment file (default: ~/.cobo/.env). The public key is stored as `<ENV>_<KEY_TYPE>_KEY`, and the secret key is stored as `<ENV>_<KEY_TYPE>_SECRET`.
+
+<Warning>
+Never share your secret key. Keep it secure and use only the public key when configuring API access in the Cobo Portal.
+</Warning>
+
+## Using API Keys for Authentication
+
+After generating an API key pair, follow these steps to use it for authentication with the Cobo CLI:
+
+1. Switch to API key authentication using the following command:
+
+```bash
+$ cobo auth apikey
+```
+
+This sets the authentication method to use the API key stored in your environment file.
+
+2. Add the newly generated API key to the Cobo Portal:
+   - Log in to the Cobo Portal and navigate to the developer console.
+   - Find the API Key Management page.
+   - Add the newly generated API key (use the public key).
+   - Grant the API key appropriate wallet scope, roles, and permissions.
+
+<Tip>
+You can quickly access the developer console by using the `cobo open developer`
+command. This shortcut opens your browser and takes you directly to the right
+page in the Cobo Portal. For more information on browser shortcuts, see the
+[Open Browser Shortcuts](/v2/cobo-cli/utility-commands/open-browser-shortcuts)
+guide.
+</Tip>
+
+<Warning>
+Ensure you grant only the necessary permissions to your API key. Limiting access helps maintain the security of your account and resources.
+</Warning>
+
+3. Once you've added the API key to the Cobo Portal and set the appropriate permissions, your Cobo CLI will be able to authenticate using this key for subsequent operations.
+
+<Note>
+Remember to update the API key in the Cobo Portal's API Key management console every time you generate a new key pair using the CLI.
+</Note>
+
+## Best Practices
+
+- Regularly rotate your API and APP keys to maintain security.
+- Use different keys for different environments (development, sandbox, production).
+- Limit the permissions associated with each key to the minimum required for its intended use.
+- Monitor key usage and revoke any keys that may have been compromised.
+

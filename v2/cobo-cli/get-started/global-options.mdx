@@ -1,0 +1,110 @@
+---
+title: 'Global Options'
+---
+
+Cobo CLI provides several global options that can be used with any command to customize its behavior. These options allow you to control the environment, authentication method, and other settings for your CLI operations.
+
+## Available Global Options
+
+### Environment Selection (-e, --env)
+
+The `-e` or `--env` option allows you to override the default environment for a specific command.
+
+Usage:
+
+```bash
+$ cobo -e sandbox get /wallets 
+```
+
+Possible values include:
+- `sandbox`: Sandbox environment
+- `dev`: Development environment
+- `prod`: Production environment
+
+If not specified, the CLI will use the environment set in your configuration or default to the development environment.
+
+### Authentication Method (-a, --auth)
+
+The `-a` or `--auth` option allows you to override the default authentication method for a specific command.
+
+Usage:
+
+```bash
+$ cobo -a user get /wallets
+```
+
+Possible values include:
+- `apikey`: Use API key authentication
+- `user`: Use user-based authentication
+- `org`: Use organization-based authentication
+
+If not specified, the CLI will use the authentication method set in your configuration or default to API key authentication.
+
+### Debug Mode (--enable-debug)
+
+The `--enable-debug` flag enables debug mode, which provides verbose logging for troubleshooting purposes.
+
+Usage:
+
+```bash
+$ cobo --enable-debug get /wallets
+```
+
+### Custom Environment File (--env-file)
+
+The `--env-file` option allows you to specify a custom path for the .env file containing your environment variables.
+
+Usage:
+
+```bash
+$ cobo-cli --env-file /path/to/custom/.env get /wallets 
+```
+
+If not specified, the CLI will use the default .env file located in your Cobo CLI configuration directory.
+
+### Custom API Specification (--spec)
+
+The `--spec` option allows you to specify a custom OpenAPI specification file for the Cobo API.
+
+Usage:
+
+```bash
+$ cobo --spec /path/to/custom/openapi.yaml get /wallets
+```
+
+This option is useful when you need to work with a different version of the API or when testing against a modified API specification.
+
+## Combining Global Options
+
+You can combine multiple global options in a single command:
+
+```bash
+$ cobo -e prod -a user --enable-debug --spec /path/to/custom/openapi.yaml get /wallets
+```
+
+This command will:
+1. Use the production environment
+2. Authenticate using user-based authentication
+3. Enable debug mode for verbose logging
+4. Use a custom API specification file
+5. Execute the GET request to retrieve wallet information
+
+## Configuration Precedence
+
+The Cobo CLI follows this order of precedence when determining which settings to use:
+
+1. Command-line options (highest priority)
+2. Environment variables
+3. Configuration file settings
+4. Default values (lowest priority)
+
+This allows you to easily override settings on a per-command basis without modifying your configuration files.
+
+<Note>
+Global options should be placed before the specific command you want to run. For example, `-e sandbox` should come before `get /wallets`.
+</Note>
+
+By using these global options, you can flexibly control the behavior of the Cobo
+CLI across different environments, authentication methods, and API
+specifications, making it easier to manage your workflows and integrate with
+various Cobo services.

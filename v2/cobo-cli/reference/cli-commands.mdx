@@ -1,0 +1,293 @@
+---
+title: 'CLI Commands Reference'
+description: 'A comprehensive guide to all commands supported by Cobo CLI'
+---
+
+This document provides a detailed reference for all commands supported by the
+Cobo CLI tool. Each command is explained with its purpose, options, and usage
+examples.
+
+## Global Options
+
+The following options can be used with any command:
+
+- `-e, --env`: Override the environment for this command. Choices are [development, sandbox, production].
+- `-a, --auth`: Override the authentication method for this command. Choices are [apikey, oauth].
+- `--enable-debug`: Enable debug mode for verbose logging.
+- `--env-file`: Specify the path to the dotenv file. Default is ~/.cobo/.env.
+- `--spec`: Path to a custom OpenAPI specification file.
+
+## Main Commands
+
+### version
+
+Display the current version of the Cobo CLI tool.
+
+Usage:
+```bash
+$ cobo version
+```
+
+### config
+
+Manage CLI configuration settings.
+
+Subcommands:
+- `set <key> <value>`: Set a configuration value.
+- `get <key>`: Get a configuration value.
+- `list`: List all configuration values.
+- `delete <key>`: Delete a configuration value.
+
+Usage:
+```bash
+$ cobo config set api_key your_api_key
+$ cobo config get api_key
+$ cobo config list
+$ cobo config delete api_key
+```
+
+### login
+
+Perform user or organization login operations.
+
+Options:
+- `--user, -u`: Login action associated with user dimension (default).
+- `--org, -o`: Login action associated with organization dimension.
+- `--org-uuid`: Specify the organization ID used to retrieve the token (required for organization login).
+- `--refresh-token`: Refresh the existing token instead of generating a new one.
+
+Usage:
+```bash
+$ cobo login
+$ cobo login --org --org-uuid your_org_uuid
+```
+
+### logout
+
+Perform user or organization logout operations.
+
+Options:
+- `--user, -u`: Logout action associated with user dimension.
+- `--org, -o`: Logout action associated with organization dimension.
+- `--all, -a`: Logout action for both user and organization (default).
+
+Usage:
+```bash
+$ cobo logout
+$ cobo logout --user
+$ cobo logout --org
+```
+
+### keys
+
+Commands to generate and manage API/APP keys.
+
+Subcommands:
+- `generate`: Generate a new API/APP key pair.
+
+Options for generate:
+- `--key-type`: Type of key to generate (API or APP). Default is API.
+- `--alg`: Specify the key generation algorithm. Default is ed25519.
+- `--force`: Force to replace existing keys.
+
+Usage:
+```bash
+$ cobo keys generate
+$ cobo keys generate --key-type APP --alg rsa --force
+```
+
+### app
+
+Commands to create, run, publish, and manage Cobo applications.
+
+Subcommands:
+- `init`: Create a new Cobo application from template.
+- `run`: Run a Cobo application.
+- `publish`: Publish a Cobo application.
+- `update`: Update a Cobo application.
+- `status`: Check the status of a Cobo application.
+
+Usage:
+```bash
+$ cobo app init -f nextjs -d my_app
+$ cobo app run -p 3000
+$ cobo app publish
+$ cobo app update
+$ cobo app status
+```
+
+### open
+
+Open a specific Cobo portal page in the default web browser.
+
+Arguments:
+- `target`: The page to open. Choices are [portal, dashboard, wallets, custodial, mpc, scw, exchange, developer, apps, settings, guides, pricing, approval]. Default is portal.
+
+Usage:
+```bash
+$ cobo open dashboard
+$ cobo open developer
+```
+
+### doc
+
+Open Cobo documentation or display API operation information.
+
+Arguments:
+- `topic_or_path`: The documentation topic or API path to open/display.
+
+Options:
+- `-u, --update`: Update the OpenAPI specification.
+
+Usage:
+```bash
+$ cobo doc api
+$ cobo doc /v2/custody/new_address
+$ cobo doc -u
+```
+
+### env
+
+Set or view the current environment.
+
+Arguments:
+- `environment`: The environment to set. Choices are [development, sandbox, production].
+
+Usage:
+```bash
+$ cobo env prod
+$ cobo env
+```
+
+### auth
+
+Set or view the default authentication method.
+
+Arguments:
+- `method`: The authentication method to set. Choices are [apikey, oauth].
+
+Usage:
+```bash
+$ cobo auth apikey
+$ cobo auth
+```
+
+## API Commands
+
+### get
+
+Make a GET request to a Cobo API endpoint.
+
+Usage:
+```bash
+$ cobo get /wallets --wallet_type Custodial
+```
+
+
+### post
+
+Make a POST request to a Cobo API endpoint.
+
+Usage:
+```bash
+$ cobo post /wallets --name "My New Wallet" --wallet_type Custodial
+```
+
+### put
+
+Make a PUT request to a Cobo API endpoint.
+
+Usage:
+```bash
+$ cobo put /wallets/{wallet_id} --wallet_id your_wallet_id --name "Updated Wallet Name"
+```
+
+### delete
+
+Make a DELETE request to a Cobo API endpoint.
+
+Usage:
+```bash
+$ cobo delete /wallets/mpc/key_share_holder_groups/{group_id}/key_share_holders/{holder_id} --group_id your_group_id --holder_id your_holder_id
+```
+
+### graphql
+
+Execute a GraphQL query against the Cobo API.
+
+Options:
+- `-q, --query`: The GraphQL query string (required).
+- `-v, --variables`: JSON string of variables for the GraphQL query.
+- `--raw`: Output the raw JSON response.
+
+Usage:
+```bash
+$ cobo graphql -q '{
+  "query": "
+    {
+      wallet(id: \"f47ac10b-58cc-4372-a567-0e02b2c3d479\") {
+        id
+        name
+        walletType
+        balance {
+          tokenId
+          amount
+        }
+      }
+    }
+  "
+}'
+```
+
+## Utility Commands
+
+### logs tail
+
+Tail the request logs from Cobo.
+
+Options:
+- `--http-method`: Filter logs by HTTP method.
+- `--request-path`: Filter logs by request path.
+- `--status-code`: Filter logs by status code.
+- `--api-key`: Filter logs by API key.
+- `--ip-address`: Filter logs by IP address.
+- `--limit`: Number of logs to fetch per request (default: 3).
+
+Usage:
+```bash
+$ cobo logs tail --http-method GET --request-path /v2/custody/coin_info --limit 5
+```
+
+### webhook
+
+Commands related to webhook operations.
+
+Subcommands:
+- `trigger`: Manually trigger a webhook event.
+- `events`: List all available webhook event types.
+- `listen`: Listen for webhook events using WebSocket.
+
+Usage:
+$ cobo webhook trigger EVENT_TYPE [--override JSON_STRING]
+$ cobo webhook events
+$ cobo webhook listen [--events EVENT_LIST] [--forward URL]
+
+Options for trigger:
+- `EVENT_TYPE`: The type of event to trigger (required).
+- `--override`: JSON string to override event data.
+
+Options for listen:
+- `--events`: Comma-separated list of event types to listen for.
+- `--forward`: URL to forward events to.
+
+Examples:
+```bash
+$ cobo webhook trigger wallets.transaction.updated --override '{"amount": 100}'
+$ cobo webhook events
+$ cobo webhook listen --events wallets.transaction.updated --forward http://example.com/webhook
+```
+
+This reference covers all the main commands and subcommands available in the
+Cobo CLI tool. Each command has various options and arguments that can be used
+to customize its behavior. For more detailed information about a specific
+command, you can use the --help option with any command or subcommand.
