@@ -1,0 +1,60 @@
+---
+title: "GET Requests"
+---
+
+The `cobo get` command allows you to make GET requests to Cobo API endpoints.
+This command is useful for retrieving information from the Cobo WaaS 2 API.
+
+## Usage
+
+```bash
+$ cobo get <path> [options]
+```
+
+## Options
+
+- `-d, --describe`: Display operation description
+- `-l, --list`: List all API operations for this method
+
+## Examples
+
+### List all GET operations
+
+To see a list of all available GET operations:
+
+```bash
+$ cobo get -l
+```
+
+
+### Retrieve wallet information
+
+To get information about a specific wallet:
+
+```bash
+$ cobo get /wallets/{wallet_id} --wallet_id your_wallet_id
+```
+
+### List all transactions
+
+To retrieve a list of all transactions:
+
+```bash
+$ cobo get /transactions
+```
+
+### Get operation description
+
+To see the description of a specific GET operation:
+
+```bash
+$ cobo get /wallets/{wallet_id} -d
+```
+
+## API Reference
+
+For a complete list of available GET endpoints and their parameters, refer to the [Cobo WaaS 2 API Documentation](https://www.cobo.com/developers/v2/api-references/).
+
+<Note>
+Remember to authenticate your requests by logging in or setting up your API keys before making API calls.
+</Note>
