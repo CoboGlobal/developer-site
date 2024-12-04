@@ -1,0 +1,65 @@
+---
+title: "Environment Management"
+---
+
+Cobo CLI allows you to switch between different environments, such as sandbox,
+development, and production. This guide helps you set up and switch between
+environments effectively.
+
+## View Current Environment
+
+To check which environment is currently active, use:
+
+```bash
+$ cobo env
+Current environment: dev
+```
+
+This command will display the name of the currently active environment.
+
+<Info>
+If you don't specify an environment, Cobo CLI defaults to the "development" environment.
+</Info>
+
+## Set Environment
+
+To switch to a different environment, use the following command:
+
+```bash
+$ cobo env <ENVIRONMENT_NAME>
+```
+
+Replace `<ENVIRONMENT_NAME>` with your desired environment (e.g., "dev" or
+"prod"). This command will set the specified environment as the active one for
+subsequent CLI commands.
+
+## Global Environment Option
+
+You can override the current environment for a single command by using the
+global `-e` or `--env` option:
+
+```bash
+$ cobo -e <ENVIRONMENT_NAME> <COMMAND>
+```
+
+This allows you to execute a command in a specific environment without changing the overall active environment.
+
+## Environment Configuration
+
+Each environment has pre-configured API endpoints and base URLs for the Cobo portal. These configurations are set as follows:
+
+- Sandbox: 
+  - API Host: https://api.sandbox.cobo.com
+  - Base URL: https://portal.sandbox.cobo.com
+
+- Development:
+  - API Host: https://api.dev.cobo.com
+  - Base URL: https://portal.dev.cobo.com
+
+- Production:
+  - API Host: https://api.cobo.com
+  - Base URL: https://portal.cobo.com
+
+<Note>
+Remember to switch to the correct environment before executing commands to avoid unintended actions in the wrong environment.
+</Note>

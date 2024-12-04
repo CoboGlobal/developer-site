@@ -1,0 +1,112 @@
+---
+title: "Login and Authentication"
+---
+
+This guide will walk you through the process of logging in, authenticating, and
+managing authentication methods with the Cobo CLI. Proper authentication is
+essential for securely accessing Cobo WaaS 2.0 services and managing your
+resources.
+
+## Authentication Methods
+
+Cobo CLI supports three authentication methods:
+
+1. API Key
+2. User Access Token
+3. Organization Access Token
+
+You can switch between these methods using the `auth` command.
+
+## User Login
+
+To log in as a user and obtain a user access token, use the following command:
+
+```
+cobo login --user
+```
+
+This command will initiate the user login process:
+
+1. The CLI will display a browser URL, a token URL, and a code.
+2. You'll be prompted to open a browser to continue the authorization process.
+3. If you confirm, your default browser will open with the provided URL.
+4. Complete the authorization process in your browser, granting the necessary permissions for the Cobo CLI app to access your crypto wallets.
+5. The CLI will poll the token URL for the granted token.
+6. Once authenticated, your user access token will be saved in the environment file (default: ~/.cobo/.env).
+
+## Organization Login
+
+To log in as an organization and obtain an organization access token, use the following command:
+
+```
+cobo login --org --org-uuid <YOUR_ORG_UUID>
+```
+
+Replace `<YOUR_ORG_UUID>` with your actual organization UUID.
+
+This command will:
+
+1. Prompt you to open a browser for authorization.
+2. Guide you through the process of granting permissions for the Cobo CLI app to access your organization's resources.
+3. Retrieve and save the organization token in the environment file.
+
+## Refreshing Organization Token
+
+To refresh an existing organization token, add the `--refresh-token` flag:
+
+```bash
+$ cobo login --org --org-uuid <YOUR_ORG_UUID> --refresh-token
+```
+
+This command will refresh the existing token for the specified organization and update it in the environment file.
+
+## Logout
+
+To remove the access tokens obtained via login, use the logout command:
+
+```bash
+$ cobo logout
+```
+
+You can specify which tokens to remove:
+
+- `cobo logout --user`: Remove only the user access token
+- `cobo logout --org`: Remove only the organization access token
+- `cobo logout --all`: Remove both user and organization access tokens (default behavior)
+
+## Switching Authentication Methods
+
+To switch between authentication methods, use the `auth` command:
+
+```bash
+$ cobo auth <METHOD>
+```
+
+Replace `<METHOD>` with one of the following:
+
+- `apikey`: Use API Key authentication
+- `user`: Use User Access Token authentication
+- `org`: Use Organization Access Token authentication
+
+For example, to switch to API Key authentication:
+
+```bash
+$ cobo auth apikey
+```
+
+To view the current authentication method:
+
+```bash
+$ cobo auth
+```
+
+## API Key Authentication
+
+For information on generating and managing API keys, please refer to the [Key Management](/v2/cobo-cli/get-started/key-management) guide.
+
+## Best Practices
+
+- Keep your credentials and access tokens secure and never share them.
+- Use environment variables or a secure configuration file to store sensitive information.
+- Regularly refresh your tokens and rotate your API keys to maintain security.
+- Use the appropriate authentication method based on your use case and security requirements.
