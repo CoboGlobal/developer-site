@@ -1,0 +1,94 @@
+---
+title: 'Trigger Webhook Events'
+---
+
+The Cobo CLI provides a convenient way to trigger test webhook events, allowing
+you to simulate various scenarios and test your webhook integration without
+affecting real data.
+
+## Usage
+
+To trigger a test webhook event, use the following command:
+
+```bash
+$ cobo webhook trigger <event_type> [--override <json_string>]
+```
+
+### Parameters
+
+- `<event_type>`: The type of webhook event you want to trigger. This is a required parameter.
+- `--override <json_string>`: (Optional) A JSON string to override specific fields in the event payload.
+
+## Supported Event Types
+
+The Cobo CLI supports triggering the following webhook event types:
+
+- `wallets.transaction.created`
+- `wallets.transaction.updated`
+- `wallets.transaction.failed`
+- `wallets.transaction.succeeded`
+- `wallets.mpc.tss_request.created`
+- `wallets.mpc.tss_request.updated`
+- `wallets.mpc.tss_request.failed`
+- `wallets.mpc.tss_request.succeeded`
+
+<Note>
+  To get the most up-to-date list of supported event types, you can use the
+  `cobo webhook events` command.
+</Note>
+
+## Examples
+
+### Trigger a simple event
+
+To trigger a `wallets.transaction.created` event with default data:
+
+```bash
+$ cobo webhook trigger wallets.transaction.created
+```
+
+### Trigger an event with custom data
+
+To trigger a `wallets.transaction.updated` event with custom data:
+
+```bash
+$ cobo webhook trigger wallets.transaction.updated --override '{"chain_id": "ETH", "amount": "1000000000000000000"}'
+```
+
+This command will trigger a `wallets.transaction.updated` event with the specified `chain_id` and `amount` values, while using default values for other fields.
+
+## Response
+
+After triggering an event, the CLI will display the event details, including:
+
+- Event ID
+- Event Type
+- Timestamp
+- Event Data
+
+Example response:
+
+```json
+{
+  "event_id": "evt_1234567890abcdef",
+  "type": "wallets.transaction.created",
+  "created_timestamp": 1701396866000,
+  "data": {
+    "chain_id": "ETH",
+    "amount": "1000000000000000000",
+    "status": "Pending"
+  }
+}
+```
+
+## Best Practices
+
+1. **Test all event types**: Trigger events for all the webhook types your application is subscribed to, ensuring your system can handle each type correctly.
+
+2. **Use realistic data**: When overriding event data, try to use realistic values that match your production scenarios.
+
+3. **Test error handling**: Trigger events with edge case data to ensure your webhook consumer can handle unexpected scenarios gracefully.
+
+4. **Verify webhook delivery**: After triggering an event, check your webhook endpoint logs to confirm that the event was received and processed correctly.
+
+By using the Cobo CLI's webhook trigger feature, you can thoroughly test your webhook integration, ensuring that your application is ready to handle real webhook events in a production environment.
