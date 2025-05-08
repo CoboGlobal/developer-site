@@ -1,0 +1,70 @@
+---
+title: 'Listen and Forward Events'
+---
+
+The Cobo CLI provides a powerful feature to listen for webhook events in
+real-time and optionally forward them to a specified URL. This functionality is
+particularly useful during development and testing of your integration with Cobo
+WaaS 2.0.
+
+## Listening for Webhook Events
+
+To start listening for webhook events, use the `webhook listen` command:
+
+```bash
+$ cobo webhook listen
+```
+
+This command establishes a WebSocket connection to the Cobo server and starts streaming all available webhook events.
+
+### Filtering Events
+
+You can filter the events you want to listen for by specifying event types:
+
+```bash
+$ cobo webhook listen --events EVENT_TYPE1,EVENT_TYPE2
+```
+
+Replace `EVENT_TYPE1,EVENT_TYPE2` with the specific event types you're interested in, separated by commas.
+
+<Info>
+To see a list of all available event types, run `cobo webhook events`.
+</Info>
+
+## Forwarding Events
+
+The CLI can also forward received events to a specified URL, which is useful for testing your webhook endpoint:
+
+```bash
+$ cobo webhook listen --forward https://your-endpoint.com/webhook
+```
+
+This will send a POST request to the specified URL for each event received.
+
+## Combining Filtering and Forwarding
+
+You can combine event filtering and forwarding in a single command:
+
+```bash   
+$ cobo webhook listen --events EVENT_TYPE1,EVENT_TYPE2 --forward https://your-endpoint.com/webhook
+```
+
+## Output
+
+The CLI will print each received event to the console in JSON format. If forwarding is enabled, it will also attempt to send the event to the specified URL and report any errors encountered during forwarding.
+
+## Stopping the Listener
+
+To stop listening for events, simply press `Ctrl+C` in your terminal. The CLI will gracefully close the WebSocket connection and terminate the process.
+
+## Best Practices
+
+1. **Use in Development**: The `webhook listen` command is primarily intended for use in development and testing environments. For production, set up a proper webhook endpoint in your application.
+
+2. **Secure Forwarding**: When using the `--forward` option, ensure that your endpoint is properly secured, especially if you're forwarding to a public URL.
+
+3. **Event Type Familiarity**: Familiarize yourself with the available event types by running `cobo webhook events`. This will help you filter for relevant events and reduce noise in your testing process.
+
+4. **Error Handling**: Pay attention to any error messages in the CLI output, especially when forwarding events. This can help you identify and resolve issues with your webhook endpoint.
+
+By leveraging the Cobo CLI's webhook listening and forwarding capabilities, you can streamline your development process and ensure robust handling of Cobo WaaS 2.0 webhook events in your application.
