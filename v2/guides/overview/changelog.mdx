@@ -6,6 +6,26 @@ description: "Detailed changelog of all additions and changes to the WaaS 2.0 AP
 
 This changelog details all additions and changes to the WaaS 2.0 API. You can download the WaaS 2.0 API specification from [GitHub](https://github.com/CoboGlobal/developer-site/blob/master/v2/cobo_waas2_openapi_spec/dev_openapi.yaml).
 
+## v1.16.0
+
+This version was released on May 28, 2025.
+
+### New Features
+- Added the following new operations for managing app workflows:
+  - [List app workflows](/v2/api-references/appworkflows/list-app-workflows)
+  - [Request workflow approval](/v2/api-references/appworkflows/request-workflow-approval)
+  - [Get approval request details](/v2/api-references/appworkflows/get-approval-request-details)
+  - [Revoke approval request](/v2/api-references/appworkflows/revoke-approval-request)
+  - [List approval requests](/v2/api-references/appworkflows/list-approval-requests)
+- Added a new operation [Batch check UTXOs](/v2/api-references/wallets/batch-check-utxos) which allows you to verify the existence and details of specified unspent transaction outputs (UTXOs) for a given wallet and token. This operation is supported for both MPC Wallets and Custodial Wallets (Web3 Wallets).
+
+### Improvements
+- Enhanced the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation by adding a property `replaced_transaction_id` to the request body, allowing fee estimation for replacement transactions.
+- Added new values to the `TransactionCoboCategory` schema to support more use cases.
+- Added a property `coinbase_maturity` to the `ChainInfo` schema to indicate the required confirmations for coinbase maturity.
+- Added two [transaction sub-statuses](/v2/guides/transactions/status#status-reference-table) `PendingCoboKYTCheck` and `RejectedByCoboKYT`.
+- Added the `is_frozen` property to the response of the [List UTXOs](/v2/api-references/wallets/list-utxos) operation. This property indicates whether each UTXO is currently frozen and unavailable for spending.
+
 ## v1.15.0
 
 This version was released on May 14, 2025.

@@ -11,7 +11,6 @@ description: "了解如何配置 Cobo Portal Apps 的审批工作流。"
 
 您可以在 App Manifest 文件中的 `operation_approval_rules` 字段中配置 App 的默认审批工作流。以下是 `operation_approval_rules` 对象的示例。此对象在 [批量付款](https://manuals.cobo.com/en/apps/batch-payouts/introduction)  App 的Manifest 文件中定义，该文件配置了 App 的默认审批工作流。如果您在批量付款 App 中进行批量付款，并且付款金额大于 100 美元，您将触发一个审批工作流，其中批量付款需要一个团队管理员的批准。在管理员批准或拒绝之前，付款请求将处于待批准状态。
 
-<Note>要充分利用审批工作流，您的 App 必须向 WaaS 2.0 服务发送 `operation_id`。请联系 [help@cobo.com](mailto:help@cobo.com)。</Note>
 
 ```json
 [

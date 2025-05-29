@@ -592,6 +592,7 @@
           "group": "UTXOs",
           "pages": [
             "v2/api-references/wallets/list-utxos",
+            "v2/api-references/wallets/batch-check-utxos",
             "v2/api-references/wallets/lock-utxos",
             "v2/api-references/wallets/unlock-utxos"
           ],
@@ -921,6 +922,22 @@
           "group": "Bank accounts",
           "pages": [
             "v2/api-references/payment/list-all-bank-accounts"
+          ]
+        }
+      ],
+      "version": "Version 2.0 EN"
+    },
+    {
+      "group": "Cobo Portal Apps operations",
+      "pages": [
+        {
+          "group": "Approval workflows",
+          "pages": [
+            "v2/api-references/appworkflows/list-app-workflows",
+            "v2/api-references/appworkflows/request-workflow-approval",
+            "v2/api-references/appworkflows/list-approval-requests-by-operation",
+            "v2/api-references/appworkflows/get-approval-request-details",
+            "v2/api-references/appworkflows/revoke-approval-request"
           ]
         }
       ],

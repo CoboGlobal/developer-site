@@ -22,7 +22,7 @@ WaaS 2.0 定义了各种交易状态和子状态，以反映不同的处理阶�
     <td>交易已提交。</td>
   </tr>
   <tr>
-    <td rowspan="3">PendingScreening</td>
+    <td rowspan="4">PendingScreening</td>
     <td>PendingTravelRuleCheck</td>
     <td>交易正在进行 Travel Rule 检查。</td>
   </tr>
@@ -33,6 +33,10 @@ WaaS 2.0 定义了各种交易状态和子状态，以反映不同的处理阶�
   <tr>
     <td>PendingScreeningAppCheck</td>
     <td>交易正在由 [Screening App](https://manuals.cobo.com/cn/apps/screening/introduction) 审核。</td>
+  </tr>
+  <tr>
+    <td>PendingCoboKYTCheck</td>
+    <td>交易正在等待 Cobo 的 KYT 检查。</td>
   </tr>
   <tr>
     <td rowspan="5">PendingAuthorization</td>
@@ -145,7 +149,7 @@ WaaS 2.0 定义了各种交易状态和子状态，以反映不同的处理阶�
     <td>交易因区块链重组而失败。</td>
   </tr>
   <tr>
-    <td rowspan="17">Rejected</td>
+    <td rowspan="18">Rejected</td>
     <td>RejectedWhiteList</td>
     <td>交易被拒绝，因为发起者的 IP 地址不在白名单中。</td>
   </tr>
@@ -212,6 +216,10 @@ WaaS 2.0 定义了各种交易状态和子状态，以反映不同的处理阶�
   <tr>
     <td>OnchainRejection</td>
     <td>交易被拒绝添加到区块链中。</td>
+  </tr>
+    <tr>
+    <td>RejectedByCoboKYT</td>
+    <td>交易被拒绝，因为未通过 Cobo 的 KYT 检查。</td>
   </tr>
   <tr>
     <td rowspan="1">Pending</td>

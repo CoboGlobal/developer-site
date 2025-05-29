@@ -51,6 +51,8 @@ tags:
     description: Operations related to travel rule.
   - name: PrimeBroker
     description: Operations related to prime broker.
+  - name: AppWorkflows
+    description: Operations related to app workflow.
   - name: FeeStation
     description: Operations related to fee station.
   - name: Payment
@@ -406,7 +408,7 @@ paths:
       description: |
         The operation retrieves a list of unspent transaction outputs (UTXOs) for a specified wallet and token.
 
-        <Note>This operation is applicable to MPC Wallets only.</Note>
+        <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -421,6 +423,30 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listUtxoResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/wallets/{wallet_id}/utxos/batch_check':
+    parameters:
+      - $ref: '#/components/parameters/walletIdParam'
+    post:
+      tags:
+        - Wallets
+      operationId: batch_check_utxo
+      summary: Batch check UTXOs
+      description: |
+        This operation verifies the existence and details of specified unspent transaction outputs (UTXOs) for a given wallet and token. A maximum of 100 UTXOs can be verified per request.
+        <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - wallet.read
+      requestBody:
+        $ref: '#/components/requestBodies/batchCheckUtxoRequestBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/batchCheckUtxoResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -2970,6 +2996,123 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /app/workflows:
+    get:
+      tags:
+        - AppWorkflows
+      summary: list app workflows
+      description: |
+        This operation retrieves all approval workflows of an Cobo Portal App.
+        <Note>You need to [configure approval workflow](https://www.cobo.com/developers/v2/apps/configure-workflow) in the app Manifest file first.</Note>
+        <Note>To use the approval workflow operations, you must use the Cobo OAuth authentication method ([Org Access Token](https://www.cobo.com/developers/v2/apps/org-access-tokens)).</Note>
+      operationId: list_app_workflows
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - app_governance_policy.read
+      responses:
+        '200':
+          $ref: '#/components/responses/listAppWorkflowsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /app/workflows/approval_requests:
+    post:
+      tags:
+        - AppWorkflows
+      summary: Request workflow approval
+      description: |
+        This operation triggers a specified workflow and generates a new approval request.
+
+        <Note>To use the approval workflow operations, you must use the Cobo OAuth authentication method ([Org Access Token](https://www.cobo.com/developers/v2/apps/org-access-tokens)).</Note>
+      operationId: create_approval_request
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - app_governance_policy.update
+      requestBody:
+        $ref: '#/components/requestBodies/requestApprovalBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/requestApprovalResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - AppWorkflows
+      summary: List approval requests
+      description: |
+        This operation retrieves a list of approval requests.
+
+        <Note>To use the approval workflow operations, you must use the Cobo OAuth authentication method ([Org Access Token](https://www.cobo.com/developers/v2/apps/org-access-tokens)).</Note>
+      operationId: list_approval_requests
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - app_governance_policy.read
+      parameters:
+        - $ref: '#/components/parameters/ApprovalOperationIdParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listApprovalRequestsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/app/workflows/approval_requests/{approval_id}':
+    parameters:
+      - $ref: '#/components/parameters/ApprovalIdParam'
+    get:
+      tags:
+        - AppWorkflows
+      summary: Get approval request details
+      description: |
+        This operation retrieves the details of a specific approval request.
+
+        <Note>To use the approval workflow operations, you must use the Cobo OAuth authentication method ([Org Access Token](https://www.cobo.com/developers/v2/apps/org-access-tokens)).</Note>
+      operationId: get_approval_request_by_id
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - app_governance_policy.read
+      responses:
+        '200':
+          $ref: '#/components/responses/getApprovalRequestByIdResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/app/workflows/approval_requests/{approval_id}/revoke':
+    parameters:
+      - $ref: '#/components/parameters/ApprovalIdParam'
+    post:
+      tags:
+        - AppWorkflows
+      summary: Revoke approval request
+      description: |
+        This operation revokes a pending approval request.
+
+        <Note>To use the approval workflow operations, you must use the Cobo OAuth authentication method ([Org Access Token](https://www.cobo.com/developers/v2/apps/org-access-tokens)).</Note>
+      operationId: revoke_approval_request
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - app_governance_policy.update
+      requestBody:
+        $ref: '#/components/requestBodies/revokeApprovalRequestBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/revokeApprovalRequestResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /payments/merchants:
     post:
       tags:
@@ -3257,28 +3400,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getPaymentOrderResponse'
-        4XX:
-          $ref: '#/components/responses/badRequestError'
-        5XX:
-          $ref: '#/components/responses/internalServerError'
-  /payments/orders/address_info:
-    get:
-      tags:
-        - Payment
-      operationId: get_payment_order_address_info
-      summary: Get pay-in order's receiving address info
-      description: |
-        This operation retrieves the detailed information about a specific pay-in address.
-      security:
-        - CoboAuth: []
-        - OAuth2:
-            - payment_orders_payin.read
-      parameters:
-        - $ref: '#/components/parameters/TokenIdOptionalParam'
-        - $ref: '#/components/parameters/AddressOptionalParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/getPaymentOrderAddressInfoResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -3602,6 +3723,11 @@ components:
           type: integer
           format: int32
           description: 'The number of confirmations required for an on-chain transaction, such as 64 for Ethereum.'
+          example: 15
+        coinbase_maturity:
+          type: integer
+          format: int32
+          description: 'The number of confirmations required before a coinbase transaction is considered mature and can be spent, for example, 100 confirmations for BTC.'
           example: 15
     WalletType:
       type: string
@@ -3949,6 +4075,26 @@ components:
           type: integer
           description: The number of confirmations for the UTXO.
           example: 66716
+        is_frozen:
+          type: boolean
+          description: Whether the UTXO is frozen.
+          example: false
+    BatchUTXOParam:
+      type: object
+      description: The UTXO information.
+      required:
+        - tx_hash
+      properties:
+        tx_hash:
+          type: string
+          description: The transaction hash.
+          example: 9bdf8e7ae03c237e115f09543fbdb40f8efa600106e78b67ce4d5adfadda2dbb
+        vout_ns:
+          type: array
+          items:
+            type: integer
+            description: The output index of the UTXO.
+            example: 0
     MaxTransferableValue:
       type: object
       description: 'The maximum amount you can transfer from the wallet or the specified wallet address, along with the corresponding transaction fee.'
@@ -5579,6 +5725,8 @@ components:
         - RejectedTransactionPolicy
         - RejectedByScreeningApp
         - PendingScreeningAppCheck
+        - PendingCoboKYTCheck
+        - RejectedByCoboKYT
         - PendingCoboTravelRuleCheck
       example: PendingDoubleCheck
       description: |
@@ -6831,14 +6979,33 @@ components:
     TransactionCoboCategory:
       type: string
       enum:
-        - AutoSweep
         - AutoFueling
         - AutoFuelingRefund
-        - SafeTxMessage
+        - AutoSweep
         - BillPayment
         - BillRefund
         - CommissionFeeCharge
         - CommissionFeeRefund
+        - SafeTxMessage
+        - StakingBabylonBtcDelegation
+        - StakingBabylonBtcSignBabylon
+        - StakingBabylonClaim
+        - StakingBabylonSlashing
+        - StakingBabylonStake
+        - StakingBabylonUnstake
+        - StakingBabylonWithdraw
+        - StakingBithiveClaim
+        - StakingBithiveStake
+        - StakingBithiveUnstake
+        - StakingBithiveWithdraw
+        - StakingCoreStake
+        - StakingCoreWithdraw
+        - StakingEthClaim
+        - StakingEthStake
+        - StakingEthUnstake
+        - StakingSkyfarmClaim
+        - StakingSkyfarmStake
+        - StakingSkyfarmUnstake
       example: AutoSweep
       description: |
         The transaction category defined by Cobo. Possible values include: 
@@ -6850,6 +7017,25 @@ components:
           - `BillRefund`: A refund for a previously made bill payment.
           - `CommissionFeeCharge`: A transaction to charge commission fees via Fee Station.
           - `CommissionFeeRefund`: A refund of previously charged commission fees.
+          - `StakingBabylonBtcDelegation`: A transaction for delegating BTC in Babylon staking.
+          - `StakingBabylonBtcSignBabylon`: A transaction for signing Babylon operations with BTC.
+          - `StakingBabylonClaim`: A transaction for claiming rewards from Babylon staking.
+          - `StakingBabylonSlashing`: A transaction related to slashing penalties in Babylon staking.
+          - `StakingBabylonStake`: A transaction for staking assets in the Babylon platform.
+          - `StakingBabylonUnstake`: A transaction for unstaking assets from the Babylon platform.
+          - `StakingBabylonWithdraw`: A transaction for withdrawing assets from Babylon staking.
+          - `StakingBithiveClaim`: A transaction for claiming rewards from BitHive staking.
+          - `StakingBithiveStake`: A transaction for staking assets in the BitHive platform.
+          - `StakingBithiveUnstake`: A transaction for unstaking assets from the BitHive platform.
+          - `StakingBithiveWithdraw`: A transaction for withdrawing assets from BitHive staking.
+          - `StakingCoreStake`: A transaction for staking assets in the Core staking platform.
+          - `StakingCoreWithdraw`: A transaction for withdrawing assets from Core staking.
+          - `StakingEthClaim`: A transaction for claiming rewards from ETH staking.
+          - `StakingEthStake`: A transaction for staking ETH assets.
+          - `StakingEthUnstake`: A transaction for unstaking ETH assets.
+          - `StakingSkyfarmClaim`: A transaction for claiming rewards from Skyfarm staking.
+          - `StakingSkyfarmStake`: A transaction for staking assets in the Skyfarm platform.
+          - `StakingSkyfarmUnstake`: A transaction for unstaking assets from the Skyfarm platform.
     SafeTxExtraData:
       type: object
       description: 'The information used to construct and sign Safe{Wallet} transactions using the EIP-712 standard.'
@@ -7513,6 +7699,11 @@ components:
           $ref: '#/components/schemas/TransferDestination'
         fee_type:
           $ref: '#/components/schemas/FeeType'
+        replaced_transaction_id:
+          type: string
+          description: The ID of the transaction that this transaction replaced.
+          format: uuid
+          example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
     EstimateContractCallFeeParams:
       type: object
       description: The information about a transaction that interacts with a smart contract
@@ -7539,6 +7730,11 @@ components:
           $ref: '#/components/schemas/ContractCallDestination'
         fee_type:
           $ref: '#/components/schemas/FeeType'
+        replaced_transaction_id:
+          type: string
+          description: The ID of the transaction that this transaction replaced.
+          format: uuid
+          example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
     BaseContractCallSource:
       type: object
       description: |
@@ -8497,6 +8693,9 @@ components:
                 - `false`: The transaction will not be submitted to the blockchain automatically. You can call [Broadcast signed transactions](https://www.cobo.com/developers/v2/api-references/transactions/broadcast-signed-transactions) to broadcast the transaction to the blockchain, or retrieve the signed raw transaction data `raw_tx` by calling [Get transaction information](https://www.cobo.com/developers/v2/api-references/transactions/get-transaction-information) and broadcast it yourself.
               type: boolean
               example: false
+            babylon_address:
+              $ref: '#/components/schemas/StakingSource'
+              description: The Babylon address to register for the staking.
     BabylonStakeEstimatedFee:
       title: Babylon Staking Fee
       type: object
@@ -10205,6 +10404,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/SwapActivityTimeline'
+            approvers:
+              type: array
+              items:
+                $ref: '#/components/schemas/SwapActivityApprovers'
     SwapToken:
       type: object
       required:
@@ -10340,6 +10543,32 @@ components:
           example: 1640995200000
           description: |
             The time when the action took place, in Unix timestamp format, measured in milliseconds. 
+    SwapActivityApprovers:
+      description: The approvers data for swap activity.
+      type: object
+      required:
+        - name
+        - status
+      properties:
+        name:
+          type: string
+          example: Wenyu.Xiao
+          description: |
+            The approver name of the swap activity.
+        status:
+          $ref: '#/components/schemas/SwapApproversStatus'
+    SwapApproversStatus:
+      type: string
+      enum:
+        - Pending
+        - Approved
+        - Rejected
+      example: Pending
+      description: |
+        The status of the approval. Possible values include:
+          - `Pending`: Waiting for approval from the approver.
+          - `Approved`: The approver has agreed to the approval.
+          - `Rejected`: The approver has rejected the approval.
     GuardPubkeyStatus:
       type: string
       enum:
@@ -10380,6 +10609,300 @@ components:
           - `Reject`: The user has rejected the request.
           - `Invalid`: The request is invalid.
           - `Timeout`: The request has expired.
+    AppWorkflow:
+      type: object
+      description: The information of an approval workflow
+      required:
+        - workflow_id
+        - operation_id
+        - current_policies
+        - operation_name
+      properties:
+        workflow_id:
+          type: string
+          description: The unique ID distinguishing the approval workflow instance among organizations.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        operation_id:
+          type: string
+          description: The unique ID of the approval workflow.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        operation_name:
+          type: string
+          description: The name of the approval workflow.
+          example: Make Batch Payout
+        current_policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppWorkflowPolicy'
+    ApprovalRequest:
+      type: object
+      description: The information of an approval request.
+      required:
+        - approval_id
+        - request_id
+        - fields
+        - status
+        - initiated_timestamp
+      properties:
+        approval_id:
+          type: string
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+          description: The system-generated unique ID of the approval request.
+        request_id:
+          type: string
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+          description: An identifier provided by you when requesting the approval.
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppWorkflowField'
+        status:
+          $ref: '#/components/schemas/ApprovalStatus'
+        initiated_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the approval was initiated, in Unix timestamp format, measured in milliseconds.'
+          example: 1610445878970
+    ApprovalRequestDetail:
+      type: object
+      description: The information of an approval request detail.
+      required:
+        - initiator
+        - status
+        - timestamp
+      properties:
+        approval_id:
+          type: string
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+          description: The system-generated unique ID of the approval request.
+        initiator:
+          $ref: '#/components/schemas/ApprovalUser'
+        approved_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApprovalEntry'
+        status:
+          $ref: '#/components/schemas/ApprovalStatus'
+        modified_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the approval was modified, in Unix timestamp format, measured in milliseconds.'
+          example: 1610445878970
+    ApprovalEntry:
+      type: object
+      description: The information of an approval request.
+      required:
+        - email
+        - status
+        - created_timestamp
+      properties:
+        status:
+          $ref: '#/components/schemas/ApprovalStatus'
+        created_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the approval was created, in Unix timestamp format, measured in milliseconds.'
+          example: 1610445878970
+        approval_users:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApprovalUser'
+    ApprovalStatus:
+      type: string
+      enum:
+        - Pending
+        - Completed
+        - Failed
+        - Revoked
+      example: Pending
+      description: |
+        The approval status. Possible values include: 
+          - `Pending`: The approval is pending.
+          - `Completed`: The approval is completed. 
+          - `Failed`: The approval is rejected.
+          - `Revoked`: The approval is revoked. 
+    ApprovalUser:
+      type: object
+      description: The information of the user.
+      required:
+        - email
+        - status
+        - created_timestamp
+      properties:
+        email:
+          type: string
+          description: The user email.
+          example: john.smith@example.com
+        name:
+          type: string
+          description: The user name.
+          example: John Smith
+        status:
+          $ref: '#/components/schemas/ApprovalStatus'
+        created_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the approval was created, in Unix timestamp format, measured in milliseconds.'
+          example: 1610445878970
+    AppWorkflowField:
+      type: object
+      description: The information of a workflow field.
+      required:
+        - field
+        - value_type
+        - value
+      properties:
+        field:
+          type: string
+          description: The workflow field name.
+          example: amount
+        value_type:
+          $ref: '#/components/schemas/PolicyFieldValueType'
+        value:
+          type: string
+          description: The workflow field value.
+          example: '11.23'
+    AppWorkflowPolicy:
+      type: object
+      description: 'The current approval workflow policy, consisting of one or more conditions and an associated action. When the conditions are met, the action is triggered.'
+      required:
+        - action
+      properties:
+        action:
+          $ref: '#/components/schemas/PolicyAction'
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyCondition'
+    PolicyAction:
+      type: object
+      description: The action to be executed when the policy conditions are satisfied.
+      required:
+        - action_type
+      properties:
+        action_type:
+          $ref: '#/components/schemas/PolicyActionType'
+        content:
+          type: object
+          description: The definition of the quorum action. This property is applicable only when `action_type` is `Quorum`.
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum:
+                - FULL_APPROVAL
+                - PART_APPROVAL
+              example: PART_APPROVAL
+              description: |
+                The quorum type. Possible values include: 
+                  - `FULL_APPROVAL`: Requires approval from all participants.
+                  - `PART_APPROVAL`: Requires approval from a specified number of participants.
+            roles:
+              type: array
+              items:
+                type: string
+                example: admin
+              description: 'The roles included in the quorum. Possible values include `admin`, `spender`, `operator`, and `approver`.'
+            user_ids:
+              type: array
+              items:
+                type: string
+                example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+              description: The ID of the users included in the quorum.
+            threshold:
+              type: integer
+              format: int32
+              description: The number of approvers required to meet the quorum.
+              example: 15
+    PolicyActionType:
+      type: string
+      enum:
+        - Reject
+        - Accept
+        - Quorum
+      example: Pending
+      description: |
+        The approval action type. Possible values include: 
+          - `Reject`: The action rejects the request.
+          - `Accept`: The action approves the request.
+          - `Quorum`: The action requires approval from multiple participants.
+    PolicyCondition:
+      type: object
+      description: A condition that defines under what circumstances the policy’s action should be triggered.
+      required:
+        - field
+        - value_type
+        - value
+        - operator
+      properties:
+        field:
+          type: string
+          description: The field name.
+          example: amount
+        value_type:
+          $ref: '#/components/schemas/PolicyFieldValueType'
+        value:
+          type: string
+          description: The field value.
+          example: '11.23'
+        operator:
+          $ref: '#/components/schemas/PolicyFieldOperator'
+    PolicyFieldOperator:
+      type: string
+      enum:
+        - '>'
+        - '>='
+        - <
+        - <=
+        - '='
+      example: '='
+      description: |
+        The policy field operator. Possible values include: 
+          - `>`: Greater than.
+          - `>=`: Greater than or equal.
+          - `<`: Less than.
+          - `<=`: Less than or equal.
+          - `=`: Equal.
+    PolicyFieldValueType:
+      type: string
+      enum:
+        - INT
+        - Float2
+      example: INT
+      description: |
+        The field value type. Possible values include: 
+        - `INT`: The field value is an integer.
+        - `Float2`: The field value is a float with two decimal places.
+    RequestApproval:
+      type: object
+      description: The information about a approval request.
+      required:
+        - operation_id
+        - request_id
+        - initiator_email
+        - fields
+        - guard_template
+      properties:
+        operation_id:
+          type: string
+          description: The unique ID of the approval workflow.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        request_id:
+          type: string
+          description: An identifier provided by you to track this request.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        initiator_email:
+          type: string
+          description: The email of the user who requested the approval.
+          example: johnsmith@example.com
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppWorkflowField'
+        guard_template:
+          type: string
+          description: 'The template of a Cobo Guard message. Please connect [help@cobo.com](mailto:help@cobo.com) to get the template content.'
     FeeStationTransactionType:
       type: string
       enum:
@@ -10453,9 +10976,6 @@ components:
           example: 1744689600
     CreateSettlement:
       type: object
-      required:
-        - amount
-        - bank_account_id
       properties:
         merchant_id:
           type: string
@@ -10615,31 +11135,6 @@ components:
         - `Completed`: The payment has been fully received and is now complete.
         - `Expired`: The order has reached its expiration time without receiving any payment, or the order has been cancelled by the [Update pay-in order](https://www.cobo.com/developers/v2/api-references/payment/update-pay-in-order) operation.
         - `Underpaid`: The order has reached its expiration time. A payment was received but the amount is less than the order's required amount.
-    OrderAddressInfo:
-      type: object
-      required:
-        - wallet_id
-        - amount
-        - created_timestamp
-        - updated_timestamp
-      properties:
-        wallet_id:
-          type: string
-          format: uuid
-          description: The ID of the linked wallet.
-          example: 123e4567-e89b-12d3-a456-426614174001
-        amount:
-          type: string
-          description: The amount of cryptocurrency received by the order's receiving address.
-          example: '0.000001'
-        created_timestamp:
-          type: integer
-          description: 'The created time of the address, represented as a UNIX timestamp in seconds.'
-          example: 1744689600
-        updated_timestamp:
-          type: integer
-          description: 'The updated time of the address, represented as a UNIX timestamp in seconds.'
-          example: 1744689600
     Refund:
       type: object
       required:
@@ -10849,6 +11344,10 @@ components:
           type: integer
           description: 'The updated time of the settlement, represented as a UNIX timestamp in seconds.'
           example: 1744689600
+        crypto_address_id:
+          type: string
+          description: 'Unique identifier for the pre-approved crypto address, used to reference the address securely in requests.'
+          example: addr_ethusdt_20250429T134512_a8c31f
     SettlementInfo:
       type: object
       required:
@@ -12745,6 +13244,31 @@ components:
         type: integer
         format: int64
       example: 1635744000000
+    ApprovalIdParam:
+      name: approval_id
+      in: path
+      required: true
+      description: The system-generated unique ID of the approval request.
+      schema:
+        type: string
+        format: uuid
+      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+    ApprovalOperationIdParam:
+      name: operation_id
+      in: query
+      required: true
+      description: The unique ID of the approval workflow.
+      schema:
+        type: string
+      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+    ApprovalRequestIdParam:
+      name: request_id
+      in: query
+      required: true
+      description: The request ID that is used to track a workflow request. The request ID is provided by you and must be unique within your app.
+      schema:
+        type: string
+      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     UserIdParam:
       name: user_id
       in: path
@@ -12899,15 +13423,6 @@ components:
       schema:
         type: string
       example: random_request_id
-    AddressOptionalParam:
-      name: address
-      in: query
-      required: false
-      description: |
-        The receiving address.
-      schema:
-        type: string
-      example: '0x9876543210abcdef1234567890abcdef12345678'
   requestBodies:
     createWalletBody:
       description: The request body to create a wallet
@@ -13031,6 +13546,24 @@ components:
                 type: string
                 description: The token's contract address on the specified blockchain.
                 example: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
+    batchCheckUtxoRequestBody:
+      description: The request body of the batch check UTXOs operation.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - token_id
+              - utxos
+            properties:
+              token_id:
+                type: string
+                description: 'The token ID, which is the unique identifier of a token. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](https://www.cobo.com/developers/v2/api-references/wallets/list-enabled-tokens).'
+                example: BTC
+              utxos:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BatchUTXOParam'
     createKeyShareHolderGroupBody:
       description: The request body to create a key share holder group.
       content:
@@ -13672,6 +14205,25 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FeeStationTransfer'
+    requestApprovalBody:
+      description: The request body to request workflow approval.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RequestApproval'
+    revokeApprovalRequestBody:
+      description: The request body to revoke an approval request.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - initiator_email
+            properties:
+              initiator_email:
+                type: string
+                description: The email of the user who requested the approval.
+                example: johnsmith@example.com
   responses:
     badRequestError:
       description: Bad request. Your request contains malformed syntax or invalid parameters.
@@ -13879,6 +14431,17 @@ components:
                   Whether the locking or unlocking operation has been successfully executed.
                   - `true`: The operation has been successfully executed.
                   - `false`: The operation has not been executed.
+    batchCheckUtxoResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UTXO'
     maxTransferableValueResponse:
       description: The request was successful.
       content:
@@ -15081,12 +15644,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Order'
-    getPaymentOrderAddressInfoResponse:
-      description: The request was successful.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/OrderAddressInfo'
     createRefundResponse:
       description: Refund transaction created successfully.
       content:
@@ -15215,6 +15772,63 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/EstimatedFixedFee'
+    getApprovalRequestByIdResponse:
+      description: The information about an approval request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApprovalRequestDetail'
+    listAppWorkflowsResponse:
+      description: A list of approval workflows successfully retrieved
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AppWorkflow'
+    listApprovalRequestsResponse:
+      description: A list of approval requests have been successfully retrieved.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                items:
+                  $ref: '#/components/schemas/ApprovalRequest'
+                type: array
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    requestApprovalResponse:
+      description: The request workflow approval was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - approval_id
+            properties:
+              approval_id:
+                type: string
+                format: uuid
+                example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+                description: The system-generated unique ID of the approval request. You can use this ID to query the approval request status or revoke the request.
+    revokeApprovalRequestResponse:
+      description: The request workflow approval was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - approval_id
+            properties:
+              approval_id:
+                type: string
+                format: uuid
+                example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+                description: The system-generated unique ID of the approval request.
+              status:
+                $ref: '#/components/schemas/ApprovalStatus'
   securitySchemes:
     CoboAuth:
       type: apiKey

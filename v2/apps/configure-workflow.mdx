@@ -10,7 +10,6 @@ In the context of Cobo Portal Apps, an approval workflow consists of specific op
 
 You can configure the default approval workflow for your app in the `operation_approval_rules` field in the app manifest file. The following is an example of the `operation_approval_rules` object. This object is defined in the [Batch Payout](https://manuals.cobo.com/en/apps/batch-payouts/introduction) app's manifest file, which configures the default approval workflow for the app. If you make a batch payout in the Batch Payout app, and the payout amount is greater than $100, you will trigger an approval workflow in which the batch payout requires approval from one organization admin. The payout request will be in the Pending Approval status until an admin approves or rejects.
 
-<Note>To fully use the approval workflow, your app must send `operation_id` to the WaaS 2.0 service. Please contact [help@cobo.com](mailto:help@cobo.com.).</Note>
 
 ```json
 [

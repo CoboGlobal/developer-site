@@ -7,6 +7,26 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 本更新日志详细记录了 WaaS 2.0 API 的所有新增和变更内容。您可以从 [GitHub](https://github.com/CoboGlobal/developer-site/blob/master/v2/cobo_waas2_openapi_spec/dev_openapi.yaml) 下载 WaaS 2.0 API 规范。
 
+## v1.16.0
+
+本版本于 2025 年 5 月 28 日发布。
+
+### 新功能
+- 添加了以下用于管理应用流程的操作：
+  - [列出应用流程](/v2/api-references/appworkflows/list-app-workflows)
+  - [请求流程审批](/v2/api-references/appworkflows/request-workflow-approval)
+  - [获取审批请求详情](/v2/api-references/appworkflows/get-approval-request-details)
+  - [撤销审批请求](/v2/api-references/appworkflows/revoke-approval-request)
+  - [列出审批请求](/v2/api-references/appworkflows/list-approval-requests)
+- 添加了[批量检查 UTXOs](/v2/api-references/wallets/batch-check-utxos)操作，允许您验证指定钱包和代币的未花费交易输出（UTXOs）的存在性和详细信息。此操作支持 MPC 钱包和全托管钱包（Web3 钱包）。
+
+### 改进
+- 添加了[估算交易费用](/v2/api-references/transactions/estimate-transaction-fee)操作，允许您通过添加 `replaced_transaction_id` 属性到请求负载来估算替换交易的费用。
+- 添加了 `TransactionCoboCategory` Schema 的新值，以支持更多使用场景。
+- 添加了 `coinbase_maturity` 属性到 `ChainInfo` Schema，用于指示 coinbase 成熟所需的确认数量。
+- 添加了两个 [交易子状态](/v2/guides/transactions/status#状态参考表格)：`PendingCoboKYTCheck` 和 `RejectedByCoboKYT`。
+- 添加了 `is_frozen` 属性到 [列出 UTXOs](/v2/api-references/wallets/list-utxos) 操作的响应，用于指示每个 UTXO 是否当前被冻结且不可用于交易。
+
 ## v1.15.0
 
 本版本于 2025 年 5 月 14 日发布。

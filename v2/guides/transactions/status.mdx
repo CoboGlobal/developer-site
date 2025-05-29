@@ -22,7 +22,7 @@ The table below provides a complete overview of all transaction statuses and the
     <td>The transaction is submitted.</td>
   </tr>
   <tr>
-    <td rowspan="3">PendingScreening</td>
+    <td rowspan="4">PendingScreening</td>
     <td>PendingTravelRuleCheck</td>
     <td>The transaction is undergoing a Travel Rule check.</td>
   </tr>
@@ -33,6 +33,10 @@ The table below provides a complete overview of all transaction statuses and the
   <tr>
     <td>PendingScreeningAppCheck</td>
     <td>The transaction is under review by the [Screening app](https://manuals.cobo.com/en/apps/screening/introduction).</td>
+  </tr>
+  <tr>
+    <td>PendingCoboKYTCheck</td>
+    <td>The transaction is pending Cobo's KYT check.</td>
   </tr>
   <tr>
     <td rowspan="5">PendingAuthorization</td>
@@ -145,57 +149,57 @@ The table below provides a complete overview of all transaction statuses and the
     <td>The transaction failed due to a blockchain reorganization.</td>
   </tr>
   <tr>
-    <td rowspan="17">Rejected</td>
+    <td rowspan="18">Rejected</td>
     <td>RejectedWhiteList</td>
-    <td>The transaction is rejected because the IP address of the initiator is not in the whitelist.</td>
+    <td>The transaction was rejected because the IP address of the initiator was not in the whitelist.</td>
   </tr>
   <tr>
     <td>RejectedKYT</td>
-    <td>The transaction is rejected because it failed Know Your Transaction (KYT) compliance checks.</td>
+    <td>The transaction was rejected because it failed Know Your Transaction (KYT) compliance checks.</td>
   </tr>
   <tr>
     <td>RejectedRiskControlCheck</td>
-    <td>The transaction is rejected because it failed the risk control check.</td>
+    <td>The transaction was rejected because it failed the risk control check.</td>
   </tr>
   <tr>
     <td>RejectedSpenderAuth</td>
-    <td>The transaction is rejected by the spender.</td>
+    <td>The transaction was rejected by the spender.</td>
   </tr>
   <tr>
     <td>RejectedApproverAuth</td>
-    <td>The transaction is rejected by the approver.</td>
+    <td>The transaction was rejected by the approver.</td>
   </tr>
   <tr>
     <td>RejectedDoubleCheck</td>
-    <td>The transaction is rejected because it failed a double check.</td>
+    <td>The transaction was rejected because it failed a double check.</td>
   </tr>
   <tr>
     <td>RejectedbyMobileCosigner</td>
-    <td>The transaction is rejected by a mobile cosigner.</td>
+    <td>The transaction was rejected by a mobile cosigner.</td>
   </tr>
   <tr>
     <td>RejectedCoboCheck</td>
-    <td>The transaction is rejected because it failed the internal check by Cobo.</td>
+    <td>The transaction was rejected because it failed the internal check by Cobo.</td>
   </tr>
     <tr>
     <td>RejectedByScreeningApp</td>
-    <td>The transaction is rejected because it failed the screening check by the [Screening app](https://manuals.cobo.com/en/apps/screening/introduction).</td>
+    <td>The transaction was rejected because it failed the screening check by the [Screening app](https://manuals.cobo.com/en/apps/screening/introduction).</td>
   </tr>
   <tr>
     <td>RejectedTravelRuleDueToUnsupportedToken</td>
-    <td>The transaction is rejected because the token is not supported by the Travel Rule.</td>
+    <td>The transaction was rejected because the token was not supported by the Travel Rule.</td>
   </tr>
   <tr>
     <td>RejectedTravelRule</td>
-    <td>The transaction is rejected because it failed to comply with the Travel Rule.</td>
+    <td>The transaction was rejected because it failed to comply with the Travel Rule.</td>
   </tr>
   <tr>
     <td>RejectedTravelRuleDueToCompliance</td>
-    <td>The transaction is rejected because it failed the cross-check of the Travel Rule.</td>
+    <td>The transaction was rejected because it failed the cross-check of the Travel Rule.</td>
   </tr>
   <tr>
     <td>RejectedTransactionPolicy</td>
-    <td>The transaction is rejected due to it failed the transaction policies.</td>
+    <td>The transaction was rejected due to it failed the transaction policies.</td>
   </tr>
   <tr>
     <td>RejectedBySigner</td>
@@ -203,15 +207,19 @@ The table below provides a complete overview of all transaction statuses and the
   </tr>
   <tr>
     <td>CanceledBySpender</td>
-    <td>The transaction is canceled by a spender.</td>
+    <td>The transaction was canceled by a spender.</td>
   </tr>
   <tr>
     <td>CanceledByAPI</td>
-    <td>The transaction is canceled by a [Cancel transaction](https://www.cobo.com/developers/v2/api-references/transactions/cancel-transaction) operation.</td>
+    <td>The transaction was canceled by a [Cancel transaction](https://www.cobo.com/developers/v2/api-references/transactions/cancel-transaction) operation.</td>
   </tr>
   <tr>
     <td>OnchainRejection</td>
-    <td>The transaction is rejected from being added to the blockchain.</td>
+    <td>The transaction was rejected from being added to the blockchain.</td>
+  </tr>
+  <tr>
+    <td>RejectedByCoboKYT</td>
+    <td>The transaction was rejected due to it failed Cobo's KYT check.</td>
   </tr>
   <tr>
     <td rowspan="1">Pending</td>
