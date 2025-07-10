@@ -1,0 +1,72 @@
+---
+title: Real-time Logs
+---
+
+The Cobo CLI provides a powerful feature to tail real-time logs of your API
+requests. This is particularly useful for debugging and monitoring your API
+usage in real-time.
+
+## Tailing Logs
+
+To start tailing logs, use the `logs tail` command:
+
+```bash
+$ cobo logs tail
+```
+
+This command will start streaming logs in real-time. Each log entry will display
+detailed information about the API request, including the request method,
+endpoint, status code, and more.
+
+## Filtering Logs
+
+You can filter the logs based on various criteria to focus on specific types of requests. The following options are available:
+
+- `--http-method`: Filter logs by HTTP method (e.g., GET, POST)
+- `--request-path`: Filter logs by request path
+- `--status-code`: Filter logs by status code
+- `--api-key`: Filter logs by API key
+- `--ip-address`: Filter logs by IP address
+
+For example, to tail logs for POST requests only:
+
+```bash
+$ cobo logs tail --http-method POST
+```
+
+## Limiting the Number of Logs
+
+By default, the `logs tail` command fetches 3 logs per request. You can adjust this using the `--limit` option:
+
+```bash
+$ cobo logs tail --limit 5
+```
+
+This will fetch 5 logs per request.
+
+## Log Details
+
+Each log entry provides detailed information about the API request:
+
+- Log ID
+- Timestamp
+- HTTP Method
+- API Endpoint
+- Status Code
+- IP Address
+- API Key
+- Query Parameters
+- Request Body
+- Response Body
+
+This comprehensive information helps you understand exactly what's happening with your API requests in real-time.
+
+## Stopping the Tail
+
+To stop tailing logs, simply press `Ctrl+C` in your terminal.
+
+<Note>
+The `logs tail` command requires appropriate authentication. Make sure you're logged in and have the necessary permissions to access the logs.
+</Note>
+
+By using the `logs tail` command, you can gain valuable insights into your API usage, helping you debug issues, monitor activity, and ensure the smooth operation of your Cobo-powered applications.
