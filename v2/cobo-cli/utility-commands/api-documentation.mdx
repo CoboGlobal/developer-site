@@ -1,0 +1,100 @@
+---
+title: API Documentation
+---
+
+The Cobo CLI provides several commands to help you access and understand the API documentation for Cobo's Wallet-as-a-Service (WaaS) 2.0. This guide will walk you through various ways to retrieve API information directly from the command line.
+
+## Using the `doc` Command
+
+The `doc` command allows you to quickly access API reference information for specific endpoints.
+
+To get information about a specific API endpoint:
+
+```bash
+$ cobo doc /wallets/mpc/vaults
+```
+
+This will display detailed information about the `/wallets/mpc/vaults` endpoint, including its description, parameters, and response format.
+
+## Describing API Endpoints with HTTP Methods
+
+You can use the `-d` or `--describe` flag with the HTTP method commands (`get`, `post`, `put`, `delete`) to get help on specific API endpoints.
+
+For example, to get information about a GET endpoint:
+
+```bash
+$ cobo get -d /wallets
+```
+
+This will show you the description, parameters, and other details for the GET request to `/wallets`, which lists all wallets.
+
+## Getting Help on Specific Parameters
+
+You can also use the `-d` or `--describe` flag to get help on one or multiple parameters for an API endpoint. This is particularly useful when you need information about specific fields in the request.
+
+To get help on a single parameter:
+
+```bash
+$ cobo post -d /wallets/mpc/vaults --name
+```
+
+This will provide detailed information about the `name` parameter for the `/wallets/mpc/vaults` endpoint, which creates a new MPC vault.
+
+To get help on multiple parameters:
+
+```bash
+$ cobo post -d /wallets/mpc/vaults --name --vault_type
+```
+
+This will display information about both the `name` and `vault_type` parameters for creating an MPC vault.
+
+## Updating the OpenAPI Specification
+
+The Cobo CLI uses an OpenAPI specification to provide accurate and up-to-date information about the API. This specification is automatically updated on a weekly basis to ensure you have access to the most recent API documentation.
+
+However, if you need to force an update before the next scheduled update, you can use the `doc` command with the `-u` flag:
+
+```bash
+$ cobo doc -u
+```
+
+When you run this command, the CLI performs the following actions:
+
+1. It sends a GET request to the Cobo GitHub repository to fetch the latest OpenAPI specification file from:
+   `https://raw.githubusercontent.com/CoboGlobal/developer-site/master/v2/cobo_waas2_openapi_spec/dev_openapi.yaml`
+
+2. If the request is successful, it downloads the content of the YAML file.
+
+3. The CLI then saves this file to your local configuration directory, typically as `openapi.yaml` in the Cobo CLI configuration folder.
+
+4. If the download and save operations are successful, you'll see a message: "OpenAPI specification file downloaded successfully."
+
+This process ensures that your local copy of the API specification is immediately updated with the latest version published by Cobo, regardless of when the last automatic update occurred.
+
+<Note>
+The automatic weekly update occurs when you run any command that requires the OpenAPI specification. If the spec file is older than one week, the CLI will attempt to update it before proceeding with the command.
+</Note>
+
+It's generally not necessary to manually update the specification unless you specifically need the very latest changes before the next automatic update. However, running this command can be useful if you're experiencing unexpected API behaviors or if you know there have been recent changes to the API that you need to access immediately.
+
+<Note>
+If there's an error during the manual or automatic update process, such as network issues or permission problems, the CLI will display an error message explaining what went wrong.
+</Note>
+
+## Using a Custom API Specification File
+
+If you have a custom OpenAPI specification file, you can use it with the Cobo CLI. This is useful for testing or working with different versions of the API.
+
+To use a custom specification file:
+
+```bash
+$ cobo --spec /path/to/custom_spec.yaml get /wallets -d
+```
+
+Replace `/path/to/custom_spec.yaml` with the actual path to your custom specification file.
+
+<Note>
+Using a custom specification file will override the default OpenAPI specification for that command only. It won't affect other commands or future uses of the CLI.
+</Note>
+
+By utilizing these commands and options, you can efficiently navigate and understand Cobo's WaaS 2.0 API documentation directly from your command line interface. This integration of documentation with the CLI tool streamlines the development process and helps you quickly find the information you need while working with Cobo's WaaS 2.0 services.

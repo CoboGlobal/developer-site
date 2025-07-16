@@ -1,0 +1,86 @@
+---
+title: Open Browser Shortcuts
+---
+
+The Cobo CLI provides a convenient way to quickly open various pages of the Cobo
+Portal in your default web browser. This feature helps you navigate to specific
+sections of the portal without manually typing URLs.
+
+## Usage
+
+To open a specific page, use the `open` command followed by the target page name:
+
+```bash
+$ cobo open <target>
+```
+
+Where `<target>` is one of the available page shortcuts.
+
+## Available Shortcuts
+
+The following shortcuts are available:
+
+- `portal`: Open the main Cobo Portal page
+- `dashboard`: Open the Dashboard page
+- `wallets`: Open the Wallets overview page
+- `custodial`: Open the Custodial Wallets management page
+- `mpc`: Open the MPC Wallets management page
+- `scw`: Open the Smart Contract Wallets management page
+- `exchange`: Open the Exchange Wallets management page
+- `tx`: Open the Transaction page
+- `rc`: Open the Risk Control page
+- `address`: Open the Address Book page
+- `developer`: Open the Developers page
+- `apps`: Open the Apps page
+- `org`: Open the Organization overview page
+- `members`: Open the Organization Members page
+- `fee`: Open the Fee Station page
+- `roles`: Open the User Roles and Permissions page
+- `governance`: Open the Governance Policies page
+- `activities`: Open the Activities page
+- `guides`: Open the Guides page
+- `pricing`: Open the Pricing page
+- `approval`: Open the Approval page
+
+## Examples
+
+Open the main Cobo Portal page:
+
+```bash
+$ cobo open portal
+```
+
+Open the MPC Wallets management page:
+
+```bash
+$ cobo open mpc
+```
+
+Open the Developers page:
+
+```bash
+$ cobo open developer
+```
+
+## Notes
+
+- The command will open the specified page in your default web browser.
+- The URL opened will correspond to the currently set environment (development, sandbox, or production).
+- If an invalid target is provided, the CLI will display an error message.
+- Some targets require you to be logged in to the Cobo Portal. If you're not logged in, you'll be redirected to the login page before accessing the requested page.
+
+<Info>
+You can use the `-e / --env` option to specify a different environment for the opened URL. For example:
+
+```bash
+$ cobo -e prod open dashboard 
+```
+
+This will open the dashboard in the production environment, regardless of your current CLI environment setting.
+</Info>
+
+<Note>
+Targets such as `dashboard`, `wallets`, `custodial`, `mpc`, `scw`, `exchange`, `tx`, `rc`, `address`, `apps`, `org`, `members`, `fee`, `roles`, `governance`, `activities`, and `approval` require authentication. If you're not logged in, you'll be redirected to the login page first.
+</Note>
+
+By using these shortcuts, you can quickly access different sections of the Cobo Portal, streamlining your workflow and saving time navigating through the web interface.

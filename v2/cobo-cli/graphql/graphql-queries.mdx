@@ -1,0 +1,155 @@
+---
+title: "GraphQL Queries"
+description: "Execute GraphQL queries using the Cobo CLI"
+---
+
+The Cobo CLI provides a powerful GraphQL interface to interact with the Cobo WaaS 2 API. This feature allows you to execute complex queries and retrieve specific data from the API.
+
+## Execute a GraphQL Query
+
+To execute a GraphQL query, use the `graphql` command followed by your query. The basic syntax is:
+
+```bash
+$ cobo graphql -q "YOUR_QUERY_HERE"
+```
+
+Replace `YOUR_QUERY_HERE` with your actual GraphQL query.
+
+## Query Structure
+
+Your GraphQL query should be a valid JSON string containing a `query` key. For example:
+
+```bash
+$ cobo graphql -q '{
+  "query": "{ wallets { id name } }"
+}'
+```
+
+If your query is a simple string (not JSON), the CLI will automatically wrap it in the required JSON structure.
+
+## Use Variables
+
+You can include variables in your GraphQL query using the `-v` or `--variables` option. The variables should be provided as a JSON string. For example:
+
+```bash
+$ cobo graphql -q '{
+  "query": "query($walletId: ID!) { wallet(id: $walletId) { id name balance } }"
+}' -v '{
+  "walletId": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+}'
+```
+
+## Raw Output
+
+By default, the CLI formats the JSON response for readability. If you prefer the raw JSON output, use the `--raw` flag:
+
+```bash
+$ cobo graphql -q "{ wallets { id name } }" --raw
+```
+
+## Example Queries
+
+Here are some example GraphQL queries you can try with the Cobo WaaS 2 API:
+
+### Fetch Wallet Information
+
+```bash
+$ cobo graphql -q '{
+  "query": "
+    {
+      wallet(id: \"f47ac10b-58cc-4372-a567-0e02b2c3d479\") {
+        id
+        name
+        walletType
+        balance {
+          tokenId
+          amount
+        }
+      }
+    }
+  "
+}'
+```
+
+### Retrieve Transactions for a Wallet
+
+```bash
+$ cobo graphql -q '{
+  "query": "
+    {
+      transactions(walletId: \"f47ac10b-58cc-4372-a567-0e02b2c3d479\", limit: 5) {
+        id
+        type
+        status
+        amount {
+          tokenId
+          value
+        }
+      }
+    }
+  "
+}'
+```
+
+### Get MPC Vault Information with Variables
+
+```bash
+$ cobo graphql -q '{
+  "query": "
+    query($vaultId: ID!) {
+      mpcVault(id: $vaultId) {
+        id
+        name
+        type
+        rootPubkeys {
+          rootPubkey
+          curve
+        }
+      }
+    }
+  "
+}' -v '{
+  "vaultId": "YPdbyVaVGqXXjkUsohHw"
+}'
+```
+
+## Error Handling
+
+If there's an error in your GraphQL query or during execution, the CLI will display the error message. Make sure to check the response for any error fields.
+
+<Warning>
+Always validate your queries before executing them in a production environment to avoid potential issues.
+</Warning>
+
+## Tips for Using GraphQL with Cobo CLI
+
+1. Use the `--help` option with the `graphql` command to see all available options:
+
+   ```bash
+   $ cobo graphql --help
+   ```
+
+2. For complex queries, consider writing your query in a separate file and using command substitution to pass it to the CLI:
+
+   ```bash
+   $ cobo graphql -q "$(cat your_query.graphql)"
+   ```
+
+3. Remember to escape special characters in your query string when using it directly in the command line.
+
+4. The GraphQL endpoint uses the same authentication method as other API commands. Ensure you're properly authenticated before executing queries.
+
+5. Use the Cobo WaaS 2 API documentation to explore available GraphQL schemas and construct your queries accordingly.
+
+<Info>
+By leveraging the power of GraphQL, you can efficiently retrieve exactly the data you need from the Cobo WaaS 2 API, reducing unnecessary data transfer and simplifying your API interactions.
+</Info>
+
+## Related Commands
+
+- [`cobo get`](/v2/cobo-cli/api-commands/get-requests): Execute GET requests to the Cobo API
+- [`cobo post`](/v2/cobo-cli/api-commands/post-requests): Execute POST requests to the Cobo API
+- [`cobo put`](/v2/cobo-cli/api-commands/put-requests): Execute PUT requests to the Cobo API
+- [`cobo delete`](/v2/cobo-cli/api-commands/delete-requests): Execute DELETE requests to the Cobo API
+
+For more information on these commands, refer to their respective documentation pages.
