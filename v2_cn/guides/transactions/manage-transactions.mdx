@@ -29,7 +29,7 @@ description: "使用 WaaS 2.0 API 管理交易的综合指南，涵盖取消，�
 
 <Note>此操作仅适用于 SOL 代币的 MPC 钱包的交易。</Note>
 
-只有当交易状态为 `Failed` 时，才能重发交易。
+重新发送交易是一项高风险操作。请确保原始交易尚未广播到区块链、已经过期且永远不会被确认。否则，同一笔交易可能会在链上被确认两次。
 
 要重发交易，请使用 [重发交易](/v2/api-references/transactions/resend-transaction) 操作。这需要您希望重发的交易的交易 ID。
 

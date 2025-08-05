@@ -28,7 +28,7 @@ Resending a transaction means retrying a previously failed transaction.
 
 <Note>This operation only applies to transactions from MPC Wallets in the SOL token.</Note>
 
-A transaction can be resent only if its status is `failed`.
+Resending a transaction is a high‑risk operation. Ensure that the original transaction has not been broadcast to the blockchain, has already expired, and will never be confirmed. Otherwise, the same transaction may be confirmed on‑chain twice.
 
 To resend a transaction, use the [Resend transaction](/v2/api-references/transactions/resend-transaction) operation. This requires the transaction ID of the transaction you wish to resend.
 
