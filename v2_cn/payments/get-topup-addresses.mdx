@@ -4,26 +4,26 @@ lang: "zh-hans"
 description: ""
 ---
 
-您可以调用 Payment API 为用户获取专用的充值地址。下图展示了用户、商户、开发者以及 Cobo 之间的交互流程：
+您可以调用 Payment API 为用户（Payer）获取专用的充值地址。下图展示了 Payer、商户、开发者以及 Cobo 之间的交互流程：
 
 ```mermaid
 sequenceDiagram
-    participant 用户
+    participant Payer
     participant 商户
     participant 开发者
     participant Cobo
-    用户 ->> 商户: 请求开通钱包/充值功能
+    Payer ->> 商户: 请求开通钱包/充值功能
     商户 ->> 开发者: 请求开通钱包
-    开发者 ->> Cobo: ① 获取该用户的充值地址
+    开发者 ->> Cobo: ① 获取该 Payer 的充值地址
     Cobo ->> 开发者: 返回充值地址
     Cobo ->> Cobo: 地址入账轮询
     开发者 ->> 商户: 返回充值地址
-    商户 ->> 用户: 显示充值地址
-    用户 ->> Cobo: 向地址转入资金进行充值
+    商户 ->> Payer: 显示充值地址
+    Payer ->> Cobo: 向地址转入资金进行充值
     Cobo ->> Cobo: 合规检查
     Cobo ->> 开发者: ② 推送 Webhook 事件，通知充值成功
     开发者 ->> 商户: 同步充值状态
-    商户 ->> 用户: 更新钱包余额
+    商户 ->> Payer: 更新钱包余额
 ```
 
 ## 前提条件
@@ -32,9 +32,9 @@ sequenceDiagram
 
 ## 获取充值地址
 
-1. 调用 [Get top-up address](/v2/api-references/payment/get-top-up-address) 为指定商户的指定用户创建充值地址。请求中的关键参数包括：
+1. 调用 [Get top-up address](/v2/api-references/payment/get-top-up-address) 为指定商户的指定 Payer 创建充值地址。请求中的关键参数包括：
    * **商户 ID** (`merchant_id`)：商户在 Cobo 系统中的唯一标识，在您进行商户录入时由 Cobo 分配。
-   * **自定义用户 ID** (`custom_payer_id`)：用户在您的系统中的唯一标识。
+   * **自定义 Payer ID** (`custom_payer_id`)：Payer 在您的系统中的唯一标识。
    * **Token ID** (`token_id`)：指定充值地址需要支持的加密货币和区块链网络。
 
 2. **配置充值事件监听**：通过 Webhook 接收充值相关的事件通知，包括：

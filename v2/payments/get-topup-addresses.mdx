@@ -6,26 +6,26 @@ description: ""
 
 <Note>**Disclaimer: This article contains AI translations and should only be used as reference.** Contact Cobo's support team through [help@cobo.com](mailto:help@cobo.com) if you have any questions.</Note>
 
-You can call Payment API to get dedicated top-up addresses for users. The diagram below shows the interaction flow between users, merchants, developers, and Cobo:
+You can call Payment API to get dedicated top-up addresses for payers. The diagram below shows the interaction flow between payers, merchants, developers, and Cobo:
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Payer
     participant Merchant
     participant Developer
     participant Cobo
-    User ->> Merchant: Request to enable wallet/top-up function
+    Payer ->> Merchant: Request to enable wallet/top-up function
     Merchant ->> Developer: Request to enable wallet
-    Developer ->> Cobo: ① Get top-up address for this user
+    Developer ->> Cobo: ① Get top-up address for this payer
     Cobo ->> Developer: Return top-up address
     Cobo ->> Cobo: Address deposit polling
     Developer ->> Merchant: Return top-up address
-    Merchant ->> User: Display top-up address
-    User ->> Cobo: Transfer funds to address for top-up
+    Merchant ->> Payer: Display top-up address
+    Payer ->> Cobo: Transfer funds to address for top-up
     Cobo ->> Cobo: Compliance check
     Cobo ->> Developer: ② Push webhook events, notify successful top-up
     Developer ->> Merchant: Sync top-up status
-    Merchant ->> User: Update wallet balance
+    Merchant ->> Payer: Update wallet balance
 ```
 
 ## Prerequisites
@@ -34,9 +34,9 @@ You have completed all steps mentioned in [Preparation](/v2/payments/preparation
 
 ## Get top-up addresses
 
-1. Call [Get top-up address](/v2/api-references/payment/get-top-up-address) to create a top-up address for a specified user of a specified merchant. Key parameters in the request include:
+1. Call [Get top-up address](/v2/api-references/payment/get-top-up-address) to create a top-up address for a specified payer of a specified merchant. Key parameters in the request include:
    * **Merchant ID** (`merchant_id`): The unique identifier of the merchant in the Cobo system, assigned by Cobo when you register the merchant.
-   * **Custom user ID** (`custom_payer_id`): The unique identifier of the user in your system.
+   * **Custom payer ID** (`custom_payer_id`): The unique identifier of the payer in your system.
    * **Token ID** (`token_id`): Specifies the cryptocurrency and blockchain network that the top-up address needs to support.
 
 2. **Configure top-up event listening**: Receive top-up related event notifications through webhooks, including:

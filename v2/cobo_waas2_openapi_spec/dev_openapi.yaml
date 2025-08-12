@@ -1,4 +1,6 @@
 openapi: 3.0.3
+x-mcp:
+  enabled: true
 info:
   title: Cobo Wallet as a Service 2.0
   description: |
@@ -3709,9 +3711,9 @@ paths:
       tags:
         - Payment
       operationId: create_forced_sweep_request
-      summary: Create forced sweep request
+      summary: Create forced sweep
       description: |
-        This operation creates a forced sweep request to transfer funds from addresses within a specified wallet to its designated sweep-to address.
+        This operation creates a forced sweep to transfer funds from addresses within a specified wallet to its designated sweep-to address.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -3729,9 +3731,9 @@ paths:
       tags:
         - Payment
       operationId: list_forced_sweep_requests
-      summary: List forced sweep requests
+      summary: List forced sweeps
       description: |
-        This operation retrieves the information of all forced sweep requests.
+        This operation retrieves the information of all forced sweeps.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -12730,7 +12732,7 @@ components:
       properties:
         request_id:
           type: string
-          description: The request ID that is used to track a forced sweep request. The request ID is provided by you and must be unique.
+          description: The request ID that is used to track a forced sweep. The request ID is provided by you and must be unique.
           example: 123e4567-e89b-12d3-a456-426614174002
         wallet_id:
           type: string
@@ -12759,7 +12761,7 @@ components:
           example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
         request_id:
           type: string
-          description: The request ID provided by you when creating the forced sweep request.
+          description: The request ID provided by you when creating the forced sweep.
           example: 123e4567-e89b-12d3-a456-426614174002
         wallet_id:
           type: string
@@ -12778,11 +12780,11 @@ components:
           $ref: '#/components/schemas/ForcedSweepStatus'
         created_timestamp:
           type: integer
-          description: 'The creation time of the forced sweep request, represented as a UNIX timestamp in seconds.'
+          description: 'The creation time of the forced sweep, represented as a UNIX timestamp in seconds.'
           example: 1744689600
         updated_timestamp:
           type: integer
-          description: 'The update time of the forced sweep request, represented as a UNIX timestamp in seconds.'
+          description: 'The update time of the forced sweep, represented as a UNIX timestamp in seconds.'
           example: 1744689600
     ForcedSweepStatus:
       type: string
@@ -12792,9 +12794,9 @@ components:
         - Completed
       example: Pending
       description: |
-        The current status of the forced sweep request:
-        - `Pending`: The forced sweep request has been created and is awaiting processing.
-        - `Processing`: The forced sweep request is currently being processed.
+        The current status of the forced sweep:
+        - `Pending`: The forced sweep has been created and is awaiting processing.
+        - `Processing`: The forced sweep is currently being processed.
         - `Completed`: The requested forced sweep has been completed.
     TSSKeyGenRequest:
       type: object
@@ -18564,7 +18566,7 @@ components:
               pagination:
                 $ref: '#/components/schemas/Pagination'
     createForcedSweepResponse:
-      description: Forced sweep request created successfully.
+      description: Forced sweep created successfully.
       content:
         application/json:
           schema:

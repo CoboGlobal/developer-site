@@ -122,8 +122,10 @@ sequenceDiagram
 1. Call [Create refund order](/v2/api-references/payment/create-refund-order) to create a refund order. When creating a refund order, you need to pay attention to the following points:
 
    - You need to specify the source of the refund amount through the `refund_type` field. When you choose `Merchant`, Cobo will deduct the refund amount from the merchant balance; when you choose `Psp`, Cobo will deduct the refund amount from the developer balance.
-   - Since refunds involve transfers to external addresses, Cobo will charge you related fees. You can charge merchants an appropriate amount of developer fee as compensation through the developer fee field (`merchant_fee_amount`). Cobo will transfer this fee from the merchant balance to the developer balance, and the funds will remain at the original address without separate transfer. You can first call [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) to estimate on-chain handling fees, providing a reference for determining the developer fee amount.
-   - Cobo will verify the refund amount. If the refund amount is less than the developer fee, the request will be rejected and the failure reason returned, because in this case the user cannot actually receive any refund.
+   - Since refunds involve transfers to external addresses, Cobo will charge you related fees. You can charge merchants an appropriate amount of developer fee as compensation through the developer fee field (`merchant_fee_amount`). After specifying this field:
+     - Cobo will transfer the developer fee from the merchant balance to the developer balance, and the funds will remain at the original address without actual on-chain transfer.
+     - The actual refund amount received by the user = the specified refund amount - the developer fee (i.e., `payable_amount` - `merchant_fee_amount`).
+     - Cobo will verify the refund amount. If the refund amount is less than the developer fee, the request will be rejected and the failure reason returned, because in this case the user cannot actually receive any refund.
 
 2. You can get real-time update notifications of refund order status through the `payment.refund.status.updated` event. You can also query individual refund order status by calling [Get refund order information](/v2/api-references/payment/get-refund-order-information), or query all refund order statuses by calling [List all refund orders](/v2/api-references/payment/list-all-refund-orders).
 

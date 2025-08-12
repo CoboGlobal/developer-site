@@ -10,7 +10,29 @@ In top-up mode, you may need to handle the following exception situations.
 
 ## Top-up address replacement
 
-When a top-up address has multiple deposit transactions that fail compliance screening, Cobo will automatically deprecate that address and generate a new top-up address for that user. After address replacement, please ensure to promptly notify the user to use the new address for deposits. Any subsequent funds credited to deprecated addresses will not be included in actual received amounts and will not trigger top-up events.
+You can manually replace the top-up address of a payer. Cobo will also automatically replace the top-up address in certain cases.
+
+### Manual replacement
+
+When you need to replace the top-up address due to business changes, internal risk assessment, or merchant's request, you can call [Get top-up address](/v2/api-references/payment/get-top-up-address) to get a new top-up address.
+
+<Note>For a single payer, you can replace the address up to 10 times. If you exceed the limit, the API request will return an error.</Note>
+
+### Automatic replacement
+
+When a top-up address has multiple deposit transactions that fail compliance screening, Cobo will automatically deprecate that address and generate a new top-up address for that payer. After address replacement, please ensure to promptly notify the payer to use the new address for deposits. Any subsequent funds credited to deprecated addresses will not be included in actual received amounts and will not trigger top-up events.
+
+
+### Impact of address replacement
+
+<Warning>
+Address replacement requires immediate notification to the payer to use the new address for deposits.
+</Warning>
+
+- **Fund handling**: All funds except high-risk funds will be automatically swept to the sweep address, even if they do not meet the sweep threshold.
+- **Transaction monitoring**: Cobo will no longer monitor the transaction activity of this address, and no webhook notifications will be triggered for subsequent deposits.
+- **Address query**: You can still query the address through the payer ID, and the Payment App will also show all the addresses bound by the payer in the past.
+
 
 ## Compliance screening failure
 When a transaction fails compliance screening by Cobo KYT or the Screening App, the system will trigger a `payment.transaction.held` event. The subsequent processing flow is as follows:

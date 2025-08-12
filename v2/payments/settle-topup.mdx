@@ -34,7 +34,7 @@ The API returns two key balance fields:
 When `available_balance` is less than `total_balance`, it means some funds have not reached the [sweep threshold](/v2/payments/glossary#sweep-threshold). You have two options:
 
 - Wait for the balance on that address to increase to the sweep threshold.
-- Call [Create forced sweep request](/v2/api-references/payment/create-forced-sweep-request) to perform forced sweep: Cobo will immediately sweep funds that have not reached the threshold to the sweep-to address. After sweeping is complete, you can use these funds for settlement.
+- Call [Create forced sweep](/v2/api-references/payment/create-forced-sweep) to perform forced sweep: Cobo will immediately sweep funds that have not reached the threshold to the sweep-to address. After sweeping is complete, you can use these funds for settlement.
 
 ### 2. Create settlement request
 

@@ -118,8 +118,10 @@ sequenceDiagram
 1. 调用 [Create refund order](/v2/api-references/payment/create-refund-order) 创建退款订单。创建退款订单时需要注意以下几点：
 
    - 您需要通过 `refund_type` 字段指定退款金额的来源。当您选择 `Merchant` 时，Cobo 会从商户余额中扣除退款金额；当您选择 `Psp` 时，Cobo 会从开发者余额中扣除退款金额。
-   - 由于退款涉及到向外部地址转账，Cobo 会对您收取相关费用。您可以通过开发者费用字段（`merchant_fee_amount`）向商户收取合适金额的开发者费用作为补偿。Cobo 会将该费用从商户余额划转为开发者余额，资金会保留在原地址而不会另行转账。您可以先调用 [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) 对链上手续费进行预估，为确定开发者费用金额提供参考。 
-   - Cobo 会对退款金额进行校验。如果退款金额小于开发者费用，该请求将被拒绝并返回失败原因，因为这种情况下用户实际无法收到任何退款。
+   - 由于退款涉及到向外部地址转账，Cobo 会收取相关手续费。您可以通过开发者费用字段（`merchant_fee_amount`）向商户收取适当的费用作为补偿。指定该字段后：
+     - Cobo 会将开发者费用从商户余额划转至开发者余额，资金会保留在原地址，不会发生实际转账。
+     - 用户实际收到的退款金额 = 指定退款金额 - 开发者费用（即 `payable_amount` - `merchant_fee_amount`）。
+     - Cobo 会对退款金额进行校验。如果退款金额小于开发者费用，该请求将被拒绝并返回失败原因，因为此时用户实际无法收到任何退款。
 
 2. 您可以通过 `payment.refund.status.updated` 事件获取退款订单状态的实时更新通知。您也可以通过调用 [Get refund order information](/v2/api-references/payment/get-refund-order-information) 查询单个退款订单状态，或调用 [List all refund orders](/v2/api-references/payment/list-all-refund-orders) 查询所有退款订单状态。
   

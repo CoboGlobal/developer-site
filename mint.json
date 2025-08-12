@@ -25,9 +25,9 @@
     "dark": "#1F32D6"
   },
   "versions": [
-    "Version 1.0",
-    "Version 2.0 EN",
-    "Version 2.0 中文版"
+    "🌐 Version 1.0",
+    "🌐 Version 2.0 EN",
+    "🌐 Version 2.0 中文版"
   ],
   "topbarLinks": [
     {
@@ -51,82 +51,82 @@
     {
       "name": "Guides",
       "url": "v2/guides",
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "name": "API References",
       "url": "v2/api-references",
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "name": "Developer Tools",
       "url": "v2/developer-tools",
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "name": "Payment Solution",
       "url": "v2/payments",
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "name": "Cobo Portal Apps",
       "url": "v2/apps",
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "name": "开发指南",
       "url": "v2_cn/guides",
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "name": "API 参考",
       "url": "v2_cn/api-references",
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "name": "开发者工具",
       "url": "v2_cn/developer-tools",
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "name": "支付解决方案",
       "url": "v2_cn/payments",
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "name": "Cobo Portal Apps",
       "url": "v2_cn/apps",
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "name": "Documentation",
       "url": "v1/overview",
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "name": "Get Started",
       "url": "v1/get-started",
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "name": "API References",
       "url": "v1/api-references",
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "name": "SDKs and Tools",
       "url": "v1/sdks-and-tools",
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "name": "Guides",
       "url": "v1/guides",
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "name": "FAQs",
       "url": "v1/faqs",
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     }
   ],
   "navigation": [
@@ -145,7 +145,7 @@
         },
         "v2_cn/guides/overview/error-codes"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "快速开始",
@@ -156,7 +156,7 @@
         "v2_cn/guides/mpc-wallets/get-started-ucw",
         "v2_cn/guides/smart-contract-wallets/get-started-scw"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "Webhooks 和 Callbacks",
@@ -165,7 +165,7 @@
         "v2_cn/guides/webhooks-callbacks/set-up-endpoint",
         "v2_cn/guides/webhooks-callbacks/webhook-event-type"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "交易",
@@ -178,11 +178,11 @@
             "v2_cn/guides/transactions/status",
             "v2_cn/guides/transactions/transaction-process-custodial"
           ],
-          "version": "Version 2.0 中文版"
+          "version": "🌐 Version 2.0 中文版"
         },
         "v2_cn/guides/transactions/manage-transactions"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "MPC 钱包",
@@ -238,7 +238,7 @@
       "pages": [
         "v2_cn/guides/smart-contract-wallets/automate-farming-rewards-collection"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "资源文档",
@@ -246,14 +246,14 @@
         "v2_cn/guides/overview/changelog",
         "v2_cn/guides/overview/upgrade-guide"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "概览",
       "pages": [
         "v2_cn/api-references/overview"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "WaaS SDKs",
@@ -263,7 +263,7 @@
         "v2_cn/developer-tools/quickstart-go",
         "v2_cn/developer-tools/quickstart-javascript"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },    
     {
       "group": "Cobo CLI",
@@ -328,7 +328,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "Cobo UI Toolkit",
@@ -336,7 +336,7 @@
         "v2_cn/developer-tools/uitoolkit-intro",
         "v2_cn/developer-tools/uitoolkit-api"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "UCW SDKs",
@@ -344,28 +344,28 @@
         "v2_cn/developer-tools/quickstart-ucw-ios",
         "v2_cn/developer-tools/ucw-sdk/api-reference"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "其他工具",
       "pages": [
         "v2_cn/developer-tools/get-testnet-coins"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "介绍",
       "pages": [
         "v2_cn/apps/introduction"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "快速开始",
       "pages": [
         "v2_cn/apps/get-started"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "创建 App",
@@ -381,7 +381,7 @@
         "v2_cn/apps/build-app",
         "v2_cn/apps/configure-workflow"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "概览",
@@ -392,7 +392,7 @@
         "v2_cn/payments/preparation",
         "v2_cn/payments/preparation-prod"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "充值模式",
@@ -401,7 +401,7 @@
         "v2_cn/payments/settle-topup",
         "v2_cn/payments/handle-abnormality-topup"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "订单模式",
@@ -411,7 +411,7 @@
         "v2_cn/payments/handle-abnormality-order",
         "v2_cn/payments/checkout-sdk"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "索引信息",
@@ -422,7 +422,7 @@
         "v2_cn/payments/roles-and-permissions",
         "v2_cn/payments/api-reference"
       ],
-      "version": "Version 2.0 中文版"
+      "version": "🌐 Version 2.0 中文版"
     },
     {
       "group": "Overview",
@@ -439,7 +439,7 @@
         },
         "v2/guides/overview/error-codes"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Get started",
@@ -450,7 +450,7 @@
         "v2/guides/mpc-wallets/get-started-ucw",
         "v2/guides/smart-contract-wallets/get-started-scw"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Webhooks and callbacks",
@@ -459,7 +459,7 @@
         "v2/guides/webhooks-callbacks/set-up-endpoint",
         "v2/guides/webhooks-callbacks/webhook-event-type"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Transactions",
@@ -472,11 +472,11 @@
             "v2/guides/transactions/status",
             "v2/guides/transactions/transaction-process-custodial"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         "v2/guides/transactions/manage-transactions"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "MPC Wallets",
@@ -532,7 +532,7 @@
       "pages": [
         "v2/guides/smart-contract-wallets/automate-farming-rewards-collection"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Resources",
@@ -540,7 +540,7 @@
         "v2/guides/overview/changelog",
         "v2/guides/overview/upgrade-guide"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Development Tools and Resources",
@@ -549,7 +549,7 @@
         "v2/api-references/pagination",
         "v2/api-references/error-codes"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "General wallet operations",
@@ -567,7 +567,7 @@
             "v2/api-references/wallets/list-token-listing-requests",
             "v2/api-references/wallets/get-token-listing-request"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Wallets",
@@ -578,7 +578,7 @@
             "v2/api-references/wallets/update-wallet",
             "v2/api-references/wallets/delete-wallet"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Addresses",
@@ -589,7 +589,7 @@
             "v2/api-references/wallets/check-address-validity-across-chains",
             "v2/api-references/wallets/check-addresses-validity"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Balances",
@@ -600,7 +600,7 @@
             "v2/api-references/wallets/list-address-balances-by-token",
             "v2/api-references/wallets/refresh-address-balances-by-token"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "UTXOs",
@@ -610,10 +610,10 @@
             "v2/api-references/wallets/lock-utxos",
             "v2/api-references/wallets/unlock-utxos"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "MPC Wallets-specific operations",
@@ -626,7 +626,7 @@
             "v2/api-references/wallets--mpc-wallets/get-project-information",
             "v2/api-references/wallets--mpc-wallets/update-project-name"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Vaults",
@@ -636,7 +636,7 @@
             "v2/api-references/wallets--mpc-wallets/get-vault-information",
             "v2/api-references/wallets--mpc-wallets/update-vault-name"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Key share holder groups",
@@ -647,7 +647,7 @@
             "v2/api-references/wallets--mpc-wallets/update-key-share-holder-group",
             "v2/api-references/wallets--mpc-wallets/delete-key-share-holder-group"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Key share holders",
@@ -656,7 +656,7 @@
             "v2/api-references/wallets--mpc-wallets/list-all-cobo-key-share-holders",
             "v2/api-references/wallets--mpc-wallets/get-key-share-holder-information"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "TSS requests",
@@ -666,10 +666,10 @@
             "v2/api-references/wallets--mpc-wallets/get-tss-request",
             "v2/api-references/wallets--mpc-wallets/cancel-tss-request"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Smart Contract Wallets-specific operations",
@@ -681,7 +681,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Exchange Wallets-specific operations",
@@ -696,7 +696,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Transaction operations",
@@ -706,7 +706,7 @@
           "pages": [
             "v2/api-references/transactions/estimate-transaction-fee"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Make transactions",
@@ -715,7 +715,7 @@
             "v2/api-references/transactions/call-smart-contract",
             "v2/api-references/transactions/sign-message"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Query transactions",
@@ -724,7 +724,7 @@
             "v2/api-references/transactions/get-transaction-information",
             "v2/api-references/transactions/check-cobo-loop-transfers"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Manage transactions",
@@ -736,10 +736,10 @@
             "v2/api-references/transactions/broadcast-signed-transactions",
             "v2/api-references/transactions/sign-and-broadcast-transaction"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Fee Station operations",
@@ -755,7 +755,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },    
     {
       "group": "OAuth operations",
@@ -768,7 +768,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Webhook operations",
@@ -781,7 +781,7 @@
             "v2/api-references/developers--webhooks/get-webhook-endpoint-information",
             "v2/api-references/developers--webhooks/update-webhook-endpoint"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         },
         {
           "group": "Webhook events",
@@ -793,10 +793,10 @@
             "v2/api-references/developers--webhooks/retry-event",
             "v2/api-references/developers--webhooks/trigger-test-event"
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Staking operations",
@@ -846,7 +846,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Address book operations",
@@ -858,7 +858,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Organization operations",
@@ -870,7 +870,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Developer Console operations",
@@ -884,7 +884,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Travel Rule operations",
@@ -899,7 +899,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Payment operations",
@@ -948,8 +948,8 @@
           "group": "Settlements",
           "pages": [
             "v2/api-references/payment/get-withdrawable-balances",
-            "v2/api-references/payment/create-forced-sweep-request",
-            "v2/api-references/payment/list-forced-sweep-requests",
+            "v2/api-references/payment/create-forced-sweep",
+            "v2/api-references/payment/list-forced-sweeps",
             "v2/api-references/payment/create-settlement-request",
             "v2/api-references/payment/list-all-settlement-requests",
             "v2/api-references/payment/get-settlement-request-information",
@@ -965,7 +965,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Cobo Portal Apps operations",
@@ -981,7 +981,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "WaaS SDKs",
@@ -991,7 +991,7 @@
         "v2/developer-tools/quickstart-go",
         "v2/developer-tools/quickstart-javascript"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Cobo CLI",
@@ -1056,7 +1056,7 @@
           ]
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Cobo UI Toolkit",
@@ -1064,7 +1064,7 @@
         "v2/developer-tools/uitoolkit-intro",
         "v2/developer-tools/uitoolkit-api"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "UCW SDKs",
@@ -1155,31 +1155,31 @@
               ]
             }
           ],
-          "version": "Version 2.0 EN"
+          "version": "🌐 Version 2.0 EN"
         }
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Other tools",
       "pages": [
         "v2/developer-tools/get-testnet-coins"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Introduction",
       "pages": [
         "v2/apps/introduction"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Get started",
       "pages": [
         "v2/apps/get-started"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Build an app",
@@ -1195,7 +1195,7 @@
         "v2/apps/build-app",
         "v2/apps/configure-workflow"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Overview",
@@ -1206,7 +1206,7 @@
         "v2/payments/preparation",
         "v2/payments/preparation-prod"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Top-up mode",
@@ -1215,7 +1215,7 @@
         "v2/payments/settle-topup",
         "v2/payments/handle-abnormality-topup"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Order mode",
@@ -1225,7 +1225,7 @@
         "v2/payments/handle-abnormality-order",
         "v2/payments/checkout-sdk"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Reference",
@@ -1236,7 +1236,7 @@
         "v2/payments/roles-and-permissions",
         "v2/payments/api-reference"
       ],
-      "version": "Version 2.0 EN"
+      "version": "🌐 Version 2.0 EN"
     },
     {
       "group": "Overview",
@@ -1244,14 +1244,14 @@
         "v1/overview/introduction",
         "v1/overview/waas-introduction"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Custodial Wallets",
       "pages": [
         "v1/overview/custodial-wallet"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "MPC Wallets",
@@ -1276,7 +1276,7 @@
           ]
         }
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Smart Contract Wallets",
@@ -1323,7 +1323,7 @@
           ]
         }
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Community",
@@ -1335,7 +1335,7 @@
         "v1/overview/community/telegram",
         "v1/overview/community/news"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Overview",
@@ -1346,7 +1346,7 @@
         "v1/get-started/overview/mpc-lite-quick-start",
         "v1/get-started/overview/first-wallet-tutorial"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Overview",
@@ -1354,7 +1354,7 @@
         "v1/api-references/overview/authentication",
         "v1/api-references/overview/playground"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "SDKs",
@@ -1368,7 +1368,7 @@
             "v1/sdks-and-tools/sdks/waas/go",
             "v1/sdks-and-tools/sdks/waas/php"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Cobo Safe",
@@ -1376,7 +1376,7 @@
             "v1/sdks-and-tools/sdks/cobo-safe/python",
             "v1/sdks-and-tools/sdks/cobo-safe/js"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         }
       ]
     },
@@ -1386,7 +1386,7 @@
         "v1/sdks-and-tools/tools/pycobosafe",
         "v1/sdks-and-tools/tools/recovery-kit"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "FAQs",
@@ -1397,7 +1397,7 @@
         "v1/faqs/api-key",
         "v1/faqs/api-callback"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Wallet, Address and Transactions",
@@ -1408,7 +1408,7 @@
         "v1/guides/howtos/creating-withdrawal-transactions",
         "v1/guides/howtos/manage-balance-and-transactions"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Events and Notifications",
@@ -1416,7 +1416,7 @@
         "v1/guides/howtos/configure-api-callback",
         "v1/guides/howtos/api-error-handling-and-reporting"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "MPC Wallets Specific",
@@ -1426,7 +1426,7 @@
         "v1/guides/howtos/estimate-transaction-fees",
         "v1/guides/howtos/rbf"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Security Best Practices",
@@ -1434,14 +1434,14 @@
         "v1/guides/howtos/api-security-key",
         "v1/guides/howtos/api-configuration-best-practices"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Working with UTXO Model",
       "pages": [
         "v1/guides/howtos/creating-utxo-transactions"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Custodial Wallets API",
@@ -1459,7 +1459,7 @@
             "v1/api-references/custody-wallet/is_valid_address",
             "v1/api-references/custody-wallet/address_history"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Loop Alliance",
@@ -1468,7 +1468,7 @@
             "v1/api-references/custody-wallet/internal_address_info_batch",
             "v1/api-references/custody-wallet/loop-explorer"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Transactions",
@@ -1483,7 +1483,7 @@
             "v1/api-references/custody-wallet/pending_transactions",
             "v1/api-references/custody-wallet/transaction_history"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Withdraw",
@@ -1491,7 +1491,7 @@
             "v1/api-references/custody-wallet/new_withdraw_request",
             "v1/api-references/custody-wallet/withdraw_info_by_request_id"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Staking",
@@ -1504,7 +1504,7 @@
             "v1/api-references/custody-wallet/staking/unstakings",
             "v1/api-references/custody-wallet/staking/staking_history"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Trading",
@@ -1516,7 +1516,7 @@
             "v1/api-references/custody-wallet/trading/trading_transfer",
             "v1/api-references/custody-wallet/trading/trading_transfer_info"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Gas Station",
@@ -1529,10 +1529,10 @@
             "v1/api-references/custody-wallet/transactions_by_time",
             "v1/api-references/custody-wallet/transactions_by_id"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         }
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "MPC Wallets API",
@@ -1556,7 +1556,7 @@
             "v1/api-references/mpc-wallet/mpc_get_max_send_amount",
             "v1/api-references/mpc-wallet/mpc_get_supported_nft_collections"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Transaction",
@@ -1567,7 +1567,7 @@
             "v1/api-references/mpc-wallet/mpc_transactions_by_tx_hash",
             "v1/api-references/mpc-wallet/mpc_get_approval_details"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Withdraw",
@@ -1577,7 +1577,7 @@
             "v1/api-references/mpc-wallet/mpc_drop_transaction",
             "v1/api-references/mpc-wallet/mpc_retry_double_check"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Tss Node",
@@ -1585,7 +1585,7 @@
             "v1/api-references/mpc-wallet/mpc_list_tss_node_requests",
             "v1/api-references/mpc-wallet/mpc_list_tss_node"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Bind Auth",
@@ -1598,7 +1598,7 @@
             "v1/api-references/mpc-wallet/auth_unbind_binding",
             "v1/api-references/mpc-wallet/auth_query_statement"
           ],
-          "version": "Version 1.0"
+          "version": "🌐 Version 1.0"
         },
         {
           "group": "Gas Station",
@@ -1628,7 +1628,7 @@
           ]
         }
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     },
     {
       "group": "Development",
@@ -1641,7 +1641,7 @@
         "v1/api-references/development/testing",
         "v1/api-references/development/changelog"
       ],
-      "version": "Version 1.0"
+      "version": "🌐 Version 1.0"
     }
   ],
   "footerSocials": {
