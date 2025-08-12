@@ -35,16 +35,17 @@ description: "学习如何使用 JavaScript SDK 快速集成 WaaS 服务。"
   npm install @cobo/cobo-waas2 --save
   ```
 
-安装完成后的目录结构（示例）如下：
+  安装完成后的目录结构（示例）如下：
 
-```pgsql
-waas2-js/
-├─ node_modules/
-├─ package.json
-├─ package-lock.json
-└─ (稍后将创建) index.js
-```
-<Note> 如果您的项目已存在 <code>package.json</code> 和 <code>package-lock.json</code>，可直接将二者放到根目录后执行 <code>npm install</code> 拉取依赖。</Note>
+  ```pgsql
+  waas2-js/
+  ├─ node_modules/
+  ├─ package.json
+  ├─ package-lock.json
+  └─ (稍后将创建) index.js
+  ```
+
+  <Tip>如果您的项目已存在 <code>package.json</code> 和 <code>package-lock.json</code>，可直接将二者放到根目录后执行 <code>npm install</code> 拉取依赖。</Tip>
 
 3. 在项目根目录创建一个文件 <code>index.js</code>，并将以下示例代码粘贴到该文件中。
 
@@ -52,22 +53,22 @@ waas2-js/
 
 1. 设置 API Secret。
 
-```javascript
-// 初始化默认 API 客户端
-const apiClient = CoboWaas2.ApiClient.instance
-// 设置 API Secret
-apiClient.setPrivateKey("<YOUR_API_SECRET_IN_HEX>");
-```
+  ```javascript
+  // 初始化默认 API 客户端
+  const apiClient = CoboWaas2.ApiClient.instance
+  // 设置 API Secret
+  apiClient.setPrivateKey("<YOUR_API_SECRET_IN_HEX>");
+  ```
 
 2. 选择环境。
 
-```javascript
-// 选择开发环境
-apiClient.setEnv(CoboWaas2.Env.DEV);
+  ```javascript
+  // 选择开发环境
+  apiClient.setEnv(CoboWaas2.Env.DEV);
 
-// 选择生产环境
-// apiClient.setEnv(CoboWaas2.Env.PROD);
-```
+  // 选择生产环境
+  // apiClient.setEnv(CoboWaas2.Env.PROD);
+  ```
 
 ## 示例代码
 
