@@ -15,18 +15,38 @@ description: "学习如何使用 JavaScript SDK 快速集成 WaaS 服务。"
 
 ## 前提条件
 
-- 安装 NPM。
+- 安装 Node.js 和 NPM。
 
 - 按照[创建您的账户和团队](https://manuals.cobo.com/en/portal/quick-start-guide)中的说明设置您的 Cobo 账户并创建您的团队。如果已经设置了团队，请让您的团队管理员邀请您加入团队。
 - 您已[生成 API Key 和 API Secret](/v2_cn/guides/overview/cobo-auth#generate-an-api-key-and-an-api-secret)，并在 Cobo Portal 上[注册了 API Key](https://manuals.cobo.com/en/portal/developer-console/create-api-key)。
 
-## 安装 SDK
+## 安装与项目准备
 
-运行以下命令安装 SDK：
+1. 创建项目根目录并初始化 NPM：
 
+  ```bash
+  mkdir waas2-js && cd waas2-js
+  npm init -y
+  ```
+
+2. 安装 SDK：
+
+  ```bash
+  npm install @cobo/cobo-waas2 --save
+  ```
+
+安装完成后的目录结构（示例）如下：
+
+```pgsql
+waas2-js/
+├─ node_modules/
+├─ package.json
+├─ package-lock.json
+└─ (稍后将创建) index.js
 ```
-npm install @cobo/cobo-waas2 --save
-```
+<Note> 如果您的项目已存在 <code>package.json</code> 和 <code>package-lock.json</code>，可直接将二者放到根目录后执行 <code>npm install</code> 拉取依赖。</Note>
+
+3. 在项目根目录创建一个文件 <code>index.js</code>，并将以下示例代码粘贴到该文件中。
 
 ## 配置 API Key 和 HTTP Host
 
@@ -56,59 +76,97 @@ API 操作级别的文档和示例代码请参照 WaaS SDK GitHub 仓库内的 [
 ### 列出支持的链
 
 ```javascript
-const CoboWaas2 = require('@cobo/cobo-waas2');
-// 初始化默认 API 客户端
-const apiClient = CoboWaas2.ApiClient.instance
-// 使用开发环境
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// 初始化 API 客户端
+const apiClient = CoboWaas2.ApiClient.instance;
+// 设置运行环境（开发环境：Env.DEV，生产环境：Env.PROD）
 apiClient.setEnv(CoboWaas2.Env.DEV);
-// 设置 API Secret
-apiClient.setPrivateKey("<YOUR_API_SECRET_IN_HEX>");
-// 调用 API
+// 配置 API Secret，请将 <YOUR_PRIVATE_KEY> 替换为您的 API Secret。
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// 创建 WalletsApi 实例
 const apiInstance = new CoboWaas2.WalletsApi();
+// 定义查询参数
 const opts = {
-  'wallet_type': CoboWaas2.WalletType.Custodial,
-  'wallet_subtype': CoboWaas2.WalletSubtype.Asset,
-  'chain_ids': "BTC,ETH",
-  'limit': 10,
-  'before': "",
-  'after': ""
+  wallet_type: "Custodial",      // 钱包类型：全托管钱包
+  wallet_subtype: "Asset",       // 钱包子类型：资产钱包
+  chain_ids: "BTC,ETH",          // 需要查询的链 ID：BTC，ETH
+  limit: 10,                     // 返回数量限制为 10 条
+  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1", // 分页用，可选
+  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",  // 分页用，可选
 };
-apiInstance.listSupportedChains(opts).then((data) => {
-  console.log('API called successfully. Returned data: ' + data);
-}, (error) => {
-  console.error(error);
-});
+// 调用 API 列出支持的链
+apiInstance.listSupportedChains(opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+```
+
+示例响应如下：
+
+```javascript
+API called successfully. Returned data: {
+ "data": [
+   {
+     "chain_id": "BTC",
+     "symbol": "Bitcoin",
+     "icon_url": "https://d.cobo.com/public/logos/btc%403x.png",
+     "explorer_tx_url": "https://mempool.space/tx/{txn_id}",
+     "explorer_address_url": "https://mempool.space/address/{address}",
+     "require_memo": false,
+     "confirming_threshold": 4
+   },
+   {
+     "chain_id": "ETH",
+     "symbol": "Ethereum",
+     "icon_url": "https://d.cobo.com/public/logos/eth%403x.png",
+     "explorer_tx_url": "https://etherscan.io/tx/{txn_id}",
+     "explorer_address_url": "https://etherscan.io/address/{address}",
+     "require_memo": false,
+     "confirming_threshold": 64
+   }
+ ],
+ "pagination": {
+   "before": "",
+   "after": "",
+   "total_count": 2
+ }
+}
 ```
 
 ### 创建钱包
 
 ```javascript
-const CoboWaas2 = require('@cobo/cobo-waas2');
-// 初始化默认 API 客户端 
-const apiClient = CoboWaas2.ApiClient.instance
-// 使用开发环境
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// 初始化 API 客户端
+const apiClient = CoboWaas2.ApiClient.instance;
+// 设置运行环境（开发环境：Env.DEV，生产环境：Env.PROD）
 apiClient.setEnv(CoboWaas2.Env.DEV);
-// 设置 API Secret
-apiClient.setPrivateKey("<YOUR_API_SECRET_IN_HEX>");
-// 调用 API
+// 配置 API Secret，请将 <YOUR_PRIVATE_KEY> 替换为您的 API Secret
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// 创建 WalletsApi 实例
 const apiInstance = new CoboWaas2.WalletsApi();
-const walletName = "My Wallet"
-const walletType = "Custodial"
-const walletSubtype = "Asset"
+// 定义创建钱包的参数
 const opts = {
-    'CreateWalletParams': new CoboWaas2.CreateWalletParams(
-        new CoboWaas2.CreateCustodialWalletParams(
-            walletName,
-            walletType,
-            walletSubtype
-        )
-    )
+  CreateWalletParams: CoboWaas2.CreateWalletParams.constructFromObject({
+    name: "My WaaS 2.0 Wallet", // 钱包名称
+    wallet_type: "Custodial",   // 钱包类型：全托管钱包
+    wallet_subtype: "Asset",    // 子类型：资产钱包
+  }),
 };
-apiInstance.createWallet(opts).then((data) => {
-    console.log('API called successfully. Returned data: ' + data);
-}, (error) => {
+// 调用 API 创建钱包
+apiInstance.createWallet(opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
     console.error(error);
-});
+  },
+);
+
 ```
 
 <Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

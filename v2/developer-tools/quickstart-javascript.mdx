@@ -14,18 +14,38 @@ You can go to [GitHub](https://github.com/CoboGlobal/cobo-waas2-js-sdk/) to acce
 
 ## Prerequisites
 
-- Install NPM.
+- Install Node.js and NPM.
 
 - Follow the instructions in [Set up your account and organization](https://manuals.cobo.com/en/portal/quick-start-guide) to set up your Cobo account and create your organization. If an organization has already been set up, ask your organization admin to invite you to join the organization.
 - You have [generated an API key and an API secret](/v2/guides/overview/cobo-auth#generate-an-api-key-and-an-api-secret), and [registered the API key](https://manuals.cobo.com/en/portal/developer-console/create-api-key) on Cobo Portal.
 
-## Install the SDK
+## Create a project and install the SDK 
 
-Run the following command to install the SDK:
+1. Create a project directory and initialize NPM:
 
+```bash
+mkdir waas2-js && cd waas2-js
+npm init -y
 ```
+
+2. Install the SDK:
+
+```bash
 npm install @cobo/cobo-waas2 --save
 ```
+
+The directory structure after installation is as follows:
+
+```pgsql
+waas2-js/
+├─ node_modules/
+├─ package.json
+├─ package-lock.json
+└─ (to be created later) index.js
+```
+<Tip> If your project already has <code>package.json</code> and <code>package-lock.json</code>, you can directly copy them to the root directory and run <code>npm install</code> to pull dependencies.</Tip>
+
+3. Create a file <code>index.js</code> in the root directory and paste the following code into it.
 
 ## Configure API key and HTTP host
 
@@ -55,59 +75,96 @@ For operation-specific documentation and sample code, see the [docs](https://git
 ### List supported chains
 
 ```javascript
-const CoboWaas2 = require('@cobo/cobo-waas2');
-// Initial default API client
-const apiClient = CoboWaas2.ApiClient.instance
-// Use the development environment
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// Initialize the API client
+const apiClient = CoboWaas2.ApiClient.instance;
+// Set the environment (development: Env.DEV, production: Env.PROD)
 apiClient.setEnv(CoboWaas2.Env.DEV);
-// Set the API secret
-apiClient.setPrivateKey("<YOUR_API_SECRET_IN_HEX>");
-// Call the API
+// Configure API Secret – replace <YOUR_PRIVATE_KEY> with your API Secret
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// Create a WalletsApi instance
 const apiInstance = new CoboWaas2.WalletsApi();
+// Define query parameters
 const opts = {
-  'wallet_type': CoboWaas2.WalletType.Custodial,
-  'wallet_subtype': CoboWaas2.WalletSubtype.Asset,
-  'chain_ids': "BTC,ETH",
-  'limit': 10,
-  'before': "",
-  'after': ""
+  wallet_type: "Custodial",      // Wallet type: Custodial wallet
+  wallet_subtype: "Asset",       // Wallet subtype: Asset wallet
+  chain_ids: "BTC,ETH",          // Chain IDs to query: BTC, ETH
+  limit: 10,                     // Limit the number of results to 10 entries
+  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1", // For pagination, optional
+  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",  // For pagination, optional
 };
-apiInstance.listSupportedChains(opts).then((data) => {
-  console.log('API called successfully. Returned data: ' + data);
-}, (error) => {
-  console.error(error);
-});
+// Call the API to list supported chains
+apiInstance.listSupportedChains(opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+```
+
+Example response is as follows:
+
+```javascript
+API called successfully. Returned data: {
+ "data": [
+   {
+     "chain_id": "BTC",
+     "symbol": "Bitcoin",
+     "icon_url": "https://d.cobo.com/public/logos/btc%403x.png",
+     "explorer_tx_url": "https://mempool.space/tx/{txn_id}",
+     "explorer_address_url": "https://mempool.space/address/{address}",
+     "require_memo": false,
+     "confirming_threshold": 4
+   },
+   {
+     "chain_id": "ETH",
+     "symbol": "Ethereum",
+     "icon_url": "https://d.cobo.com/public/logos/eth%403x.png",
+     "explorer_tx_url": "https://etherscan.io/tx/{txn_id}",
+     "explorer_address_url": "https://etherscan.io/address/{address}",
+     "require_memo": false,
+     "confirming_threshold": 64
+   }
+ ],
+ "pagination": {
+   "before": "",
+   "after": "",
+   "total_count": 2
+ }
+}
 ```
 
 ### Create a wallet
 
 ```javascript
-const CoboWaas2 = require('@cobo/cobo-waas2');
-// Initial default API client 
-const apiClient = CoboWaas2.ApiClient.instance
-// Use the development environment
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// Initialize the API client
+const apiClient = CoboWaas2.ApiClient.instance;
+// Set the environment (development: Env.DEV, production: Env.PROD)
 apiClient.setEnv(CoboWaas2.Env.DEV);
-// Set the API secret
-apiClient.setPrivateKey("<YOUR_API_SECRET_IN_HEX>");
-// Call the API
+// Configure API Secret – replace <YOUR_PRIVATE_KEY> with your API Secret
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// Create a WalletsApi instance
 const apiInstance = new CoboWaas2.WalletsApi();
-const walletName = "My Wallet"
-const walletType = "Custodial"
-const walletSubtype = "Asset"
+// Define parameters for wallet creation
 const opts = {
-    'CreateWalletParams': new CoboWaas2.CreateWalletParams(
-        new CoboWaas2.CreateCustodialWalletParams(
-            walletName,
-            walletType,
-            walletSubtype
-        )
-    )
+  CreateWalletParams: CoboWaas2.CreateWalletParams.constructFromObject({
+    name: "My WaaS 2.0 Wallet", // Wallet name
+    wallet_type: "Custodial",   // Wallet type: Custodial Wallets
+    wallet_subtype: "Asset",    // Wallet subtype: Asset Wallets
+  }),
 };
-apiInstance.createWallet(opts).then((data) => {
-    console.log('API called successfully. Returned data: ' + data);
-}, (error) => {
+// Call the API to create a wallet
+apiInstance.createWallet(opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
     console.error(error);
-});
+  },
+);
 ```
 
 
