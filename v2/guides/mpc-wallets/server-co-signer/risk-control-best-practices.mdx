@@ -108,7 +108,7 @@ Implement these security checks in your TSS Node callback server:
 
 2. Validate critical transaction parameters to prevent unauthorized or malicious transactions
 
-    - Parse `extra_info.Transaction.RawTxInfo.UnsignedRawTx` according to the chain format, and extract key transaction parameters such as:
+    1. Parse `extra_info.Transaction.RawTxInfo.UnsignedRawTx` according to the chain format, and extract key transaction parameters such as:
       - Gas fee: Ensure it is within acceptable ranges
       - Destination address: Verify against allowed addresses
       - Transaction amount: Check against configured limits
@@ -116,8 +116,8 @@ Implement these security checks in your TSS Node callback server:
       - Call data
       - Other specific parameters as needed
 
-    - Compare the parsed parameters with those in `extra_info.Transaction`
-    - Compare the parsed parameters or `extra_info.Transaction` with the original transaction created using the WaaS 2.0 API
+    2. Compare the parsed parameters with those in `extra_info.Transaction`
+    3. Compare the parsed parameters or `extra_info.Transaction` with the original transaction created using the WaaS 2.0 API
 
 Additional information to verify (not security-critical):
 
