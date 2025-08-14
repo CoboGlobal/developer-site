@@ -180,7 +180,8 @@
           ],
           "version": "🌐 Version 2.0 中文版"
         },
-        "v2_cn/guides/transactions/manage-transactions"
+        "v2_cn/guides/transactions/manage-transactions",
+        "v2_cn/guides/transactions/batch-transfer"
       ],
       "version": "🌐 Version 2.0 中文版"
     },
@@ -474,7 +475,8 @@
           ],
           "version": "🌐 Version 2.0 EN"
         },
-        "v2/guides/transactions/manage-transactions"
+        "v2/guides/transactions/manage-transactions",
+        "v2/guides/transactions/batch-transfer"
       ],
       "version": "🌐 Version 2.0 EN"
     },
@@ -594,6 +596,7 @@
         {
           "group": "Balances",
           "pages": [
+            "v2/api-references/wallets/estimate-maximum-transferable-value",
             "v2/api-references/wallets/get-maximum-transferable-value",
             "v2/api-references/wallets/list-token-balances-by-address",
             "v2/api-references/wallets/list-token-balances-by-wallet",
@@ -940,6 +943,8 @@
           "group": "Refund orders",
           "pages": [
             "v2/api-references/payment/create-refund-order",
+            "v2/api-references/payment/update-refund-order",
+            "v2/api-references/payment/cancel-refund-order",
             "v2/api-references/payment/get-refund-order-information",
             "v2/api-references/payment/list-all-refund-orders"
           ]
@@ -953,7 +958,10 @@
             "v2/api-references/payment/create-settlement-request",
             "v2/api-references/payment/list-all-settlement-requests",
             "v2/api-references/payment/get-settlement-request-information",
+            "v2/api-references/payment/list-all-settlement-details",
             "v2/api-references/payment/list-all-bank-accounts",
+            "v2/api-references/payment/create-crypto-address",
+            "v2/api-references/payment/delete-crypto-address",
             "v2/api-references/payment/list-crypto-addresses"
           ]
         },

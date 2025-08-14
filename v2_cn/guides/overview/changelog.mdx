@@ -9,6 +9,21 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.21.0
+
+本版本于 2025 年 8 月 13 日发布。
+
+### 新功能
+
+- 添加了 [Estimate maximum transferable value](/v2/api-references/wallets/estimate-maximum-transferable-value) 操作，用于估算基于指定费用设置的最大可转账值。我们推荐使用此新操作取代 [Get maximum transferable value](/v2/api-references/wallets/get-maximum-transferable-value)，因为未来该操作将被废弃。
+
+### 改进
+
+- 在 `TransactionCoboCategory` 模式中新增了合规相关的枚举值：
+  - `ScreenAppRefund`
+  - `ScreenAppIsolate`
+  - `ComplianceRefund`
+  - `ComplianceIsolate`
 
 ## v1.20.0
 

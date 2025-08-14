@@ -27,6 +27,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
     merchant_id = "M1001"
     psp_order_id = "P20240201001"
+    statuses = "Pending,Processing"
 
     try:
         # List all pay-in orders
@@ -36,6 +37,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
             after=after,
             merchant_id=merchant_id,
             psp_order_id=psp_order_id,
+            statuses=statuses,
         )
         print("The response of PaymentApi->list_payment_orders:\n")
         pprint(api_response)
@@ -67,9 +69,10 @@ public class Example {
     String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
     String merchantId = "M1001";
     String pspOrderId = "P20240201001";
+    String statuses = "Pending,Processing";
     try {
       ListPaymentOrders200Response result =
-          apiInstance.listPaymentOrders(limit, before, after, merchantId, pspOrderId);
+          apiInstance.listPaymentOrders(limit, before, after, merchantId, pspOrderId, statuses);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentApi#listPaymentOrders");
@@ -99,6 +102,7 @@ func main() {
 	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
 	merchantId := "M1001"
 	pspOrderId := "P20240201001"
+	statuses := "Pending,Processing"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -117,6 +121,7 @@ func main() {
 		After(after).
 		MerchantId(merchantId).
 		PspOrderId(pspOrderId).
+		Statuses(statuses).
 		Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListPaymentOrders``: %v\n", err)
@@ -143,6 +148,7 @@ const opts = {
   after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
   merchant_id: "M1001",
   psp_order_id: "P20240201001",
+  statuses: "Pending,Processing",
 };
 apiInstance.listPaymentOrders(opts).then(
   (data) => {

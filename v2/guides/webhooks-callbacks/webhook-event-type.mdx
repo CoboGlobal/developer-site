@@ -7,10 +7,16 @@ sidebarTitle: "Webhook event types and data types"
 
 ## Webhook event types
 
-The available webhook event types are as follows:
+<Info>Here, transaction refers to all types of transactions, including deposits, withdrawals, contract calls, and message signing.</Info>  
 
-<Info>Here, transaction refers to all types of transactions, including transfers, contract calls, and message signing.</Info>
-<Note>For payment webhook events, please refer to [Order Status and Events](/v2/payments/status-and-events).</Note>
+### Payment events
+
+For payment webhook events, please refer to [Order Status and Events](/v2/payments/status-and-events).
+
+### Transaction events (deposits/withdrawals/contract calls/message signing)
+
+<Note>The following events apply to all types of transactions, including deposits, withdrawals, contract calls, and message signing.</Note>
+
 <table class="table-three-cols">
   <thead>
     <tr>
@@ -22,54 +28,116 @@ The available webhook event types are as follows:
   <tbody>
     <tr>
       <td><code>wallets.transaction.created</code></td>
-      <td rowspan="8"><code>Transaction</code></td>
+      <td><code>Transaction</code></td>
       <td>A transaction has been detected on the blockchain, generating a transaction record. This event does not indicate that the transaction was successful.</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.updated</code></td>
-      <td>There are changes to a transaction's status or confirmation numbers.<Note>The <code>wallets.transaction.updated</code> event covers the entire lifecycle of a transaction, including creation, completion, and failure. If you want to track every status change, you can subscribe to this event.</Note></td>
+      <td><code>Transaction</code></td>
+      <td>There are changes to a transaction's status or confirmation numbers.<Note>The <code>wallets.transaction.updated</code> event covers the entire lifecycle of a transaction, including creation, completion, and failure. If you want to track every status change, you need only subscribe to this event.</Note></td>
     </tr>
     <tr>
       <td><code>wallets.transaction.succeeded</code></td>
+      <td><code>Transaction</code></td>
       <td>A transaction has been successfully completed.</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.failed</code></td>
+      <td><code>Transaction</code></td>
       <td>A transaction failed.</td>
     </tr>
     <tr>
+      <td><code>token.suspended.deposit</code></td>
+      <td><code>SuspendedToken</code></td>
+      <td>A token deposit has been suspended.</td>
+    </tr>
+    <tr>
+      <td><code>token.suspended.withdraw</code></td>
+      <td><code>SuspendedToken</code></td>
+      <td>A token withdrawal has been suspended.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Fee Station events
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>Event Type</th>
+      <th>Event Data Type</th>
+      <th>When It Occurs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
       <td><code>fee_station.transaction.created</code></td>
+      <td><code>Transaction</code></td>
       <td>A Fee Station transaction has been created.</td>
     </tr>
     <tr>
       <td><code>fee_station.transaction.updated</code></td>
+      <td><code>Transaction</code></td>
       <td>There are changes to the status of a Fee Station transaction.</td>
     </tr>
     <tr>
       <td><code>fee_station.transaction.failed</code></td>
+      <td><code>Transaction</code></td>
       <td>A Fee Station transaction failed.</td>
     </tr>
     <tr>
       <td><code>fee_station.transaction.succeeded</code></td>
+      <td><code>Transaction</code></td>
       <td>A Fee Station transaction has been successfully completed.</td>
     </tr>
+  </tbody>
+</table>
+
+### MPC TSS request events
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>Event Type</th>
+      <th>Event Data Type</th>
+      <th>When It Occurs</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code>wallets.mpc.tss_request.created</code></td>
-      <td rowspan="4"><code>TSSRequest</code></td>
+      <td><code>TSSRequest</code></td>
       <td>A TSS request is created.</td>
     </tr>
     <tr>
       <td><code>wallets.mpc.tss_request.updated</code></td>
+      <td><code>TSSRequest</code></td>
       <td>There are changes to the status of a TSS request.</td>
     </tr>
     <tr>
       <td><code>wallets.mpc.tss_request.succeeded</code></td>
+      <td><code>TSSRequest</code></td>
       <td>The requested action has been successfully completed.</td>
     </tr>
     <tr>
       <td><code>wallets.mpc.tss_request.failed</code></td>
+      <td><code>TSSRequest</code></td>
       <td>The requested action failed.</td>
     </tr>
+  </tbody>
+</table>
+
+### Wallet and address management events
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>Event Type</th>
+      <th>Event Data Type</th>
+      <th>When It Occurs</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code>wallets.addresses.created</code></td>
       <td><code>Addresses</code></td>
@@ -85,53 +153,77 @@ The available webhook event types are as follows:
       <td><code>MPCVault</code></td>
       <td>A new MPC vault has been created.</td>
     </tr>
+  </tbody>
+</table>
+
+### Token and chain management events
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>Event Type</th>
+      <th>Event Data Type</th>
+      <th>When It Occurs</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code>wallet.token.enabled</code></td>
-      <td rowspan="2"><code>Tokens</code></td>
+      <td><code>Tokens</code></td>
       <td>One or more tokens have been enabled.</td>
     </tr>
     <tr>
       <td><code>wallet.token.disabled</code></td>
+      <td><code>Tokens</code></td>
       <td>One or more tokens have been disabled.</td>
     </tr>
     <tr>
       <td><code>wallet.chain.enabled</code></td>
-      <td rowspan="2"><code>Chains</code></td>
+      <td><code>Chains</code></td>
       <td>One or more chains have been enabled.</td>
     </tr>
     <tr>
       <td><code>wallet.chain.disabled</code></td>
+      <td><code>Chains</code></td>
       <td>One or more chains have been disabled.</td>
     </tr>
     <tr>
       <td><code>wallets.token_listing.failed</code></td>
-      <td rowspan="2"><code>TokenListing</code></td>
+      <td><code>TokenListing</code></td>
       <td>A token listing request failed.</td>
     </tr>
     <tr>
       <td><code>wallets.token_listing.succeeded</code></td>
+      <td><code>TokenListing</code></td>
       <td>A token listing request has been successfully processed and the token is now available.</td>
     </tr>
+  </tbody>
+</table>
+
+### Balance update events
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>Event Type</th>
+      <th>Event Data Type</th>
+      <th>When It Occurs</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code>wallet.mpc.balance.updated</code></td>
-      <td rowspan="2"><code>BalanceUpdateInfo</code></td>
+      <td><code>BalanceUpdateInfo</code></td>
       <td>The balance of an MPC Wallet has been updated.</td>
     </tr>
     <tr>
       <td><code>wallet.web3.balance.updated</code></td>
+      <td><code>BalanceUpdateInfo</code></td>
       <td>The balance of a Custodial Wallet (Web3 Wallet) has been updated.</td>
-    </tr>
-    <tr>
-      <td><code>token.suspended.deposit</code></td>
-      <td rowspan="2"><code>SuspendedToken</code></td>
-      <td>A token deposit has been suspended.</td>
-    </tr>
-    <tr>
-      <td><code>token.suspended.withdraw</code></td>
-      <td>A token withdrawal has been suspended.</td>
     </tr>
   </tbody>
 </table>
+
 
 
 ## Data structure of webhook events           

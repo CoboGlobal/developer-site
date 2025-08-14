@@ -1,12 +1,13 @@
 ---
-openapi: post /wallets/mpc/vaults
+openapi: post /payments/crypto_addresses/{crypto_address_id}/delete
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_mpc_vault_request import CreateMpcVaultRequest
-from cobo_waas2.models.mpc_vault import MPCVault
+from cobo_waas2.models.delete_crypto_address201_response import (
+    DeleteCryptoAddress201Response,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -20,20 +21,16 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.WalletsMPCWalletsApi(api_client)
-    create_mpc_vault_request = cobo_waas2.CreateMpcVaultRequest(
-        name="My vault", vault_type="Org-Controlled"
-    )
+    api_instance = cobo_waas2.PaymentApi(api_client)
+    crypto_address_id = "addr_ethusdt_20250506T123456_ab12cd"
 
     try:
-        # Create vault
-        api_response = api_instance.create_mpc_vault(
-            create_mpc_vault_request=create_mpc_vault_request
-        )
-        print("The response of WalletsMPCWalletsApi->create_mpc_vault:\n")
+        # Delete crypto address
+        api_response = api_instance.delete_crypto_address(crypto_address_id)
+        print("The response of PaymentApi->delete_crypto_address:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling WalletsMPCWalletsApi->create_mpc_vault: %s\n" % e)
+        print("Exception when calling PaymentApi->delete_crypto_address: %s\n" % e)
 
 ```
 ```java Java
@@ -42,7 +39,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.WalletsMpcWalletsApi;
+import com.cobo.waas2.api.PaymentApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -54,14 +51,13 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    WalletsMpcWalletsApi apiInstance = new WalletsMpcWalletsApi();
-    CreateMpcVaultRequest createMpcVaultRequest =
-        new CreateMpcVaultRequest().name("My vault").vaultType(MPCVaultType.ORG_CONTROLLED);
+    PaymentApi apiInstance = new PaymentApi();
+    String cryptoAddressId = "addr_ethusdt_20250506T123456_ab12cd";
     try {
-      MPCVault result = apiInstance.createMpcVault(createMpcVaultRequest);
+      DeleteCryptoAddress201Response result = apiInstance.deleteCryptoAddress(cryptoAddressId);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling WalletsMpcWalletsApi#createMpcVault");
+      System.err.println("Exception when calling PaymentApi#deleteCryptoAddress");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -83,7 +79,7 @@ import (
 )
 
 func main() {
-	createMpcVaultRequest := *coboWaas2.NewCreateMpcVaultRequest("My vault", coboWaas2.MPCVaultType("Org-Controlled"))
+	cryptoAddressId := "addr_ethusdt_20250506T123456_ab12cd"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -96,19 +92,13 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.WalletsMPCWalletsAPI.CreateMpcVault(ctx).
-		CreateMpcVaultRequest(createMpcVaultRequest).
-		Execute()
+	resp, r, err := apiClient.PaymentAPI.DeleteCryptoAddress(ctx, cryptoAddressId).Execute()
 	if err != nil {
-		fmt.Fprintf(
-			os.Stderr,
-			"Error when calling `WalletsMPCWalletsAPI.CreateMpcVault``: %v\n",
-			err,
-		)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.DeleteCryptoAddress``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreateMpcVault`: MPCVault
-	fmt.Fprintf(os.Stdout, "Response from `WalletsMPCWalletsAPI.CreateMpcVault`: %v\n", resp)
+	// response from `DeleteCryptoAddress`: DeleteCryptoAddress201Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.DeleteCryptoAddress`: %v\n", resp)
 }
 
 ```
@@ -121,14 +111,9 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.WalletsMPCWalletsApi();
-const opts = {
-  CreateMpcVaultRequest: CoboWaas2.CreateMpcVaultRequest.constructFromObject({
-    name: "My vault",
-    vault_type: "Org-Controlled",
-  }),
-};
-apiInstance.createMpcVault(opts).then(
+const apiInstance = new CoboWaas2.PaymentApi();
+const crypto_address_id = "addr_ethusdt_20250506T123456_ab12cd";
+apiInstance.deleteCryptoAddress(crypto_address_id).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

@@ -1,12 +1,12 @@
 ---
-openapi: post /wallets/mpc/vaults
+openapi: post /payments/crypto_addresses
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_mpc_vault_request import CreateMpcVaultRequest
-from cobo_waas2.models.mpc_vault import MPCVault
+from cobo_waas2.models.create_crypto_address_request import CreateCryptoAddressRequest
+from cobo_waas2.models.crypto_address import CryptoAddress
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -20,20 +20,20 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.WalletsMPCWalletsApi(api_client)
-    create_mpc_vault_request = cobo_waas2.CreateMpcVaultRequest(
-        name="My vault", vault_type="Org-Controlled"
+    api_instance = cobo_waas2.PaymentApi(api_client)
+    create_crypto_address_request = cobo_waas2.CreateCryptoAddressRequest(
+        token_id="ETH_USDT", address="0xabc123456789def0000000000000000000000000"
     )
 
     try:
-        # Create vault
-        api_response = api_instance.create_mpc_vault(
-            create_mpc_vault_request=create_mpc_vault_request
+        # Create crypto address
+        api_response = api_instance.create_crypto_address(
+            create_crypto_address_request=create_crypto_address_request
         )
-        print("The response of WalletsMPCWalletsApi->create_mpc_vault:\n")
+        print("The response of PaymentApi->create_crypto_address:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling WalletsMPCWalletsApi->create_mpc_vault: %s\n" % e)
+        print("Exception when calling PaymentApi->create_crypto_address: %s\n" % e)
 
 ```
 ```java Java
@@ -42,7 +42,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.WalletsMpcWalletsApi;
+import com.cobo.waas2.api.PaymentApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -54,14 +54,16 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    WalletsMpcWalletsApi apiInstance = new WalletsMpcWalletsApi();
-    CreateMpcVaultRequest createMpcVaultRequest =
-        new CreateMpcVaultRequest().name("My vault").vaultType(MPCVaultType.ORG_CONTROLLED);
+    PaymentApi apiInstance = new PaymentApi();
+    CreateCryptoAddressRequest createCryptoAddressRequest =
+        new CreateCryptoAddressRequest()
+            .tokenId("ETH_USDT")
+            .address("0xabc123456789def0000000000000000000000000");
     try {
-      MPCVault result = apiInstance.createMpcVault(createMpcVaultRequest);
+      CryptoAddress result = apiInstance.createCryptoAddress(createCryptoAddressRequest);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling WalletsMpcWalletsApi#createMpcVault");
+      System.err.println("Exception when calling PaymentApi#createCryptoAddress");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -83,7 +85,7 @@ import (
 )
 
 func main() {
-	createMpcVaultRequest := *coboWaas2.NewCreateMpcVaultRequest("My vault", coboWaas2.MPCVaultType("Org-Controlled"))
+	createCryptoAddressRequest := *coboWaas2.NewCreateCryptoAddressRequest("ETH_USDT", "0xabc123456789def0000000000000000000000000")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -96,19 +98,15 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.WalletsMPCWalletsAPI.CreateMpcVault(ctx).
-		CreateMpcVaultRequest(createMpcVaultRequest).
+	resp, r, err := apiClient.PaymentAPI.CreateCryptoAddress(ctx).
+		CreateCryptoAddressRequest(createCryptoAddressRequest).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(
-			os.Stderr,
-			"Error when calling `WalletsMPCWalletsAPI.CreateMpcVault``: %v\n",
-			err,
-		)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.CreateCryptoAddress``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreateMpcVault`: MPCVault
-	fmt.Fprintf(os.Stdout, "Response from `WalletsMPCWalletsAPI.CreateMpcVault`: %v\n", resp)
+	// response from `CreateCryptoAddress`: CryptoAddress
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreateCryptoAddress`: %v\n", resp)
 }
 
 ```
@@ -121,14 +119,15 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.WalletsMPCWalletsApi();
+const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
-  CreateMpcVaultRequest: CoboWaas2.CreateMpcVaultRequest.constructFromObject({
-    name: "My vault",
-    vault_type: "Org-Controlled",
-  }),
+  CreateCryptoAddressRequest:
+    CoboWaas2.CreateCryptoAddressRequest.constructFromObject({
+      token_id: "ETH_USDT",
+      address: "0xabc123456789def0000000000000000000000000",
+    }),
 };
-apiInstance.createMpcVault(opts).then(
+apiInstance.createCryptoAddress(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },
