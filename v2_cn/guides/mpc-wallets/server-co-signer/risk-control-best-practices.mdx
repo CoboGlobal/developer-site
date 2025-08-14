@@ -102,16 +102,21 @@ embedded_risk_control_rules:
 
 1. 验证交易哈希以防止交易被篡改：
    1. 从 `extra_info.Transaction.RawTxInfo.UnsignedRawTx` 提取原始交易数据
-   2. 计算此原始交易数据的哈希值
-   3. 将其与 `request_detail.msg_hash_list` 中提供的哈希值进行比较
+   2. 根据特定链的规则计算此原始交易数据的哈希值
+   3. 将计算出的哈希值与 `request_detail.msg_hash_list` 中提供的哈希值进行比较
    4. 如果哈希值不匹配，则拒绝交易
 
 2. 验证关键的交易参数以防止未经授权或恶意的交易：
-   - Gas 费用：确保在可接受的范围内
-   - 目标地址：验证是否在允许的地址列表中
-   - 交易金额：检查是否符合配置的限制
-   - 链 ID：确认是否匹配您预期的网络
-   - 根据需要验证其他特定参数
+   - 根据特定链的格式解析 `extra_info.Transaction.RawTxInfo.UnsignedRawTx`，提取以下关键参数：
+     - Gas 费用：确保在可接受的范围内
+     - 目标地址：验证是否在允许的地址列表中
+     - 交易金额：检查是否符合配置的限制
+     - 链 ID：确认是否匹配您预期的网络
+     - Call data
+     - 根据需要验证其他特定参数
+
+   - 将解析出的参数与 `extra_info.Transaction` 中的值进行比对
+   - 将解析出的参数或 `extra_info.Transaction` 与通过 WaaS 2.0 API 构建的原始交易进行比对
 
 需要验证的其他信息（非关键安全问题）：
 

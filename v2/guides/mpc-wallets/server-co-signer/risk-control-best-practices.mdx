@@ -102,16 +102,22 @@ Implement these security checks in your TSS Node callback server:
 
 1. Verify the transaction hash to prevent transaction tampering:
    1. Extract the raw transaction data from `extra_info.Transaction.RawTxInfo.UnsignedRawTx`
-   2. Calculate the hash of this raw transaction data
-   3. Compare it with the hash provided in `request_detail.msg_hash_list`
+   2. Calculate the hash of this raw transaction data according to the rules of the specific chain
+   3. Compare the calculated hash with the value in `request_detail.msg_hash_list`
    4. Reject the transaction if the hashes don't match
 
-2. Validate critical transaction parameters to prevent unauthorized or malicious transactions:
-   - Gas fee: Ensure it's within acceptable ranges
-   - Destination address: Verify against allowed addresses
-   - Transaction amount: Check against configured limits
-   - Chain ID: Confirm it matches your expected network
-   - Other specific parameters as needed
+2. Validate critical transaction parameters to prevent unauthorized or malicious transactions
+
+    - Parse `extra_info.Transaction.RawTxInfo.UnsignedRawTx` according to the chain format, and extract key transaction parameters such as:
+      - Gas fee: Ensure it is within acceptable ranges
+      - Destination address: Verify against allowed addresses
+      - Transaction amount: Check against configured limits
+      - Chain ID: Confirm it matches your expected network
+      - Call data
+      - Other specific parameters as needed
+
+    - Compare the parsed parameters with those in `extra_info.Transaction`
+    - Compare the parsed parameters or `extra_info.Transaction` with the original transaction created using the WaaS 2.0 API
 
 Additional information to verify (not security-critical):
 
