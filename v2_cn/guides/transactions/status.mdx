@@ -17,212 +17,212 @@ WaaS 2.0 定义了各种交易状态和子状态，以反映不同的处理阶�
     <th>描述</th>
   </tr>
   <tr>
-    <td rowspan="1">Submitted</td>
+    <td rowspan="1">Submitted（已提交）</td>
     <td>N/A</td>
     <td>交易已提交。</td>
   </tr>
   <tr>
-    <td rowspan="4">PendingScreening</td>
-    <td>PendingTravelRuleCheck</td>
+    <td rowspan="4">PendingScreening（合规检查中）</td>
+    <td>PendingTravelRuleCheck（待 Travel Rule 审核）</td>
     <td>交易正在进行 Travel Rule 检查。</td>
   </tr>
   <tr>
-    <td>PendingTravelRuleInfo</td>
+    <td>PendingTravelRuleInfo（待提供 Travel Rule 信息）</td>
     <td>交易正在等待用户提供与 Travel Rule 相关的信息。</td>
   </tr>
   <tr>
-    <td>PendingScreeningAppCheck</td>
+    <td>PendingScreeningAppCheck（等待 Screening App 检查）</td>
     <td>交易正在由 [Screening App](https://manuals.cobo.com/cn/apps/screening/introduction) 审核。</td>
   </tr>
   <tr>
-    <td>PendingCoboKYTCheck</td>
+    <td>PendingCoboKYTCheck（等待 Cobo 审查）</td>
     <td>交易正在等待 Cobo 的 KYT 检查。</td>
   </tr>
   <tr>
-    <td rowspan="5">PendingAuthorization</td>
-    <td>PendingDoubleCheck</td>
+    <td rowspan="5">PendingAuthorization（等待审批）</td>
+    <td>PendingDoubleCheck（等待 MFA 认证）</td>
     <td>交易正在等待双重检查。</td>
   </tr>
   <tr>
-    <td>PendingSpenderCheck</td>
+    <td>PendingSpenderCheck（等待提币员审批）</td>
     <td>交易正在等待提币员检查。</td>
   </tr>
   <tr>
-    <td>PendingRiskControlCheck</td>
+    <td>PendingRiskControlCheck（等待风控审批）</td>
     <td>交易正在等待风控检查。</td>
   </tr>
   <tr>
-    <td>PendingApproverCheck</td>
+    <td>PendingApproverCheck（等待审批员审批）</td>
     <td>交易正在等待审批员的批准。</td>
   </tr>
     <tr>
-    <td>PendingCoboCheck</td>
+    <td>PendingCoboCheck（待 Cobo 审核）</td>
     <td>交易正在等待 Cobo 的内部检查。</td>
   </tr>
   <tr>
-    <td rowspan="11">PendingSignature</td>
-    <td>Queue</td>
+    <td rowspan="11">PendingSignature（等待签名）</td>
+    <td>Queued（排队中（请先处理待签交易））</td>
     <td>交易正在排队等待 Cobo Portal 处理。</td>
   </tr>
   <tr>
-    <td>PendingWaitSigner</td>
+    <td>PendingWaitSigner（等待移动端签名人批准（1位签名人需在 Cobo Guard 中确认交易））</td>
     <td>交易正在等待签名。</td>
   </tr>
   <tr>
-    <td>InsufficientBalance</td>
+    <td>InsufficientBalance（余额不足）</td>
     <td>由于余额不足，交易无法继续。请存入所需的代币或取消交易。</td>
   </tr>
   <tr>
-    <td>InsufficientBalanceFundLocked</td>
+    <td>InsufficientBalanceFundLocked（余额不足 - 资金已锁定）</td>
     <td>由于可用余额当前被锁定，交易无法继续。请等待可用余额解锁。</td>
   </tr>
   <tr>
-    <td>PendingSystemProcessing</td>
+    <td>PendingSystemProcessing（等待系统处理）</td>
     <td>交易已提交，正在等待区块链系统处理。</td>
   </tr>
   <tr>
-    <td>SystemProcessingOngoing</td>
+    <td>SystemProcessingOngoing（系统处理中）</td>
     <td>区块链系统正在处理交易。</td>
   </tr>
   <tr>
-    <td>Built</td>
+    <td>Built（交易已构建）</td>
     <td>交易已构建但尚未签名。</td>
   </tr>
   <tr>
-    <td>PendingSignerApproval</td>
+    <td>PendingSignerApproval（等待签名人批准）</td>
     <td>交易正在等待签名人的批准。</td>
   </tr>
   <tr>
-    <td>PendingApprovalStart</td>
+    <td>PendingApprovalStart（等待签名人节点启动）</td>
     <td>交易审批正在等待开始。<ul><li>对于<a href="https://manuals.cobo.com/en/portal/mpc-wallets/ucw/introduction">MPC 钱包（终端用户钱包）</a>，您需要使用客户端 App 并调用 UCW SDK 以开始交易审批流程。</li><li>对于<a href="https://manuals.cobo.com/en/portal/mpc-wallets/ocw/introduction">MPC 钱包（机构控制钱包）</a>：<ul><li>如果您使用<a href="https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups">服务器端签名人</a>，此状态表示 TSS Node将很快请求回调服务器开始<a href="https://manuals.cobo.com/en/portal/risk-controls/introduction">风控策略</a>检查。在此阶段无需您采取进一步行动。</li><li>如果您使用<a href="https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups">移动端签名人</a>，私钥分片持有者需要使用他们的<a href="https://manuals.cobo.com/en/guard/introduction">Cobo Guard</a>批准交易并参与签名过程。</li></ul></li></ul></td>
   </tr>
   <tr>
-    <td>PendingSignerProcessing</td>
+    <td>PendingSignerProcessing（签名人签名中）</td>
     <td>交易正在签名中。</td>
   </tr>
   <tr>
-    <td>SignatureVerificationSuccess</td>
+    <td>SignatureVerificationSuccess（签名验证成功）</td>
     <td>交易的签名已成功验证。</td>
   </tr>
   <tr>
-    <td>Broadcasting</td>
-    <td>FailedBroadcasting</td>
+    <td>Broadcasting（广播中）</td>
+    <td>FailedBroadcasting（广播失败，持续广播中）</td>
     <td>交易未能广播到区块链网络。</td>
   </tr>
   <tr>
-    <td rowspan="2">Confirming</td>
-    <td>Reverting</td>
+    <td rowspan="2">Confirming（确认中）</td>
+    <td>Reverting（正在回滚）</td>
     <td>由于区块链上的失败，交易正在回退（Revert）。</td>
   </tr>
   <tr>
-    <td>PendingBlockConfirmations</td>
+    <td>PendingBlockConfirmations（等待链上确认数）</td>
     <td>交易正在等待所需数量的确认。</td>
   </tr>
   <tr>
-    <td rowspan="1">Completed</td>
+    <td rowspan="1">Completed（已完成）</td>
     <td>N/A</td>
     <td>交易已完成。</td>
   </tr>
   <tr>
-    <td rowspan="6">Failed</td>
-    <td>FailedBySigner</td>
+    <td rowspan="6">Failed（失败）</td>
+    <td>FailedBySigner（签名人操作失败）</td>
     <td>交易在签名过程中失败。</td>
   </tr>
   <tr>
-    <td>FailedOnChain</td>
+    <td>FailedOnChain（交易链上失败）</td>
     <td>交易在区块链上失败。</td>
   </tr>
   <tr>
-    <td>ReplacedByNewTransaction</td>
+    <td>ReplacedByNewTransaction（被新交易取代）</td>
     <td>交易已被新交易替换。</td>
   </tr>
   <tr>
-    <td>SignatureVerificationFailed</td>
+    <td>SignatureVerificationFailed（签名失败）</td>
     <td>交易的签名验证失败。</td>
   </tr>
   <tr>
-    <td>FailedSignerTimeout</td>
+    <td>FailedSignerTimeout（签名人超时）</td>
     <td>交易由于签名超时而失败。</td>
   </tr>
   <tr>
-    <td>ReOrged</td>
+    <td>ReOrged（已重组）</td>
     <td>交易因区块链重组而失败。</td>
   </tr>
   <tr>
-    <td rowspan="18">Rejected</td>
-    <td>RejectedWhiteList</td>
+    <td rowspan="18">Rejected（已拒绝）</td>
+    <td>RejectedWhiteList（未通过白名单审批）</td>
     <td>交易被拒绝，因为发起者的 IP 地址不在白名单中。</td>
   </tr>
   <tr>
-    <td>RejectedKYT</td>
+    <td>RejectedKYT（因 KYT 被拒绝）</td>
     <td>交易被拒绝，因为未通过 KYT 合规检查。</td>
   </tr>
   <tr>
-    <td>RejectedRiskControlCheck</td>
+    <td>RejectedRiskControlCheck（未通过风控审批）</td>
     <td>交易被拒绝，因为未通过风控策略检查。</td>
   </tr>
   <tr>
-    <td>RejectedSpenderAuth</td>
+    <td>RejectedSpenderAuth（未通过提币员审批）</td>
     <td>交易被提币员拒绝。</td>
   </tr>
   <tr>
-    <td>RejectedApproverAuth</td>
+    <td>RejectedApproverAuth（未通过审批员审批）</td>
     <td>交易被审批员拒绝。</td>
   </tr>
   <tr>
-    <td>RejectedDoubleCheck</td>
+    <td>RejectedDoubleCheck（未通过 MFA 认证）</td>
     <td>交易被拒绝，因为未通过双重检查。</td>
   </tr>
   <tr>
-    <td>RejectedbyMobileCosigner</td>
+    <td>RejectedbyMobileCosigner（被移动端签名人拒绝）</td>
     <td>交易被移动端签名人拒绝。</td>
   </tr>
   <tr>
-    <td>RejectedCoboCheck</td>
+    <td>RejectedCoboCheck（未通过 Cobo 审批）</td>
     <td>交易被拒绝，因为未通过Cobo的内部检查。</td>
   </tr>
   <tr>
-    <td>RejectedByScreeningApp</td>
+    <td>RejectedByScreeningApp（被 Screening App 拒绝）</td>
     <td>交易被 [Screening App](https://manuals.cobo.com/cn/apps/screening/introduction) 拒绝。</td>
   </tr>
   <tr>
-    <td>RejectedTravelRuleDueToUnsupportedToken</td>
+    <td>RejectedTravelRuleDueToUnsupportedToken（因不支持的代币被 Travel Rule 拒绝）</td>
     <td>交易被拒绝，因为该代币不支持 Travel Rule。</td>
   </tr>
   <tr>
-    <td>RejectedTravelRule</td>
+    <td>RejectedTravelRule（因国际转账规则被拒绝）</td>
     <td>交易被拒绝，因为未能遵守 Travel Rule。</td>
   </tr>
   <tr>
-    <td>RejectedTravelRuleDueToCompliance</td>
+    <td>RejectedTravelRuleDueToCompliance（因合规要求被 Travel Rule 拒绝）</td>
     <td>交易被拒绝，因为未通过 Travel Rule 的交叉检查。</td>
   </tr>
   <tr>
-    <td>RejectedTransactionPolicy</td>
+    <td>RejectedTransactionPolicy（被交易风控规则拒绝）</td>
     <td>交易被拒绝，因为未通过交易风控。</td>
   </tr>
   <tr>
-    <td>RejectedBySigner</td>
+    <td>RejectedBySigner（被签名人拒绝）</td>
     <td>交易被拒绝，因为被签名人拒绝。</td>
   </tr>
   <tr>
-    <td>CanceledBySpender</td>
+    <td>CanceledBySpender（被提币员取消）</td>
     <td>交易被提币员取消。</td>
   </tr>
   <tr>
-    <td>CanceledByAPI</td>
+    <td>CanceledByAPI（被 API 接口取消）</td>
     <td>交易被[取消交易](https://www.cobo.com/developers/v2/api-references/transactions/cancel-transaction)操作取消。</td>
   </tr>
   <tr>
-    <td>OnchainRejection</td>
+    <td>OnchainRejection（链上拒绝）</td>
     <td>交易被拒绝添加到区块链中。</td>
   </tr>
     <tr>
-    <td>RejectedByCobo</td>
+    <td>RejectedByCobo（被 Cobo 拒绝）</td>
     <td>交易被 Cobo 拒绝，可能由于未满足相关的合规要求。您可以联系我们的[客户支持团队](mailto:help@cobo.com)获取更多详情。</td>
   </tr>
   <tr>
-    <td rowspan="1">Pending</td>
+    <td rowspan="1">Pending（等待中）</td>
     <td>N/A</td>
     <td>交易正在等待被包含在区块中。</td>
   </tr>
