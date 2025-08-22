@@ -1,0 +1,73 @@
+---
+title: "使用 App 快速跑通订单模式"
+sidebarTitle: "使用 App 快速跑通"
+lang: "zh-hans"
+---
+
+本指南将帮助您通过 Payment Management App 快速跑通订单模式，包括查看订单详情、查看余额和结算。
+
+您也可以通过 API 来完成本文涉及的所有操作。详情可参考[创建订单](/v2_cn/payments/create-orders)和[结算](/v2_cn/payments/settle-orders)。
+
+<Note>
+  本指南以开发环境为例。在生产环境进行操作时，请将 URL 等参数替换为生产环境的对应值。
+</Note>
+
+## 前提条件
+
+- 您已完成[前置准备](/v2_cn/payments/preparation)中提到的所有步骤。
+
+- 创建一个订单并完成支付。目前 App 尚不支持创建订单，您可以通过以下两种方式创建：
+  - 使用 API：参考[创建订单](/v2_cn/payments/create-orders)文档，通过 API 创建订单。
+  - 使用 Checkout SDK：参考[集成 Checkout SDK](/v2_cn/payments/checkout-sdk)文档，通过简单的 iFrame 集成，快速开发一个安全可靠的加密货币收单页面。
+
+
+## 操作步骤
+
+### 1. 查看订单详情
+
+创建订单之后，您可以在 Payment Management App 中查看订单详情。
+
+1. 登录 Cobo Portal [开发环境](https://portal.dev.cobo.com/login)。
+2. 在左侧导航栏中点击 **Apps**，然后点击 **Payment Management** 卡片，启动 App。
+3. 在 App 的左侧导航栏中点击**订单**。您可以在此页面查看所有订单的详细信息，如订单 ID、商户信息、支付金额、订单状态等。
+4. 当用户完成支付、且交易通过合规扫描后，订单状态会流转为**已完成**。此时您即可对该笔订单进行结算。
+
+<img src="/v2_cn/images/payments/view-orders.png" className="screenshot_full_screen" alt="查看订单列表" />
+
+### 2. 查看余额
+
+在结算前，您可以在**余额**页面查看各个维度的余额信息。
+
+1. 在左侧导航栏中点击**余额**。
+2. 在右上角的筛选框中选择余额类型：
+   - **商户余额** - **订单模式**：查看各个商户在订单模式下的余额
+   - **开发者余额**：查看您作为开发者的所有余额，包括从商户收取的手续费等
+3. 筛选后，您可以查看总余额以及每个代币在不同链上的余额。
+
+关于各类余额的具体定义和计算方式，请参考[金额定义与余额计算说明](/v2_cn/payments/amounts-and-balances)。
+
+<img src="/v2_cn/images/payments/view-order-balances.png" className="screenshot_full_screen" alt="查看订单余额" />
+
+### 3. 结算余额
+
+1. 在左侧导航栏中点击**结算**。
+2. 选择您想要结算的余额类型以及结算方式。在本例中，我们选择通过加密货币的方式结算商户在订单模式下的余额。
+
+<img src="/v2_cn/images/payments/settle-orders-button.png" className="screenshot_full_screen" alt="结算订单入口" />
+
+3. 填写结算信息：
+   - 选择要提现的代币和网络。
+   - 选择要结算的订单。
+   - 输入接收地址。<Note>您需要联系 Cobo 销售团队录入相应的结算账户信息，该地址才会出现在下拉列表中。</Note>
+   - 添加可选的描述信息，如结算备注等。
+   - 按照页面提示确认并提交结算信息。
+
+<img src="/v2_cn/images/payments/settle-orders-form.png" className="screenshot_full_screen" alt="结算订单表单" />
+
+
+## 下一步
+
+您可以通过 API 将以上功能集成到您的系统中。详情可参考[创建订单](/v2_cn/payments/create-orders)和[结算](/v2_cn/payments/settle-orders)。
+
+
+<Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

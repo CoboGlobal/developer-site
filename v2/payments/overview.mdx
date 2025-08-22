@@ -46,7 +46,7 @@ Funds from top-up mode and order mode will be settled separately. During settlem
 The Cobo Payment Solution provides multiple product forms to meet different customer integration needs:
 
 * **[Payment API](/v2/payments/api-reference)**: Provides complete payment business process API interfaces, supporting SDKs for mainstream programming languages such as Python, Java, Go, and JavaScript, allowing you to flexibly integrate payment functions into existing systems.
-* **Payment Management App**: Provides an intuitive web interface for convenient merchant management, order queries, settlement processing, exception handling, and other daily operational work.
+* **Payment Management App**: Provides an intuitive web interface for convenient merchant management, top-up address creation, order queries, settlement processing, exception handling, and other daily operational work.
 * **[Checkout SDK](/v2/payments/checkout-sdk)**: Provides ready-to-use payment collection frontend components that embed in your application as iframes, quickly implementing standardized payment processes and significantly reducing development costs.
 
 The support for payment business processes by various product forms is as follows:
@@ -54,13 +54,10 @@ The support for payment business processes by various product forms is as follow
 | Module | Details | Payment API | Payment Management App | Checkout SDK |
 |------|------|-------------|----------------------|--------------|
 | Basic information management | Account and merchant management | ✅ | ✅ | - |
-| Payment collection management | Top-up address and order management | ✅ | - | ✅ |
+| Payment collection management | Top-up address and order management | ✅ | ✅ (Order creation not supported yet) | ✅ |
 | Settlement management | Fund sweeping, fiat off-ramp, crypto withdrawal | ✅ | ✅ | - |
 | Payment exception handling | Overpayment/underpayment/late payment processing, refunds, compliance screening exception handling | ✅ | ✅ | ✅ |
 
-You can flexibly choose the following product form combinations based on business needs:
-- **Pure API solution**: Use all functions completely through API integration.
-- **Hybrid solution**: Integrate Checkout SDK to handle payment collection processes and use Payment Management App for daily management.
 
 ## Business model selection
 

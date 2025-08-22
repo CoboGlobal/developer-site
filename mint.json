@@ -398,6 +398,7 @@
     {
       "group": "充值模式",
       "pages": [
+        "v2_cn/payments/top-up-mode-quick-start",
         "v2_cn/payments/get-topup-addresses",
         "v2_cn/payments/settle-topup",
         "v2_cn/payments/handle-abnormality-topup"
@@ -407,6 +408,7 @@
     {
       "group": "订单模式",
       "pages": [
+        "v2_cn/payments/order-mode-quick-start",
         "v2_cn/payments/create-orders",
         "v2_cn/payments/settle-orders",
         "v2_cn/payments/handle-abnormality-order",
@@ -1219,6 +1221,7 @@
     {
       "group": "Top-up mode",
       "pages": [
+        "v2/payments/top-up-mode-quick-start",
         "v2/payments/get-topup-addresses",
         "v2/payments/settle-topup",
         "v2/payments/handle-abnormality-topup"
@@ -1228,6 +1231,7 @@
     {
       "group": "Order mode",
       "pages": [
+        "v2/payments/order-mode-quick-start",
         "v2/payments/create-orders",
         "v2/payments/settle-orders",
         "v2/payments/handle-abnormality-order",
