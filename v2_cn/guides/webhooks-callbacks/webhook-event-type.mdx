@@ -11,7 +11,13 @@ description: "WaaS 2.0 中 Webhook 事件类型的综合列表，详细说明每
 可用的 webhook 事件类型如下：
 
 <Info>本文所指交易为所有类型的交易，包括转账，合约调用和消息签名。</Info>
-<Note>支付相关的 Webhook 事件，请参考[事件与状态](/v2_cn/payments/status-and-events)。</Note>
+
+### 支付相关事件
+支付相关的 Webhook 事件，请参考[事件与状态](/v2_cn/payments/status-and-events)。
+
+### 交易类事件（充币/提币/合约调用/消息签名）
+
+<Note>以下事件适用于所有类型的交易，包括充币、提币、合约调用以及消息签名等。</Note>
 
 <table class="table-three-cols">
   <thead>
@@ -24,54 +30,117 @@ description: "WaaS 2.0 中 Webhook 事件类型的综合列表，详细说明每
   <tbody>
     <tr>
       <td><code>wallets.transaction.created</code></td>
-      <td rowspan="8"><code>Transaction</code></td>
-      <td>在区块链上检测到交易，生成交易记录。此事件不代表交易已成功。</td>
+      <td><code>Transaction</code></td>
+      <td>在区块链上检测到交易并生成记录。此事件不代表交易已成功。</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.updated</code></td>
-      <td>交易的状态或确认数发生变化。<Note>`wallets.transaction.updated` 事件涵盖交易的整个生命周期，包括创建、完成和失败。如果您想跟踪每个状态变化，可以订阅此事件。</Note></td>
+      <td><code>Transaction</code></td>
+      <td>交易的状态或确认数发生变化。<Note>`wallets.transaction.updated` 涵盖交易的整个生命周期，包括创建、完成和失败。如果您想跟踪每个状态变化，订阅此事件即可。</Note></td>
     </tr>
     <tr>
       <td><code>wallets.transaction.succeeded</code></td>
+      <td><code>Transaction</code></td>
       <td>交易已成功完成。</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.failed</code></td>
+      <td><code>Transaction</code></td>
       <td>交易失败。</td>
     </tr>
     <tr>
+      <td><code>token.suspended.deposit</code></td>
+      <td><code>SuspendedToken</code></td>
+      <td>充币已暂停。</td>
+    </tr>
+    <tr>
+      <td><code>token.suspended.withdraw</code></td>
+      <td><code>SuspendedToken</code></td>
+      <td>提币已暂停。</td>
+    </tr>
+  </tbody>
+</table>
+
+
+### Fee Station 相关事件
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>事件类型</th>
+      <th>事件数据类型</th>
+      <th>发生时机</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
       <td><code>fee_station.transaction.created</code></td>
+      <td><code>Transaction</code></td>
       <td>Fee Station 交易已创建。</td>
     </tr>
     <tr>
       <td><code>fee_station.transaction.updated</code></td>
+      <td><code>Transaction</code></td>
       <td>Fee Station 交易的状态发生变化。</td>
     </tr>
     <tr>
       <td><code>fee_station.transaction.failed</code></td>
+      <td><code>Transaction</code></td>
       <td>Fee Station 交易失败。</td>
     </tr>
     <tr>
       <td><code>fee_station.transaction.succeeded</code></td>
-      <td>Fee Station 交易已成功完成。</td>
+      <td><code>Transaction</code></td>
+      <td>Fee Station 交易已完成。</td>
     </tr>
+  </tbody>
+</table>
+
+### MPC 钱包 TSS 请求事件
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>事件类型</th>
+      <th>事件数据类型</th>
+      <th>发生时机</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code>wallets.mpc.tss_request.created</code></td>
-      <td rowspan="4"><code>TSSRequest</code></td>
+      <td><code>TSSRequest</code></td>
       <td>创建了 TSS 请求。</td>
     </tr>
     <tr>
       <td><code>wallets.mpc.tss_request.updated</code></td>
+      <td><code>TSSRequest</code></td>
       <td>TSS 请求的状态发生变化。</td>
     </tr>
     <tr>
       <td><code>wallets.mpc.tss_request.succeeded</code></td>
-      <td>请求的操作已成功完成。</td>
+      <td><code>TSSRequest</code></td>
+      <td>请求的操作已完成。</td>
     </tr>
     <tr>
       <td><code>wallets.mpc.tss_request.failed</code></td>
+      <td><code>TSSRequest</code></td>
       <td>请求的操作失败。</td>
     </tr>
+  </tbody>
+</table>
+
+### 钱包与地址管理事件
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>事件类型</th>
+      <th>事件数据类型</th>
+      <th>发生时机</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code>wallets.addresses.created</code></td>
       <td><code>Addresses</code></td>
@@ -87,50 +156,73 @@ description: "WaaS 2.0 中 Webhook 事件类型的综合列表，详细说明每
       <td><code>MPCVault</code></td>
       <td>已创建新的 MPC Vault。</td>
     </tr>
+  </tbody>
+</table>
+
+### 代币与链管理事件
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>事件类型</th>
+      <th>事件数据类型</th>
+      <th>发生时机</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code>wallet.token.enabled</code></td>
-      <td rowspan="2"><code>Tokens</code></td>
+      <td><code>Tokens</code></td>
       <td>一种或多种代币已被启用。</td>
     </tr>
     <tr>
       <td><code>wallet.token.disabled</code></td>
+      <td><code>Tokens</code></td>
       <td>一种或多种代币已被禁用。</td>
     </tr>
     <tr>
       <td><code>wallet.chain.enabled</code></td>
-      <td rowspan="2"><code>Chains</code></td>
+      <td><code>Chains</code></td>
       <td>一条或多条链已被启用。</td>
     </tr>
     <tr>
       <td><code>wallet.chain.disabled</code></td>
+      <td><code>Chains</code></td>
       <td>一条或多条链已被禁用。</td>
     </tr>
     <tr>
       <td><code>wallets.token_listing.failed</code></td>
-      <td rowspan="2"><code>TokenListing</code></td>
+      <td><code>TokenListing</code></td>
       <td>上币请求失败。</td>
     </tr>
     <tr>
       <td><code>wallets.token_listing.succeeded</code></td>
+      <td><code>TokenListing</code></td>
       <td>上币请求已成功处理，代币当前已可用。</td>
     </tr>
+  </tbody>
+</table>
+
+### 余额更新事件
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>事件类型</th>
+      <th>事件数据类型</th>
+      <th>发生时机</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code>wallet.mpc.balance.updated</code></td>
-      <td rowspan="2"><code>BalanceUpdateInfo</code></td>
+      <td><code>BalanceUpdateInfo</code></td>
       <td>MPC 钱包余额更新。</td>
     </tr>
     <tr>
       <td><code>wallet.web3.balance.updated</code></td>
+      <td><code>BalanceUpdateInfo</code></td>
       <td>全托管钱包（Web3 钱包）余额更新。</td>
-    </tr>
-    <tr>
-      <td><code>token.suspended.deposit</code></td>
-      <td rowspan="2"><code>SuspendedToken</code></td>
-      <td>充币已暂停。</td>
-    </tr>
-    <tr>
-      <td><code>token.suspended.withdraw</code></td>
-      <td>提币已暂停。</td>
     </tr>
   </tbody>
 </table>

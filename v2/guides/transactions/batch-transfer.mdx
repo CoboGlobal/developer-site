@@ -1,0 +1,367 @@
+---
+title: "Batch transfers using smart contracts"
+lang: "en"
+description: "Use the WaaS 2.0 API to call a batch transfer smart contract and complete multiple token transfers in a single transaction."
+---
+
+A batch transfer smart contract allows you to execute multiple token transfers in a single on-chain transaction, making it suitable for scenarios such as batch payouts or batch withdrawals. Compared to repeatedly calling the transfer API, the batch method reduces the need for multiple signatures and requests, improving operational efficiency.  
+
+This guide explains how to use the [Call smart contract](/v2/api-references/transactions/call-smart-contract) API to invoke the batch transfer smart contract deployed by Cobo, enabling batch token transfers.
+
+<Note>The transaction fee for batch transfers using the smart contract API may not necessarily be lower than the total fee for multiple individual transfer token API calls. The actual cost depends on the on-chain gas price and the number of transfers; with a small number of recipients, batch transfers could even be more expensive. We recommend using the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) API to compare the cost of both approaches before initiating a transfer.</Note>
+
+## Supported chains
+- Ethereum Mainnet (ETH, ERC-20 tokens).  
+  Batch transfer smart contract address: [`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`](https://etherscan.io/address/0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc#code)
+
+## Prerequisites
+- You have set up Cobo Accounts and successfully sent requests as described in [Send your first API request](/v2_cn/get-started/get-started-with-waas).  
+- You are familiar with and able to use the [Call smart contract](/v2/api-references/transactions/call-smart-contract) API.  
+- You have basic knowledge of interacting with smart contracts, including preparing `calldata`, locating contract methods, and using the `approve` method on a token contract to authorize the batch transfer contract to spend tokens.  
+- The batch transfer feature currently only supports transactions initiated from MPC wallets and Web3 wallets.
+
+## Batch transfer of ETH
+The following steps apply to batch transfers of ETH (native coin) on Ethereum Mainnet:
+
+1. **Prepare parameters**  
+   - Use the `sendEther` method to generate `calldata` (either with Cobo’s [script](#example-script-for-generating-calldata) or your own tool).  
+     When generating `calldata`, provide:
+     - `recipients (address[])`: array of recipient addresses.  
+     - `values (uint256[])`: array of amounts for each address (in wei).  
+   - The number of recipients must not exceed 200 (`recipients` array length ≤ 200).
+
+2. **Call the [Call smart contract](/v2/api-references/transactions/call-smart-contract) API**  
+   - Specify the batch transfer contract address: [`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`](https://etherscan.io/address/0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc#code)  
+   - Provide the generated `calldata`.  
+   - The `value` in the API request must equal the sum of all values in the `values` array in the `calldata`.
+
+3. **Wait for confirmation and check results**  
+   - Use the returned `tx_hash` to check the transaction status.  
+   - In Cobo Portal’s transaction history, you will see a transaction of the contract call type.  
+   - If any recipient address belongs to a Cobo Account, the corresponding organization will also see a transaction of the deposit type.
+
+## Batch transfer of other tokens
+The following steps apply to batch transfers of ERC-20 tokens on Ethereum Mainnet:
+
+1. **Call the token contract’s `approve` method**  
+   - Each token has its own contract address, so run `approve` on the specific token’s contract.  
+   - Approve the **source address** (the one specified in the `source` field of the smart contract call request). 
+   - The approved amount must be greater than or equal to the total transfer amount. 
+   <Note>Before calling the batch transfer contract, use an on-chain query or API request to confirm that the `approve` transaction has been successfully confirmed and completed.</Note>
+
+2. **Prepare parameters**  
+   - Use the `sendToken` method to generate `calldata` (either with Cobo’s [script](#example-script-for-generating-calldata) or your own tool).  
+     When generating `calldata`, provide:
+     - `token (address)`: ERC-20 token contract address.  
+     - `recipients (address[])`: array of recipient addresses.  
+     - `values (uint256[])`: array of amounts for each address (in the token’s smallest unit).  
+   - The number of recipients must not exceed 200 (`recipients` array length ≤ 200).
+
+3. **Call the [Call smart contract](/v2/api-references/transactions/call-smart-contract) API**  
+   - Specify the batch transfer contract address: [`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`](https://etherscan.io/address/0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc#code)  
+   - Provide the generated `calldata`.  
+   - Set `value` to 0 when making the API call.
+
+4. **Wait for confirmation and check results**  
+   - Use the returned `tx_hash` to check the transaction status.  
+   - In Cobo Portal’s transaction history, you will see a transaction of the contract call type.  
+   - If any recipient address belongs to a Cobo Account, the corresponding organization will also see a transaction of the deposit type.
+
+## Additional notes
+- You can use [Fee Station](https://manuals.cobo.com/cn/portal/fee-station/introduction) to pay on-chain transaction fees with gas tokens or USD stablecoins.
+- You can also manually call the batch transfer smart contract with the “Write Contract” function on a blockchain explorer. This method requires connecting your MPC wallet or Web3 wallet using a supported browser extension (such as [Cobo Connect](https://manuals.cobo.com/cn/cobo-connect/introduction)), without using API calls.
+
+## Common failure causes
+- Insufficient balance or insufficient approval amount.  
+- Mismatch between the length of `recipients` and the length of the amount array.  
+- Number of recipients exceeds the limit.  
+- Mismatch between the `value` in the API request and the amounts in the `calldata` (for ETH transfers).  
+- Insufficient gas limit.
+
+
+## Example script for generating `calldata`
+
+The following is a Python script provided by Cobo to generate `calldata`. You can also generate on your own.
+
+
+```python expandable
+# !/usr/bin/env python3
+"""
+Contract Call Data Generator
+
+This script generates call data for the provided smart contract ABI.
+It supports all functions defined in the ABI including multicall, send, sendEther, sendToken, etc.
+"""
+
+import json
+from web3 import Web3
+from typing import List, Optional, Union
+from eth_utils import to_checksum_address
+
+
+class ContractCallDataGenerator:
+    def __init__(self, abi_json: str):
+        """
+        Initialize the generator with contract ABI
+
+        Args:
+            abi_json (str): JSON string of the contract ABI
+        """
+        self.abi = json.loads(abi_json)
+        self.w3 = Web3()
+        self.contract = self.w3.eth.contract(abi=self.abi)
+
+    def get_eth_address_calldata(self) -> str:
+        """Generate calldata for ETH_ADDRESS() function"""
+        return self.contract.encodeABI(fn_name='ETH_ADDRESS')
+
+    def get_owner_calldata(self) -> str:
+        """Generate calldata for owner() function"""
+        return self.contract.encodeABI(fn_name='owner')
+
+    def get_renounce_ownership_calldata(self) -> str:
+        """Generate calldata for renounceOwnership() function"""
+        return self.contract.encodeABI(fn_name='renounceOwnership')
+
+    def get_transfer_ownership_calldata(self, new_owner: str) -> str:
+        """
+        Generate calldata for transferOwnership(address newOwner) function
+
+        Args:
+            new_owner (str): New owner address
+        """
+        new_owner = to_checksum_address(new_owner)
+        return self.contract.encodeABI(
+            fn_name='transferOwnership',
+            args=[new_owner]
+        )
+
+    def get_rescue_calldata(self, token: str, amount: int) -> str:
+        """
+        Generate calldata for rescue(address _token, uint256 _amount) function
+
+        Args:
+            token (str): Token contract address
+            amount (int): Amount to rescue
+        """
+        token = to_checksum_address(token)
+        return self.contract.encodeABI(
+            fn_name='rescue',
+            args=[token, amount]
+        )
+
+    def get_multicall_calldata(self, data: List[bytes]) -> str:
+        """
+        Generate calldata for multicall(bytes[] data) function
+
+        Args:
+            data (List[bytes]): List of encoded function calls
+        """
+        return self.contract.encodeABI(
+            fn_name='multicall',
+            args=[data]
+        )
+
+    def get_send_ether_calldata(self, recipients: List[str], values: List[int]) -> str:
+        """
+        Generate calldata for sendEther(address[] recipients, uint256[] values) function
+
+        Args:
+            recipients (List[str]): List of recipient addresses
+            values (List[int]): List of values to send
+        """
+        recipients = [to_checksum_address(addr) for addr in recipients]
+        return self.contract.encodeABI(
+            fn_name='sendEther',
+            args=[recipients, values]
+        )
+
+    def get_send_token_calldata(self, token: str, recipients: List[str], values: List[int]) -> str:
+        """
+        Generate calldata for sendToken(contract IERC20 token, address[] recipients, uint256[] values) function
+
+        Args:
+            token (str): Token contract address
+            recipients (List[str]): List of recipient addresses
+            values (List[int]): List of values to send
+        """
+        token = to_checksum_address(token)
+        recipients = [to_checksum_address(addr) for addr in recipients]
+        return self.contract.encodeABI(
+            fn_name='sendToken',
+            args=[token, recipients, values]
+        )
+
+    def get_send_calldata(self, tokens: List[str], recipients: List[str], values: List[int]) -> str:
+        """
+        Generate calldata for send(address[] tokens, address[] recipients, uint256[] values) function
+
+        Args:
+            tokens (List[str]): List of token addresses
+            recipients (List[str]): List of recipient addresses
+            values (List[int]): List of values to send
+        """
+        tokens = [to_checksum_address(addr) for addr in tokens]
+        recipients = [to_checksum_address(addr) for addr in recipients]
+        return self.contract.encodeABI(
+            fn_name='send',
+            args=[tokens, recipients, values]
+        )
+
+
+def main():
+    """Main function with usage examples"""
+
+    # Contract ABI
+    abi_json = '''[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"target","type":"address"}],"name":"AddressEmptyCode","type":"error"},{"inputs":[],"name":"FailedCall","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"OwnableInvalidOwner","type":"error"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"OwnableUnauthorizedAccount","type":"error"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"SafeERC20FailedOperation","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[],"name":"ETH_ADDRESS","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes[]","name":"data","type":"bytes[]"}],"name":"multicall","outputs":[{"internalType":"bytes[]","name":"results","type":"bytes[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"rescue","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"send","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"sendEther","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"token","type":"address"},{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"sendToken","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"}]'''
+
+    # Initialize generator
+    generator = ContractCallDataGenerator(abi_json)
+
+    print("=== Contract Call Data Generator ===\n")
+
+    # Example 1: Get ETH_ADDRESS calldata
+    eth_address_calldata = generator.get_eth_address_calldata()
+    print(f"ETH_ADDRESS() calldata: {eth_address_calldata}")
+
+    # Example 2: Get owner calldata
+    owner_calldata = generator.get_owner_calldata()
+    print(f"owner() calldata: {owner_calldata}")
+
+    # Example 3: Transfer ownership
+    new_owner = "0x44E734ad441C190EDf58E912b58AA6373AB945f8"
+    transfer_ownership_calldata = generator.get_transfer_ownership_calldata(new_owner)
+    print(f"transferOwnership(address) calldata: {transfer_ownership_calldata}")
+
+    # Example 4: Rescue tokens
+    token_address = "0x8d89ca14bcd4107843c62015ba332150e5f11013"
+    amount = 2 # 1 token (assuming 18 decimals)
+    rescue_calldata = generator.get_rescue_calldata(token_address, amount)
+    print(f"rescue(address, uint256) calldata: {rescue_calldata}")
+
+    # Example 5: Send Ether to multiple recipients
+    recipients = ["0x3573c0923aecc5bfdcbd3ffd022be96550a23fb4","0xe389b99f5b4bbbcd5247b19e953e4ff86b961ae4"]
+    # recipients = [
+    #               "0x250d3aa593f0db4588f400ee74b09f20e6fb47af",
+    #               "0x5d14046ccc418d41004527b091bce7de4eefde1e",
+    #               "0x91e1d5bcd9f919f7a1a541c9fed150de4cdd6720",
+    #               "0x5218bc8a3cbd5d65e10095c2573f8b0b5ff1f6eb",
+    #               ]
+
+    # values = [1,1]
+    values = [1, 1]
+    send_ether_calldata = generator.get_send_ether_calldata(recipients, values)
+    print(f"sendEther(address[], uint256[]) calldata: {send_ether_calldata}")
+
+    # Example 6: Send tokens to multiple recipients
+    # token_contract = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    token_contract = "0x8d89ca14bcd4107843c62015ba332150e5f11013"
+    token_values = [4,5]
+     # 0.5 tokens, 1.5 tokens
+    send_token_calldata = generator.get_send_token_calldata(token_contract, recipients, token_values)
+    print(f"sendToken(address, address[], uint256[]) calldata: {send_token_calldata}")
+
+    # Example 7: Multi-send (different tokens to different recipients)
+    tokens = [
+        "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",  # ETH
+        "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",  # ETH
+        "0x8d89ca14bcd4107843c62015ba332150e5f11013", # Token
+        "0x8d89ca14bcd4107843c62015ba332150e5f11013"
+    ]
+    # tokens = ["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"]
+
+    send_calldata = generator.get_send_calldata(tokens, recipients, values)
+    print(f"send(address[], address[], uint256[]) calldata: {send_calldata}")
+
+    # Example 8: Multicall - combining multiple operations
+    # First, prepare individual call data
+    call1 = generator.get_owner_calldata()
+    call2 = generator.get_eth_address_calldata()
+
+
+    # Convert hex strings to bytes
+    call_data = [ bytes.fromhex(send_token_calldata[2:])]
+    multicall_calldata = generator.get_multicall_calldata(call_data)
+    print(f"multicall(bytes[]) calldata: {multicall_calldata}")
+
+    # Example 9: Renounce ownership
+    renounce_calldata = generator.get_renounce_ownership_calldata()
+    print(f"renounceOwnership() calldata: {renounce_calldata}")
+
+    print("\n=== Usage Instructions ===")
+    print("1. Install required packages: pip install web3 eth-utils")
+    print("2. Use the generated calldata in your transaction")
+    print("3. Set appropriate gas limits for each function")
+    print("4. For payable functions (send, sendEther), include ETH value in transaction")
+
+
+def interactive_mode():
+    """Interactive mode for custom calldata generation"""
+    abi_json = '''[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"target","type":"address"}],"name":"AddressEmptyCode","type":"error"},{"inputs":[],"name":"FailedCall","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"OwnableInvalidOwner","type":"error"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"OwnableUnauthorizedAccount","type":"error"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"SafeERC20FailedOperation","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[],"name":"ETH_ADDRESS","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes[]","name":"data","type":"bytes[]"}],"name":"multicall","outputs":[{"internalType":"bytes[]","name":"results","type":"bytes[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"rescue","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"send","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"sendEther","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"token","type":"address"},{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"sendToken","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"}]'''
+
+    generator = ContractCallDataGenerator(abi_json)
+
+    print("=== Interactive Call Data Generator ===")
+    print("Available functions:")
+    print("1. ETH_ADDRESS()")
+    print("2. owner()")
+    print("3. renounceOwnership()")
+    print("4. transferOwnership(address)")
+    print("5. rescue(address, uint256)")
+    print("6. sendEther(address[], uint256[])")
+    print("7. sendToken(address, address[], uint256[])")
+    print("8. send(address[], address[], uint256[])")
+    print("9. multicall(bytes[])")
+    print("0. Exit")
+
+    while True:
+        try:
+            choice = input("\nEnter function number (0-9): ")
+
+            if choice == '0':
+                break
+            elif choice == '1':
+                print(f"Calldata: {generator.get_eth_address_calldata()}")
+            elif choice == '2':
+                print(f"Calldata: {generator.get_owner_calldata()}")
+            elif choice == '3':
+                print(f"Calldata: {generator.get_renounce_ownership_calldata()}")
+            elif choice == '4':
+                new_owner = input("Enter new owner address: ")
+                print(f"Calldata: {generator.get_transfer_ownership_calldata(new_owner)}")
+            elif choice == '5':
+                token = input("Enter token address: ")
+                amount = int(input("Enter amount: "))
+                print(f"Calldata: {generator.get_rescue_calldata(token, amount)}")
+            elif choice == '6':
+                recipients = input("Enter recipient addresses (comma-separated): ").split(',')
+                values = [int(x) for x in input("Enter values (comma-separated): ").split(',')]
+                print(f"Calldata: {generator.get_send_ether_calldata(recipients, values)}")
+            elif choice == '7':
+                token = input("Enter token address: ")
+                recipients = input("Enter recipient addresses (comma-separated): ").split(',')
+                values = [int(x) for x in input("Enter values (comma-separated): ").split(',')]
+                print(f"Calldata: {generator.get_send_token_calldata(token, recipients, values)}")
+            elif choice == '8':
+                tokens = input("Enter token addresses (comma-separated): ").split(',')
+                recipients = input("Enter recipient addresses (comma-separated): ").split(',')
+                values = [int(x) for x in input("Enter values (comma-separated): ").split(',')]
+                print(f"Calldata: {generator.get_send_calldata(tokens, recipients, values)}")
+            else:
+                print("Invalid choice. Please try again.")
+
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    # Run main examples
+    main()
+
+    # Optionally run interactive mode
+    # run_interactive = input("\nRun interactive mode? (y/n): ")
+    # if run_interactive.lower() == 'y':
+    #     interactive_mode()
+```
+
+<Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>

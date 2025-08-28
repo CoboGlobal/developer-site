@@ -9,6 +9,21 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.21.0
+
+This version was released on August 13, 2025.
+
+### New Features
+
+- Added the [Estimate maximum transferable value](/v2/api-references/wallets/estimate-maximum-transferable-value) operation to estimate the maximum transferable value based on specified fee settings. We recommend using this new operation instead of [Get maximum transferable value](/v2/api-references/wallets/get-maximum-transferable-value), which will be deprecated in the future.
+
+### Improvements
+
+- Added compliance-related enums to the `TransactionCoboCategory` schema:
+  - `ScreenAppRefund`
+  - `ScreenAppIsolate`
+  - `ComplianceRefund`
+  - `ComplianceIsolate`
 
 ## v1.20.0
 

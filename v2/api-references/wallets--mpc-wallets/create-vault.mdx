@@ -123,11 +123,10 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.WalletsMPCWalletsApi();
 const opts = {
-  CreateMpcVaultRequest:
-    CoboWaas2.CreateMpcVaultRequest.constructFromObject({
-      name: "My vault",
-      vault_type: "Org-Controlled",
-    }),
+  CreateMpcVaultRequest: CoboWaas2.CreateMpcVaultRequest.constructFromObject({
+    name: "My vault",
+    vault_type: "Org-Controlled",
+  }),
 };
 apiInstance.createMpcVault(opts).then(
   (data) => {

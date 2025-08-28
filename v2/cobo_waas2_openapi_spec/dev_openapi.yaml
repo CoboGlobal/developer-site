@@ -528,6 +528,7 @@ paths:
       operationId: get_max_transferable_value
       summary: Get maximum transferable value
       description: |
+        <Warning>This operation is planned for deprecation. We recommend using  [Estimate maximum transferable value](https://www.cobo.com/developers/v2/api-references/wallets/estimate-maximum-transferable-value) instead.</Warning>
         This operation retrieves the maximum amount that you can transfer from a wallet or a specified wallet address, along with the corresponding transaction fee.
 
         You must specify `to_address` in your query because it affects the transaction fee.
@@ -3310,6 +3311,7 @@ paths:
         - $ref: '#/components/parameters/afterParam'
         - $ref: '#/components/parameters/MerchantIdOptionalParam'
         - $ref: '#/components/parameters/RequestIdOptionalParam'
+        - $ref: '#/components/parameters/PaymentStatusesParam'
       responses:
         '200':
           $ref: '#/components/responses/listRefundsResponse'
@@ -3322,9 +3324,9 @@ paths:
       tags:
         - Payment
       operationId: update_refund_by_id
-      summary: Update refund order information
+      summary: Update refund order
       description: |
-        This operation updates a specified refund order.
+        This operation updates a specified refund order by modifying its recipient address. You can only update the recipient address for refund orders that have not been processed yet.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -3367,7 +3369,7 @@ paths:
       operationId: cancel_refund_by_id
       summary: Cancel refund order
       description: |
-        This operation cancels a specified refund order.
+        This operation cancels a specified refund order. You can only cancel refund orders that have not been processed yet.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -3438,6 +3440,7 @@ paths:
         - $ref: '#/components/parameters/afterParam'
         - $ref: '#/components/parameters/MerchantIdOptionalParam'
         - $ref: '#/components/parameters/PspOrderIdOptionalParam'
+        - $ref: '#/components/parameters/PaymentStatusesParam'
       responses:
         '200':
           $ref: '#/components/responses/listPaymentOrdersResponse'
@@ -3595,6 +3598,32 @@ paths:
         5XX:
           $ref: '#/components/responses/internalServerError'
   /payments/crypto_addresses:
+    post:
+      tags:
+        - Payment
+      operationId: create_crypto_address
+      summary: Create crypto address
+      description: |
+        This operation registers a crypto address for crypto withdrawal.
+
+        The registered address can later be referenced by its ID when creating settlement requests.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.create
+      requestBody:
+        $ref: '#/components/requestBodies/createCryptoAddressBody'
+      responses:
+        '201':
+          description: Crypto address created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoAddress'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     get:
       tags:
         - Payment
@@ -3617,6 +3646,29 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  '/payments/crypto_addresses/{crypto_address_id}/delete':
+    post:
+      tags:
+        - Payment
+      operationId: delete_crypto_address
+      summary: Delete crypto address
+      description: |
+        This operation unregisters a crypto address from being used for crypto withdrawals.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.update
+      parameters:
+        - $ref: '#/components/parameters/CryptoAddressIdPathParam'
+      responses:
+        '201':
+          $ref: '#/components/responses/deleteCryptoAddressResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
   /payments/supported_tokens:
     get:
       tags:
@@ -3746,6 +3798,31 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listForcedSweepsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /payments/settlement_details:
+    get:
+      tags:
+        - Payment
+      operationId: list_settlement_details
+      summary: List all settlement details
+      description: |
+        This operation retrieves the information of all settlement details. You can filter the result by merchant ID or status.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_settlement.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/MerchantIdOptionalParam'
+        - $ref: '#/components/parameters/PaymentStatusesParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listSettlementDetailResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -7550,6 +7627,10 @@ components:
           - `StakingSkyfarmClaim`: A transaction for claiming rewards from Skyfarm staking.
           - `StakingSkyfarmStake`: A transaction for staking assets in the Skyfarm platform.
           - `StakingSkyfarmUnstake`: A transaction for unstaking assets from the Skyfarm platform.
+          - `ScreenAppRefund`: A refund transaction initiated through the Screening App.
+          - `ScreenAppIsolate`: An isolation transaction initiated through the Screening App.
+          - `ComplianceRefund`: A refund transaction initiated by Cobo KYT.
+          - `ComplianceIsolate`: An isolation transaction initiated by Cobo KYT.
     SafeTxExtraData:
       type: object
       description: 'The information used to construct and sign Safe{Wallet} transactions using the EIP-712 standard.'
@@ -11963,20 +12044,7 @@ components:
         order_ids:
           type: array
           items:
-            type: string
-            description: |
-
-              The order ID to be included in this settlement.
-
-              - If provided: Settles merchant funds received from this specific order
-              - If empty: Settles merchant funds received from all unsettled orders of the specified merchant
-
-              **Usage conditions**
-              - Only applicable when `settlement_type` is set to `Merchant`
-              - Cannot be used together with `order_ids` or `amount` parameters
-
-                  
-            example: O20250304-M1001-1001
+            $ref: '#/components/schemas/OrderId'
     Merchant:
       type: object
       required:
@@ -12106,6 +12174,21 @@ components:
             $ref: '#/components/schemas/PaymentTransaction'
         settlement_status:
           $ref: '#/components/schemas/SettleStatus'
+    OrderId:
+      type: string
+      description: |
+
+        The order ID to be included in this settlement.
+
+        - If provided: Settles merchant funds received from this specific order
+        - If empty: Settles merchant funds received from all unsettled orders of the specified merchant
+
+        **Usage conditions**
+        - Only applicable when `settlement_type` is set to `Merchant`
+        - Cannot be used together with `order_ids` or `amount` parameters
+
+            
+      example: O20250304-M1001-1001
     OrderStatus:
       type: string
       enum:
@@ -12244,7 +12327,7 @@ components:
         - Failed
       example: Pending
       description: |
-        The current status of the settlement request:
+        The current status of a settlement request:
         - `Pending`: The settlement request has been created and is awaiting processing.
         - `Processing`: The settlement request is currently being processed, with at least one settlement in progress.
         - `Completed`: All requested settlements have been completed.
@@ -12260,10 +12343,10 @@ components:
         - Failed
       example: Pending
       description: |
-        The current status of settlement.
+        The current status of a settlement.
         - `Pending`: The settlement has been created and is awaiting processing.
         - `Processing`: The settlement is being processed.
-        - `Completed`: The funds have been successfully deposited into the bank account.
+        - `Completed`: The funds have been successfully deposited into the bank account or the withdrawal crypto address.
         - `PartiallyCompleted`: Some settlement transactions have been completed successfully, while others have failed.
         - `Failed`: The settlement could not be completed due to an error.
     Settlement:
@@ -12304,6 +12387,12 @@ components:
             - Format `api_key_<API_KEY>`: Indicates the settlement request was initiated via the Payment API using the API key.
             - Format `app_<APP_ID>`: Indicates the settlement request was initiated through the Payment Management App using the App ID.
           example: api_key_b2ae1b5aaade686c968ef2bbd31cc75ba94e5a85fd9cb0b35b81dcc15f520e9d
+        acquiring_type:
+          $ref: '#/components/schemas/AcquiringType'
+        payout_channel:
+          $ref: '#/components/schemas/PayoutChannel'
+        settlement_type:
+          $ref: '#/components/schemas/SettlementType'
     SettlementDetail:
       type: object
       properties:
@@ -12364,6 +12453,19 @@ components:
           $ref: '#/components/schemas/PayoutChannel'
         acquiring_type:
           $ref: '#/components/schemas/AcquiringType'
+        settlement_request_id:
+          type: string
+          description: The settlement request ID generated by Cobo.
+          example: S20250304-1001
+        order_ids:
+          type: array
+          description: |
+            A list of unique order IDs to be included in this settlement.
+
+            - This field is only applicable when `settlement_type` is set to `Merchant`.
+            - If provided, the settlement will only apply to the specified orders.
+          items:
+            $ref: '#/components/schemas/OrderId'
     SettlementInfo:
       type: object
       required:
@@ -12481,14 +12583,14 @@ components:
       type: object
       required:
         - token_id
-        - address_id
+        - crypto_address_id
         - address
       properties:
         token_id:
           type: string
           description: 'The token identifier (e.g., ETH_USDT, TRON_USDT) that this address is associated with.'
           example: ETH_USDT
-        address_id:
+        crypto_address_id:
           type: string
           description: |
             A unique identifier for this crypto address, automatically generated by Cobo. Use this ID (not the raw blockchain address) when submitting a settlement request.
@@ -15799,6 +15901,27 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/AcquiringType'
+    PaymentStatusesParam:
+      name: statuses
+      in: query
+      required: false
+      description: |
+        A list of order, refund or settlement statuses. You can refer to the following operations for the possible status values:
+         - [Get pay-in order information](https://www.cobo.com/developers/v2/api-references/payment/get-pay-in-order-information)
+         - [Get refund order information](https://www.cobo.com/developers/v2/api-references/payment/get-refund-order-information)
+         - [List all settlement details](https://www.cobo.com/developers/v2/api-references/payment/list-all-settlement-details)
+      schema:
+        type: string
+      example: 'Pending,Processing'
+    CryptoAddressIdPathParam:
+      name: crypto_address_id
+      in: path
+      required: true
+      description: The crypto address ID.
+      schema:
+        type: string
+        description: The crypto address ID.
+      example: addr_ethusdt_20250506T123456_ab12cd
     tokenizationActivityIdPathParam:
       name: activity_id
       in: path
@@ -16782,7 +16905,7 @@ components:
                 items:
                   $ref: '#/components/schemas/CreateSettlement'
     createCryptoAddressBody:
-      description: The request body to create a crypto address.
+      description: The request body to register a crypto address.
       content:
         application/json:
           schema:
@@ -16794,23 +16917,20 @@ components:
               token_id:
                 type: string
                 description: |
-                  The token ID that identifies the cryptocurrency and its corresponding blockchain.
-
-                  **Supported values**:
-                    - **USDC**: `ETH_USDC`, `ARBITRUM_USDCOIN`, `SOL_USDC`, `BASE_USDC`, `MATIC_USDC2`, `BSC_USDC`
-                    - **USDT**: `TRON_USDT`, `ETH_USDT`, `ARBITRUM_USDT`, `SOL_USDT`, `BASE_USDT`, `MATIC_USDT`, `BSC_USDT`
+                  The token ID, which is a unique identifier that specifies both the blockchain network and cryptocurrency token in the format `{CHAIN}_{TOKEN}`. Supported values include:
+                    - USDC: `ETH_USDC`, `ARBITRUM_USDCOIN`, `SOL_USDC`, `BASE_USDC`, `MATIC_USDC2`, `BSC_USDC`
+                    - USDT: `TRON_USDT`, `ETH_USDT`, `ARBITRUM_USDT`, `SOL_USDT`, `BASE_USDT`, `MATIC_USDT`, `BSC_USDT`
                 example: ETH_USDT
               address:
                 type: string
                 description: |
-                  The blockchain address where crypto withdrawals will be sent. Must be a valid address format for the blockchain specified by `token_id`. For example:
-                  - For `SOL_USDC`: Provide a Solana address.
-                  - For `ETH_USDT`: Provide an Ethereum address.
+                  The blockchain address in its native format. This is the actual destination address where funds will be sent. The address must match the format required by the specified blockchain. For example:
+                    - For `SOL_USDC`: Provide a Solana address
+                    - For `ETH_USDT`: Provide an Ethereum address
                 example: '0xabc123456789def0000000000000000000000000'
               label:
                 type: string
-                description: |
-                  A label to help identify the address's purpose.
+                description: A label to help identify the address's purpose.
                 example: Main Withdrawal Address
     createForceSweepBody:
       description: The request body for forced sweep.
@@ -18532,6 +18652,19 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/CryptoAddress'
+    deleteCryptoAddressResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - crypto_address_id
+            properties:
+              crypto_address_id:
+                type: string
+                description: The ID of the deleted crypto address.
+                example: addr_ethusdt_20250506T123456_ab12cd
     listSupportedTokensResponse:
       description: The request was successful.
       content:
@@ -18582,6 +18715,19 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/ForcedSweep'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    listSettlementDetailResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SettlementDetail'
               pagination:
                 $ref: '#/components/schemas/Pagination'
     getFeeStationTokenBalancesResponse:
