@@ -14675,6 +14675,7 @@ components:
         - Pausing
       example: Active
     TokenizationERC20TokenParams:
+      title: ERC20
       type: object
       properties:
         standard:
@@ -14707,6 +14708,7 @@ components:
         - symbol
         - decimals
     TokenizationSOLTokenParams:
+      title: Solana
       type: object
       properties:
         standard:
@@ -14914,6 +14916,7 @@ components:
           required:
             - fee
     TokenizationMpcOperationSource:
+      title: MPC Wallets
       type: object
       properties:
         source_type:
@@ -15189,6 +15192,7 @@ components:
         - ContractCall
       example: Issue
     TokenizationWeb3OperationSource:
+      title: Web3
       type: object
       properties:
         source_type:
@@ -15275,7 +15279,7 @@ components:
           example: steve@example.com
           description: 'The initiator of the tokenization activity. If you do not specify this property, the WaaS service will automatically designate the API key as the initiator.'
     TokenizationIssueEstimateFeeParams:
-      title: TokenizationIssueEstimateFeeParams
+      title: Issue
       allOf:
         - $ref: '#/components/schemas/TokenizationIssueTokenParams'
         - type: object
@@ -15289,6 +15293,7 @@ components:
           required:
             - operation_type
     TokenizationMintEstimateFeeParams:
+      title: Mint
       allOf:
         - $ref: '#/components/schemas/TokenizationMintTokenParams'
         - type: object
@@ -15307,6 +15312,7 @@ components:
             - operation_type
             - token_id
     TokenizationBurnEstimateFeeParams:
+      title: Burn
       allOf:
         - $ref: '#/components/schemas/TokenizationBurnTokenParams'
         - type: object
@@ -15325,6 +15331,7 @@ components:
             - operation_type
             - token_id
     TokenizationPauseEstimateFeeParams:
+      title: Pause
       allOf:
         - $ref: '#/components/schemas/TokenizationPauseTokenParams'
         - type: object
@@ -15343,6 +15350,7 @@ components:
             - operation_type
             - token_id
     TokenizationUnpauseEstimateFeeParams:
+      title: Unpause
       allOf:
         - $ref: '#/components/schemas/TokenizationUnpauseTokenParams'
         - type: object
@@ -15361,6 +15369,7 @@ components:
             - operation_type
             - token_id
     TokenizationUpdateAllowlistAddressesEstimateFeeParams:
+      title: Update allowlist addresses
       allOf:
         - $ref: '#/components/schemas/TokenizationUpdateAllowlistAddressesParams'
         - type: object
@@ -15379,6 +15388,7 @@ components:
             - operation_type
             - token_id
     TokenizationUpdateBlocklistAddressesEstimateFeeParams:
+      title: Update blocklist addresses
       allOf:
         - $ref: '#/components/schemas/TokenizationUpdateBlocklistAddressesParams'
         - type: object
@@ -15397,6 +15407,7 @@ components:
             - operation_type
             - token_id
     TokenizationToggleAllowlistEstimateFeeParams:
+      title: Toggle allowlist
       allOf:
         - $ref: '#/components/schemas/TokenizationAllowlistActivationParams'
         - type: object
@@ -15415,6 +15426,7 @@ components:
             - operation_type
             - token_id
     TokenizationContractCallEstimateFeeParams:
+      title: Contract call
       allOf:
         - $ref: '#/components/schemas/TokenizationContractCallParams'
         - type: object
