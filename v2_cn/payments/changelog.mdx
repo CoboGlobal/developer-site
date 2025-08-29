@@ -9,6 +9,7 @@ lang: "zh-hans"
 
 | 产品 | 变更说明 | 发布时间 |
 |------|----------|----------|
+| **Payment API** |API SDK v1.22.0 发版。变更如下：<br/><br/>- **不兼容变更**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;-[Create settlement request](/v2/api-references/payment/create-settlement-request) 请求包体中的 ​`settlements.token_id` 参数从可选改为必填。<br/><br/>- 新增余额相关操作：<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List merchant balances](/v2/api-references/payment/list-merchant-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get developer balance](/v2/api-references/payment/get-developer-balance)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List payment wallet balances](/v2/api-references/payment/list-payment-wallet-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get payer balance](/v2/api-references/payment/get-payer-balance)| 2025-08-28 |
 | **Payment API** |API SDK v1.21.0 发版。变更如下：<br/><br/>- 新增结算相关操作：<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List all settlement details](/v2/api-references/payment/list-all-settlement-details)：用于查询结算详情。<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Create crypto address](/v2/api-references/payment/create-crypto-address)：用于注册加密货币转账地址<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Delete crypto address](/v2/api-references/payment/delete-crypto-address)：用于取消注册加密货币转账地址<br/><br/>- 新增退款相关操作：<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Update refund order](/v2/api-references/payment/update-refund-order)：用于更新退款订单的收币地址。<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Cancel refund order](/v2/api-references/payment/cancel-refund-order)：用于取消退款订单| 2025-08-13 |
 | **Checkout SDK** | - 新增支持通过第三方钱包进行支付，支持 EVM 和 Tron 链主流钱包。<br/>- 新增支持通过 `cryptoAmount` 参数直接以加密货币指定订单金额。| 2025-08-11 |
 

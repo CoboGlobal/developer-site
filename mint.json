@@ -742,6 +742,14 @@
             "v2/api-references/transactions/sign-and-broadcast-transaction"
           ],
           "version": "🌐 Version 2.0 EN"
+        },
+        {
+          "group": "Transaction approvals",
+          "pages": [
+            "v2/api-references/transactions/list-transaction-approvals",
+            "v2/api-references/transactions/list-approval-templates"
+          ],
+          "version": "🌐 Version 2.0 EN"
         }
       ],
       "version": "🌐 Version 2.0 EN"
@@ -761,7 +769,78 @@
         }
       ],
       "version": "🌐 Version 2.0 EN"
-    },    
+    },
+    {
+      "group": "Auto-sweep operations",
+      "pages": [
+        {
+          "group": "Auto-sweep tasks",
+          "pages":[
+            "v2/api-references/autosweep/create-auto-sweep-task",
+            "v2/api-references/autosweep/list-auto-sweep-tasks",
+            "v2/api-references/autosweep/get-auto-sweep-task-details"
+          ]
+        },
+        {
+          "group": "Sweep-to addresses",
+          "pages": [
+            "v2/api-references/autosweep/create-sweep-to-address",
+            "v2/api-references/autosweep/list-sweep-to-addresses"
+          ]
+        }
+      ],
+      "version": "🌐 Version 2.0 EN"
+    },
+    {
+      "group": "Tokenization operations",
+      "pages": [
+        {
+          "group": "Transaction fees",
+          "pages": [
+            "v2/api-references/tokenization/estimate-tokenization-operation-fee"
+          ]
+        },
+        {
+          "group": "Issue tokens",
+          "pages": [
+            "v2/api-references/tokenization/list-supported-chains-for-tokenization",
+            "v2/api-references/tokenization/issue-token",
+            "v2/api-references/tokenization/list-issued-tokens",
+            "v2/api-references/tokenization/get-token-details",
+            "v2/api-references/tokenization/get-token-holdings-information"
+          ]
+        },
+        {
+          "group": "Lifecycle operations",
+          "pages": [
+            "v2/api-references/tokenization/mint-tokens",
+            "v2/api-references/tokenization/burn-tokens",
+            "v2/api-references/tokenization/call-token-contract",
+            "v2/api-references/tokenization/pause-token-contract",
+            "v2/api-references/tokenization/unpause-token-contract"
+          ]
+        },
+        {
+          "group": "Token access controls",
+          "pages": [
+            "v2/api-references/tokenization/activate-or-deactivate-allowlist",
+            "v2/api-references/tokenization/get-allowlist-activation-status",
+            "v2/api-references/tokenization/list-addresses-on-allowlist",
+            "v2/api-references/tokenization/update-addresses-on-allowlist",
+            "v2/api-references/tokenization/list-addresses-on-blocklist",
+            "v2/api-references/tokenization/update-addresses-on-blocklist"
+          ]
+        },
+        {
+          "group": "Tokenization activities",
+          "pages": [
+            "v2/api-references/tokenization/list-tokenization-activities",
+            "v2/api-references/tokenization/get-tokenization-activity-details"
+          ]
+        }
+      ],
+      "version": "🌐 Version 2.0 EN"
+    },
     {
       "group": "OAuth operations",
       "pages": [
@@ -952,9 +1031,18 @@
           ]
         },
         {
+          "group": "Balances",
+          "pages": [
+            "v2/api-references/payment/list-merchant-balances",
+            "v2/api-references/payment/get-developer-balance",
+            "v2/api-references/payment/list-payment-wallet-balances",
+            "v2/api-references/payment/get-payer-balance",
+            "v2/api-references/payment/get-withdrawable-balances"
+          ]
+        },
+        {
           "group": "Settlements",
           "pages": [
-            "v2/api-references/payment/get-withdrawable-balances",
             "v2/api-references/payment/create-forced-sweep",
             "v2/api-references/payment/list-forced-sweeps",
             "v2/api-references/payment/create-settlement-request",

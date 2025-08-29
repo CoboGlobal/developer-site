@@ -1,12 +1,12 @@
 ---
-openapi: get /payments/settlement_details
+openapi: get /tokenization/tokens/{token_id}/allowlist/addresses
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_settlement_details200_response import (
-    ListSettlementDetails200Response,
+from cobo_waas2.models.tokenization_allowlist_addresses_response import (
+    TokenizationAllowlistAddressesResponse,
 )
 from cobo_waas2.rest import ApiException
 from pprint import pprint
@@ -21,26 +21,27 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.PaymentApi(api_client)
+    api_instance = cobo_waas2.TokenizationApi(api_client)
+    token_id = "ETH_USDT"
     limit = 10
-    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
     after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
-    merchant_id = "M1001"
-    statuses = "Pending,Processing"
+    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+    direction = "ASC"
 
     try:
-        # List all settlement details
-        api_response = api_instance.list_settlement_details(
-            limit=limit,
-            before=before,
-            after=after,
-            merchant_id=merchant_id,
-            statuses=statuses,
+        # List addresses on allowlist
+        api_response = api_instance.list_tokenization_allowlist_addresses(
+            token_id, limit=limit, after=after, before=before, direction=direction
         )
-        print("The response of PaymentApi->list_settlement_details:\n")
+        print(
+            "The response of TokenizationApi->list_tokenization_allowlist_addresses:\n"
+        )
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->list_settlement_details: %s\n" % e)
+        print(
+            "Exception when calling TokenizationApi->list_tokenization_allowlist_addresses: %s\n"
+            % e
+        )
 
 ```
 ```java Java
@@ -49,7 +50,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
+import com.cobo.waas2.api.TokenizationApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -61,18 +62,19 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    PaymentApi apiInstance = new PaymentApi();
+    TokenizationApi apiInstance = new TokenizationApi();
+    String tokenId = "ETH_USDT";
     Integer limit = 10;
-    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
     String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
-    String merchantId = "M1001";
-    String statuses = "Pending,Processing";
+    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
+    String direction = "ASC";
     try {
-      ListSettlementDetails200Response result =
-          apiInstance.listSettlementDetails(limit, before, after, merchantId, statuses);
+      TokenizationAllowlistAddressesResponse result =
+          apiInstance.listTokenizationAllowlistAddresses(tokenId, limit, after, before, direction);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#listSettlementDetails");
+      System.err.println(
+          "Exception when calling TokenizationApi#listTokenizationAllowlistAddresses");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -94,11 +96,11 @@ import (
 )
 
 func main() {
+	tokenId := "ETH_USDT"
 	limit := int32(10)
-	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
 	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
-	merchantId := "M1001"
-	statuses := "Pending,Processing"
+	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+	direction := "ASC"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -111,19 +113,26 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.ListSettlementDetails(ctx).
+	resp, r, err := apiClient.TokenizationAPI.ListTokenizationAllowlistAddresses(ctx, tokenId).
 		Limit(limit).
-		Before(before).
 		After(after).
-		MerchantId(merchantId).
-		Statuses(statuses).
+		Before(before).
+		Direction(direction).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListSettlementDetails``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `TokenizationAPI.ListTokenizationAllowlistAddresses``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListSettlementDetails`: ListSettlementDetails200Response
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListSettlementDetails`: %v\n", resp)
+	// response from `ListTokenizationAllowlistAddresses`: TokenizationAllowlistAddressesResponse
+	fmt.Fprintf(
+		os.Stdout,
+		"Response from `TokenizationAPI.ListTokenizationAllowlistAddresses`: %v\n",
+		resp,
+	)
 }
 
 ```
@@ -136,15 +145,15 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.PaymentApi();
+const apiInstance = new CoboWaas2.TokenizationApi();
+const token_id = "ETH_USDT";
 const opts = {
   limit: 10,
-  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
   after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
-  merchant_id: "M1001",
-  statuses: "Pending,Processing",
+  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
+  direction: "ASC",
 };
-apiInstance.listSettlementDetails(opts).then(
+apiInstance.listTokenizationAllowlistAddresses(token_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

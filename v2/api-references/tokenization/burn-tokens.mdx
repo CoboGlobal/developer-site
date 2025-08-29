@@ -1,0 +1,191 @@
+---
+openapi: post /tokenization/tokens/{token_id}/burn
+---
+
+<RequestExample>
+```python Python
+import cobo_waas2
+from cobo_waas2.models.tokenization_burn_token_request import (
+    TokenizationBurnTokenRequest,
+)
+from cobo_waas2.models.tokenization_operation_response import (
+    TokenizationOperationResponse,
+)
+from cobo_waas2.rest import ApiException
+from pprint import pprint
+
+# See configuration.py for a list of all supported configurations.
+configuration = cobo_waas2.Configuration(
+    # Replace `<YOUR_PRIVATE_KEY>` with your private key
+    api_private_key="<YOUR_PRIVATE_KEY>",
+    # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
+    host="https://api.dev.cobo.com/v2",
+)
+# Enter a context with an instance of the API client
+with cobo_waas2.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = cobo_waas2.TokenizationApi(api_client)
+    token_id = "ETH_USDT"
+    tokenization_burn_token_request = cobo_waas2.TokenizationBurnTokenRequest(
+        source=cobo_waas2.TokenizationTokenOperationSource(
+            cobo_waas2.TokenizationMpcOperationSource(
+                source_type="Org-Controlled",
+                wallet_id="f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                address="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            )
+        ),
+        burns=[
+            cobo_waas2.TokenizationBurnTokenParamsBurnsInner(
+                amount="0.99", from_address="0x051A924H4dCb264226d7B036C2893a0D344"
+            )
+        ],
+        fee=cobo_waas2.TransactionRequestFee(
+            cobo_waas2.TransactionRequestFixedFee(
+                fee_type="EVM_EIP_1559", token_id="TRON"
+            )
+        ),
+    )
+
+    try:
+        # Burn tokens
+        api_response = api_instance.burn_tokenization(
+            token_id, tokenization_burn_token_request=tokenization_burn_token_request
+        )
+        print("The response of TokenizationApi->burn_tokenization:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling TokenizationApi->burn_tokenization: %s\n" % e)
+
+```
+```java Java
+// Import classes:
+import com.cobo.waas2.ApiClient;
+import com.cobo.waas2.ApiException;
+import com.cobo.waas2.Configuration;
+import com.cobo.waas2.Env;
+import com.cobo.waas2.api.TokenizationApi;
+import com.cobo.waas2.model.*;
+import java.util.Arrays;
+import java.util.UUID;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    // Select the development environment. To use the production environment, replace `Env.DEV` with
+    // `Env.PROD
+    defaultClient.setEnv(Env.DEV);
+
+    // Replace `<YOUR_PRIVATE_KEY>` with your private key
+    defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
+    TokenizationApi apiInstance = new TokenizationApi();
+    String tokenId = "ETH_USDT";
+    TokenizationBurnTokenRequest tokenizationBurnTokenRequest =
+        new TokenizationBurnTokenRequest()
+            .source(
+                new TokenizationTokenOperationSource(
+                    new TokenizationMpcOperationSource()
+                        .sourceType(TokenizationOperationSourceType.ORG_CONTROLLED)
+                        .walletId(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"))
+                        .address("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")))
+            .burns(
+                Arrays.asList(
+                    new TokenizationBurnTokenParamsBurnsInner()
+                        .amount("0.99")
+                        .fromAddress("0x051A924H4dCb264226d7B036C2893a0D344")))
+            .fee(
+                new TransactionRequestFee(
+                    new TransactionRequestFixedFee()
+                        .feeType(FeeType.EVM_EIP_1559)
+                        .tokenId("TRON")));
+    try {
+      TokenizationOperationResponse result =
+          apiInstance.burnTokenization(tokenId, tokenizationBurnTokenRequest);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling TokenizationApi#burnTokenization");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+
+```
+```go Go
+package main
+
+import (
+	"context"
+	"fmt"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
+	"os"
+)
+
+func main() {
+	tokenId := "ETH_USDT"
+	tokenizationBurnTokenRequest := *coboWaas2.NewTokenizationBurnTokenRequest(coboWaas2.TokenizationTokenOperationSource{TokenizationMpcOperationSource: coboWaas2.NewTokenizationMpcOperationSource(coboWaas2.TokenizationOperationSourceType("Org-Controlled"), "f47ac10b-58cc-4372-a567-0e02b2c3d479", "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")}, []coboWaas2.TokenizationBurnTokenParamsBurnsInner{*coboWaas2.NewTokenizationBurnTokenParamsBurnsInner("0.99", "0x051A924H4dCb264226d7B036C2893a0D344")}, coboWaas2.TransactionRequestFee{TransactionRequestEvmEip1559Fee: coboWaas2.NewTransactionRequestEvmEip1559Fee("9000000000000", "1000000000000", coboWaas2.FeeType("Fixed"), "ETH")})
+
+	configuration := coboWaas2.NewConfiguration()
+	// Initialize the API client
+	apiClient := coboWaas2.NewAPIClient(configuration)
+	ctx := context.Background()
+
+	// Select the development environment. To use the production environment, replace coboWaas2.DevEnv with coboWaas2.ProdEnv
+	ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.DevEnv)
+	// Replace `<YOUR_PRIVATE_KEY>` with your private key
+	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
+		Secret: "<YOUR_PRIVATE_KEY>",
+	})
+	resp, r, err := apiClient.TokenizationAPI.BurnTokenization(ctx, tokenId).
+		TokenizationBurnTokenRequest(tokenizationBurnTokenRequest).
+		Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `TokenizationAPI.BurnTokenization``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `BurnTokenization`: TokenizationOperationResponse
+	fmt.Fprintf(os.Stdout, "Response from `TokenizationAPI.BurnTokenization`: %v\n", resp)
+}
+
+```
+```javascript JavaScript
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// Initialize the API client
+const apiClient = CoboWaas2.ApiClient.instance;
+// Select the development environment. To use the production environment, replace `Env.DEV` with `Env.PROD`
+apiClient.setEnv(CoboWaas2.Env.DEV);
+// Replace `<YOUR_PRIVATE_KEY>` with your private key
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// Call the API
+const apiInstance = new CoboWaas2.TokenizationApi();
+const token_id = "ETH_USDT";
+const opts = {
+  TokenizationBurnTokenRequest:
+    CoboWaas2.TokenizationBurnTokenRequest.constructFromObject({
+      source: {
+        source_type: "Org-Controlled",
+        wallet_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+      },
+      burns: [
+        {
+          amount: "0.99",
+          from_address: "0x051A924H4dCb264226d7B036C2893a0D344",
+        },
+      ],
+      fee: { fee_type: "EVM_EIP_1559", token_id: "TRON" },
+    }),
+};
+apiInstance.burnTokenization(token_id, opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+
+```
+</RequestExample>

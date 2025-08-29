@@ -9,6 +9,52 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.22.0
+
+This version was released on August 27, 2025.
+
+### New Features
+
+- You can now issue and manage your custom tokens with the WaaS 2.0 API. Available operations are as follows:
+  - Issue tokens
+    - [List supported chains for tokenization](/v2/api-references/tokenization/list-supported-chains-for-tokenization)
+    - [Issue token](/v2/api-references/tokenization/issue-token)
+    - [List issued tokens](/v2/api-references/tokenization/list-issued-tokens)
+    - [Get token details](/v2/api-references/tokenization/get-token-details)
+    - [Get token holdings information](/v2/api-references/tokenization/get-token-holdings-information)
+  - Perform core lifecycle operations
+    - [Mint tokens](/v2/api-references/tokenization/mint-tokens)
+    - [Burn tokens](/v2/api-references/tokenization/burn-tokens)
+    - [Call token contract](/v2/api-references/tokenization/call-token-contract)
+    - [Pause token contract](/v2/api-references/tokenization/pause-token-contract)
+    - [Unpause token contract](/v2/api-references/tokenization/unpause-token-contract)
+    - [Estimate tokenization operation fee](/v2/api-references/tokenization/estimate-tokenization-operation-fee)
+  - Manage token access controls
+    - [Activate or deactivate allowlist](/v2/api-references/tokenization/activate-or-deactivate-allowlist)
+    - [Get allowlist activation status](/v2/api-references/tokenization/get-allowlist-activation-status)
+    - [List addresses on allowlist](/v2/api-references/tokenization/list-addresses-on-allowlist)
+    - [Update addresses on allowlist](/v2/api-references/tokenization/update-addresses-on-allowlist)
+    - [List addresses on blocklist](/v2/api-references/tokenization/list-addresses-on-blocklist)
+    - [Update addresses on blocklist](/v2/api-references/tokenization/update-addresses-on-blocklist)
+  - Monitor activities
+    - [List tokenization activities](/v2/api-references/tokenization/list-tokenization-activities)
+    - [Get tokenization activity details](/v2/api-references/tokenization/get-tokenization-activity-details)
+
+- Added the following operations for creating and managing auto-sweep tasks and configuring sweep-to addresses:
+  - [Create auto-sweep task](/v2/api-references/autosweep/create-auto-sweep-task)
+  - [List auto-sweep tasks](/v2/api-references/autosweep/list-auto-sweep-tasks)
+  - [Get auto-sweep task details](/v2/api-references/autosweep/get-auto-sweep-task-details)
+  - [Create sweep-to address](/v2/api-references/autosweep/create-sweep-to-address)
+  - [List sweep-to addresses](/v2/api-references/autosweep/list-sweep-to-addresses)
+
+- Added the following operations for tracking transaction approvals and retrieving approval templates:
+  - [List transaction approvals](/v2/api-references/transactions/list-transaction-approvals)
+  - [List approval templates](/v2/api-references/transactions/list-approval-templates)
+
+### Improvements
+- You can enable auto token sweeping for MPC Wallets and Web3 Wallets by setting the `enable_auto_sweep` parameter to `true` when using the [Creating wallet](/v2/api-references/wallets/create-wallet) operation.
+
+
 ## v1.21.0
 
 This version was released on August 13, 2025.

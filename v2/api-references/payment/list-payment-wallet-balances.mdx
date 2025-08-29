@@ -1,12 +1,12 @@
 ---
-openapi: get /payments/settlement_details
+openapi: get /payments/balance/payment_wallets
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_settlement_details200_response import (
-    ListSettlementDetails200Response,
+from cobo_waas2.models.list_payment_wallet_balances200_response import (
+    ListPaymentWalletBalances200Response,
 )
 from cobo_waas2.rest import ApiException
 from pprint import pprint
@@ -22,25 +22,22 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    limit = 10
-    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
-    merchant_id = "M1001"
-    statuses = "Pending,Processing"
+    token_id = "ETH_USDT"
+    wallet_ids = (
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,f47ac10b-58cc-4372-a567-0e02b2c3d472"
+    )
 
     try:
-        # List all settlement details
-        api_response = api_instance.list_settlement_details(
-            limit=limit,
-            before=before,
-            after=after,
-            merchant_id=merchant_id,
-            statuses=statuses,
+        # List payment wallet balances
+        api_response = api_instance.list_payment_wallet_balances(
+            token_id, wallet_ids=wallet_ids
         )
-        print("The response of PaymentApi->list_settlement_details:\n")
+        print("The response of PaymentApi->list_payment_wallet_balances:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->list_settlement_details: %s\n" % e)
+        print(
+            "Exception when calling PaymentApi->list_payment_wallet_balances: %s\n" % e
+        )
 
 ```
 ```java Java
@@ -62,17 +59,14 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    Integer limit = 10;
-    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
-    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
-    String merchantId = "M1001";
-    String statuses = "Pending,Processing";
+    String tokenId = "ETH_USDT";
+    String walletIds = "f47ac10b-58cc-4372-a567-0e02b2c3d479,f47ac10b-58cc-4372-a567-0e02b2c3d472";
     try {
-      ListSettlementDetails200Response result =
-          apiInstance.listSettlementDetails(limit, before, after, merchantId, statuses);
+      ListPaymentWalletBalances200Response result =
+          apiInstance.listPaymentWalletBalances(tokenId, walletIds);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#listSettlementDetails");
+      System.err.println("Exception when calling PaymentApi#listPaymentWalletBalances");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -94,11 +88,8 @@ import (
 )
 
 func main() {
-	limit := int32(10)
-	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
-	merchantId := "M1001"
-	statuses := "Pending,Processing"
+	tokenId := "ETH_USDT"
+	walletIds := "f47ac10b-58cc-4372-a567-0e02b2c3d479,f47ac10b-58cc-4372-a567-0e02b2c3d472"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -111,19 +102,20 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.ListSettlementDetails(ctx).
-		Limit(limit).
-		Before(before).
-		After(after).
-		MerchantId(merchantId).
-		Statuses(statuses).
+	resp, r, err := apiClient.PaymentAPI.ListPaymentWalletBalances(ctx).
+		TokenId(tokenId).
+		WalletIds(walletIds).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListSettlementDetails``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `PaymentAPI.ListPaymentWalletBalances``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListSettlementDetails`: ListSettlementDetails200Response
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListSettlementDetails`: %v\n", resp)
+	// response from `ListPaymentWalletBalances`: ListPaymentWalletBalances200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListPaymentWalletBalances`: %v\n", resp)
 }
 
 ```
@@ -137,14 +129,12 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
+const token_id = "ETH_USDT";
 const opts = {
-  limit: 10,
-  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
-  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
-  merchant_id: "M1001",
-  statuses: "Pending,Processing",
+  wallet_ids:
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479,f47ac10b-58cc-4372-a567-0e02b2c3d472",
 };
-apiInstance.listSettlementDetails(opts).then(
+apiInstance.listPaymentWalletBalances(token_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },
