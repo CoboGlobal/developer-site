@@ -24,7 +24,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
     token_id = "ETH_USDT"
-    acquiring_type = cobo_waas2.AcquiringType()
+    acquiring_type = cobo_waas2.AcquiringType("Order")
     merchant_ids = "M1001,M1002,M1003"
 
     try:
@@ -127,7 +127,7 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
 const token_id = "ETH_USDT";
-const acquiring_type = new CoboWaas2.AcquiringType();
+const acquiring_type = "Order";
 const opts = {
   merchant_ids: "M1001,M1002,M1003",
 };
