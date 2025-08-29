@@ -1,13 +1,11 @@
 ---
-openapi: get /payments/settlement_details
+openapi: get /transactions/approval/details
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_settlement_details200_response import (
-    ListSettlementDetails200Response,
-)
+from cobo_waas2.models.approval_detail import ApprovalDetail
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,26 +19,24 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.PaymentApi(api_client)
-    limit = 10
-    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
-    merchant_id = "M1001"
-    statuses = "Pending,Processing"
+    api_instance = cobo_waas2.TransactionsApi(api_client)
+    transaction_ids = (
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3"
+    )
+    cobo_ids = "20231213122855000000000000000000,20231213122955000000000000000000"
+    request_ids = (
+        "web_send_by_user_327_1610444045047,web_send_by_user_327_1610444045048"
+    )
 
     try:
-        # List all settlement details
-        api_response = api_instance.list_settlement_details(
-            limit=limit,
-            before=before,
-            after=after,
-            merchant_id=merchant_id,
-            statuses=statuses,
+        # List transaction approvals
+        api_response = api_instance.list_approval_details(
+            transaction_ids=transaction_ids, cobo_ids=cobo_ids, request_ids=request_ids
         )
-        print("The response of PaymentApi->list_settlement_details:\n")
+        print("The response of TransactionsApi->list_approval_details:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->list_settlement_details: %s\n" % e)
+        print("Exception when calling TransactionsApi->list_approval_details: %s\n" % e)
 
 ```
 ```java Java
@@ -49,7 +45,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
+import com.cobo.waas2.api.TransactionsApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -61,18 +57,17 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    PaymentApi apiInstance = new PaymentApi();
-    Integer limit = 10;
-    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
-    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
-    String merchantId = "M1001";
-    String statuses = "Pending,Processing";
+    TransactionsApi apiInstance = new TransactionsApi();
+    String transactionIds =
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3";
+    String coboIds = "20231213122855000000000000000000,20231213122955000000000000000000";
+    String requestIds = "web_send_by_user_327_1610444045047,web_send_by_user_327_1610444045048";
     try {
-      ListSettlementDetails200Response result =
-          apiInstance.listSettlementDetails(limit, before, after, merchantId, statuses);
+      List<ApprovalDetail> result =
+          apiInstance.listApprovalDetails(transactionIds, coboIds, requestIds);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#listSettlementDetails");
+      System.err.println("Exception when calling TransactionsApi#listApprovalDetails");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -94,11 +89,9 @@ import (
 )
 
 func main() {
-	limit := int32(10)
-	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
-	merchantId := "M1001"
-	statuses := "Pending,Processing"
+	transactionIds := "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3"
+	coboIds := "20231213122855000000000000000000,20231213122955000000000000000000"
+	requestIds := "web_send_by_user_327_1610444045047,web_send_by_user_327_1610444045048"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -111,19 +104,21 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.ListSettlementDetails(ctx).
-		Limit(limit).
-		Before(before).
-		After(after).
-		MerchantId(merchantId).
-		Statuses(statuses).
+	resp, r, err := apiClient.TransactionsAPI.ListApprovalDetails(ctx).
+		TransactionIds(transactionIds).
+		CoboIds(coboIds).
+		RequestIds(requestIds).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListSettlementDetails``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `TransactionsAPI.ListApprovalDetails``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListSettlementDetails`: ListSettlementDetails200Response
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListSettlementDetails`: %v\n", resp)
+	// response from `ListApprovalDetails`: []ApprovalDetail
+	fmt.Fprintf(os.Stdout, "Response from `TransactionsAPI.ListApprovalDetails`: %v\n", resp)
 }
 
 ```
@@ -136,15 +131,15 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.PaymentApi();
+const apiInstance = new CoboWaas2.TransactionsApi();
 const opts = {
-  limit: 10,
-  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
-  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
-  merchant_id: "M1001",
-  statuses: "Pending,Processing",
+  transaction_ids:
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3",
+  cobo_ids: "20231213122855000000000000000000,20231213122955000000000000000000",
+  request_ids:
+    "web_send_by_user_327_1610444045047,web_send_by_user_327_1610444045048",
 };
-apiInstance.listSettlementDetails(opts).then(
+apiInstance.listApprovalDetails(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

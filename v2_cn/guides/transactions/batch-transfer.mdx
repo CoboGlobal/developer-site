@@ -9,7 +9,18 @@ description: "使用 WaaS 2.0 API 调用批量转账智能合约，在一次交�
 <Note>使用调用智能合约接口做批量转账的手续费，不一定低于多次调用转账接口逐笔完成的手续费。具体取决于链上 Gas Price 和批量笔数；在笔数较少时，批量方式甚至可能更贵。建议发起前使用预估手续费接口（[Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee)）比较两种方式的成本。</Note>
 
 ## 支持的链
-- Ethereum 主网（ETH、ERC-20 Token）。批量转账智能合约地址为：[`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`](https://etherscan.io/address/0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc#code)
+
+批量转账智能合约已部署在以下 EVM 兼容链上：  
+
+- Ethereum 主网
+- BNB Smart Chain
+- Base 主网
+- Arbitrum One
+- Polygon PoS  
+
+批量转账智能合约地址为：  
+[`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`](https://etherscan.io/address/0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc#code)
+
 
 ## 前提条件
 - 已依照[发送您的第一个 API 请求](/v2_cn/get-started/get-started-with-waas)设置账户并成功发送请求。
@@ -18,7 +29,7 @@ description: "使用 WaaS 2.0 API 调用批量转账智能合约，在一次交�
 - 当前批量转账功能仅支持使用 MPC 钱包和 Web3 钱包发起交易。
 
 ## 批量转 ETH
-以下步骤适用于在 Ethereum 主网上批量转账 ETH（原生币）的场景：
+以下步骤适用于在支持的链上批量转账 ETH（原生币）的场景：
 
 1. **准备参数**  
    - 使用 `sendEther` 方法生成 `calldata`（可用 Cobo 提供的[脚本](#生成-calldata-示例脚本)或自行生成）。生成 calldata 时需传入：
@@ -37,7 +48,7 @@ description: "使用 WaaS 2.0 API 调用批量转账智能合约，在一次交�
    - 如果收款地址中包含 Cobo 内部地址，在该地址所属的团队中，还会看到一条对应的充币类型的交易记录。 
 
 ## 批量转其他 Token
-以下步骤适用于在 Ethereum 主网上批量转账 ERC-20 Token 的场景：
+以下步骤适用于在支持的链上批量转账 ERC-20 Token 的场景：
 
 1. **调用 Token 合约的 `approve` 方法授权**  
    - 每个 Token 都有自己的合约地址，请到对应合约执行 `approve`。

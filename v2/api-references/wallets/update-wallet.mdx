@@ -23,9 +23,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     api_instance = cobo_waas2.WalletsApi(api_client)
     wallet_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
     update_wallet_params = cobo_waas2.UpdateWalletParams(
-        cobo_waas2.UpdateCustodialWalletParams(
-            wallet_type="Custodial", name="My WaaS 2.0 Wallet"
-        )
+        cobo_waas2.UpdateCustodialWalletParams(wallet_type="Custodial")
     )
 
     try:
@@ -60,10 +58,7 @@ public class Example {
     WalletsApi apiInstance = new WalletsApi();
     UUID walletId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
     UpdateWalletParams updateWalletParams =
-        new UpdateWalletParams(
-            new UpdateCustodialWalletParams()
-                .walletType(WalletType.CUSTODIAL)
-                .name("My WaaS 2.0 Wallet"));
+        new UpdateWalletParams(new UpdateCustodialWalletParams().walletType(WalletType.CUSTODIAL));
     try {
       WalletInfo result = apiInstance.updateWalletById(walletId, updateWalletParams);
       System.out.println(result);
@@ -94,7 +89,6 @@ func main() {
 	updateWalletParams := coboWaas2.UpdateWalletParams{
 		UpdateCustodialWalletParams: coboWaas2.NewUpdateCustodialWalletParams(
 			coboWaas2.WalletType("Custodial"),
-			"My WaaS 2.0 Wallet",
 		),
 	}
 
@@ -135,7 +129,6 @@ const wallet_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
 const opts = {
   UpdateWalletParams: CoboWaas2.UpdateWalletParams.constructFromObject({
     wallet_type: "Custodial",
-    name: "My WaaS 2.0 Wallet",
   }),
 };
 apiInstance.updateWalletById(wallet_id, opts).then(

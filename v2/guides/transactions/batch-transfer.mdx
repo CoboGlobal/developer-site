@@ -11,17 +11,24 @@ This guide explains how to use the [Call smart contract](/v2/api-references/tran
 <Note>The transaction fee for batch transfers using the smart contract API may not necessarily be lower than the total fee for multiple individual transfer token API calls. The actual cost depends on the on-chain gas price and the number of transfers; with a small number of recipients, batch transfers could even be more expensive. We recommend using the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) API to compare the cost of both approaches before initiating a transfer.</Note>
 
 ## Supported chains
-- Ethereum Mainnet (ETH, ERC-20 tokens).  
-  Batch transfer smart contract address: [`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`](https://etherscan.io/address/0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc#code)
+ 
+The following EVM-compatible chains are supported:
+- Ethereum Mainnet
+- BNB Smart Chain
+- Base Mainnet
+- Arbitrum One
+- Polygon PoS
+
+The address of the batch transfer smart contract is [`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`](https://etherscan.io/address/0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc#code)
 
 ## Prerequisites
 - You have set up Cobo Accounts and successfully sent requests as described in [Send your first API request](/v2_cn/get-started/get-started-with-waas).  
 - You are familiar with and able to use the [Call smart contract](/v2/api-references/transactions/call-smart-contract) API.  
 - You have basic knowledge of interacting with smart contracts, including preparing `calldata`, locating contract methods, and using the `approve` method on a token contract to authorize the batch transfer contract to spend tokens.  
-- The batch transfer feature currently only supports transactions initiated from MPC wallets and Web3 wallets.
+- The batch transfer feature currently only supports transactions initiated from MPC Wallets and Web3 Wallets.
 
 ## Batch transfer of ETH
-The following steps apply to batch transfers of ETH (native coin) on Ethereum Mainnet:
+The following steps apply to batch transfers of ETH (native coin) on the supported chains:
 
 1. **Prepare parameters**  
    - Use the `sendEther` method to generate `calldata` (either with Cobo’s [script](#example-script-for-generating-calldata) or your own tool).  
@@ -41,7 +48,7 @@ The following steps apply to batch transfers of ETH (native coin) on Ethereum Ma
    - If any recipient address belongs to a Cobo Account, the corresponding organization will also see a transaction of the deposit type.
 
 ## Batch transfer of other tokens
-The following steps apply to batch transfers of ERC-20 tokens on Ethereum Mainnet:
+The following steps apply to batch transfers of ERC-20 tokens on the supported chains:
 
 1. **Call the token contract’s `approve` method**  
    - Each token has its own contract address, so run `approve` on the specific token’s contract.  
