@@ -152,9 +152,7 @@
       "pages": [
         "v2_cn/guides/get-started/get-started-with-waas",
         "v2_cn/guides/custodial-wallets/get-started-asset-wallets",
-        "v2_cn/guides/mpc-wallets/get-started-ocw",
-        "v2_cn/guides/mpc-wallets/get-started-ucw",
-        "v2_cn/guides/smart-contract-wallets/get-started-scw"
+        "v2_cn/guides/mpc-wallets/get-started-ocw"
       ],
       "version": "🌐 Version 2.0 中文版"
     },
@@ -234,18 +232,20 @@
         "v2_cn/guides/mpc-wallets/balance-amounts"
       ]
     },
-    {
-      "group": "智能合约钱包",
-      "pages": [
-        "v2_cn/guides/smart-contract-wallets/automate-farming-rewards-collection"
-      ],
-      "version": "🌐 Version 2.0 中文版"
-    },
+    
     {
       "group": "资源文档",
       "pages": [
         "v2_cn/guides/overview/changelog",
-        "v2_cn/guides/overview/upgrade-guide"
+        "v2_cn/guides/overview/upgrade-guide",
+        "v2_cn/guides/mpc-wallets/get-started-ucw",
+        {
+          "group": "智能合约钱包",
+          "pages": [
+            "v2_cn/guides/smart-contract-wallets/get-started-scw",
+            "v2_cn/guides/smart-contract-wallets/automate-farming-rewards-collection"
+          ]
+        }
       ],
       "version": "🌐 Version 2.0 中文版"
     },
@@ -340,17 +340,16 @@
       "version": "🌐 Version 2.0 中文版"
     },
     {
-      "group": "UCW SDKs",
-      "pages": [
-        "v2_cn/developer-tools/quickstart-ucw-ios",
-        "v2_cn/developer-tools/ucw-sdk/api-reference"
-      ],
-      "version": "🌐 Version 2.0 中文版"
-    },
-    {
       "group": "其他工具",
       "pages": [
-        "v2_cn/developer-tools/get-testnet-coins"
+        "v2_cn/developer-tools/get-testnet-coins",
+        {
+          "group": "UCW SDKs",
+          "pages": [
+            "v2_cn/developer-tools/quickstart-ucw-ios",
+            "v2_cn/developer-tools/ucw-sdk/api-reference"
+          ]
+        }
       ],
       "version": "🌐 Version 2.0 中文版"
     },
@@ -449,9 +448,7 @@
       "pages": [
         "v2/guides/get-started/get-started-with-waas",
         "v2/guides/custodial-wallets/get-started-asset-wallets",
-        "v2/guides/mpc-wallets/get-started-ocw",
-        "v2/guides/mpc-wallets/get-started-ucw",
-        "v2/guides/smart-contract-wallets/get-started-scw"
+        "v2/guides/mpc-wallets/get-started-ocw"
       ],
       "version": "🌐 Version 2.0 EN"
     },
@@ -531,18 +528,20 @@
         "v2/guides/mpc-wallets/balance-amounts"
       ]
     },
-    {
-      "group": "Smart Contract Wallets",
-      "pages": [
-        "v2/guides/smart-contract-wallets/automate-farming-rewards-collection"
-      ],
-      "version": "🌐 Version 2.0 EN"
-    },
+    
     {
       "group": "Resources",
       "pages": [
         "v2/guides/overview/changelog",
-        "v2/guides/overview/upgrade-guide"
+        "v2/guides/overview/upgrade-guide",
+        "v2/guides/mpc-wallets/get-started-ucw",
+        {
+          "group": "Smart Contract Wallets",
+          "pages": [
+            "v2/guides/smart-contract-wallets/get-started-scw",
+            "v2/guides/smart-contract-wallets/automate-farming-rewards-collection"
+          ]
+        }
       ],
       "version": "🌐 Version 2.0 EN"
     },
@@ -1165,103 +1164,102 @@
       "version": "🌐 Version 2.0 EN"
     },
     {
-      "group": "UCW SDKs",
-      "pages": [
-        "v2/developer-tools/quickstart-ucw-ios",
-        {
-          "group": "UCW SDK operations",
-          "pages": [
-            {
-              "group": "Initialize Secrets",
-              "pages": [
-                "v2/developer-tools/ucw-sdk/initialize-secrets/initialize-secrets"
-              ]
-            },
-            {
-              "group": "UCW class",
-              "pages": [
-                "v2/developer-tools/ucw-sdk/ucw-class/create-ucw",
-                "v2/developer-tools/ucw-sdk/ucw-class/destroy-ucw",
-                "v2/developer-tools/ucw-sdk/ucw-class/get-connection-status",
-                {
-                  "group": "TSS request",
-                  "pages": [
-                    "v2/developer-tools/ucw-sdk/ucw-class/list-pending-tss-requests",
-                    "v2/developer-tools/ucw-sdk/ucw-class/get-tss-requests",
-                    "v2/developer-tools/ucw-sdk/ucw-class/approve-tss-requests",
-                    "v2/developer-tools/ucw-sdk/ucw-class/reject-tss-requests"
-                  ]
-                },
-                {
-                  "group": "Transaction",
-                  "pages": [
-                    "v2/developer-tools/ucw-sdk/ucw-class/list-pending-transactions",
-                    "v2/developer-tools/ucw-sdk/ucw-class/get-transactions",
-                    "v2/developer-tools/ucw-sdk/ucw-class/approve-transactions",
-                    "v2/developer-tools/ucw-sdk/ucw-class/reject-transactions"
-                  ]
-                },
-                {
-                  "group": "Backup recovery key shares",
-                  "pages": [
-                    "v2/developer-tools/ucw-sdk/ucw-class/export-recovery-key-shares"
-                  ]
-                },
-                {
-                  "group": "Backup Secrets",
-                  "pages": [
-                    "v2/developer-tools/ucw-sdk/ucw-class/export-secrets"
-                  ]
-                }
-              ]
-            },
-            {
-              "group": "UCWPublic class",
-              "pages": [
-                "v2/developer-tools/ucw-sdk/ucwpublic-class/create-ucw-public",
-                "v2/developer-tools/ucw-sdk/ucwpublic-class/destroy-ucw-public",
-                "v2/developer-tools/ucw-sdk/ucwpublic-class/get-tss-node-id",
-                "v2/developer-tools/ucw-sdk/ucwpublic-class/get-tss-key-share-groups",
-                "v2/developer-tools/ucw-sdk/ucwpublic-class/list-active-tss-key-share-groups"
-              ]
-            },
-            {
-              "group": "UCWRecoverKey class",
-              "pages": [
-                "v2/developer-tools/ucw-sdk/ucwrecoverkey-class/create-ucw-recover-key",
-                "v2/developer-tools/ucw-sdk/ucwrecoverkey-class/destroy-ucw-recover-key",
-                {
-                  "group": "Recover keys",
-                  "pages": [
-                    "v2/developer-tools/ucw-sdk/ucwrecoverkey-class/import-recovery-key-share",
-                    "v2/developer-tools/ucw-sdk/ucwrecoverkey-class/recover-private-keys"
-                  ]
-                }
-              ]
-            },
-            {
-              "group": "Restore Secrets",
-              "pages": [
-                "v2/developer-tools/ucw-sdk/other-apis/import-secrets"
-              ]
-            },
-            {
-              "group": "Others",
-              "pages": [
-                "v2/developer-tools/ucw-sdk/other-apis/get-sdk-info",
-                "v2/developer-tools/ucw-sdk/other-apis/set-logger"
-              ]
-            }
-          ],
-          "version": "🌐 Version 2.0 EN"
-        }
-      ],
-      "version": "🌐 Version 2.0 EN"
-    },
-    {
       "group": "Other tools",
       "pages": [
-        "v2/developer-tools/get-testnet-coins"
+        "v2/developer-tools/get-testnet-coins",
+        {
+          "group": "UCW SDKs",
+          "pages": [
+            "v2/developer-tools/quickstart-ucw-ios",
+            {
+              "group": "UCW SDK operations",
+              "pages": [
+                {
+                  "group": "Initialize Secrets",
+                  "pages": [
+                    "v2/developer-tools/ucw-sdk/initialize-secrets/initialize-secrets"
+                  ]
+                },
+                {
+                  "group": "UCW class",
+                  "pages": [
+                    "v2/developer-tools/ucw-sdk/ucw-class/create-ucw",
+                    "v2/developer-tools/ucw-sdk/ucw-class/destroy-ucw",
+                    "v2/developer-tools/ucw-sdk/ucw-class/get-connection-status",
+                    {
+                      "group": "TSS request",
+                      "pages": [
+                        "v2/developer-tools/ucw-sdk/ucw-class/list-pending-tss-requests",
+                        "v2/developer-tools/ucw-sdk/ucw-class/get-tss-requests",
+                        "v2/developer-tools/ucw-sdk/ucw-class/approve-tss-requests",
+                        "v2/developer-tools/ucw-sdk/ucw-class/reject-tss-requests"
+                      ]
+                    },
+                    {
+                      "group": "Transaction",
+                      "pages": [
+                        "v2/developer-tools/ucw-sdk/ucw-class/list-pending-transactions",
+                        "v2/developer-tools/ucw-sdk/ucw-class/get-transactions",
+                        "v2/developer-tools/ucw-sdk/ucw-class/approve-transactions",
+                        "v2/developer-tools/ucw-sdk/ucw-class/reject-transactions"
+                      ]
+                    },
+                    {
+                      "group": "Backup recovery key shares",
+                      "pages": [
+                        "v2/developer-tools/ucw-sdk/ucw-class/export-recovery-key-shares"
+                      ]
+                    },
+                    {
+                      "group": "Backup Secrets",
+                      "pages": [
+                        "v2/developer-tools/ucw-sdk/ucw-class/export-secrets"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "group": "UCWPublic class",
+                  "pages": [
+                    "v2/developer-tools/ucw-sdk/ucwpublic-class/create-ucw-public",
+                    "v2/developer-tools/ucw-sdk/ucwpublic-class/destroy-ucw-public",
+                    "v2/developer-tools/ucw-sdk/ucwpublic-class/get-tss-node-id",
+                    "v2/developer-tools/ucw-sdk/ucwpublic-class/get-tss-key-share-groups",
+                    "v2/developer-tools/ucw-sdk/ucwpublic-class/list-active-tss-key-share-groups"
+                  ]
+                },
+                {
+                  "group": "UCWRecoverKey class",
+                  "pages": [
+                    "v2/developer-tools/ucw-sdk/ucwrecoverkey-class/create-ucw-recover-key",
+                    "v2/developer-tools/ucw-sdk/ucwrecoverkey-class/destroy-ucw-recover-key",
+                    {
+                      "group": "Recover keys",
+                      "pages": [
+                        "v2/developer-tools/ucw-sdk/ucwrecoverkey-class/import-recovery-key-share",
+                        "v2/developer-tools/ucw-sdk/ucwrecoverkey-class/recover-private-keys"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "group": "Restore Secrets",
+                  "pages": [
+                    "v2/developer-tools/ucw-sdk/other-apis/import-secrets"
+                  ]
+                },
+                {
+                  "group": "Others",
+                  "pages": [
+                    "v2/developer-tools/ucw-sdk/other-apis/get-sdk-info",
+                    "v2/developer-tools/ucw-sdk/other-apis/set-logger"
+                  ]
+                }
+              ],
+              "version": "🌐 Version 2.0 EN"
+            }
+          ]
+        }
       ],
       "version": "🌐 Version 2.0 EN"
     },
