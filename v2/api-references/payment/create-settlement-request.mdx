@@ -24,10 +24,18 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
     create_settlement_request_request = cobo_waas2.CreateSettlementRequestRequest(
-        request_id="SETTLEMENT123", settlements=[cobo_waas2.CreateSettlement(
+        request_id="SETTLEMENT123", 
+        settlement_type="Merchant",
+        payout_channel="Crypto",
+        settlements=[
+            cobo_waas2.CreateSettlement(
+                    merchant_id="M1001",
+                    token_id="ETH_USDT",  
+                    currency="USD",
                     amount="500.00",
-                    bank_account_id="123e457-e89b-12d3-a456-426614174004",
-                )]
+                    crypto_address_id="addr_ethusdt_20250506T123456_ab12cd"
+                )
+            ]
     )
 
     try:
@@ -65,10 +73,15 @@ public class Example {
     CreateSettlementRequestRequest createSettlementRequestRequest =
         new CreateSettlementRequestRequest()
             .requestId("SETTLEMENT123")
-            .settlements(Arrays.asList(
+            .settlementType(SettlementType.MERCHANT)
+            .payoutChannel(PayoutChannel.CRYPTO)
+            .settlements(Arrays.asList( 
               new CreateSettlement()
+              .merchantId("M1001")
+              .tokenId("ETH_USDT")
+              .currency("USD")
               .amount("500.00")
-              .bankAccountId(UUID.fromString("123e457-e89b-12d3-a456-426614174004"))
+              .cryptoAddressId("addr_ethusdt_20250506T123456_ab12cd")
             ));
     try {
       Settlement result = apiInstance.createSettlementRequest(createSettlementRequestRequest);
@@ -138,10 +151,15 @@ const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
   CreateSettlementRequestRequest: 
     CoboWaas2.CreateSettlementRequestRequest.constructFromObject({
-      request_id: "SETTLEMENT123",
+      request_id: "SETTLEMENT123",  
+      settlement_type: "Merchant",
+      payout_channel: "Crypto",
       settlements: [{
+        merchant_id: "M1001",
+        token_id: "ETH_USDT",
+        currency: "USD",
         amount: "500.00",
-        bank_account_id: "123e457-e89b-12d3-a456-426614174004",
+        crypto_address_id: "addr_ethusdt_20250506T123456_ab12cd",
       }],
     }),
 };
