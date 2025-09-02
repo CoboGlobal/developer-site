@@ -614,6 +614,14 @@ paths:
       summary: List wallet addresses
       description: |
         This operation retrieves a list of addresses within a specified wallet.
+        <Note>
+        For Web3 Wallets, Asset Wallets, and MPC Wallets, addresses created on one EVM chain automatically work on all other supported EVM chains. 
+        
+        Currently, query results for EVM chain addresses differ between interfaces:
+
+        - API: Query results are limited by chain_id, so only addresses from that specific chain are returned.
+        - Cobo Portal: Displays addresses from all supported EVM chains, so the number of addresses may be larger than the API results.
+        </Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -17776,7 +17784,7 @@ components:
                 example: 123e4567-e89b-12d3-a456-426614174001
               developer_fee_rate:
                 type: string
-                description: The developer fee rate applied to this merchant. Expressed as a string in decimal format where "0.1" represents 10%. This fee is deducted from the payment amount and only applies to top-up transactions.
+                description: 'The developer fee rate applied to this merchant. Expressed as a string in decimal format where "0.1" represents 10%. This fee is deducted from the payment amount and only applies to top-up transactions. If you are a merchant (directly serving the payer), you do not need to configure the developer fee rate.'
                 example: '0.1'
     updateMerchantBody:
       description: The request body to update a merchant.
@@ -17791,7 +17799,7 @@ components:
                 example: Merchant B
               developer_fee_rate:
                 type: string
-                description: The developer fee rate applied to this merchant. Expressed as a string in decimal format where "0.1" represents 10%. This fee is deducted from the payment amount and only applies to top-up transactions.
+                description: 'The developer fee rate applied to this merchant. Expressed as a string in decimal format where "0.1" represents 10%. This fee is deducted from the payment amount and only applies to top-up transactions. If you are a merchant (directly serving the payer), you do not need to configure the developer fee rate.'
                 example: '0.1'
     createBankAccountBody:
       description: The request body to register a bank account.
@@ -17916,7 +17924,8 @@ components:
               expired_in:
                 type: integer
                 description: |
-                  The number of seconds until the pay-in order expires, counted from when the request is sent. For example, if set to `1800`, the order will expire in 30 minutes. After expiration:
+                  The number of seconds until the pay-in order expires, counted from when the request is sent. For example, if set to `1800`, the order will expire in 30 minutes. Must be greater than zero and cannot exceed 3 hours (10800 seconds). After expiration:
+
                   - The order status becomes final and cannot be changed
                   - The `received_token_amount` field will no longer be updated
                   - Funds received after expiration will be categorized as late payments and can only be settled from the developer balance.

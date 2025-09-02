@@ -107,18 +107,23 @@ const initializeCheckout = async () => {
   await new Promise((resolve) => setTimeout(resolve, 100))
   if (checkoutIframe.value) {
     checkoutIframeManager.initialize(checkoutIframe.value, {
-      fiatCurrency: 'USD', // The fiat currency of the order. Currently, only USD is supported.
-      fiatAmount: amount.value, // The base amount of the order in fiat currency
-      merchantId, // The merchant ID
-      merchantName, // The merchant name
-      merchantLogo, // The merchant logo
-      merchantUrl, // The merchant website URL
-      feeAmount: '0.01', // The developer fee for the order in fiat currency
+      // Required fields
+      merchantId,
+      merchantName,
+      merchantLogo,
+      merchantUrl,
+      feeAmount: '0.01', // Developer fee
       merchantOrderCode: merchantOrderCode.value, // A unique reference code assigned by the merchant to identify this order in their system.
       pspOrderCode: pspOrderCode.value, // A unique reference code assigned by you (the developer) to identify this order in your system.
-      expiredIn: 30 * 60, // The expiration time of the pay-in order, represented as a UNIX timestamp in seconds.
-      developerName: 'xxx', // Optional text to display as "Powered by [your text]" at the bottom of the checkout page. Can only contain letters and @ symbol, with maximum length of 20 characters. This footer text will not appear if the parameter is omitted or invalid.
       locale: locale.value,
+      // When `paymentType` is set to `fiat`, the fields below become required, and `feeAmount` is calculated in fiat currency.
+      fiatCurrency: paymentType.value === 'fiat' ? 'USD' : undefined,
+      fiatAmount: paymentType.value === 'fiat' ? amount.value : undefined,
+      // When `paymentType` is set to `crypto`, the fields below become required, and `feeAmount` is calculated in crypto.
+      cryptoAmount: paymentType.value === 'crypto' ? amount.value : undefined,
+      // Optional fields
+      expiredIn: 30 * 60, // Order expiration time in seconds. Must be greater than zero and cannot exceed 3 hours (10800 seconds). Default is 1800 seconds (30 minutes).
+      developerName: 'xxx', // Optional text to display as "Powered by [your text]" at the bottom of the checkout page. Can only contain letters and @ symbol, with maximum length of 20 characters. This footer text will not appear if the parameter is omitted or invalid.
       supportToken: ['USDT', 'USDC'],
       supportChain: ['ARBITRUM_ETH', 'BASE_ETH', 'BSC_BNB', 'ETH', 'MATIC', 'SOL', 'TRON'],
     })
