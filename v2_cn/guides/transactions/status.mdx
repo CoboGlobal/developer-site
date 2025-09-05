@@ -8,7 +8,49 @@ WaaS 2.0 定义了各种交易状态和子状态，以反映不同的处理阶�
 
 ## 状态参考表格
 
-下表提供了 WaaS 2.0 中各种交易状态及其对应的子状态的概述。
+### 充币交易
+下表提供了 WaaS 2.0 服务中充币交易的状态及其对应的子状态的概述。
+
+
+<table className="table-three-cols">
+<tr>
+<th>状态</th>
+<th>子状态</th>
+<th>描述</th>
+</tr>
+<tr>
+<td rowspan="2">PendingScreening（合规检查中）</td>
+<td>PendingScreeningAppCheck（等待 Screening App 检查）</td>
+<td>交易正在由 [Screening App](https://manuals.cobo.com/en/apps/screening/introduction) 审核。</td>
+</tr>
+<tr>
+<td>PendingCoboKYTCheck（等待 Cobo 审查）</td>
+<td>交易正在等待 Cobo 的 KYT 检查。</td>
+</tr>
+<tr>
+<td>Confirming（确认中）</td>
+<td>PendingBlockConfirmations（等待链上确认数）</td>
+<td>交易正在等待所需的确认数。</td>
+</tr>
+<tr>
+<td>Completed（已完成）</td>
+<td>N/A</td>
+<td>交易已完成。</td>
+</tr>
+<tr>
+<td rowspan="2">Rejected（已拒绝）</td>
+<td>RejectedByCoboKYT</td>
+<td>交易被拒绝，因为未通过 Cobo 的 KYT 检查。</td>
+</tr>
+<tr>
+<td>RejectedByScreeningApp</td>
+<td>交易被拒绝，因为未通过 Screening App 的检查。</td>
+</tr>
+</table>
+
+### 提币交易
+
+下表提供了 WaaS 2.0 服务中提币交易的状态及其对应的子状态的概述。
 
 <table className="table-three-cols">
   <tr>

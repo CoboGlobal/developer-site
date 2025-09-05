@@ -1522,7 +1522,11 @@ paths:
 
         You can get the signature result by calling [Get transaction information](https://www.cobo.com/developers/v2/api-references/transactions/get-transaction-information). 
 
-        <Note>This operation only applies to transactions from MPC Wallets.</Note>
+        <Note>
+        This operation only supports message signing transactions from the following wallets and chains:
+        - MPC Wallets: BTC, EVM-compatible chains, Cosmos, and Solana.  
+        - Web3 Wallets: EVM-compatible chains.
+        </Note>
       security:
         - CoboAuth: []
         - OAuth2:
