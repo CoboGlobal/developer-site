@@ -1,0 +1,60 @@
+---
+title: "POST Requests"
+---
+
+The `cobo post` command allows you to make POST requests to Cobo API endpoints.
+This command is useful for creating new resources or submitting data to the Cobo
+WaaS 2 API.
+
+## Usage
+
+```bash
+$ cobo post <path> [options]
+```
+
+## Options
+
+- `-d, --describe`: Display operation description
+- `-l, --list`: List all API operations for this method
+
+## Examples
+
+### List all POST operations
+
+To see a list of all available POST operations:
+
+```bash
+$ cobo post -l
+```
+
+### Create a new wallet
+
+To create a new wallet:
+
+```bash
+$ cobo post /wallets --name "My New Wallet" --wallet_type Custodial
+```
+
+### Initiate a transaction
+
+To initiate a new transaction:
+
+```bash
+$ cobo post /transactions --from_wallet_id your_wallet_id --to_address recipient_address --amount 1.5 --token_id BTC
+```
+
+### Get operation description
+
+To see the description of a specific POST operation:
+
+```bash
+$ cobo post /wallets -d
+```
+
+## API Reference
+
+For a complete list of available POST endpoints and their parameters, refer to the [Cobo WaaS 2 API Documentation](https://www.cobo.com/developers/v2/api-references/).
+
+<Note>
+Remember to authenticate your requests by logging in or setting up your API keys before making API calls.
+</Note>

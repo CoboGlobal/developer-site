@@ -99,6 +99,11 @@
       "version": "🌐 Version 2.0 中文版"
     },
     {
+      "name": "Cobo CLI",
+      "url": "v2/cobo-cli",
+      "version": "Version 2.0"
+    },
+    {
       "name": "Documentation",
       "url": "v1/overview",
       "version": "🌐 Version 1.0"
@@ -1335,6 +1340,83 @@
         "v2/payments/api-reference"
       ],
       "version": "🌐 Version 2.0 EN"
+    },
+    {
+      "group": "Cobo CLI",
+      "pages": [
+        {
+          "group": "Overview",
+          "pages": [
+            "v2/cobo-cli/overview/introduction",
+            "v2/cobo-cli/overview/changelog"
+          ]
+        },
+        {
+          "group": "Get Started",
+          "pages": [
+            "v2/cobo-cli/get-started/installation",
+            "v2/cobo-cli/get-started/login-and-authentication",
+            "v2/cobo-cli/get-started/environment-management",
+            "v2/cobo-cli/get-started/key-management",
+            "v2/cobo-cli/get-started/configuration",
+            "v2/cobo-cli/get-started/global-options"
+          ]
+        },
+        {
+          "group": "Utility Commands",
+          "pages": [
+            "v2/cobo-cli/utility-commands/real-time-logs",
+            "v2/cobo-cli/utility-commands/open-browser-shortcuts",
+            "v2/cobo-cli/utility-commands/version-and-updates",
+            "v2/cobo-cli/utility-commands/api-documentation"
+          ]
+        },
+        {
+          "group": "API Commands",
+          "pages": [
+            "v2/cobo-cli/api-commands/get-requests",
+            "v2/cobo-cli/api-commands/post-requests",
+            "v2/cobo-cli/api-commands/put-requests",
+            "v2/cobo-cli/api-commands/delete-requests"
+          ]
+        },
+        {
+          "group": "GraphQL",
+          "pages": [
+            "v2/cobo-cli/graphql/graphql-queries"
+          ]
+        },
+        {
+          "group": "Webhooks",
+          "pages": [
+            "v2/cobo-cli/webhooks/listen-and-forward-events",
+            "v2/cobo-cli/webhooks/trigger-events"
+          ]
+        },
+        {
+          "group": "App Development",
+          "pages": [
+            "v2/cobo-cli/app-development/init-app",
+            "v2/cobo-cli/app-development/run-app-locally",
+            "v2/cobo-cli/app-development/publish-app",
+            "v2/cobo-cli/app-development/update-app"
+          ]
+        },
+        {
+          "group": "Workflows",
+          "pages": [
+            "v2/cobo-cli/workflows/create-and-publish-app",
+            "v2/cobo-cli/workflows/api-integration-example"
+          ]
+        },
+        {
+          "group": "Reference",
+          "pages": [
+            "v2/cobo-cli/reference/cli-commands"
+          ]
+        }
+      ],
+      "version": "Version 2.0"
     },
     {
       "group": "Overview",

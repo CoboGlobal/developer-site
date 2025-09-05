@@ -1,0 +1,95 @@
+---
+title: "Configuring Cobo CLI"
+---
+
+This guide introduces how to inspect and modify the configuration of the Cobo
+CLI. The configuration is used by various Cobo CLI commands, including `cobo
+env`, `cobo auth`, and `cobo keys`, to store and retrieve their respective
+information.
+
+By following this guide, you will be able to:
+
+1. Understand the configuration file location and its purpose
+2. Set configuration values
+3. Retrieve configuration values
+4. List all configurations
+5. Delete configuration values
+6. Manage important settings like environment and authentication method
+
+## Prerequisites
+
+- You have installed the Cobo CLI on your system. If not, refer to the [Installation guide](/v2/cobo-cli/get-started/installation).
+
+## 1. Configuration File Location and Purpose
+
+By default, the Cobo CLI stores its configuration in a `.env` file within the `.cobo` directory in your home directory (`~/.cobo/.env`). This file is used to store various settings that are used across different Cobo CLI commands.
+
+You can override this location by setting the `COBO_ENV` environment variable to a different path.
+
+## 2. Set Configuration Values
+
+To set a configuration value, use the `set` subcommand of the `config` command:
+
+```bash
+$ cobo config set <key> <value>
+```
+
+## 3. Retrieve Configuration Values
+
+To retrieve a configuration value, use the `get` subcommand:
+
+```bash
+$ cobo config get <key>
+```
+
+If the configuration key exists, it will display the value. Otherwise, it will inform you that the configuration was not found.
+
+## 4. List All Configurations
+
+To see all your current configuration settings, use the `list` subcommand:
+
+```bash
+$ cobo config list
+```
+
+This will display all key-value pairs in your configuration.
+
+## 5. Delete Configuration Values
+
+To remove a configuration value, use the `delete` subcommand:
+
+```bash
+$ cobo config delete <key>
+```
+
+## 6. Important Configuration Settings
+
+While you can store any custom configuration values, there are some key settings that the Cobo CLI uses:
+
+### Environment
+
+The Cobo CLI supports three environments:
+- `sandbox`: For testing and development
+- `dev`: For development purposes
+- `prod`: For production use
+
+```bash
+$ cobo config set environment sandbox
+```
+<Note>
+This has the same effect as running `cobo env sandbox`.
+</Note>
+
+### Authentication Method
+
+The CLI supports three authentication methods:
+- `apikey`: For API key-based authentication
+- `user`: For user-based authentication
+- `org`: For organization-based authentication
+
+```bash
+$ cobo config set auth_method apikey
+```
+<Note>
+This has the same effect as running `cobo auth apikey`.
+</Note>

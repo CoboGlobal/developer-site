@@ -1,0 +1,81 @@
+---
+title: 'Version and Updates'
+---
+
+The Cobo CLI provides a simple command to check the current version of the tool. This can be useful for ensuring you're using the latest version and for troubleshooting purposes.
+
+## Check Current Version
+
+To display the current version of the Cobo CLI tool, use the following command:
+
+```bash
+$ cobo version
+```
+
+This command will output the version number of the Cobo CLI tool currently installed on your system.
+
+Example output:
+
+```bash
+Cobo CLI version: 0.1.0
+```
+
+<Note>
+The version number displayed will correspond to the actual version of the Cobo
+CLI tool you have installed. The example above shows version 0.1.0, but your
+version may be different.
+</Note>
+
+## Updating Cobo CLI
+
+To ensure you have access to the latest features and bug fixes, it's important
+to keep your Cobo CLI tool up to date. The update process depends on how you
+initially installed the tool:
+
+### Updating via pip
+
+If you installed Cobo CLI using pip, you can update it with the following command:
+
+```bash
+$ pip install --upgrade cobo-cli
+```
+
+### Updating on macOS (Homebrew)
+
+If you installed Cobo CLI using Homebrew on macOS, you can update it with these commands:
+
+```bash
+$ brew update
+$ brew upgrade cobo/cobo-cli
+```
+
+After updating, verify the new version:
+
+```bash
+$ cobo version
+```
+
+
+## Best Practices for Updates
+
+1. **Check for updates regularly**: Before starting a new project or periodically during development, check if there's a new version available.
+
+2. **Review changelog**: After updating, it's a good idea to review the changelog to understand what's new or changed in the latest version.
+
+<Info>
+The Cobo team regularly releases updates to improve functionality, add new
+features, and fix any reported issues. Staying up to date ensures you have the
+best possible experience with the Cobo CLI tool.
+</Info>
+
+## Troubleshooting Version Issues
+
+If you encounter any issues related to the Cobo CLI version, consider the following steps:
+
+1. Ensure you're running the latest version of the tool.
+2. If problems persist after updating, try uninstalling and reinstalling the Cobo CLI.
+3. Check the Cobo documentation or community forums for any known issues related to your specific version.
+
+By keeping your Cobo CLI tool updated and being aware of its version, you can
+ensure smooth operation and take advantage of the latest features and
+improvements in your development workflow.
