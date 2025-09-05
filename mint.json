@@ -143,7 +143,8 @@
             "v2_cn/guides/overview/permission-list"
           ]
         },
-        "v2_cn/guides/overview/error-codes"
+        "v2_cn/guides/overview/error-codes",
+        "v2_cn/guides/overview/upgrade-guide"
       ],
       "version": "🌐 Version 2.0 中文版"
     },
@@ -237,7 +238,6 @@
       "group": "资源文档",
       "pages": [
         "v2_cn/guides/overview/changelog",
-        "v2_cn/guides/overview/upgrade-guide",
         "v2_cn/guides/mpc-wallets/get-started-ucw",
         {
           "group": "智能合约钱包",
@@ -439,7 +439,8 @@
             "v2/guides/overview/permission-list"
           ]
         },
-        "v2/guides/overview/error-codes"
+        "v2/guides/overview/error-codes",
+        "v2/guides/overview/upgrade-guide"
       ],
       "version": "🌐 Version 2.0 EN"
     },
@@ -533,7 +534,6 @@
       "group": "Resources",
       "pages": [
         "v2/guides/overview/changelog",
-        "v2/guides/overview/upgrade-guide",
         "v2/guides/mpc-wallets/get-started-ucw",
         {
           "group": "Smart Contract Wallets",
@@ -745,8 +745,8 @@
         {
           "group": "Transaction approvals",
           "pages": [
-            "v2/api-references/transactions/list-transaction-approvals",
-            "v2/api-references/transactions/list-approval-templates"
+            "v2/api-references/transactions/list-approval-details",
+            "v2/api-references/transactions/list-transaction-templates"
           ],
           "version": "🌐 Version 2.0 EN"
         }

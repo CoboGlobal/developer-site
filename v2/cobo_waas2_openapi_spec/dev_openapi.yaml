@@ -616,7 +616,7 @@ paths:
         This operation retrieves a list of addresses within a specified wallet.
         <Note>
         For Web3 Wallets, Asset Wallets, and MPC Wallets, addresses created on one EVM chain automatically work on all other supported EVM chains. 
-        
+
         Currently, query results for EVM chain addresses differ between interfaces:
 
         - API: Query results are limited by chain_id, so only addresses from that specific chain are returned.
@@ -1814,7 +1814,7 @@ paths:
       tags:
         - Transactions
       operationId: list_approval_details
-      summary: List transaction approvals
+      summary: List approval details
       description: |
         This operation retrieves comprehensive approval information for transactions, including approval status, reviewer details, signatures, and approval history. You can filter the results by transaction IDs, Cobo IDs, or request IDs. 
 
@@ -1839,7 +1839,7 @@ paths:
       tags:
         - Transactions
       operationId: list_transaction_templates
-      summary: List approval templates
+      summary: List transaction templates
       description: |
         This operation retrieves approval templates based on the specified template key and template version.
 
