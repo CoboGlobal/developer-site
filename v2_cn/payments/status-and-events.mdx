@@ -9,13 +9,13 @@ description: ""
 
 | 事件名称 | 触发条件 | 事件内容 |
 |---------|---------|----------|
-| `payment.status.updated` | 支付订单状态发生变更。支付订单状态包括：<br></br>- `Pending`: 订单已创建，等待付款。尚未检测到充币交易。<br></br>- `Processing`: 在收币地址检测到首笔充币交易。<br></br>- `Completed`: 在订单有效期内收到全额付款<br></br>- `Expired`: 订单有效期内没有已完成的充币交易，或者订单已被取消。<br></br>- `Underpaid`: 订单有效期内存在已完成的充币交易，但实收金额少于应付金额。 | [PaymentOrder](/v2_cn/payments/status-and-events#paymentorder) |
-| `payment.address.updated` | 充值地址更新 | [PaymentAddressUpdate](/v2_cn/payments/status-and-events#paymentaddressupdate) |
-| `payment.transaction.created` | 检测到订单的收币地址或充值地址上有新的充币交易 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
-| `payment.transaction.late` | 检测到充币交易，但订单已处于终态<br/>（`Underpaid`、`Expired` 或 `Completed`） | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
-| `payment.transaction.held` | 充币交易未通过合规扫描 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
-| `payment.transaction.complete` | 充值模式下，充币交易通过合规扫描，资金已成功入账并计入实收金额。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
-| `payment.refund.status.updated` | 退款订单状态发生变更。退款订单状态包括：<br></br>- `Pending`：已创建退款订单，但尚未发起交易。<br></br>- `Processing`: 至少有一笔退款交易正在进行中。<br></br>- `Completed`: 所有退款交易均已完成。<br></br>- `PartiallyCompleted`: 部分退款交易已完成，部分退款交易失败。<br></br>- `Failed`: 所有退款交易均失败。 | [PaymentRefund](/v2_cn/payments/status-and-events#paymentrefund) |
+| `payment.status.updated` | [**仅适用于订单模式**]支付订单状态发生变更。支付订单状态包括：<br></br>- `Pending`: 订单已创建，等待付款。尚未检测到充币交易。<br></br>- `Processing`: 在收币地址检测到首笔充币交易。<br></br>- `Completed`: 在订单有效期内收到全额付款<br></br>- `Expired`: 订单有效期内没有已完成的充币交易，或者订单已被取消。<br></br>- `Underpaid`: 订单有效期内存在已完成的充币交易，但实收金额少于应付金额。 | [PaymentOrder](/v2_cn/payments/status-and-events#paymentorder) |
+| `payment.address.updated` | [**仅适用于充值模式**]充值地址更新 | [PaymentAddressUpdate](/v2_cn/payments/status-and-events#paymentaddressupdate) |
+| `payment.transaction.created` | 检测到有新的充币交易。订单模式下，即使订单已达到终态（`Underpaid`、`Expired` 或 `Completed`），该事件仍会被触发。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
+| `payment.transaction.late` | [**仅适用于订单模式**]充币交易通过合规扫描，但订单已处于终态（`Underpaid`、`Expired` 或 `Completed`）。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
+| `payment.transaction.held` | 充币交易未通过合规扫描。订单模式下，即使订单已达到终态（`Underpaid`、`Expired` 或 `Completed`），该事件仍会被触发。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
+| `payment.transaction.completed` | 充币交易通过合规扫描，资金已成功入账并计入实收金额。| [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
+| `payment.refund.status.updated` | [**仅适用于订单模式**]退款订单状态发生变更。退款订单状态包括：<br></br>- `Pending`：已创建退款订单，但尚未发起交易。<br></br>- `Processing`: 至少有一笔退款交易正在进行中。<br></br>- `Completed`: 所有退款交易均已完成。<br></br>- `PartiallyCompleted`: 部分退款交易已完成，部分退款交易失败。<br></br>- `Failed`: 所有退款交易均失败。 | [PaymentRefund](/v2_cn/payments/status-and-events#paymentrefund) |
 | `payment.settlement.status.updated` | 结算请求状态变更。结算请求状态包括：<br></br>- `Pending`: 已创建结算请求，等待处理。<br></br>- `Processing`: 结算请求处理中，至少有一笔结算正在进行。<br></br>- `Completed`: 所有结算已完成。<br></br>- `PartiallyCompleted`: 部分结算已完成，部分结算失败。<br></br>- `Failed`: 所有结算均失败。| [PaymentSettlement](/v2_cn/payments/status-and-events#paymentsettlement) |
 
 ## 事件详情
