@@ -21,7 +21,7 @@ In top-up mode, Cobo will automatically divide each incoming top-up amount into 
 
 In order mode, Cobo will automatically divide the order actual received amount into merchant actual received amount and developer fees based on the ratio between the order amount (`order_amount`) and developer fee (`fee_amount`) you pass in when creating the order. For example, when `order_amount` is 99 USDT and `fee_amount` is 1 USDT, Cobo will divide a 100 USDT order actual received amount into 99 USDT of merchant actual received amount and 1 USDT of developer fees.
 
-<Note>In cases of [overpayment, underpayment, and late payment](/v2/payments/handle-abnormality-order#abnormal-payment-situations-explanation), Cobo will divide related funds into merchant funds and developer funds at the same ratio.</Note>
+<Note>In cases of [overpayment and underpayment](/v2/payments/handle-abnormality-order#abnormal-payment-situations-explanation), Cobo will divide related funds into merchant funds and developer funds at the above-mentioned ratio. Late payment funds will be completely allocated to developer funds.</Note>
 
 ## Merchant withdrawable balance
 

@@ -87,7 +87,7 @@ During the payment process, the following three abnormal situations may occur:
 | **Underpayment** | Within the order validity period, the user's actual payment amount is less than the required payment amount | The order status becomes `Underpaid` (terminal state). Subsequent payments from the user will be classified as late payment amounts. |
 | **Late payment** | The user makes a first or additional payment after the order expires | Will not change the order status. Each late payment will trigger a `payment.transaction.late` webhook event. |
 
-In the above situations, if the related transactions pass compliance screening, Cobo will divide the related funds into merchant funds and developer funds according to the same proportion. You can choose the following processing methods according to your business needs:
+[Amount Definitions and Balance Calculations](/v2/payments/amounts-and-balances) details how Cobo handles funds in cases of overpayment, underpayment, and late payment. For excess funds from abnormal payments, you can choose from the following processing methods based on your business needs:
 * Refund excess funds to users through API / Payments App / Checkout SDK.
 * Transfer excess funds to other wallets and wait for processing.
 * Do not process separately, and the funds will remain in the wallet.
