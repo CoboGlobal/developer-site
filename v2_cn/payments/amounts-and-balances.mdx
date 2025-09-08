@@ -18,7 +18,7 @@ Cobo 为您分别维护了两类资金的收支记录：商户资金与开发者
 
 订单模式下，Cobo 将根据创建订单时您传入的商品订单金额（`order_amount）`与开发者费用（`fee_amount）`之间的比例，自动将订单实收金额划分为商户实收金额和开发者费用。例如，当 `order_amount` 为 99 USDT，`fee_amount` 为 1 USDT 时，Cobo 会将 100 USDT 的订单实收金额划分为 99 USDT 的商户实收金额和 1 USDT 的开发者费用。
 
-<Note>在[多付、少付和晚付](/v2_cn/payments/handle-abnormality-order#异常支付情况说明)的情况下，Cobo 会将相关资金按照同样的比例划分为商户资金和开发者资金。</Note>
+<Note>在[多付和少付](/v2_cn/payments/handle-abnormality-order#异常支付情况说明)的情况下，Cobo 会将相关资金按照上述比例划分为商户资金和开发者资金。晚付资金将全部归为开发者资金。</Note>
 
 
 ## 商户可结算余额

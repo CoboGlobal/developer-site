@@ -85,12 +85,12 @@ public class Example {
                         .walletId(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"))
                         .address("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")))
             .tokenParams(
-              new TokenizationIssueTokenParamsTokenParams(
-                new TokenizationERC20TokenParams()
-                    .standard(TokenizationTokenStandard.ERC20)
-                    .name("My Awesome Token")
-                    .symbol("MAT")
-                    .decimals(18)))
+                new TokenizationIssueTokenParamsTokenParams(
+                    new TokenizationERC20TokenParams()
+                        .standard(TokenizationTokenStandard.ERC20)
+                        .name("My Awesome Token")
+                        .symbol("MAT")
+                        .decimals(18)))
             .fee(
                 new TransactionRequestFee(
                     new TransactionRequestFixedFee()

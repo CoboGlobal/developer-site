@@ -37,8 +37,12 @@ with cobo_waas2.ApiClient(configuration) as api_client:
                 )
             ),
             addresses=[
-                cobo_waas2.TokenizationUpdateAllowlistAddressesParamsAddressesInner(address="0x789abc..."),
-                cobo_waas2.TokenizationUpdateAllowlistAddressesParamsAddressesInner(address="0xdef012..."),
+                cobo_waas2.TokenizationUpdateAllowlistAddressesParamsAddressesInner(
+                    address="0x789abc..."
+                ),
+                cobo_waas2.TokenizationUpdateAllowlistAddressesParamsAddressesInner(
+                    address="0xdef012..."
+                ),
             ],
             fee=cobo_waas2.TransactionRequestFee(
                 cobo_waas2.TransactionRequestFixedFee(
@@ -98,8 +102,10 @@ public class Example {
                         .address("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")))
             .addresses(
                 Arrays.asList(
-                    new TokenizationUpdateAllowlistAddressesParamsAddressesInner().address("0x789abc..."),
-                    new TokenizationUpdateAllowlistAddressesParamsAddressesInner().address("0xdef012...")))
+                    new TokenizationUpdateAllowlistAddressesParamsAddressesInner()
+                        .address("0x789abc..."),
+                    new TokenizationUpdateAllowlistAddressesParamsAddressesInner()
+                        .address("0xdef012...")))
             .fee(
                 new TransactionRequestFee(
                     new TransactionRequestFixedFee()

@@ -1,14 +1,11 @@
 ---
-openapi: post /payments/settlement_requests
+openapi: get /transactions/approval/details
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_settlement_request_request import (
-    CreateSettlementRequestRequest,
-)
-from cobo_waas2.models.settlement import Settlement
+from cobo_waas2.models.approval_detail import ApprovalDetail
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -22,31 +19,24 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.PaymentApi(api_client)
-    create_settlement_request_request = cobo_waas2.CreateSettlementRequestRequest(
-        request_id="SETTLEMENT123", 
-        settlement_type="Merchant",
-        payout_channel="Crypto",
-        settlements=[
-            cobo_waas2.CreateSettlement(
-                    merchant_id="M1001",
-                    token_id="ETH_USDT",  
-                    currency="USD",
-                    amount="500.00",
-                    crypto_address_id="addr_ethusdt_20250506T123456_ab12cd"
-                )
-            ]
+    api_instance = cobo_waas2.TransactionsApi(api_client)
+    transaction_ids = (
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3"
+    )
+    cobo_ids = "20231213122855000000000000000000,20231213122955000000000000000000"
+    request_ids = (
+        "web_send_by_user_327_1610444045047,web_send_by_user_327_1610444045048"
     )
 
     try:
-        # Create settlement request
-        api_response = api_instance.create_settlement_request(
-            create_settlement_request_request=create_settlement_request_request
+        # List approval details
+        api_response = api_instance.list_approval_details(
+            transaction_ids=transaction_ids, cobo_ids=cobo_ids, request_ids=request_ids
         )
-        print("The response of PaymentApi->create_settlement_request:\n")
+        print("The response of TransactionsApi->list_approval_details:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_settlement_request: %s\n" % e)
+        print("Exception when calling TransactionsApi->list_approval_details: %s\n" % e)
 
 ```
 ```java Java
@@ -55,10 +45,8 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
+import com.cobo.waas2.api.TransactionsApi;
 import com.cobo.waas2.model.*;
-import java.util.Arrays;
-import java.util.UUID;
 
 public class Example {
   public static void main(String[] args) {
@@ -69,25 +57,17 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    PaymentApi apiInstance = new PaymentApi();
-    CreateSettlementRequestRequest createSettlementRequestRequest =
-        new CreateSettlementRequestRequest()
-            .requestId("SETTLEMENT123")
-            .settlementType(SettlementType.MERCHANT)
-            .payoutChannel(PayoutChannel.CRYPTO)
-            .settlements(Arrays.asList( 
-              new CreateSettlement()
-              .merchantId("M1001")
-              .tokenId("ETH_USDT")
-              .currency("USD")
-              .amount("500.00")
-              .cryptoAddressId("addr_ethusdt_20250506T123456_ab12cd")
-            ));
+    TransactionsApi apiInstance = new TransactionsApi();
+    String transactionIds =
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3";
+    String coboIds = "20231213122855000000000000000000,20231213122955000000000000000000";
+    String requestIds = "web_send_by_user_327_1610444045047,web_send_by_user_327_1610444045048";
     try {
-      Settlement result = apiInstance.createSettlementRequest(createSettlementRequestRequest);
+      List<ApprovalDetail> result =
+          apiInstance.listApprovalDetails(transactionIds, coboIds, requestIds);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createSettlementRequest");
+      System.err.println("Exception when calling TransactionsApi#listApprovalDetails");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -109,7 +89,9 @@ import (
 )
 
 func main() {
-	createSettlementRequestRequest := *coboWaas2.NewCreateSettlementRequestRequest("SETTLEMENT123", []coboWaas2.CreateSettlement{*coboWaas2.NewCreateSettlement("ETH_USDT")})
+	transactionIds := "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3"
+	coboIds := "20231213122855000000000000000000,20231213122955000000000000000000"
+	requestIds := "web_send_by_user_327_1610444045047,web_send_by_user_327_1610444045048"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -122,19 +104,21 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreateSettlementRequest(ctx).
-		CreateSettlementRequestRequest(createSettlementRequestRequest).
+	resp, r, err := apiClient.TransactionsAPI.ListApprovalDetails(ctx).
+		TransactionIds(transactionIds).
+		CoboIds(coboIds).
+		RequestIds(requestIds).
 		Execute()
 	if err != nil {
 		fmt.Fprintf(
 			os.Stderr,
-			"Error when calling `PaymentAPI.CreateSettlementRequest``: %v\n",
+			"Error when calling `TransactionsAPI.ListApprovalDetails``: %v\n",
 			err,
 		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreateSettlementRequest`: Settlement
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreateSettlementRequest`: %v\n", resp)
+	// response from `ListApprovalDetails`: []ApprovalDetail
+	fmt.Fprintf(os.Stdout, "Response from `TransactionsAPI.ListApprovalDetails`: %v\n", resp)
 }
 
 ```
@@ -147,23 +131,15 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.PaymentApi();
+const apiInstance = new CoboWaas2.TransactionsApi();
 const opts = {
-  CreateSettlementRequestRequest: 
-    CoboWaas2.CreateSettlementRequestRequest.constructFromObject({
-      request_id: "SETTLEMENT123",  
-      settlement_type: "Merchant",
-      payout_channel: "Crypto",
-      settlements: [{
-        merchant_id: "M1001",
-        token_id: "ETH_USDT",
-        currency: "USD",
-        amount: "500.00",
-        crypto_address_id: "addr_ethusdt_20250506T123456_ab12cd",
-      }],
-    }),
+  transaction_ids:
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3",
+  cobo_ids: "20231213122855000000000000000000,20231213122955000000000000000000",
+  request_ids:
+    "web_send_by_user_327_1610444045047,web_send_by_user_327_1610444045048",
 };
-apiInstance.createSettlementRequest(opts).then(
+apiInstance.listApprovalDetails(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

@@ -616,7 +616,7 @@ paths:
         This operation retrieves a list of addresses within a specified wallet.
         <Note>
         For Web3 Wallets, Asset Wallets, and MPC Wallets, addresses created on one EVM chain automatically work on all other supported EVM chains. 
-        
+
         Currently, query results for EVM chain addresses differ between interfaces:
 
         - API: Query results are limited by chain_id, so only addresses from that specific chain are returned.
@@ -1522,7 +1522,11 @@ paths:
 
         You can get the signature result by calling [Get transaction information](https://www.cobo.com/developers/v2/api-references/transactions/get-transaction-information). 
 
-        <Note>This operation only applies to transactions from MPC Wallets.</Note>
+        <Note>
+        This operation only supports message signing transactions from the following wallets and chains:
+        - MPC Wallets: BTC, EVM-compatible chains, Cosmos, and Solana.  
+        - Web3 Wallets: EVM-compatible chains.
+        </Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1814,7 +1818,7 @@ paths:
       tags:
         - Transactions
       operationId: list_approval_details
-      summary: List transaction approvals
+      summary: List approval details
       description: |
         This operation retrieves comprehensive approval information for transactions, including approval status, reviewer details, signatures, and approval history. You can filter the results by transaction IDs, Cobo IDs, or request IDs. 
 
@@ -1839,7 +1843,7 @@ paths:
       tags:
         - Transactions
       operationId: list_transaction_templates
-      summary: List approval templates
+      summary: List transaction templates
       description: |
         This operation retrieves approval templates based on the specified template key and template version.
 
@@ -12730,9 +12734,7 @@ components:
         amount:
           type: string
           description: |
-            The settlement amount. When settling merchant balance from orders (`acquiring_type` is `Order` and `settlement_type` is `Merchant`), do not specify this field as the settlement amount will be automatically calculated based on the order amounts.
-            - If `payout_channel` is set to `Crypto`, this represents the settlement amount in the specified cryptocurrency.
-            - If `payout_channel` is set to `OffRamp`, this represents the settlement amount in the specified fiat currency.
+            The amount of cryptocurrency to be settled. When settling merchant balance from orders (`acquiring_type` is `Order` and `settlement_type` is `Merchant`), do not specify this field as the amount will be automatically calculated based on the order amounts.
           example: '500.00'
         bank_account_id:
           type: string

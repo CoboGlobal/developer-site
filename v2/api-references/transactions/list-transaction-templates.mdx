@@ -1,14 +1,11 @@
 ---
-openapi: post /payments/settlement_requests
+openapi: get /transactions/templates
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_settlement_request_request import (
-    CreateSettlementRequestRequest,
-)
-from cobo_waas2.models.settlement import Settlement
+from cobo_waas2.models.approval_template import ApprovalTemplate
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -22,31 +19,22 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.PaymentApi(api_client)
-    create_settlement_request_request = cobo_waas2.CreateSettlementRequestRequest(
-        request_id="SETTLEMENT123", 
-        settlement_type="Merchant",
-        payout_channel="Crypto",
-        settlements=[
-            cobo_waas2.CreateSettlement(
-                    merchant_id="M1001",
-                    token_id="ETH_USDT",  
-                    currency="USD",
-                    amount="500.00",
-                    crypto_address_id="addr_ethusdt_20250506T123456_ab12cd"
-                )
-            ]
-    )
+    api_instance = cobo_waas2.TransactionsApi(api_client)
+    template_key = "withdrawal"
+    template_version = "1.0.0"
 
     try:
-        # Create settlement request
-        api_response = api_instance.create_settlement_request(
-            create_settlement_request_request=create_settlement_request_request
+        # List transaction templates
+        api_response = api_instance.list_transaction_templates(
+            template_key, template_version=template_version
         )
-        print("The response of PaymentApi->create_settlement_request:\n")
+        print("The response of TransactionsApi->list_transaction_templates:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_settlement_request: %s\n" % e)
+        print(
+            "Exception when calling TransactionsApi->list_transaction_templates: %s\n"
+            % e
+        )
 
 ```
 ```java Java
@@ -55,10 +43,8 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
+import com.cobo.waas2.api.TransactionsApi;
 import com.cobo.waas2.model.*;
-import java.util.Arrays;
-import java.util.UUID;
 
 public class Example {
   public static void main(String[] args) {
@@ -69,25 +55,15 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    PaymentApi apiInstance = new PaymentApi();
-    CreateSettlementRequestRequest createSettlementRequestRequest =
-        new CreateSettlementRequestRequest()
-            .requestId("SETTLEMENT123")
-            .settlementType(SettlementType.MERCHANT)
-            .payoutChannel(PayoutChannel.CRYPTO)
-            .settlements(Arrays.asList( 
-              new CreateSettlement()
-              .merchantId("M1001")
-              .tokenId("ETH_USDT")
-              .currency("USD")
-              .amount("500.00")
-              .cryptoAddressId("addr_ethusdt_20250506T123456_ab12cd")
-            ));
+    TransactionsApi apiInstance = new TransactionsApi();
+    String templateKey = "withdrawal";
+    String templateVersion = "1.0.0";
     try {
-      Settlement result = apiInstance.createSettlementRequest(createSettlementRequestRequest);
+      List<ApprovalTemplate> result =
+          apiInstance.listTransactionTemplates(templateKey, templateVersion);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createSettlementRequest");
+      System.err.println("Exception when calling TransactionsApi#listTransactionTemplates");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -109,7 +85,8 @@ import (
 )
 
 func main() {
-	createSettlementRequestRequest := *coboWaas2.NewCreateSettlementRequestRequest("SETTLEMENT123", []coboWaas2.CreateSettlement{*coboWaas2.NewCreateSettlement("ETH_USDT")})
+	templateKey := "withdrawal"
+	templateVersion := "1.0.0"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -122,19 +99,20 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreateSettlementRequest(ctx).
-		CreateSettlementRequestRequest(createSettlementRequestRequest).
+	resp, r, err := apiClient.TransactionsAPI.ListTransactionTemplates(ctx).
+		TemplateKey(templateKey).
+		TemplateVersion(templateVersion).
 		Execute()
 	if err != nil {
 		fmt.Fprintf(
 			os.Stderr,
-			"Error when calling `PaymentAPI.CreateSettlementRequest``: %v\n",
+			"Error when calling `TransactionsAPI.ListTransactionTemplates``: %v\n",
 			err,
 		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreateSettlementRequest`: Settlement
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreateSettlementRequest`: %v\n", resp)
+	// response from `ListTransactionTemplates`: []ApprovalTemplate
+	fmt.Fprintf(os.Stdout, "Response from `TransactionsAPI.ListTransactionTemplates`: %v\n", resp)
 }
 
 ```
@@ -147,23 +125,12 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.PaymentApi();
+const apiInstance = new CoboWaas2.TransactionsApi();
+const template_key = "withdrawal";
 const opts = {
-  CreateSettlementRequestRequest: 
-    CoboWaas2.CreateSettlementRequestRequest.constructFromObject({
-      request_id: "SETTLEMENT123",  
-      settlement_type: "Merchant",
-      payout_channel: "Crypto",
-      settlements: [{
-        merchant_id: "M1001",
-        token_id: "ETH_USDT",
-        currency: "USD",
-        amount: "500.00",
-        crypto_address_id: "addr_ethusdt_20250506T123456_ab12cd",
-      }],
-    }),
+  template_version: "1.0.0",
 };
-apiInstance.createSettlementRequest(opts).then(
+apiInstance.listTransactionTemplates(template_key, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

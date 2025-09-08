@@ -36,7 +36,10 @@ with cobo_waas2.ApiClient(configuration) as api_client:
                 ),
                 token_params=cobo_waas2.TokenizationIssueTokenParamsTokenParams(
                     cobo_waas2.TokenizationERC20TokenParams(
-                        standard="ERC20", name="My Awesome Token", symbol="MAT", decimals=18
+                        standard="ERC20",
+                        name="My Awesome Token",
+                        symbol="MAT",
+                        decimals=18,
                     )
                 ),
                 operation_type="Issue",
@@ -81,28 +84,24 @@ public class Example {
     TokenizationEstimateFeeRequest tokenizationEstimateFeeRequest =
         new TokenizationEstimateFeeRequest()
             .operationParams(
-              new TokenizationEstimateFeeRequestOperationParams(
-                new TokenizationIssueEstimateFeeParams()
-                    .chainId("ETH")
-                    .source(
-                        new TokenizationTokenOperationSource(
-                            new TokenizationMpcOperationSource()
-                                .sourceType(TokenizationOperationSourceType.ORG_CONTROLLED)
-                                .walletId(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"))
-                                .address("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"))
-                    )
-                    .tokenParams(
-                      new TokenizationIssueTokenParamsTokenParams(
-                        new TokenizationERC20TokenParams()
-                            .standard(TokenizationTokenStandard.ERC20)
-                            .name("My Awesome Token")
-                            .symbol("MAT")
-                            .decimals(18)
-                      )
-                    )
-                    .operationType(TokenizationOperationType.ISSUE)
-            )
-          );
+                new TokenizationEstimateFeeRequestOperationParams(
+                    new TokenizationIssueEstimateFeeParams()
+                        .chainId("ETH")
+                        .source(
+                            new TokenizationTokenOperationSource(
+                                new TokenizationMpcOperationSource()
+                                    .sourceType(TokenizationOperationSourceType.ORG_CONTROLLED)
+                                    .walletId(
+                                        UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"))
+                                    .address("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")))
+                        .tokenParams(
+                            new TokenizationIssueTokenParamsTokenParams(
+                                new TokenizationERC20TokenParams()
+                                    .standard(TokenizationTokenStandard.ERC20)
+                                    .name("My Awesome Token")
+                                    .symbol("MAT")
+                                    .decimals(18)))
+                        .operationType(TokenizationOperationType.ISSUE)));
     try {
       EstimatedFee result = apiInstance.estimateTokenizationFee(tokenizationEstimateFeeRequest);
       System.out.println(result);
