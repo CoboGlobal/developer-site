@@ -676,18 +676,6 @@
       "version": "🌐 Version 2.0 EN"
     },
     {
-      "group": "Smart Contract Wallets-specific operations",
-      "pages": [
-        {
-          "group": "Query information",
-          "pages": [
-            "v2/api-references/wallets--smart-contract-wallets/list-delegates"
-          ]
-        }
-      ],
-      "version": "🌐 Version 2.0 EN"
-    },
-    {
       "group": "Exchange Wallets-specific operations",
       "pages": [
         {
