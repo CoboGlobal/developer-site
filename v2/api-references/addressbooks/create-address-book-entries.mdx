@@ -1,11 +1,14 @@
 ---
-openapi: get /address_books
+openapi: post /address_books
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_address_books200_response import ListAddressBooks200Response
+from cobo_waas2.models.create_address_books201_response import (
+    CreateAddressBooks201Response,
+)
+from cobo_waas2.models.create_address_books_param import CreateAddressBooksParam
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -20,27 +23,23 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.AddressBooksApi(api_client)
-    chain_id = "ETH"
-    address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-    label = "test"
-    limit = 10
-    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    create_address_books_param = cobo_waas2.CreateAddressBooksParam(
+        address_books=[
+            cobo_waas2.CreateAddressBookParam(
+                chain_ids=["ETH"], address="0x570f02f2b5fcf3ac56fb6703bd7039c0c9e33460"
+            )
+        ]
+    )
 
     try:
-        # List Address Book entries
-        api_response = api_instance.list_address_books(
-            chain_id=chain_id,
-            address=address,
-            label=label,
-            limit=limit,
-            before=before,
-            after=after,
+        # Create Address Book entries
+        api_response = api_instance.create_address_books(
+            create_address_books_param=create_address_books_param
         )
-        print("The response of AddressBooksApi->list_address_books:\n")
+        print("The response of AddressBooksApi->create_address_books:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling AddressBooksApi->list_address_books: %s\n" % e)
+        print("Exception when calling AddressBooksApi->create_address_books: %s\n" % e)
 
 ```
 ```java Java
@@ -51,6 +50,7 @@ import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
 import com.cobo.waas2.api.AddressBooksApi;
 import com.cobo.waas2.model.*;
+import java.util.Arrays;
 
 public class Example {
   public static void main(String[] args) {
@@ -62,18 +62,19 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     AddressBooksApi apiInstance = new AddressBooksApi();
-    String chainId = "ETH";
-    String address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
-    String label = "test";
-    Integer limit = 10;
-    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
-    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    CreateAddressBooksParam createAddressBooksParam =
+        new CreateAddressBooksParam()
+            .addressBooks(
+                Arrays.asList(
+                    new CreateAddressBookParam()
+                        .chainIds(Arrays.asList("ETH"))
+                        .address("0x570f02f2b5fcf3ac56fb6703bd7039c0c9e33460")));
     try {
-      ListAddressBooks200Response result =
-          apiInstance.listAddressBooks(chainId, address, label, limit, before, after);
+      CreateAddressBooks201Response result =
+          apiInstance.createAddressBooks(createAddressBooksParam);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling AddressBooksApi#listAddressBooks");
+      System.err.println("Exception when calling AddressBooksApi#createAddressBooks");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -95,12 +96,7 @@ import (
 )
 
 func main() {
-	chainId := "ETH"
-	address := "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-	label := "test"
-	limit := int32(10)
-	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	createAddressBooksParam := *coboWaas2.NewCreateAddressBooksParam([]coboWaas2.CreateAddressBookParam{*coboWaas2.NewCreateAddressBookParam([]string{"ETH"}, "0x570f02f2b5fcf3ac56fb6703bd7039c0c9e33460")})
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -113,20 +109,19 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.AddressBooksAPI.ListAddressBooks(ctx).
-		ChainId(chainId).
-		Address(address).
-		Label(label).
-		Limit(limit).
-		Before(before).
-		After(after).
+	resp, r, err := apiClient.AddressBooksAPI.CreateAddressBooks(ctx).
+		CreateAddressBooksParam(createAddressBooksParam).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `AddressBooksAPI.ListAddressBooks``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `AddressBooksAPI.CreateAddressBooks``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListAddressBooks`: ListAddressBooks200Response
-	fmt.Fprintf(os.Stdout, "Response from `AddressBooksAPI.ListAddressBooks`: %v\n", resp)
+	// response from `CreateAddressBooks`: CreateAddressBooks201Response
+	fmt.Fprintf(os.Stdout, "Response from `AddressBooksAPI.CreateAddressBooks`: %v\n", resp)
 }
 
 ```
@@ -141,14 +136,17 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.AddressBooksApi();
 const opts = {
-  chain_id: "ETH",
-  address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-  label: "test",
-  limit: 10,
-  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
-  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+  CreateAddressBooksParam:
+    CoboWaas2.CreateAddressBooksParam.constructFromObject({
+      address_books: [
+        {
+          chain_ids: ["ETH"],
+          address: "0x570f02f2b5fcf3ac56fb6703bd7039c0c9e33460",
+        },
+      ],
+    }),
 };
-apiInstance.listAddressBooks(opts).then(
+apiInstance.createAddressBooks(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

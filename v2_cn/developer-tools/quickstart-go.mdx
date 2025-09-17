@@ -52,7 +52,7 @@ ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.DevEnv)
 // ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.ProdEnv)
 ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
     // 将 `<YOUR_API_SECRET>` 替换为您的 API Secret。
-    PrivateKey: []byte("<YOUR_API_SECRET>"),
+    Secret: "<YOUR_API_SECRET>",
 })
 ```
 
@@ -98,7 +98,7 @@ func main() {
 	// ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.ProdEnv)
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		// 将 `<YOUR_API_SECRET>` 替换为您的 API Secret。
-		PrivateKey: []byte("<YOUR_API_SECRET>"),
+		Secret: "<YOUR_API_SECRET>",
 	})
 	// 调用列出支持的链操作。
 	req := apiClient.WalletsAPI.ListSupportedChains(ctx).WalletType(walletType).WalletSubtype(walletSubtype)
@@ -169,7 +169,7 @@ func main() {
 	// ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.ProdEnv)
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		// 将 `<YOUR_API_SECRET>` 替换为您的 API Secret。
-		PrivateKey: []byte("<YOUR_API_SECRET>"),
+		Secret: "<YOUR_API_SECRET>",
 	})
 	// 调用创建钱包操作。
 	resp, r, err := apiClient.WalletsAPI.CreateWallet(ctx).CreateWalletParams(createWalletParams).Execute()

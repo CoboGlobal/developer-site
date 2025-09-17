@@ -9,6 +9,35 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v.1.23.0
+
+本版本于 2025 年 9 月 17 日发布。
+
+### 重大变更
+
+- 更新了 [列出审批详情](/v2/api-references/transactions/list-approval-details) 操作的响应模式，添加和修改了多个字段。
+- 更新了 [列出地址簿条目](/v2/api-references/addressbooks/list-address-book-entries) 操作的行为：
+  - 当同时提供 `address` 和 `label` 时，结果现在仅在两个条件都匹配时返回（之前只要一个条件匹配就返回）。
+  - `chain_id` 参数已从必填改为选填。
+
+### 新功能
+
+- 您现在可以使用 WaaS 2.0 API 对交易进行合规处置，相关操作包括：
+  - [隔离资金](/v2/api-references/compliance/isolate-funds)
+  - [退款资金](/v2/api-references/compliance/isolate-funds)
+  - [解冻资金](/v2/api-references/compliance/unfreeze-frozen-funds)
+  - [获取处置状态](/v2/api-references/compliance/get-disposition-status)
+- 您现在可以使用 WaaS 2.0 API 管理地址簿条目，相关操作包括：
+  - [获取地址簿条目](/v2/api-references/addressbooks/get-address-book-entry)
+  - [创建地址簿条目](/v2/api-references/addressbooks/create-address-book-entries)
+  - [更新地址簿条目](/v2/api-references/addressbooks/update-address-book-entry)
+  - [删除地址簿条目](/v2/api-references/addressbooks/delete-address-book-entry)
+<Note>创建地址簿条目、更新地址簿条目和删除地址簿条目操作需申请开通。如需使用，请联系[客户支持](mailto:help@cobo.com)。</Note>
+### 改进
+
+- 添加了 `chain_identifier` 属性到 `chain` 模式，用于按执行逻辑对链进行分组。例如，`ETH` 用于所有 EVM 兼容的链（以太坊、BNB Smart Chain、Polygon）。
+- 添加了 `biz_org_id` 属性到 [获取团队信息](/v2/api-references/organizations/get-organization-information) 操作的响应模式，用于提供给 Cobo 客户支持帮助快速定位团队。
+
 ## v1.22.0
 
 本版本于 2025 年 8 月 27 日发布。

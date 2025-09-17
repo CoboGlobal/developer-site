@@ -1,11 +1,12 @@
 ---
-openapi: get /address_books
+openapi: post /compliance/funds/disposition/refund
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_address_books200_response import ListAddressBooks200Response
+from cobo_waas2.models.disposition_response import DispositionResponse
+from cobo_waas2.models.refund_disposition import RefundDisposition
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -19,28 +20,16 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.AddressBooksApi(api_client)
-    chain_id = "ETH"
-    address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-    label = "test"
-    limit = 10
-    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    api_instance = cobo_waas2.ComplianceApi(api_client)
+    refund_disposition = cobo_waas2.RefundDisposition()
 
     try:
-        # List Address Book entries
-        api_response = api_instance.list_address_books(
-            chain_id=chain_id,
-            address=address,
-            label=label,
-            limit=limit,
-            before=before,
-            after=after,
-        )
-        print("The response of AddressBooksApi->list_address_books:\n")
+        # Refund funds
+        api_response = api_instance.refund_funds(refund_disposition=refund_disposition)
+        print("The response of ComplianceApi->refund_funds:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling AddressBooksApi->list_address_books: %s\n" % e)
+        print("Exception when calling ComplianceApi->refund_funds: %s\n" % e)
 
 ```
 ```java Java
@@ -49,7 +38,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.AddressBooksApi;
+import com.cobo.waas2.api.ComplianceApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -61,19 +50,13 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    AddressBooksApi apiInstance = new AddressBooksApi();
-    String chainId = "ETH";
-    String address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
-    String label = "test";
-    Integer limit = 10;
-    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
-    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    ComplianceApi apiInstance = new ComplianceApi();
+    RefundDisposition refundDisposition = new RefundDisposition();
     try {
-      ListAddressBooks200Response result =
-          apiInstance.listAddressBooks(chainId, address, label, limit, before, after);
+      DispositionResponse result = apiInstance.refundFunds(refundDisposition);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling AddressBooksApi#listAddressBooks");
+      System.err.println("Exception when calling ComplianceApi#refundFunds");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -95,12 +78,7 @@ import (
 )
 
 func main() {
-	chainId := "ETH"
-	address := "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-	label := "test"
-	limit := int32(10)
-	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	refundDisposition := *coboWaas2.NewRefundDisposition("f47ac10b-58cc-4372-a567-0e02b2c3d479", "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb7", "1.5")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -113,20 +91,15 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.AddressBooksAPI.ListAddressBooks(ctx).
-		ChainId(chainId).
-		Address(address).
-		Label(label).
-		Limit(limit).
-		Before(before).
-		After(after).
+	resp, r, err := apiClient.ComplianceAPI.RefundFunds(ctx).
+		RefundDisposition(refundDisposition).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `AddressBooksAPI.ListAddressBooks``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `ComplianceAPI.RefundFunds``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListAddressBooks`: ListAddressBooks200Response
-	fmt.Fprintf(os.Stdout, "Response from `AddressBooksAPI.ListAddressBooks`: %v\n", resp)
+	// response from `RefundFunds`: DispositionResponse
+	fmt.Fprintf(os.Stdout, "Response from `ComplianceAPI.RefundFunds`: %v\n", resp)
 }
 
 ```
@@ -139,16 +112,11 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.AddressBooksApi();
+const apiInstance = new CoboWaas2.ComplianceApi();
 const opts = {
-  chain_id: "ETH",
-  address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-  label: "test",
-  limit: 10,
-  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
-  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+  RefundDisposition: new CoboWaas2.RefundDisposition(),
 };
-apiInstance.listAddressBooks(opts).then(
+apiInstance.refundFunds(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

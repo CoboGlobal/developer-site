@@ -345,6 +345,20 @@
                 ]
               },
               {
+                "group": "Compliance operations",
+                "pages": [
+                  {
+                    "group": "Compliance operations",
+                    "pages": [
+                      "/v2/api-references/compliance/isolate-funds",
+                      "/v2/api-references/compliance/refund-funds",
+                      "/v2/api-references/compliance/unfreeze-frozen-funds",
+                      "/v2/api-references/compliance/get-disposition-status"
+                    ]
+                  }
+                ]
+              },
+              {
                 "group": "Tokenization operations",
                 "pages": [
                   {
@@ -480,12 +494,21 @@
                 ]
               },
               {
-                "group": "Address book operations",
+                "group": "Address Book operations",
                 "pages": [
                   {
-                    "group": "Query information",
+                    "group": "Query addresses",
                     "pages": [
-                      "v2/api-references/addressbooks/list-address-book-entries"
+                      "v2/api-references/addressbooks/list-address-book-entries",
+                      "v2/api-references/addressbooks/get-address-book-entry"
+                    ]
+                  },
+                  {
+                    "group": "Manage addresses",
+                    "pages": [
+                      "v2/api-references/addressbooks/create-address-book-entries",
+                      "v2/api-references/addressbooks/update-address-book-entry",
+                      "v2/api-references/addressbooks/delete-address-book-entry"
                     ]
                   }
                 ]

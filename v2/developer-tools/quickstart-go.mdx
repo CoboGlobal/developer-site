@@ -167,7 +167,7 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.DevEnv)
 	// ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.ProdEnv)
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
-             // Replace `<YOUR_API_SECRET>` with your own API secret.
+        // Replace `<YOUR_API_SECRET>` with your own API secret.
 		Secret: "<YOUR_API_SECRET>",
 	})
 	// Call the Create wallet operation.

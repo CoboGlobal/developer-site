@@ -9,6 +9,37 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.23.0
+
+This version was released on September 17, 2025.
+
+### Breaking Changes
+
+- Updated the response schema of [List approval details](/v2/api-references/transactions/list-approval-details). Several properties were added or modified.
+- Updated the behavior of the [List Address Book Entries](/v2/api-references/addressbooks/list-address-book-entries) operation:
+  - When both `address` and `label` are provided, results are now returned only if both match (previously matched if either condition was true).
+  - The `chain_id` parameter has been changed from required to optional.
+
+### New Features
+
+- You can now manage transaction dispositions for compliance purposes with the WaaS 2.0 API. Available operations are as follows:
+  - [Isolate funds](/v2/api-references/compliance/isolate-funds)
+  - [Refund funds](/v2/api-references/compliance/isolate-funds)
+  - [Unfreeze funds](/v2/api-references/compliance/unfreeze-frozen-funds)
+  - [Get disposition status](/v2/api-references/compliance/get-disposition-status)
+
+- You can now get, create, update, and delete Address Book entries with the following operations:
+  - [Get Address Book entry](/v2/api-references/addressbooks/get-address-book-entry)
+  - [Create Address Book entries](/v2/api-references/addressbooks/create-address-book-entries)
+  - [Update Address Book entry](/v2/api-references/addressbooks/update-address-book-entry)
+  - [Delete Address Book entry](/v2/api-references/addressbooks/delete-address-book-entry)
+<Note>The Create Address Book entries, Update Address Book entry, and Delete Address Book entry operations are available upon request. Please contact our [customer support](mailto:help@cobo.com) to enable them.</Note>
+
+### Improvements
+
+- Added a property `chain_identifier` to the `chain` schema which groups chains by their execution logic. For example, `ETH` for all EVM-compatible chains (Ethereum, BNB Smart Chain, Polygon).
+- Added a property `biz_org_id` to the response schema of [Get organization information](/v2/api-references/organizations/get-organization-information) which can be provided to Cobo's customer support to help quickly locate the organization.
+
 ## v1.22.0
 
 This version was released on August 27, 2025.
