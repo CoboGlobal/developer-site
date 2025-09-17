@@ -35,7 +35,7 @@ Address replacement requires immediate notification to the payer to use the new 
 
 
 ## Compliance screening failure
-When a transaction fails compliance screening by Cobo KYT or the Screening App, the system will trigger a `payment.transaction.held` event. The subsequent processing flow is as follows:
+When a transaction receives a `payment.transaction.held` event but does not receive a `payment.transaction.completed` event for an extended period, this indicates that the transaction failed to pass compliance screening by either Cobo KYT or the Screening App. In this case, you need to handle it according to the following steps:
 
 - If the transaction passes manual review: The funds will be counted towards the top-up amount.
 - If the transaction ultimately fails manual review: The funds will be frozen and will not be counted towards the top-up amount

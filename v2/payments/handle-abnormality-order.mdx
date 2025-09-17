@@ -211,7 +211,7 @@ public class Example {
 
 ## Compliance screening failure
 
-When a transaction fails compliance screening by Cobo KYT or the Screening App, the system will trigger a `payment.transaction.held` event. The subsequent processing flow is as follows:
+When a transaction receives a `payment.transaction.held` event but does not receive a `payment.transaction.completed` event for an extended period, this indicates that the transaction failed to pass compliance screening by either Cobo KYT or the Screening App. In this case, you need to handle it according to the following steps:
 
 - If the transaction subsequently passes manual review:
     - If the order has not expired: The funds will be counted towards the order's actual received amount, and the order status will be updated accordingly based on the actual received amount

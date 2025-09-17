@@ -17905,14 +17905,14 @@ components:
 
                   The developer fee for the order, in the currency specified by `currency`. If `currency` is not specified, the fee is in the cryptocurrency specified by `token_id`.
 
-                  If you are a merchant (directly serving the payer), you do not need to configure the developer fee. The developer fee rate only applies to platforms such as payment service providers (PSPs) that charge fees to their downstream merchants.
+                  If you are a merchant directly serving payers, set this field to `0`. Developer fees are only relevant for platforms like payment service providers (PSPs) that charge fees to their downstream merchants.
 
                   The developer fee is added to the base amount (`order_amount`) to determine the final charge. For example:
                   - Base amount (`order_amount`): "100.00"
                   - Developer fee (`fee_amount`): "2.00" 
                   - Total charged to customer: "102.00"
 
-                  Values must be greater than 0 and contain two decimal places.
+                  Values can contain up to two decimal places.
                 example: '2.00'
               merchant_order_code:
                 type: string
@@ -17976,7 +17976,7 @@ components:
                 example: M1001
               payable_amount:
                 type: string
-                description: The amount to refund in cryptocurrency. The amount must be a positive integer with up to two decimal places.
+                description: The amount to refund in cryptocurrency. The amount must be a positive number and can have up to two decimal places
                 example: '0.25'
               to_address:
                 type: string

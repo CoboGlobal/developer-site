@@ -39,7 +39,7 @@ sequenceDiagram
 
 2. **配置充值事件监听**：通过 Webhook 接收充值相关的事件通知，包括：
    - `payment.transaction.created`：检测到收币地址有新的充币交易
-   - `payment.transaction.held`：充币交易未通过合规扫描
+   - `payment.transaction.held`：充币交易正在接受合规扫描
    - `payment.transaction.complete`：充值模式下，充币交易通过合规扫描，资金已成功入账并计入实收金额。
 
 ## 调用示例

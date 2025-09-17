@@ -41,7 +41,7 @@ You have completed all steps mentioned in [Preparation](/v2/payments/preparation
 
 2. **Configure top-up event listening**: Receive top-up related event notifications through webhooks, including:
    - `payment.transaction.created`: New deposit transaction detected at the receiving address
-   - `payment.transaction.held`: Deposit transaction failed compliance screening
+   - `payment.transaction.held`: Deposit transaction is being screened for compliance
    - `payment.transaction.complete`: In top-up mode, deposit transaction passed compliance screening, funds successfully credited and included in actual received amount.
 
 ## Call example

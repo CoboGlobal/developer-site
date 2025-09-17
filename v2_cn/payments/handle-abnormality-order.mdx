@@ -209,7 +209,8 @@ public class Example {
 
 ## 合规扫描不通过
 
-当交易经过 Cobo KYT 或 Screening App 扫描不通过时，系统会触发 `payment.transaction.held` 事件，后续处理流程如下：
+当某笔交易收到 `payment.transaction.held` 事件，但长期未收到 `payment.transaction.completed` 事件时，这表明该笔交易未能通过 Cobo KYT 或 Screening App 的合规扫描。这种情况下，您需要按照以下步骤进行处理：
+
 
 - 若该笔交易后续通过人工审核：
     - 如果订单未过期：该笔资金将计入订单实收金额，订单状态将根据实收金额相应更新

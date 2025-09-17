@@ -47,7 +47,7 @@ You have completed all steps mentioned in [Preparation](/v2/payments/preparation
    * **Token and chain** (`token_id`): The currency and chain type selected by the user for payment.
    * **Currency** (`currency`): The currency of the product order. Currently only `USD` is supported.
    * **Product order amount** (`order_amount`): The payable amount of the product order, excluding developer fees.
-   * **Developer fee** (`fee_amount`): The developer fee you charge to the merchant. Please refer to [Amount definitions and balance calculation explanations](/v2/payments/amounts-and-balances) for more information about developer fees.
+   * **Developer fee** (`fee_amount`): The developer fee you charge to the merchant. If you are a merchant directly serving payers, please set this field to `0`. Please refer to [Amount definitions and balance calculation explanations](/v2/payments/amounts-and-balances) for more information about developer fees.
    * **Use dedicated address** (`use_dedicated_address`): Whether to allocate an independent receiving address for this order.
      - `true`: Allocate an independent receiving address for this order, not shared with other orders. Recommended for large transactions and other scenarios requiring strict fund isolation.
      - `false` (default): Use shared addresses from the address pool.

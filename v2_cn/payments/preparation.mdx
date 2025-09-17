@@ -210,12 +210,12 @@ public class Example {
 
 ### 配置结算账户
 
-根据您的资金结算需求，请联系 Cobo 销售团队录入相应的结算账户：
+根据您的资金结算需求，请调用 Payment API 或联系 Cobo 销售团队录入相应的结算账户。
 
-| 结算账户类型 | 说明 | API 查询接口 |
-| --- | --- | --- |
-| **加密货币地址** | 录入外部加密货币地址。资金将直接转账至该钱包地址。 | [List crypto addresses](/v2/api-references/payment/list-crypto-addresses)&nbsp;&nbsp;|
-| **银行账户** | 录入银行账户信息。资金将被兑换为法币并结算至账户。注意：开发环境下，不支持实际的法币兑换和结算。 | [List all bank accounts](/v2/api-references/payment/list-all-bank-accounts)&nbsp;&nbsp;|
+| 结算账户类型 | 说明 |
+| --- | --- | 
+| **加密货币地址** | 调用 [Create crypto address](/v2/api-references/payment/create-crypto-address) 或联系 Cobo 销售团队录入外部加密货币地址。资金将直接转账至该钱包地址。|
+| **银行账户** | 联系 Cobo 销售团队录入银行账户信息。资金将被兑换为法币并结算至账户。注意：开发环境下，不支持实际的法币兑换和结算。您可以调用 [List all bank accounts](/v2/api-references/payment/list-all-bank-accounts) 查询已录入的银行账户信息。 | 
 
 
 ### 向 Fee Station 充值
