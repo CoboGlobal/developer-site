@@ -1526,7 +1526,7 @@ paths:
 
         <Note>
         This operation only supports message signing transactions from the following wallets and chains:
-        - MPC Wallets: BTC, EVM-compatible chains, Cosmos, and Solana.  
+        - MPC Wallets: BTC, EVM-compatible chains, and Cosmos.  
         - Web3 Wallets: EVM-compatible chains.
         </Note>
       security:
