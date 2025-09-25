@@ -100,9 +100,11 @@ To see examples of how to implement the handling logic, refer to the following f
 - JavaScript: [ServerDemo.js](https://github.com/CoboGlobal/cobo-waas2-js-sdk/blob/master/src/ServerDemo.js)
 - Go: [server_demo.go](https://github.com/CoboGlobal/cobo-waas2-go-sdk/blob/master/cobo_waas2/demo/server_demo.go)
 
-## Important notes
+## ⚠️⚠️⚠️Important notes
 
+<Warning>
 - When receiving the webhook events, your endpoint should first return the correct status code promptly and then handle any subsequent processing asynchronously to prevent timeouts.
-- Webhook endpoints may sometimes receive the same event multiple times. To protect against duplicate event processing, you can log the event IDs you've already processed and refrain from processing those that are already logged.
+- Webhook endpoints may sometimes receive the same event multiple times. To protect against duplicate event processing, please log the event IDs, transaction hashes, or transaction IDs you've already processed and refrain from processing those that are already logged.
+</Warning>
 
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>
