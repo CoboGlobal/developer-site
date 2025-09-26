@@ -20,6 +20,7 @@
                 "group": "Overview",
                 "pages": [
                   "v2/guides/overview/introduction",
+                  "v2/guides/overview/find-right-info",
                   "v2/guides/overview/environments",
                   "v2/guides/overview/cobo-auth",
                   {
@@ -917,6 +918,7 @@
                 "group": "概述",
                 "pages": [
                   "v2_cn/guides/overview/introduction",
+                  "v2_cn/guides/overview/find-right-info",
                   "v2_cn/guides/overview/environments",
                   "v2_cn/guides/overview/cobo-auth",
                   {

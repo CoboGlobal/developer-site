@@ -19,28 +19,135 @@ When you call the [Estimate transaction fee](/v2/api-references/transactions/est
 
 You will get the estimated transaction fee with different fee levels in the response, which varies based on the blockchain network and the fee model used.
 
-
 ## Fee models
 
-Each blockchain may employ various fee models to calculate transaction fees, creating a one-to-many relationship with its fee structures. For example, Ethereum supports both the Legacy model and the EIP-1559 model.
+Each blockchain may employ multiple fee models to calculate transaction fees. For EVM chains, both the Legacy and EIP-1559 models are supported.
 
-Cobo currently supports transactions with the following fee models:
+Most transactions follow the blockchain's native fee model. However, transactions from Custodial Wallets (Asset Wallets) and Exchange Wallets always use the [fixed fee model](#chains-using-the-fixed-model). If you specify a different fee model when initiating a transaction from these wallets, the API request will return an error.
 
-| Fee Model | Calculation Method | Typical Blockchains Using This Model | Customizable Parameters | 
-|-----------|--------------------|-------------------------------------|-------------------------|
-| Legacy    | Transaction fee = gas price * gas units used<ul><li>Gas price: The gas price, in wei, represents the amount of ETH that must be paid to validators for processing transactions per gas unit used.</li><li>Gas units: A measure of computational work required to perform operations on the Ethereum network.</li></ul>   | Ethereum and other EVM-compatible chains | <ul><li>Gas price</li><li>Gas limit</li></ul>Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details. |
-| [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) | Transaction fee = (base fee per gas unit + priority fee per gas unit) * gas units used<ul><li>Base fee per gas unit: The base fee required to include a transaction in a block per gas unit used on the chain, dynamically adjusted based on network demand.</li><li>Priority fee per gas unit: An additional fee paid to miners to prioritize the transaction per gas unit used on the chain, also known as a tip.</li><li>Gas units: A measure of computational work required to perform operations on the Ethereum network.</li></ul> | Currently supported chains are Ethereum Mainnet, Sepolia Testnet, Scroll Mainnet, Base, BNB Smart Chain, Polygon, Sonic, and Berachain.  | <ul><li>Maximum gas fee per gas unit</li><li>Maximum priority fee per gas unit</li><li>Gas limit</li></ul>Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details. |
-| UTXO      | Transaction fee = fee rate * transaction size<ul><li>Fee rate: The fee rate, in sat/vByte, represents the satoshis you are willing to pay for each byte of data that your transaction will consume on the blockchain.</li><li>Transaction size: The total size of a transaction in bytes, affecting the total fee in UTXO models.</li></ul> | Bitcoin and other UTXO-based chains | <ul><li>Max fee amount</li><li>Fee Rate</li></ul>Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details. |
-| Fixed     | The transaction fee is fixed fee amount. | TRON | Maximum fee amount. Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details. |
-| [Solana](https://solana.com/docs/core/fees) | Transaction fee = base fee + compute unit limit * compute unit price<ul><li>Base fee: A fixed fee charged per signature (default 5,000 lamports per signature).</li><li>Compute unit limit: The maximum number of compute units your transaction is allowed to consume.</li><li>Compute unit price: The price paid per compute unit, set in lamports, used to increase transaction priority.</li><li>Rent (if applicable): Charged periodically for non–rent-exempt accounts. This is not part of the transaction fee, but may apply if the account balance is below the exemption threshold.</li></ul> | Solana | <ul><li>Compute unit limit</li><li>Compute unit price</li></ul>Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details. |
-| [Filecoin](https://spec.filecoin.io/systems/filecoin_vm/gas_fee/#section-systems.filecoin_vm.gas_fee.summary) | Transaction fee = min(gas fee cap, base fee + gas premium) * gas limit<Note>On-chain actual fee is calculated as: <code>base fee * gas used + gas premium * gas limit</code>.</Note><ul><li>Gas fee cap: The maximum gas price you are willing to pay per unit.</li><li>Base fee: The minimum fee required for inclusion in a block. It is dynamically adjusted based on network congestion and is burned to reduce total FIL supply.</li><li>Gas premium: A user-defined tip to incentivize miner prioritization.</li><li>Gas limit: The maximum amount of gas your transaction can consume.</li></ul> | Filecoin | <ul><li>Gas limit</li><li>Gas premium</li><li>Gas fee cap</li></ul>Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details. |
+### EVM chains
 
-<Note>Solana and Filecoin each support two fee models: their native model and the legacy model. When calling the transaction API operations, you can choose which model to use. However, for Replace-By-Fee (RBF) transactions, you must use the same fee model as the original transaction.</Note> 
+#### EIP-1559 model
 
-While most transactions follow the blockchain's native fee model, transactions from Custodial Wallets (Asset Wallets) and Exchange Wallets always use the fixed fee model. If you specify a different fee model when initiating a transaction from these wallets, the API request will return an error.
+The following chains currently support [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559):
+- Ethereum Mainnet
+- Sepolia Testnet
+- Scroll Mainnet
+- Base
+- BNB Smart Chain
+- Polygon
+- Sonic
+- Berachain
 
-<Note>For both the Legacy and EIP-1559 fee models, an additional `reserved_fee` is charged for submitting transaction calldata to L1 (Layer 1).</Note>
+In the EIP-1559 model, the transaction fee is calculated as: (base fee per gas + priority fee per gas) * gas limit
 
+| Parameter | Description |
+|-----------|-------------|
+| Base fee per gas | The minimum fee required to include a transaction in a block per gas unit used on the chain. It is dynamically adjusted based on network demand. |
+| Priority fee per gas | An additional fee paid to miners/validators to prioritize the transaction per gas unit used on the chain (also known as a tip). |
+| Gas limit | The maximum number of gas units you are willing to spend to execute the transaction or run the EVM. Different operations consume different amounts of gas. |
+
+<Note>For the Legacy and EIP-1559 fee models, an additional fee is charged for submitting transaction calldata to L1 (Layer 1). This fee is reflected in the API response under the `reserved_fee` field.</Note>
+
+You can customize the following values:
+- Max fee per gas: The maximum fee per gas unit you are willing to pay.
+- Max priority fee per gas: The maximum priority fee per gas unit you are willing to pay.
+- Gas limit
+
+Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details.
+
+#### Legacy model
+
+All EVM chains support the Legacy model.
+
+In the Legacy model, the transaction fee is calculated as: gas price * gas limit
+
+| Parameter | Description |
+|-----------|-------------|
+| Gas price | The gas price, in wei, representing the amount of ETH that must be paid to validators per gas unit used to process the transaction. |
+| Gas limit | The maximum number of gas units you are willing to spend to execute the transaction or run the EVM. Different operations consume different amounts of gas. |
+
+<Note>For the Legacy and EIP-1559 fee models, an additional fee is charged for submitting transaction calldata to L1 (Layer 1). This fee is reflected in the API response under the `reserved_fee` field.</Note>
+
+You can customize the following values:
+- Gas price
+- Gas limit
+
+Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details.
+
+### UTXO-based chains
+
+Currently supported chains include:
+- Bitcoin
+- Cardano
+- Nervos CKB
+- Handshake
+
+In the UTXO-based model, the transaction fee is calculated as: fee rate * transaction size
+
+| Parameter | Description |
+|-----------|-------------|
+| Fee rate | The fee rate, in sats/vByte, representing how many satoshis you are willing to pay per vByte of transaction data. |
+| Transaction size | The total size of a transaction on-chain in bytes, which impacts the total fee in UTXO models. |
+
+You can customize the following values:
+- Fee rate
+- Max fee amount
+
+Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details.
+
+### Solana
+
+On Solana, you can use either the native model or the Legacy model. In the native model, the transaction fee is calculated as: base fee + (CU price * CU limit)
+
+| Parameter | Description |
+|-----------|-------------|
+| Base fee | A fixed fee charged per signature (default 5,000 lamports per signature). |
+| CU price | The price paid per CU (compute unit) to increase transaction priority, in lamports. |
+| CU limit | The maximum number of compute units your transaction is allowed to consume. A higher limit may increase priority but also increases the fee. |
+
+You can customize the following values:
+- CU price
+- CU limit
+
+Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details.
+
+<Note>Solana and Filecoin both support two fee models: their native model and the Legacy model. When calling transaction API operations, you can choose which model to use. However, for Replace-By-Fee (RBF) transactions, you must use the same fee model as the original transaction.</Note>
+
+### Filecoin
+
+On Filecoin, you can use either the native model or the Legacy model. In the native model, the transaction fee is calculated as: min(gas fee cap, base fee + gas premium) * gas limit
+
+| Parameter | Description |
+|-----------|-------------|
+| Gas fee cap | The maximum gas price you are willing to pay per unit. |
+| Base fee | The minimum fee required for inclusion in a block. It is dynamically adjusted based on network congestion and is burned to reduce total FIL supply. |
+| Gas premium | A user-defined tip to incentivize miner prioritization. |
+| Gas limit | The maximum amount of gas your transaction can consume. |
+
+You can customize the following values:
+- Gas fee cap
+- Gas premium
+- Gas limit
+
+Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details.
+
+<Note>Solana and Filecoin both support two fee models: their native model and the Legacy model. When calling transaction API operations, you can choose which model to use. However, for Replace-By-Fee (RBF) transactions, you must use the same fee model as the original transaction.</Note>
+
+### Chains using the fixed model
+
+The following chains use a fixed fee model:
+- TRON
+- Algorand
+- Polkadot
+- Internet Computer and its ICRC assets (ckBTC, ckETH, ckUSDC, ckUSDT, DKP, GLDGOV, ICS, NICP, OC, OGY)
+- Stellar
+- Ripple
+- Tezos
+- Sui
+- Near
+
+In the fixed model, the transaction fee is a fixed amount. You can customize the parameter Max fee amount to cap the maximum fee for a transaction.
 
 ## Fee levels
 
@@ -48,7 +155,7 @@ Transaction fees are influenced by speed levels. Users can choose between slow, 
 
 Cobo supports three fee levels for Legacy, EIP-1559, UTXO, Solana and Filecoin models:
 
-- Slow: Lowest fee, longer confirmation time.
+- Slow: Lower fee for slower processing.
 - Recommended: Balanced fee and confirmation time.
 - Fast: Higher fee for quicker processing.
 

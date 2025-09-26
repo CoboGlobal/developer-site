@@ -6346,7 +6346,10 @@ components:
           example: '500'
     EstimatedFixedFee:
       type: object
-      description: The estimated transaction fee based on the fixed fee model.
+      description: |
+        The estimated transaction fee based on the fixed fee model.
+
+        For more details about the fixed fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
       title: Fixed
       required:
         - fee_type
@@ -6371,7 +6374,10 @@ components:
         - $ref: '#/components/schemas/FeeAmount'
     EstimatedEvmEip1559Fee:
       type: object
-      description: The estimated transaction fee based on the EIP-1559 fee model.
+      description: |
+        The estimated transaction fee based on the EIP-1559 fee model.
+
+        For more details about the EIP-1559 fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
       title: EVM_EIP_1559
       required:
         - fee_type
@@ -6413,7 +6419,10 @@ components:
             - $ref: '#/components/schemas/FeeReserved'
     EstimatedEvmLegacyFee:
       type: object
-      description: The estimated transaction fee based on the legacy fee model.
+      description: |
+        The estimated transaction fee based on the Legacy fee model.
+
+        For more details about the Legacy fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
       title: EVM_Legacy
       required:
         - fee_type
@@ -6452,7 +6461,10 @@ components:
             - $ref: '#/components/schemas/FeeReserved'
     EstimatedUtxoFee:
       type: object
-      description: The estimated transaction fee for UTXO-based chains.
+      description: |
+        The estimated transaction fee for UTXO-based chains.
+
+        For more details about the UTXO fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
       title: UTXO
       required:
         - fee_type
@@ -6488,7 +6500,10 @@ components:
             - $ref: '#/components/schemas/FeeAmount'
     EstimatedSOLFee:
       type: object
-      description: The estimated transaction fee based on the sol fee model.
+      description: |
+        The estimated transaction fee based on the SOL fee model.
+
+        For more details about the SOL fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
       title: SOL
       required:
         - fee_type
@@ -6527,7 +6542,10 @@ components:
             - $ref: '#/components/schemas/SOLBase'
     EstimatedFILFee:
       type: object
-      description: The estimated transaction fee based on the fil fee model.
+      description: |
+        The estimated transaction fee based on the FIL fee model.
+
+        For more details about the FIL fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
       title: FIL
       required:
         - fee_type
@@ -6613,7 +6631,7 @@ components:
       description: |
         The preset properties to limit transaction fee.
 
-        In the EIP-1559 fee model, the transaction fee is calculated by multiplying the gas price and the gas units used by the transaction. This can be expressed as: Transaction fee = gas price * gas units used. For more information about the EIP-1559 fee model, refer to [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
+        For more information about the EIP-1559 fee model, refer to [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         You can specify the maximum gas fee per gas unit, maximum priority fee per gas unit, and the gas limit to limit the gas price, priority fee per gas unit, gas units used in the transaction. 
 
@@ -6643,7 +6661,7 @@ components:
       description: |
         The preset properties to limit transaction fee.
 
-        In the legacy fee model, the transaction fee is calculated by multiplying the gas price by the gas units used by the transaction. This can be expressed as: Transaction fee =  (gas price * gas units used). For more information about the legacy fee model, refer to [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
+        For more information about the Legacy fee model, refer to [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         You can specify the gas limit to limit the gas units used in the transaction.
 
@@ -6672,7 +6690,7 @@ components:
       description: |
         The preset properties to limit transaction fee.
 
-        In the UTXO fee model, the transaction fee is calculated by multiplying the fee rate by the transaction size. This can be expressed as: Transaction fee = fee rate * transaction size. For more information about the UTXO fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
+        For more information about the UTXO fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         You can specify the maximum fee amount to limit the transaction fee. The transaction will fail if the transaction fee exceeds the specified maximum fee amount.
 
@@ -6700,7 +6718,7 @@ components:
       description: |
         The preset properties to limit transaction fee.
 
-        In the Solana fee model, the transaction fee is calculated by adding the base fee to the product of the compute unit limit and the compute unit price. This can be expressed as: Transaction fee = base fee + (CU limit * CU price). For more information about the Solana fee model, refer to [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
+        For more information about the SOL fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         You can specify CU price and CU limit to adjust the priority and resource allocation of your transaction.
 
@@ -6726,7 +6744,7 @@ components:
       description: |
         The preset properties to limit transaction fee.
 
-        In the Filecoin fee model, the transaction fee is calculated using the minimum of your specified gas fee cap and the sum of the base fee and gas premium, then multiplied by the gas limit. This can be expressed as: Transaction fee = min(gas fee cap, base fee + gas premium) * gas limit. For more information about the Filecoin fee model, refer to [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
+        For more information about the FIL fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         You can specify the gas fee cap, gas premium, and gas limit to control fee behavior and prioritization.
 
@@ -8103,6 +8121,8 @@ components:
       description: |
         The transaction fee actually charged by the chain that uses the fixed fee model. 
 
+        For more information about the fixed fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
+
         Switch between the tabs to display the properties for different transaction fee models.
       required:
         - fee_type
@@ -8130,7 +8150,7 @@ components:
       description: |
         The transaction fee actually charged by the chain that uses the EIP-1559 fee model. 
 
-        The transaction fee is calculated by multiplying the gas price by the used gas units. This can be expressed as: Transaction fee = gas price * used gas units.
+        For more information about the EIP-1559 fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         Switch between the tabs to display the properties for different transaction fee models.
       title: EVM_EIP_1559
@@ -8168,7 +8188,7 @@ components:
       description: |
         The transaction fee actually charged by the chain that uses the legacy fee model. 
 
-        The transaction fee is calculated by multiplying the gas price by the used gas. This can be expressed as: Transaction fee = gas price * used gas units.
+        For more information about the Legacy fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         Switch between the tabs to display the properties for different transaction fee models.
       title: EVM_Legacy
@@ -8202,7 +8222,7 @@ components:
       description: |
         The transaction fee actually charged by the chain that uses the UTXO fee model, such as Bitcoin.
 
-        The transaction fee is calculated by multiplying the fee rate by the transaction size. This can be expressed as: Transaction fee = fee rate * transaction size.
+        For more information about the UTXO fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         Switch between the tabs to display the properties for different transaction fee models.
       title: UTXO
@@ -8235,7 +8255,7 @@ components:
       description: |
         The transaction fee actually charged by the chain that uses the Solana fee model.
 
-        In this model, the fee is calculated as: fee = base fee + (compute unit price * compute unit limit) + rent (if applicable). For more details, refer to [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
+        For more details about the Solana fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         Switch between the tabs to display the properties for different transaction fee models.
       title: SOL
@@ -8265,7 +8285,7 @@ components:
       description: |
         The transaction fee actually charged by the chain that uses the Filecoin fee model.
 
-        In this model, the fee is calculated as: fee = base fee * gas used + gas premium * gas limit. For more details, refer to [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
+        For more details about the Filecoin fee model, see [Fee models](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees#fee-models).
 
         Switch between the tabs to display the properties for different transaction fee models.
       title: FIL
