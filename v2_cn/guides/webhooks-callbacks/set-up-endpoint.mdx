@@ -104,7 +104,7 @@ Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以
 ## ⚠️⚠️⚠️ 注意事项
 <Warning>
 - 在接收 Webhook 事件时，您的 Endpoint 应该首先快速返回正确的状态码，然后异步处理任何后续处理，以防止超时。
-- Webhook Endpoint 有时会多次接收到相同的事件。为了防止重复事件处理，请记录已处理的 Event ID，Transaction Hash 或 Transaction ID，并避免处理已记录的事件。
+- 由于 Webhook 事件存在重试机制，Webhook Endpoint 有时会多次接收到相同的事件。为了防止重复事件处理，请记录已处理的 Event ID，Transaction Hash 或 Transaction ID，并避免处理已记录的事件。
 </Warning>
 
 <Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>
