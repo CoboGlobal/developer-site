@@ -111,20 +111,6 @@ In order mode, order records created by Cobo to collect payments. Each pay-in or
 
 The unique key in cryptocurrency wallets used to control and manage digital assets. A private key is a randomly generated combination of numbers and letters used to prove asset ownership and authorize transactions. When making transfer transactions, the system uses the private key to generate digital signatures to verify transaction legitimacy. Once a private key is lost or stolen, you will permanently lose access to your assets.
 
-## S
-
-### Sweep
-
-The process of automatically or manually transferring funds from multiple receiving addresses to a sweep-to address. In the Cobo Payment Solution, when the balance on a receiving address exceeds the sweep threshold, the system automatically executes the sweep operation. Swept funds can be used for settlement or refund processing. You can also initiate a forced sweep through the API to manually sweep funds below the threshold to the sweep-to address.
-
-### Sweep Threshold 
-
-The minimum balance requirement that triggers automatic sweep operations.
-
-- When the balance on a receiving address equals or exceeds the sweep threshold: Cobo will automatically sweep the funds to the sweep address when you initiate settlement or refund. These funds are included in the available balance (`available_balance`).
-- When the balance on a receiving address is below the sweep threshold: Funds remain at the receiving address and are not included in the available balance, but only in the total balance (`total_balance`).
-
-You can query the difference between available balance and total balance through the API, and use the forced sweep feature to manually sweep funds below the threshold to make them available for settlement or refund.
 
 ## R
 

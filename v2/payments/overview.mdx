@@ -64,9 +64,7 @@ The support for payment business processes by various product forms is as follow
 The Cobo Payment Solution provides multiple business models to meet various actual business needs.
 
 - **Payment collection mode**: The same account can support both modes simultaneously
-  - **Order mode**: Each order is allocated a specified receiving address, users need to pay the specified amount within the validity period, suitable for scenarios requiring precise order tracking. Additionally, in order mode, you can choose independent addresses or recycling address pools, with support for setting independent address thresholds to achieve automatic allocation:
-    - **Recycling address pool**: Addresses are recycled and reused after order completion, with low fees, suitable for small payments
-    - **Independent address**: Addresses are not reused, with high security, suitable for large payment collections
+  - **Order mode**: Each order is allocated a receiving address, users need to pay the specified amount within the validity period, suitable for scenarios requiring precise order tracking. The receiving address will be reused after a waiting period following order expiration.
   - **Top-up mode**: Each user has a fixed receiving address and can top up any amount at any time, suitable for account balance management scenarios
 
 - **Settlement methods**: Support switching at any time, different methods can be chosen for each settlement

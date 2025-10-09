@@ -3670,6 +3670,7 @@ paths:
       operationId: get_settlement_info_by_ids
       summary: Get withdrawable balances
       description: |
+        <Warning>This operation has been deprecated.</Warning>
         This operation retrieves the balances of specified merchants or the developer.
       security:
         - CoboAuth: []
@@ -3919,6 +3920,7 @@ paths:
       operationId: create_forced_sweep_request
       summary: Create forced sweep
       description: |
+        <Warning>This operation has been deprecated.</Warning>
         This operation creates a forced sweep to transfer funds from addresses within a specified wallet to its designated sweep-to address.
       security:
         - CoboAuth: []
@@ -3939,6 +3941,7 @@ paths:
       operationId: list_forced_sweep_requests
       summary: List forced sweeps
       description: |
+        <Warning>This operation has been deprecated.</Warning>
         This operation retrieves the information of all forced sweeps.
       security:
         - CoboAuth: []
@@ -3988,6 +3991,7 @@ paths:
       operationId: list_payment_wallet_balances
       summary: List payment wallet balances
       description: |
+        <Warning>This operation has been deprecated.</Warning>
         This operation retrieves the balance information for specified payment wallets. The balance information is grouped by token. If you do not specify the `wallet_ids` parameter, the balance information for all payment wallets will be returned.
       security:
         - CoboAuth: []
@@ -13063,14 +13067,14 @@ components:
           format: uuid
           description: |
             The ID of the bank account where the settled funds will be deposited. This field is only applicable when `payout_channel` is set to `OffRamp`.
-            Call [List all bank accounts](/v2/api-references/payment/list-all-bank-accounts) to retrieve the IDs of registered bank accounts.
+            Call [List all bank accounts](https://www.cobo.com/developers/v2/api-references/payment/list-all-bank-accounts) to retrieve the IDs of registered bank accounts.
           example: 123e457-e89b-12d3-a456-426614174004
         crypto_address_id:
           type: string
           description: |
             The ID of the crypto address used for crypto withdrawal. Specify this field when `payout_channel` is set to `Crypto`.
 
-            Call [List all crypto addresses](/v2/api-references/payments/list-all-crypto-addresses) to retrieve registered crypto addresses.
+            Call [List crypto addresses](https://www.cobo.com/developers/v2/api-references/payment/list-crypto-addresses) to retrieve registered crypto addresses.
           example: addr_ethusdt_20250506T123456_ab12cd
         order_ids:
           type: array
@@ -13337,7 +13341,7 @@ components:
         - `Completed`: All refund transactions have been completed successfully.
         - `PartiallyCompleted`: Some refund transactions have been completed successfully, while others have failed.
         - `Failed`: All refund transactions have failed.
-        - `PendingConfirmation`: The refund order has been completed but the address to send is pending confirmation.
+        - `PendingConfirmation`: The refund order has been created but the address to send (`to_address`) has not been specified. Once you use the [Update refund order](https://www.cobo.com/developers/v2/api-references/payment/update-refund-order) operation to specify the address, the status will be updated to `Pending`.
     RefundType:
       type: string
       enum:
@@ -13513,19 +13517,19 @@ components:
           example: ETH_USDT
         available_amount:
           type: string
-          description: This field is no longer in use and can be ignored.
+          description: This field has been deprecated.
           example: '500.00'
         available_currency_balance:
           type: string
-          description: This field is no longer in use and can be ignored.
+          description: This field has been deprecated.
           example: '500.00'
         pending_amount:
           type: string
-          description: This field is no longer in use and can be ignored.
+          description: This field has been deprecated.
           example: '500.00'
         pending_currency_balance:
           type: string
-          description: This field is no longer in use and can be ignored.
+          description: This field has been deprecated.
           example: '500.00'
         settled_amount:
           type: string
@@ -13533,15 +13537,11 @@ components:
           example: '500.00'
         available_balance:
           type: string
-          description: 'The balance available for settlement or refund, in the specified cryptocurrency.'
+          description: This field has been deprecated.
           example: '500.00'
         total_balance:
           type: string
-          description: |
-
-            The total unsettled balance in the specified cryptocurrency, including:
-            - Available balance that can be settled immediately
-            - Amounts below the sweep threshold that require forced sweep before settlement
+          description: The total balance in the specified cryptocurrency.
           example: '500.00'
         acquiring_type:
           $ref: '#/components/schemas/AcquiringType'
@@ -13997,7 +13997,7 @@ components:
           example: '1.23'
         available_balance:
           type: string
-          description: 'The balance available for settlement or refund, in the specified cryptocurrency.'
+          description: Deprecated.
           example: '1.23'
     PspBalance:
       type: object
@@ -14025,7 +14025,7 @@ components:
           example: '1.23'
         available_balance:
           type: string
-          description: 'The balance available for settlement or refund, in the specified cryptocurrency.'
+          description: This field has been deprecated.
           example: '1.23'
     PayerBalanceByAddress:
       type: array
@@ -18457,9 +18457,7 @@ components:
               use_dedicated_address:
                 type: boolean
                 description: |
-                  Whether to allocate a dedicated address for this order. 
-                  - `true`: A dedicated address will be allocated for this order.
-                  - `false`: A shared address from the address pool will be used.
+                  This field has been deprecated.
                 example: false
     updatePaymentOrderBody:
       description: The request body to update a pay-in order.

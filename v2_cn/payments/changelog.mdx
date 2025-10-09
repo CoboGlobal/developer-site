@@ -5,11 +5,21 @@ lang: "zh-hans"
 
 本文记录了 Cobo 支付解决方案的所有重要更新。
 
+## 2025 年 10 月
+
+| 产品 | 变更说明 | 发布时间 |
+|------|----------|----------|
+| **Payment API** |为了简化结算流程，提升用户体验，我们对 Payment API 进行了优化，取消了可结算余额、强制归集等概念和相关操作：<br/><br/>**废弃的操作：**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- 可结算余额查询：[Get withdrawable balances](/v2/api-references/payment/get-withdrawable-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- 支付钱包余额查询：[List payment wallet balances](/v2/api-references/payment/list-payment-wallet-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- 强制归集操作：[Create forced sweep](/v2/api-references/payment/create-forced-sweep)、[List forced sweeps](/v2/api-references/payment/list-forced-sweeps)<br/><br/>**废弃的字段：**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List merchant balances](/v2/api-references/payment/list-merchant-balances) 和 [Get developer balance](/v2/api-references/payment/get-developer-balance) 中的 `available_balance` 字段<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 中的 `use_dedicated_address` 字段<br/><br/><Warning>上述操作及字段仅为兼容旧版本而保留，不建议在新实现中继续使用。</Warning> | 2025-10-01 |
+
+
+
 ## 2025 年 09 月
 
 | 产品 | 变更说明 | 发布时间 |
 |------|----------|----------|
+| **支付解决方案** | 新增支持 Solana 链。 | 2025-09-26 |
 | **Payment API** |订单模式新增支持 [payment.transaction.completed](/v2_cn/payments/status-and-events) 事件。| 2025-09-05 |
+
 
 ## 2025 年 08 月
 
