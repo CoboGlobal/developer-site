@@ -20,9 +20,6 @@ description: ""
    <img src="/v2_cn/images/payments/add-chain.png" className="screenshot_full_screen" alt="添加链"/>
    4. 在**管理**页面，查看可用链列表。如果您需要的链不在列表中，点击**添加公链**为您的团队添加更多公链。
 
-   <Info>要查看 Cobo 支持的完整代币和链列表，请参阅[支持的代币和链](https://manuals.cobo.com/cn/portal/supported-tokens-and-chains)。</Info>
-
-
 ### 开通 Cobo KYT
 Cobo KYT 是 Cobo 提供的 Know Your Transaction (KYT) 合规扫描服务，用于识别和防范可疑或高风险交易。
 
@@ -93,9 +90,9 @@ Cobo Portal 提供多种风控机制，旨在提高存储、管理和转移加�
    * **密钥类型**：选择**长期（需要静态 IP 地址）**，并设置 IP 白名单。
 
 
-### Payment Management App 设置
+### Payments App 设置
 
-安装 Payment Management App 时，**钱包范围**建议仅选择您实际需要访问的特定钱包类型，例如，如果您只使用全托管钱包，则仅选择**全托管钱包**。您可以在后续根据业务发展需要随时调整钱包范围，以确保 API 访问权限遵循最小权限原则。
+安装 Payments App 时，**钱包范围**建议仅选择您实际需要访问的特定钱包类型，例如，如果您只使用全托管钱包，则仅选择**全托管钱包**。您可以在后续根据业务发展需要随时调整钱包范围，以确保 API 访问权限遵循最小权限原则。
 
 
 ### MPC 钱包相关配置
@@ -148,9 +145,9 @@ Cobo Portal 提供多种风控机制，旨在提高存储、管理和转移加�
 
 #### 4. 其他持有者组相关配置
 
-- **持有者组配置**：除主控组外，您需要另外创建至少一个签名组和一个恢复组。强烈建议不要让同一私钥分片持有者（即具有相同 [TSS Node ID](https://manuals.cobo.com/cn/portal/glossary#tss-node)）同时属于不同类型的持有者组，例如，既属于主控组，又属于签名组。如果出现这种情况，请确保签名组不止一组。
-- **签名人类型**：由于结算之前可能会发生大量[归集](/v2_cn/payments/glossary#sweep（归集）)交易且交易时间集中，请确保在您的[主控组](https://manuals.cobo.com/cn/portal/mpc-wallets/ocw/holder-group-main-group)或[签名组](https://manuals.cobo.com/cn/portal/mpc-wallets/ocw/holder-group-signing-group)中设置一个[服务端签名人](/v2_cn/guides/mpc-wallets/server-co-signer/tss-node-overview)，以实现自动化签名。
-- **风控配置**：如果您选择使用 [TSS Node 回调](/v2_cn/guides/mpc-wallets/server-co-signer/callback-server-overview)作为您服务端签名人的风控机制，则需要将您钱包的归集地址写入该回调服务器的白名单。写入后，服务端签名人会在您结算或退款时自动签署来自归集地址的提币交易。详细的白名单配置方法请参考[风控最佳实践-自动归集实现](/v2_cn/guides/mpc-wallets/server-co-signer/risk-control-best-practices#自动归集实现)。您可以在钱包的**地址** → **归集至**标签页下查看某一钱包的归集地址。<img src="/v2_cn/images/payments/auto-sweep-address-list.png" className="screenshot_modal" alt="钱包归集地址列表" />
+- **持有者组配置**：除主控组外，您需要另外创建至少一个签名组和一个恢复组。强烈建议不要让同一私钥分片持有者同时属于不同类型的持有者组，例如，既属于主控组，又属于签名组。如果出现这种情况，请确保签名组不止一组。
+- **签名人类型**：由于结算之前可能会发生大量资金归集交易且交易时间集中，请确保在您的[主控组](https://manuals.cobo.com/cn/portal/mpc-wallets/ocw/holder-group-main-group)或[签名组](https://manuals.cobo.com/cn/portal/mpc-wallets/ocw/holder-group-signing-group)中设置一个[服务端签名人](/v2_cn/guides/mpc-wallets/server-co-signer/tss-node-overview)，以实现自动化签名。
+- **风控配置**：如果您选择使用 [TSS Node 回调](/v2_cn/guides/mpc-wallets/server-co-signer/callback-server-overview)作为您服务端签名人的风控机制，则需要将您钱包的归集地址写入该回调服务器的白名单。写入后，服务端签名人会在进行资金转出或退款时自动签署来自归集地址的提币交易。详细的白名单配置方法请参考[风控最佳实践-自动归集实现](/v2_cn/guides/mpc-wallets/server-co-signer/risk-control-best-practices#自动归集实现)。您可以在钱包的**地址** → **归集至**标签页下查看某一钱包的归集地址。<img src="/v2_cn/images/payments/auto-sweep-address-list.png" className="screenshot_modal" alt="钱包归集地址列表" />
 
 
 

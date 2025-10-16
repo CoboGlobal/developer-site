@@ -6,10 +6,10 @@ description: ""
 
 <Note>**Disclaimer: This article contains AI translations and should only be used as reference.** Contact Cobo's support team through [help@cobo.com](mailto:help@cobo.com) if you have any questions.</Note>
 
-Cobo's Checkout SDK provides ready-to-use payment collection frontend components. Through simple iframe integration, you can quickly develop a secure and reliable cryptocurrency payment collection page without directly calling the payment collection interfaces in [Payment API](/v2/api-references/payment) or handling complex UI design and payment logic, significantly reducing development costs and time investment.
+Cobo's Checkout SDK provides out-of-the-box payment frontend components. Through simple iFrame integration, you can quickly develop a secure and reliable cryptocurrency payment page without directly calling Payments API or dealing with tedious UI design and payment logic, significantly reducing development costs and time investment.
 
 ## Sample project
-Cobo provides a [sample project](https://github.com/CoboGlobal/cobo-checkout-sdk-demo) that demonstrates the basic integration process of the SDK. The sample project contains minimal implementation of parameter passing and authentication, and you can add your own business logic based on this sample code.
+Cobo provides a [sample project](https://github.com/CoboGlobal/cobo-checkout-sdk-demo) that demonstrates the basic integration process of the SDK. This sample project contains a minimal implementation of parameter passing and authentication, and you can add your own business logic based on this sample code.
 
 ## Product features
 
@@ -19,27 +19,27 @@ Checkout SDK interface display (mobile example):
 
 **User experience**
 
-- **Full device adaptation**: Native support for mobile, desktop, and tablet devices with built-in Chinese and English language switching.
-- **Multi-chain multi-currency support**: Covers mainstream stablecoins such as USDT and USDC, supporting mainstream blockchains like Ethereum, Arbitrum, Base, Solana, BSC, and Polygon.
-- **One-click payment**: Supports QR code payment and one-click address copying with real-time exchange rate display.
-- **Complete transaction monitoring**: Provides complete on-chain data tracking including transaction hash, address information, and block confirmation count.
-- **Smart error handling**: Covers abnormal situations such as payment failure, order expiration, and insufficient amounts, providing clear solutions.
+- **Full terminal adaptation**: Native support for mobile, desktop, and tablet devices, with built-in bilingual switching between Chinese and English.
+- **Multi-chain and multi-token support**: Covers mainstream stablecoins such as USDT and USDC, and supports mainstream blockchains such as Ethereum, Arbitrum, Base, Solana, BSC, and Polygon.
+- **One-click payment**: Supports QR code payment and one-click address copying, with real-time exchange rate display.
+- **Complete transaction monitoring**: Provides complete on-chain data tracking such as transaction hash, address information, and block confirmation count.
+- **Smart error handling**: Covers exception situations such as payment failure, order expiration, and insufficient amount, and provides clear solutions.
 
 **Technical features**
 
-- **Security isolation**: Embedded in your page through iframe with independent domain, ensuring security and stability of the payment environment.
-- **Bidirectional communication**: Based on postMessage mechanism for real-time, reliable bidirectional data transmission between iframe and parent page.
-- **Continuous maintenance**: Iframe is maintained and updated by the Cobo team, so you don't need to worry about underlying interface changes. You only need to adjust integration code when interface parameters have major changes (such as adding or removing parameters).
+- **Security isolation**: Embedded in your page through iFrame with an independent domain name to ensure the security and stability of the payment environment.
+- **Bidirectional communication**: Based on the postMessage mechanism, real-time and reliable bidirectional data transmission is achieved between iFrame and parent page.
+- **Continuous maintenance**: iFrame is maintained and updated by the Cobo team, and you do not need to pay attention to underlying API changes. Only when API parameters undergo major changes (such as adding or deleting parameters) do you need to adjust the integration code accordingly.
 
 ## Prerequisites
 
-Before SDK integration, make sure you have completed all steps mentioned in [Preparation](/v2/payments/preparation). During the preparation process, please ensure you have:
+Before integrating the SDK, please complete all the steps mentioned in [Preparation](/v2/payments/preparation). During the preparation process, please ensure that you have:
 
-   - Obtained API Key and API Secret
-   - Completed merchant registration and obtained merchant ID
-   - Configured webhook endpoint for receiving payment status notifications
+   - Obtained the API key and API secret
+   - Completed merchant registration and obtained the merchant ID
+   - Configured a webhook endpoint to receive payment status notifications
 
-Please properly save the above API Key, merchant ID, and other key information, which will be used in the subsequent SDK integration process.
+Please properly save the above API key, merchant ID, and other critical information, as this information will be used in the subsequent SDK integration process.
 
 ## Integration steps
 
@@ -48,10 +48,11 @@ Please properly save the above API Key, merchant ID, and other key information, 
 You need to complete SDK OAuth authentication through Access Token. The authentication process is as follows:
 
 1. Your application server calls [Get Access Token](/v2/api-references/oauth/get-access-token) to obtain Access Token and Refresh Token.
-2. Application frontend gets Access Token from backend and passes it to iframe to complete authentication.
-3. Access Token is valid for 1 hour. Before Access Token expires, the server needs to call [Refresh Access Token](/v2/api-references/oauth/refresh-access-token) and pass in the Refresh Token obtained in the above steps to get new Access Token and Refresh Token. If Token expires, iframe will send `TOKEN_EXPIRED` event to parent page.
+2. The application frontend obtains the Access Token from the backend and passes it into the iFrame to complete authentication.
+3. The Access Token is valid for 1 hour. Before the Access Token expires, the server needs to call [Refresh Access Token](/v2/api-references/oauth/refresh-access-token) and pass in the Refresh Token obtained in the above steps to obtain a new Access Token and Refresh Token. If the Token expires, the iFrame will send a `TOKEN_EXPIRED` event to the parent page.
 
-The following code snippet demonstrates an example of obtaining Access Token and Refresh Token using [Python SDK](/v2/developer-tools/quickstart-python):
+
+The following code snippet shows an example of using the [Python SDK](/v2/developer-tools/quickstart-python) to obtain Access Token and Refresh Token:
 
 ```py
 from cobo_waas2 import Configuration, ApiClient, OAuthApi, ExchangePermissionTokenRequest, RefreshPermissionTokenRequest
@@ -69,12 +70,15 @@ with ApiClient(configuration=configuration) as api_client:
         refresh_permission_token_request=RefreshPermissionTokenRequest(refresh_token=exchange_response.refresh_token))
 ```
 
-### Integrate iframe
 
-The following steps are explained using the [sample project](https://github.com/CoboGlobal/cobo-checkout-sdk-demo) as an example. You can refer to this sample project and integrate according to your own business logic.
+### Integrate iFrame
 
-1. Create iframe container. When the page loads, the browser will fetch and display the payment collection interface from the specified URL.
-<Note>You need to allow iframe access to clipboard through `allow="clipboard-write"` to support one-click copy function for receiving addresses.</Note>
+The following steps are explained using the [sample project](https://github.com/CoboGlobal/cobo-checkout-sdk-demo) as an example. You can refer to this sample project and integrate it according to your own business logic.
+
+
+
+1. Create an iframe container. When the page loads, the browser will obtain and display the payment interface from the specified URL.
+<Note>You need to allow the iFrame to access the clipboard through `allow="clipboard-write"` to support the one-click copy function for receiving addresses.</Note>
 
 ```html
 <iframe
@@ -85,7 +89,7 @@ The following steps are explained using the [sample project](https://github.com/
   frameborder="0"
   allow="clipboard-write"
 ></iframe>
-```
+``` 
 
 Configure iframe source URL:
 
@@ -96,7 +100,7 @@ const iframeUrl = 'https://payout-checkout.dev.cobo.com';
 // const iframeUrl = 'https://payout-checkout.cobo.com';
 ```
 
-2. Initialize iframe in `src/views/CheckoutDemo.vue` and pass in merchant ID, amount, currency and other order information. For specific field explanations, refer to [Create Pay-in Order](/v2/api-references/payment/create-pay-in-order) interface documentation.
+2. Initialize the iFrame in `src/views/CheckoutDemo.vue` and pass in order information such as merchant ID, amount, and currency. For specific field explanations, refer to the [Create Pay-in Order](/v2/api-references/payment/create-pay-in-order) API documentation.
 
 ```ts
 // Initialize iFrame
@@ -131,7 +135,7 @@ const initializeCheckout = async () => {
   }
 ```
 
-3. Implement bidirectional communication between your page and iframe in `src/services/checkoutIframeService.ts`. You need to listen to events from iframe in your page and handle them according to event types.
+3. Implement the bidirectional communication process between your page and the iFrame in `src/services/checkoutIframeService.ts`. You need to listen to events from the iFrame on your page and handle them according to the event type.
 
 ```ts
 public initialize(iframeElement: HTMLIFrameElement, config: Partial<ICheckoutInfo>): void {
@@ -145,7 +149,7 @@ public initialize(iframeElement: HTMLIFrameElement, config: Partial<ICheckoutInf
 }
 ```
 
-4. After iframe completes initialization, it will send `LOADED` event to your page.
+4. After the iFrame completes initialization, it will send a `LOADED` event to your page.
 
 ```ts
 private handleIframeMessage(event: MessageEvent): void {
@@ -160,7 +164,7 @@ private handleIframeMessage(event: MessageEvent): void {
 }
 ```
 
-After your page receives the `LOADED` event, you need to call the backend service to get the Access Token, then send the `GET_TOKEN` event to the iframe, and pass the Access Token as data to the iframe. At this point, the iframe initialization process is complete.
+  After your page receives the `LOADED` event, it needs to call the backend service to obtain the Access Token, then send a `GET_TOKEN` event to the iFrame, and pass the Access Token as data into the iFrame. At this point, the iFrame initialization process is complete.
 
 ```ts
   public async sendAccessToken(): Promise<void> {
@@ -189,25 +193,7 @@ After your page receives the `LOADED` event, you need to call the backend servic
   }
 ```
 
-### Order status monitoring
 
-After users create an order on the payment collection page, Cobo will use polling to detect all transactions deposited to the receiving address.
 
-   * You can subscribe to webhook events to get real-time update notifications of order status and transaction status. Please refer to [Webhook reference](/v2/payments/status-and-events) to understand the trigger time and returned data structure of each event.
-   * You can also query individual payment order status by calling [Get pay-in order information](/v2/api-references/payment/get-pay-in-order-information), or query all order statuses by calling [List all pay-in orders](/v2/api-references/payment/list-all-pay-in-orders).
+<Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>
 
-## Fund settlement
-
-After payment collection is completed, you can flexibly manage fund settlement through the Payment API or Payment Management App. For each settlement, you can choose either of the following methods:
-
-- Cryptocurrency withdrawal: Directly transfer cryptocurrency to a specified external wallet address for fast fund extraction
-- Fiat currency withdrawal: Convert cryptocurrency to fiat currency through OTC channels and transfer to a specified bank account
-
-Funds from deposit mode and order mode will be settled separately. During settlement, you need to specify the source of settlement funds, and you can choose to settle merchant balance or developer balance.
-
-- [Order mode settlement process](/v2/payments/settle-orders)
-- [Amount definitions and balance calculation explanation](/v2/payments/amounts-and-balances)
-
-For complete implementation details and more event handling examples, please refer to the [sample project](https://github.com/CoboGlobal/cobo-checkout-sdk-demo).
-
-<Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip> 

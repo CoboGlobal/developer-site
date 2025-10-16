@@ -4,7 +4,7 @@ lang: "zh-hans"
 description: ""
 ---
 
-Cobo 的 Checkout SDK 提供开箱即用的收单前端组件。通过简单的 iFrame 集成，您可以快速开发一个安全可靠的加密货币收单页面，无需直接调用 [Payment API](/v2/api-references/payment) 中的收单接口或处理繁琐的 UI 设计和支付逻辑，从而显著降低开发成本和时间投入。
+Cobo 的 Checkout SDK 提供开箱即用的支付前端组件。通过简单的 iFrame 集成，您可以快速开发一个安全可靠的加密货币支付页面，无需直接调用 Payments API 或处理繁琐的 UI 设计和支付逻辑，从而显著降低开发成本和时间投入。
 
 ## 示例项目
 Cobo 提供了一个[示例项目](https://github.com/CoboGlobal/cobo-checkout-sdk-demo)，展示了 SDK 的基本集成流程。该示例项目包含了参数传递和认证的最小实现，您可以基于此示例代码添加自己的业务逻辑。
@@ -75,7 +75,7 @@ with ApiClient(configuration=configuration) as api_client:
 
 
 
-1. 创建 iframe 容器。当页面加载时，浏览器会从指定的 URL 获取并显示收单界面。
+1. 创建 iframe 容器。当页面加载时，浏览器会从指定的 URL 获取并显示支付界面。
 <Note>您需要通过 `allow="clipboard-write"` 允许 iFrame 访问剪贴板，以支持收币地址一键复制功能。</Note>
 
 ```html
@@ -191,25 +191,6 @@ private handleIframeMessage(event: MessageEvent): void {
   }
 ```
 
-### 订单状态监控
-
-用户在收单页面创建订单后，Cobo 会通过轮询检测存入收币地址的所有交易。
-
-   * 您可以订阅 Webhook 事件，以获取订单状态和交易状态的实时更新通知。请参考 [Webhook reference](/v2_cn/payments/status-and-events) 了解每个事件的触发时间和返回的数据结构。  
-   * 您也可以通过调用 [Get pay-in order information](/v2/api-references/payment/get-pay-in-order-information) 查询单个支付订单状态，或调用 [List all pay-in orders](/v2/api-references/payment/list-all-pay-in-orders) 查询所有订单状态。
-
-
-## 资金结算
-
-收单完成后，您可以通过 Payment API 或 Payment Management App 灵活管理资金结算。每次结算时可选择以下任一方式：
-
-- 加密货币提现：直接将加密货币转账到指定外部钱包地址，实现快速资金提取
-- 法币出金：通过 OTC 渠道将加密货币兑换成法币后转入指定银行账户
-
-充值模式和订单模式的资金将分别进行结算。结算时，您需要指定结算的资金来源，可以选择结算商家余额或开发者余额。
-
-- [订单模式结算流程](/v2_cn/payments/settle-orders)
-- [金额定义与余额计算说明](/v2_cn/payments/amounts-and-balances)
 
 
 <Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

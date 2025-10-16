@@ -1,52 +1,216 @@
 ---
-title: "金额定义与余额计算说明"
+title: "资金分配与余额管理"
 lang: "zh-hans"
 ---
-本文介绍收单、退款和结算过程中各类金额的定义以及余额计算公式。
+Cobo 为您维护两类资金的收支记录：**商户资金**与**开发者资金**。**商户**代表实际收款的业务主体，**开发者**则代表提供收款服务的主体（即您）。所有的收款都需要指定归属的商户，并通过开发者费用/费率确定开发者应获得的收入分成。
 
-## 商户资金和开发者资金
+通过创建商户、设置开发者费用/费率，您可以实现自动化的资金结算和收入分成：
 
-Cobo 为您分别维护了两类资金的收支记录：商户资金与开发者资金。
+- 如果您直接服务于付款方：
+  - 通常情况下仅需要创建一个商户（使用系统默认创建的商户即可），且无需配置开发者费率。
+  - 如果您想要为不同的业务线单独管理资金，则可以为每个业务线创建一个商户。
+- 如果您是服务于多个下游商户的平台型机构，则可以为每个下游商户在系统中创建一个商户，并通过设置开发者费用/费率来实现自动化的商家结算与平台收入分配。
 
-* 商户资金：指归属于各个商户的资金，主要来源为充值金额和订单实收金额中归属于商户的部分。  
-* 开发者资金：指归属于开发者的资金，主要包括以下来源：  
-  * 充值金额和订单实收金额中归属于开发者的部分；  
-  * 退款过程中向商户收取的开发者费用；
-  * 从外部钱包转入 Cobo Portal 的资金。
+更多关于商户管理的使用场景和说明，可以参考[商户管理](/v2_cn/payments/merchants)。
 
-充值模式下，Cobo 将根据您在创建商户时设置的开发者费率（`developer_fee_rate`），自动将每一笔入账的充值金额划分为商户资金和开发者资金。例如，当您设置的开发者费率为 1% 时，Cobo 会将 100 USDT 的充值金额划分为 99 USDT 的商户资金和 1 USDT 的开发者资金。
 
-订单模式下，Cobo 将根据创建订单时您传入的商品订单金额（`order_amount）`与开发者费用（`fee_amount）`之间的比例，自动将订单实收金额划分为商户实收金额和开发者费用。例如，当 `order_amount` 为 99 USDT，`fee_amount` 为 1 USDT 时，Cobo 会将 100 USDT 的订单实收金额划分为 99 USDT 的商户实收金额和 1 USDT 的开发者费用。
+## 资金分配概览
 
-<Note>在[多付和少付](/v2_cn/payments/handle-abnormality-order#异常支付情况说明)的情况下，Cobo 会将相关资金按照上述比例划分为商户资金和开发者资金。晚付资金将全部归为开发者资金。</Note>
+下图展示了支付过程中资金的整体分配和流向（示例数据）：
 
-## 商户余额
+```mermaid
+%%{init: {'themeVariables': { 'fontSize': '12px'}}}%%
+graph TD
+    A[付款方 A<br/>100 USDT] --> B[商家 A<br/>费率：2%]
+    C[付款方 B<br/>100 USDT] --> D[商家 B<br/>费率：1.5%]
+    E[付款方 C<br/>100 USDT] --> F[商家 C<br/>费率：1%]
+    
+    B --> G[商家 A 余额<br/>98 USDT]
+    B --> H[开发者费用<br/>2 USDT]
+    
+    D --> I[商家 B 余额<br/>98.5 USDT]
+    D --> J[开发者费用<br/>1.5 USDT]
+    
+    F --> K[商家 C 余额<br/>99 USDT]
+    F --> L[开发者费用<br/>1 USDT]
+    
+    H --> M[开发者余额<br/>4.5 USDT]
+    J --> M
+    L --> M
+    
+    style A fill:#e3f2fd
+    style C fill:#e3f2fd
+    style E fill:#e3f2fd
+    style B fill:#f3e5f5
+    style D fill:#f3e5f5
+    style F fill:#f3e5f5
+    style G fill:#c8e6c9
+    style I fill:#c8e6c9
+    style K fill:#c8e6c9
+    style H fill:#fff3e0
+    style J fill:#fff3e0
+    style L fill:#fff3e0
+    style M fill:#fff3e0
+```
 
-**商户余额**指某一商户在特定时刻可用于发起结算或退款的资金总额。Cobo 会分别计算充值模式和订单模式下的商户余额，该余额可以通过 [List merchant balances](/v2/api-references/payment/list-merchant-balances) 进行查询。
 
-该金额的计算公式为： **商户实收总金额** \- **商户已结算金额** \- **商户已退款金额** \- **商户审查中/隔离/冻结金额**。
+## 资金分配规则
 
-* **商户实收总金额**：充值模式下，该金额为该商户收到的所有充值中的商户资金总额；订单模式下，该金额为该商户所有支付订单的实收金额中的商户资金总额。
-* **商户已结算金额**：已完成结算的商户资金总额。  
-* **商户已退款金额**：已退还给用户的商户资金总额。  
-* **审查中/已隔离/已冻结金额**：已计入实收金额，但未通过合规扫描，当前处于人工审查、已被隔离或已被冻结状态的商户资金总额。
+在不同的收款模式下，以及退款场景中，开发者费用的收取方式和计算规则各有不同。以下将详细介绍各种场景下的资金分配机制。
 
-## 开发者余额
 
-**开发者余额**指开发者在特定时刻可用于发起结算或退款的资金总额。Cobo 会分别计算充值模式和订单模式下的开发者余额，该余额可以通过 [Get developer balance](/v2/api-references/payment/get-developer-balance) 进行查询。
+### 充值模式
 
-**开发者余额**包含以下资金来源：
+在充值模式下，资金分配基于创建商户时设置的开发者费率（`developer_fee_rate`）。开发者费率决定每笔充值中开发者获得的比例。
 
-* **开发者费用**：充值模式下，该金额为该商户收到的所有充值中的开发者费用；订单模式下，该金额为该商户所有支付订单的实收金额中的开发者费用。
-* **退款手续费**：您在退款订单中向商户收取的开发者费用。
-* 您从外部钱包转入 Cobo Portal 的资金
+**示例**：当开发者费率为 1% 时，100 USDT 充值将分配为商户资金 99 USDT 和开发者费用 1 USDT。
 
-在计算过程中将扣除以下金额：
+```mermaid
+%%{init: {'themeVariables': { 'fontSize': '12px'}}}%%
+graph TD
+    A[开发者费率：1%] --> B[付款方充值<br/>100 USDT]
+    
+    B --> C[商户实收金额<br/>99 USDT]
+    B --> D[开发者费用<br/>1 USDT]
 
-* **已结算金额**：已完成结算的开发者资金总额  
-* **已退款金额**：已退还给用户的开发者资金总额
-* 转出至外部钱包的资金：您从 Cobo Portal 转出至外部钱包的资金  
-* **审查中/已隔离/已冻结金额**：已计入实收金额，但未通过合规扫描，当前处于人工审查、已被隔离或已被冻结状态的开发者资金
+    C --> E[商户余额增加<br/>99 USDT]
+    D --> F[开发者余额增加<br/>1 USDT]
 
+    
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style C fill:#c8e6c9
+    style D fill:#fff3e0
+    style E fill:#c8e6c9
+    style F fill:#fff3e0
+```
+
+
+
+### 订单模式
+
+在订单模式下，资金分配基于创建订单时设置的金额参数。开发者费用（`fee_amount`）与商品订单金额（`order_amount`）之间的比例决定每笔订单中开发者获得的比例。
+
+**示例**：当商品订单金额为 99 USDT，开发者费用为 1 USDT 时，100 USDT 的订单实收金额将分配为商户实收金额 99 USDT 和开发者费用 1 USDT：
+```mermaid
+%%{init: {'themeVariables': { 'fontSize': '12px'}}}%%
+graph TD
+    A[商品订单金额 99 USDT<br/>开发者费用 1 USDT] --> B[付款方支付<br/>100 USDT]
+    
+    B --> C[商户实收金额<br/>99 USDT]
+    B --> D[开发者费用<br/>1 USDT]
+    
+    C --> E[商户余额增加<br/>99 USDT]
+    D --> F[开发者余额增加<br/>1 USDT]
+    
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style C fill:#c8e6c9
+    style D fill:#fff3e0
+    style E fill:#c8e6c9
+    style F fill:#fff3e0
+```
+
+
+
+<Note>
+特殊情况处理：
+
+- 多付/少付：按上述相同比例分配资金
+- 晚付：资金全部记为开发者费用
+</Note>
+
+### 退款
+
+退款时的资金分配基于创建退款订单时设定的金额参数。例如，当退款金额（`payable_amount`）为 100 USDT，开发者费用（`merchant_fee_amount`）为 1 USDT 时，100 USDT 的退款金额将分配 1 USDT 作为开发者费用，付款方实际收到 99 USDT。退款金额的来源可以是商户余额或开发者余额，具体操作方式为：
+- 如果退款金额来源为商户余额，则系统会从商户余额划转 1 USDT 至开发者余额，将 99 USDT 从商户余额中扣除，并转帐给付款方；
+- 如果退款金额来源为开发者余额，则系统会从开发者余额扣除 99 USDT，转账给付款方，并保留 1 USDT 作为开发者费用。
+
+
+下图展示了退款过程中资金的分配和流向（示例数据）：
+
+```mermaid
+%%{init: {'themeVariables': { 'fontSize': '12px'}}}%%
+graph TD
+    E[创建退款订单<br/>退款金额: 100 USDT<br/>开发者费用: 1 USDT] --> F[选择退款来源]
+    
+    F -->|从商户余额退款| G[从商户余额扣除 100 USDT]
+    F -->|从开发者余额退款| H[从开发者余额扣除 99 USDT]
+    
+    G --> J[付款方实际收到<br/>99 USDT]
+    G --> K[开发者余额增加<br/>1 USDT]
+    
+    H --> L[向付款方转账<br/>99 USDT]
+    
+    style E fill:#e3f2fd
+    style F fill:#f3e5f5
+    style G fill:#c8e6c9
+    style H fill:#fff3e0
+    style J fill:#c8e6c9
+    style K fill:#fff3e0
+    style L fill:#c8e6c9
+```
+
+
+## 余额
+
+下图展示了商户余额和开发者余额的主要来源和去向：
+
+<Info>审查中/隔离/冻结金额将不被计入商户实收金额或开发者余额。</Info>
+
+```mermaid
+%%{init: {'themeVariables': { 'fontSize': '12px'}}}%%
+graph TD
+    A[付款]
+    
+    A --> L[审查中、隔离<br>或冻结金额]
+    A --> D[商户实收金额]
+    A --> E[开发者费用]
+    
+    D --> F[商户余额]
+    E --> G[开发者余额]
+    
+    F --> H[资金转出]
+    F --> I[退款]
+    
+    G --> J[资金转出]
+    G --> K[退款]
+    
+    M[退款收取的开发者费用] --> E
+    P[外部钱包转入] --> G
+    
+    style A fill:#e1f5fe
+    style F fill:#c8e6c9
+    style G fill:#fff3e0
+    style H fill:#c8e6c9
+    style I fill:#c8e6c9
+    style J fill:#fff3e0
+    style K fill:#fff3e0
+    style M fill:#e1f5fe
+    style L fill:#ffebee
+    style P fill:#e1f5fe
+```
+
+
+### 商户余额
+
+**商户余额**指某一商户在特定时刻可提取或退款的资金总额。计算公式：
+
+`商户余额 = 商户实收总金额 - 已提取的商户资金 - 已用于退款的商户资金`
+
+
+该余额可以通过 Payments App 的**余额**模块或调用 [List merchant balances](/v2/api-references/payment/list-merchant-balances) 进行查询。
+
+
+### 开发者余额
+
+**开发者余额**指开发者在特定时刻可提取或退款的资金总额。计算公式：
+
+
+`开发者余额 = 开发者费用总额 - 已提取的开发者资金 - 已用于退款的开发者资金`
+
+<Info>开发者费用总额中，除了各类收款模式中的开发者费用，还包括从外部钱包转入的资金。</Info>
+
+该余额可以通过 Payments App 的**余额**模块或调用 [Get developer balance](/v2/api-references/payment/get-developer-balance) 进行查询。
 
 <Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

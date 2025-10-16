@@ -3,7 +3,7 @@ title: "事件与状态"
 lang: "zh-hans"
 description: ""
 ---
-本文介绍收单、退款和结算过程中涉及到的所有 Webhook 事件以及状态变更流程。
+本文介绍收款、退款和出金/转账过程中涉及到的所有 Webhook 事件以及状态变更流程。
 
 ## Webhook 事件
 
@@ -16,7 +16,7 @@ description: ""
 | `payment.transaction.held` | 充币交易正在接受合规扫描。订单模式下，即使订单已达到终态（`Underpaid`、`Expired` 或 `Completed`），该事件仍会被触发。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
 | `payment.transaction.completed` | 充币交易通过合规扫描，资金已成功入账并计入实收金额。| [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
 | `payment.refund.status.updated` | [**仅适用于订单模式**]退款订单状态发生变更。退款订单状态包括：<br></br>- `Pending`：已创建退款订单，但尚未发起交易。<br></br>- `Processing`: 至少有一笔退款交易正在进行中。<br></br>- `Completed`: 所有退款交易均已完成。<br></br>- `PartiallyCompleted`: 部分退款交易已完成，部分退款交易失败。<br></br>- `Failed`: 所有退款交易均失败。 | [PaymentRefund](/v2_cn/payments/status-and-events#paymentrefund) |
-| `payment.settlement.status.updated` | 结算请求状态变更。结算请求状态包括：<br></br>- `Pending`: 已创建结算请求，等待处理。<br></br>- `Processing`: 结算请求处理中，至少有一笔结算正在进行。<br></br>- `Completed`: 所有结算已完成。<br></br>- `PartiallyCompleted`: 部分结算已完成，部分结算失败。<br></br>- `Failed`: 所有结算均失败。| [PaymentSettlement](/v2_cn/payments/status-and-events#paymentsettlement) |
+| `payment.settlement.status.updated` | 出金/转账请求状态变更。出金/转账请求状态包括：<br></br>- `Pending`: 已创建出金/转账请求，等待处理。<br></br>- `Processing`: 出金/转账请求处理中，至少有一笔出金/转账正在进行。<br></br>- `Completed`: 所有出金/转账已完成。<br></br>- `PartiallyCompleted`: 部分出金/转账已完成，部分出金/转账失败。<br></br>- `Failed`: 所有出金/转账均失败。| [PaymentSettlement](/v2_cn/payments/status-and-events#paymentsettlement) |
 
 ## 事件详情
 
@@ -27,33 +27,26 @@ description: ""
 
 该数据结构包含以下字段：
 
-- `custom_payer_id`: 开发者系统中用于跟踪和识别付款人的唯一标识符
+- `custom_payer_id`: 您的系统中用于跟踪和识别付款人的唯一标识符
 - `payer_id`: Cobo 分配的用于跟踪和识别付款人的唯一标识符
 - `chain`: 链 ID，例如 "ETH"
-- `previous_address`: 付款人之前使用的充值地址
-- `updated_address`: 付款人新分配的充值地址
+- `previous_address`: 旧地址
+- `updated_address`: 新地址
 
 ### PaymentTransaction
 
 该数据结构包含了 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 响应参数中的所有字段，此外还包含以下字段：
 
-  - `acquiring_type`: 收单类型。`Order` 表示订单模式，`TopUp` 表示充值模式。
+  - `acquiring_type`: 收款类型。`Order` 表示订单模式，`TopUp` 表示充值模式。
   - `order_id`: 支付订单 ID。
-  - `psp_order_code`: 开发者系统中用于标识该订单的唯一标识符。
+  - `psp_order_code`: 您的系统中用于标识该订单的唯一标识符。
   - `payer_id`: Cobo 分配的用于跟踪和识别付款人的唯一标识符。
-  - `custom_payer_id`: 开发者系统中用于跟踪和识别付款人的唯一标识符。
+  - `custom_payer_id`: 您的系统中用于跟踪和识别付款人的唯一标识符。
 
 ### PaymentRefund
 参考 [Get refund order information](/v2/api-references/payment/get-refund-order-information) 的响应参数说明
 
 ### PaymentSettlement
 参考 [Get settlement request information](/v2/api-references/payment/get-settlement-request-information) 的响应参数说明
-
-
-
-## 状态流转
-下图展示了支付订单的状态流转以及各类 Webhook 事件的触发时间。  
-<img src="/v2_cn/images/payments/order_status.png" className="diagram" alt="Cobo 支付解决方案的整体业务流程"></img>
-
 
 <Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

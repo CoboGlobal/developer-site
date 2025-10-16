@@ -5,58 +5,69 @@ lang: "en"
 
 <Note>**Disclaimer: This article contains AI translations and should only be used as reference.** Contact Cobo's support team through [help@cobo.com](mailto:help@cobo.com) if you have any questions.</Note>
 
-This document records all important updates to the Cobo Payment Solution.
+This document records all major updates to the Cobo payments solution.
 
 ## October 2025
 
-| Product | Change Description | Release Date |
+| Product | Change description | Release date |
 |------|----------|----------|
-| **Payment API** |To simplify the settlement process and improve user experience, we have optimized the Payment API by removing the concepts of available balance, forced sweep, and related operations:<br/><br/>**Deprecated operations:**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- Withdrawable balance query: [Get withdrawable balances](/v2/api-references/payment/get-withdrawable-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Payment wallet balance query: [List payment wallet balances](/v2/api-references/payment/list-payment-wallet-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Forced sweep operations: [Create forced sweep](/v2/api-references/payment/create-forced-sweep), [List forced sweeps](/v2/api-references/payment/list-forced-sweeps)<br/><br/>**Deprecated fields:**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- `available_balance` field in [List merchant balances](/v2/api-references/payment/list-merchant-balances) and [Get developer balance](/v2/api-references/payment/get-developer-balance)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- `use_dedicated_address` field in [Create pay-in order](/v2/api-references/payment/create-pay-in-order)<br/><br/><Warning>The above operations and fields are maintained for backward compatibility only and should not be used in new implementations.</Warning> | 2025-10-01 |  
+| **Payments API** |To simplify the settlement process and improve user experience, we have optimized Payments API by removing concepts and related operations such as withdrawable balance and forced sweep:<br/><br/>**Deprecated operations:**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- Withdrawable balance query: [Get withdrawable balances](/v2/api-references/payment/get-withdrawable-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Payment wallet balance query: [List payment wallet balances](/v2/api-references/payment/list-payment-wallet-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Forced sweep operation: [Create forced sweep](/v2/api-references/payment/create-forced-sweep), [List forced sweeps](/v2/api-references/payment/list-forced-sweeps)<br/><br/>**Deprecated fields:**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- `available_balance` field in [List merchant balances](/v2/api-references/payment/list-merchant-balances) and [Get developer balance](/v2/api-references/payment/get-developer-balance)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- `use_dedicated_address` field in [Create pay-in order](/v2/api-references/payment/create-pay-in-order)<br/><br/><Warning>The above operations and fields are retained only for compatibility with older versions and should not be used in new implementations.</Warning> | 2025-10-01 |
+
+
 
 ## September 2025
 
-| Product | Change Description | Release Date |
+| Product | Change description | Release date |
 |------|----------|----------|
-| **Payments Solution** | Added support for the Solana chain. | 2025-09-26 |
-| **Payment API** | Added support for [payment.transaction.completed](/v2/payments/status-and-events) event in order mode. | 2025-09-05 |
+| **Payments solution** | Added support for Solana chain. | 2025-09-26 |
+| **Payments API** |Order mode now supports [payment.transaction.completed](/v2/payments/status-and-events) event.| 2025-09-05 |
+
 
 ## August 2025
 
-| Product | Change Description | Release Date |
+| Product | Change description | Release date |
 |------|----------|----------|
-| **Payment API** |API SDK v1.22.0 release. Changes include:<br/><br/>- **Breaking changes**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- The `settlements.token_id` parameter in the request body of [Create settlement request](/v2/api-references/payment/create-settlement-request) is now required. Also, the `settlements.amount` field now only represents the amount of cryptocurrency to be settled, not the amount of fiat currency.<br/><br/>- Added balance operations:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List merchant balances](/v2/api-references/payment/list-merchant-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get developer balance](/v2/api-references/payment/get-developer-balance)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List payment wallet balances](/v2/api-references/payment/list-payment-wallet-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get payer balance](/v2/api-references/payment/get-payer-balance)| 2025-08-28 |
-| **Payment API** |API SDK v1.21.0 release. Changes include:<br/><br/>- Added settlement-related operations:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List all settlement details](/v2/api-references/payment/list-all-settlement-details): For querying settlement details.<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Create crypto address](/v2/api-references/payment/create-crypto-address): For registering cryptocurrency withdrawal addresses<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Delete crypto address](/v2/api-references/payment/delete-crypto-address): For unregistering cryptocurrency withdrawal addresses<br/><br/>- Added refund-related operations:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Update refund order](/v2/api-references/payment/update-refund-order): For updating the receiving address of refund orders.<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Cancel refund order](/v2/api-references/payment/cancel-refund-order): For canceling refund orders| 2025-08-13 |
-| **Checkout SDK** | - Added support for payments via third-party wallets, supporting major wallets on EVM and Tron chains.<br/>- Added support for specifying order amounts directly in cryptocurrency through the `cryptoAmount` parameter.| 2025-08-11 |
+| **Payments API** |API SDK v1.22.0 released. Changes as follows:<br/><br/>- **Breaking change**<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;-The ​`settlements.token_id` field in the [Create settlement request](/v2/api-references/payment/create-settlement-request) request body is changed from optional to required. At the same time, the ​`settlements.amount` field only represents the cryptocurrency amount to be settled and no longer represents the fiat currency amount.<br/><br/>- Added balance-related operations:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List merchant balances](/v2/api-references/payment/list-merchant-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get developer balance](/v2/api-references/payment/get-developer-balance)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List payment wallet balances](/v2/api-references/payment/list-payment-wallet-balances)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get payer balance](/v2/api-references/payment/get-payer-balance)| 2025-08-28 |
+| **Payments API** |API SDK v1.21.0 released. Changes as follows:<br/><br/>- Added settlement-related operations:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List all settlement details](/v2/api-references/payment/list-all-settlement-details): Used to query settlement details.<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Create crypto address](/v2/api-references/payment/create-crypto-address): Used to register crypto payout addresses<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Delete crypto address](/v2/api-references/payment/delete-crypto-address): Used to cancel registration of crypto payout addresses<br/><br/>- Added refund-related operations:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Update refund order](/v2/api-references/payment/update-refund-order): Used to update the receiving address of refund orders.<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Cancel refund order](/v2/api-references/payment/cancel-refund-order): Used to cancel refund orders| 2025-08-13 |
+| **Checkout SDK** | - Added support for payment through third-party wallets, supporting mainstream wallets on EVM and Tron chains.<br/>- Added support for directly specifying order amount in cryptocurrency through the `cryptoAmount` parameter.| 2025-08-11 |
+
 
 ## July 2025
 
-| Product | Change Description | Release Date |
+| Product | Change description | Release date |
 |------|----------|----------|
-| **Checkout SDK** | Added support for customizing the "Powered by xxx" footer text at the bottom of the checkout page through the `developerName` parameter.| 2025-07-30 |
-| **Payment API** |API SDK v1.20.0 release. Changes include:<br/><br/>- [Create pay-in order](/v2/api-references/payment/create-pay-in-order) added new feature: supports specifying order amounts directly in cryptocurrency. When the `currency` field is empty, `order_amount` and `fee_amount` will be denominated in the cryptocurrency specified by `token_id`, rather than fiat currency.<br/><br/>- Added [Update top-up address](/v2/api-references/payment/update-top-up-address) operation for updating top-up addresses.<br/><br/> - Added forced sweep related operations:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Create forced sweep](/v2/api-references/payment/create-forced-sweep)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List forced sweeps](/v2/api-references/payment/list-forced-sweeps)<br/><br/>- [Get withdrawable balances](/v2/api-references/payment/get-withdrawable-balances) added `available_balance` and `total_balance` fields, representing available balance and total balance respectively.<br/><br/>- Added `payment.address.updated` webhook event for notifying top-up address updates. Also added multiple new fields to order-related events.| 2025-07-30 |
-| **Payment API** | - [Create settlement request](/v2/api-references/payment/create-settlement-request) added new feature: when `order_ids` parameter is empty, automatically settles all unsettled orders for that merchant. | 2025-07-24 |
-| **Payment Management App** | - Added support for top-up mode. You can now use the web interface to:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Create and manage top-up addresses<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Monitor top-up transaction status<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Export top-up records | 2025-07-10 |
-| **Payment API** | API SDK v1.18.0 release. Changes include:<br/><br/>- Added top-up mode related operations:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get top-up address](/v2/api-references/payment/get-top-up-address)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List payers](/v2/api-references/payment/list-payers)<br/>&nbsp;&nbsp;For specific integration steps, refer to [Get top-up addresses](/v2/payments/get-topup-addresses)<br/><br/>- Added `use_dedicated_address` parameter to [Create pay-in order](/v2/api-references/payment/create-pay-in-order), supporting specification of independent receiving addresses<br/><br/>- Added multiple [webhook events](/v2/payments/status-and-events) related to top-up mode | 2025-07-02 |
+| **Checkout SDK** | Added support for customizing the "Powered by xxx" text at the bottom of the checkout page through the `developerName` parameter. | 2025-07-30 |
+| **Payments API** |API SDK v1.20.0 released. Changes as follows:<br/><br/>- [Create pay-in order](/v2/api-references/payment/create-pay-in-order) new feature: Supports directly specifying order amount in cryptocurrency. When the `currency` parameter is empty, `order_amount` and `fee_amount` will be in the cryptocurrency specified by `token_id` instead of fiat currency.<br/><br/>- Added [Update top-up address](/v2/api-references/payment/update-top-up-address) operation to update top-up addresses.<br/><br/> - Added forced sweep-related operations:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Create forced sweep](/v2/api-references/payment/create-forced-sweep)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List forced sweeps](/v2/api-references/payment/list-forced-sweeps)<br/><br/>- [Get withdrawable balances](/v2/api-references/payment/get-withdrawable-balances) added `available_balance` and `total_balance` fields, representing withdrawable balance and total balance respectively.<br/><br/>- Added `payment.address.updated` webhook event to notify top-up address updates. At the same time, order-related events have added multiple fields.| 2025-07-30 |
+| **Payments API** | - [Create settlement request](/v2/api-references/payment/create-settlement-request) new feature: When the `order_ids` parameter is empty, automatically settle all unsettled orders for the merchant. | 2025-07-24 |
+| **Payments App** | - Added support for top-up mode. You can now on the web interface:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Create and manage top-up addresses<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Monitor top-up transaction status<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Export top-up records | 2025-07-10 |
+| **Payments API** | API SDK v1.18.0 released. Changes as follows:<br/><br/>- Added top-up mode-related operations:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get top-up address](/v2/api-references/payment/get-top-up-address)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [List payers](/v2/api-references/payment/list-payers)<br/>&nbsp;&nbsp;For specific integration steps, refer to [Get top-up address](/v2/payments/get-topup-addresses)<br/><br/>- Added `use_dedicated_address` parameter to [Create pay-in order](/v2/api-references/payment/create-pay-in-order), supporting specifying the use of a dedicated receiving address<br/><br/>- Added multiple [webhook events](/v2/payments/status-and-events) related to top-up mode | 2025-07-02 |
+
 
 ## June 2025
 
-| Product | Change Description | Release Date |
+| Product | Change description | Release date |
 |------|----------|----------|
-| **Payment Management App** | - Added dashboard, balance query, and report export features | 2025-06-27 |
-| **Payment Management App** | - Added support for Custodial Wallets | 2025-06-19 |
-| **Payment API** | API SDK v1.17.0 release. Changes include:<br/><br/>- Added support for crypto withdrawal settlement method. Related operations:<br/>&nbsp;&nbsp;&nbsp;&nbsp;-[Create settlement request](/v2/api-references/payment/create-settlement-request)<br/>&nbsp;&nbsp;&nbsp;&nbsp;-[List crypto addresses](/v2/api-references/payment/list-crypto-addresses)<br/><br/>- [Create refund order](/v2/api-references/payment/create-refund-order) added developer fee related fields. You can charge developer fees to merchants during refunds. For more information, refer to [Handle refund requests](/v2/payments/handle-abnormality-order#handle-refund-requests).<br/><br/>- Added the following interfaces for completing Checkout SDK OAuth authentication:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get Access Token](/v2/api-references/oauth/get-access-token)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Refresh Access Token](/v2/api-references/oauth/refresh-access-token)| 2025-06-18 |
-| **Payment Management App** | - Added support for crypto withdrawal settlement method | 2025-06-10 |
-| **Checkout SDK** | - Checkout SDK v1.1.0 release. Checkout SDK provides ready-to-use payment collection frontend components with iframe embedding for quick integration | 2025-06-09 |
+| **Payments App** | - Added dashboard, balance query, and report export features | 2025-06-27 |
+| **Payments App** | - Added support for Custodial Wallets | 2025-06-19 |
+| **Payments API** | API SDK v1.17.0 released. Changes as follows:<br/><br/>- Added support for crypto payout settlement method. Related operations:<br/>&nbsp;&nbsp;&nbsp;&nbsp;-[Create settlement request](/v2/api-references/payment/create-settlement-request)<br/>&nbsp;&nbsp;&nbsp;&nbsp;-[List crypto addresses](/v2/api-references/payment/list-crypto-addresses)<br/><br/>- [Create refund order](/v2/api-references/payment/create-refund-order) added developer fee-related fields. You can charge developer fees to merchants during refunds. For more information, refer to [Handle refund requests](/v2/payments/create-orders#handle-refund-requests).<br/><br/>- Added the following APIs for OAuth authentication of Checkout SDK:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get Access Token](/v2/api-references/oauth/get-access-token)<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Refresh Access Token](/v2/api-references/oauth/refresh-access-token)| 2025-06-18 |
+| **Payments App** | - Added support for crypto payout settlement method | 2025-06-10 |
+| **Checkout SDK** | - Checkout SDK v1.1.0 released. Checkout SDK provides out-of-the-box payment frontend components, supporting quick integration via iframe embedding | 2025-06-09 |
 
 ## May 2025
-| Product | Change Description | Release Date |
+| Product | Change description | Release date |
 |------|----------|----------|
-| **Payment Management App** | - App release, providing web interface for order management, settlement management, and merchant management | 2025-05-22 |
+| **Payments App** | - App released, providing web interface for order management, settlement management, and merchant management | 2025-05-22 |
 
 ## April 2025
 
-| Product | Change Description | Release Date |
+| Product | Change description | Release date |
 |------|----------|----------|
-| **Payment API** | API SDK v1.14.0 release. Changes include:<br/><br/>- Added core payment-related operations:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Create and manage payment orders<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Handle refund requests<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Execute settlement operations<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Merchant information management<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Bank account management<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Real-time exchange rate queries<br/><br/>- Added payment-related [webhook events](/v2/payments/status-and-events) for real-time notifications of order, refund, and settlement status changes. | 2025-04-23 |
+| **Payments API** | API SDK v1.14.0 released. Changes as follows:<br/><br/>- Added payment-related core operations:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Create and manage pay-in orders<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Handle refund requests<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Execute settlement operations<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Merchant information management<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Bank account management<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Real-time exchange rate query<br/><br/>- Added payment-related [webhook events](/v2/payments/status-and-events) for real-time notifications of order, refund, and settlement status changes. | 2025-04-23 |
+
+
+
+
+
 
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>
+

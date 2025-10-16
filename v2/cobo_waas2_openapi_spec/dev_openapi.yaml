@@ -3759,7 +3759,7 @@ paths:
       operationId: create_crypto_address
       summary: Create crypto address
       description: |
-        This operation registers a crypto address for crypto withdrawal.
+        This operation registers a crypto address for crypto payouts.
 
         The registered address can later be referenced by its ID when creating settlement requests.
       security:
@@ -3785,7 +3785,7 @@ paths:
       operationId: list_crypto_addresses
       summary: List crypto addresses
       description: |
-        This operation retrieves a list of crypto addresses registered for crypto withdrawal. 
+        This operation retrieves a list of crypto addresses registered for crypto payouts. 
 
         Contact our support team at [help@cobo.com](mailto:help@cobo.com) to register a new crypto address.
       parameters:
@@ -3808,7 +3808,7 @@ paths:
       operationId: delete_crypto_address
       summary: Delete crypto address
       description: |
-        This operation unregisters a crypto address from being used for crypto withdrawals.
+        This operation unregisters a crypto address from being used for crypto payouts.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -4014,7 +4014,10 @@ paths:
       operationId: list_merchant_balances
       summary: List merchant balances
       description: |
+
         This operation retrieves the balance information for specified merchants. The balance information is grouped by token and acquiring type. If you do not specify the `merchant_ids` parameter, the balance information for all merchants will be returned.
+
+        For more information, please refer to [Amounts and Balances](/v2/payments/amounts-and-balances)
       security:
         - CoboAuth: []
         - OAuth2:
@@ -4038,6 +4041,8 @@ paths:
       summary: Get developer balance
       description: |
         This operation retrieves the balance information for you as the developer. The balance information is grouped by token.
+
+        For more information, please refer to [Amounts and Balances](/v2/payments/amounts-and-balances)
       security:
         - CoboAuth: []
         - OAuth2:
@@ -13072,7 +13077,7 @@ components:
         crypto_address_id:
           type: string
           description: |
-            The ID of the crypto address used for crypto withdrawal. Specify this field when `payout_channel` is set to `Crypto`.
+            The ID of the crypto address used for crypto payouts. Specify this field when `payout_channel` is set to `Crypto`.
 
             Call [List crypto addresses](https://www.cobo.com/developers/v2/api-references/payment/list-crypto-addresses) to retrieve registered crypto addresses.
           example: addr_ethusdt_20250506T123456_ab12cd
@@ -13298,9 +13303,9 @@ components:
           type: string
           description: |
 
-            The initiator of this settlement request. Can return either an API key or the Payment Management App's ID. 
-            - Format `api_key_<API_KEY>`: Indicates the settlement request was initiated via the Payment API using the API key.
-            - Format `app_<APP_ID>`: Indicates the settlement request was initiated through the Payment Management App using the App ID.
+            The initiator of this settlement request. Can return either an API key or the Payments App's ID. 
+            - Format `api_key_<API_KEY>`: Indicates the settlement request was initiated via the Payments API using the API key.
+            - Format `app_<APP_ID>`: Indicates the settlement request was initiated through the Payments App using the App ID.
           example: b2ae1b5aaade686c968ef2bbd31cc75ba94e5a85fd9cb0b85b81dcc15f920e9d
         transactions:
           type: array
@@ -13418,9 +13423,9 @@ components:
           type: string
           description: |
 
-            The initiator of this settlement request. Can return either an API key or the Payment Management App's ID. 
-            - Format `api_key_<API_KEY>`: Indicates the settlement request was initiated via the Payment API using the API key.
-            - Format `app_<APP_ID>`: Indicates the settlement request was initiated through the Payment Management App using the App ID.
+            The initiator of this settlement request. Can return either an API key or the Payments App's ID. 
+            - Format `api_key_<API_KEY>`: Indicates the settlement request was initiated via the Payments API using the API key.
+            - Format `app_<APP_ID>`: Indicates the settlement request was initiated through the Payments App using the App ID.
           example: api_key_b2ae1b5aaade686c968ef2bbd31cc75ba94e5a85fd9cb0b35b81dcc15f520e9d
         acquiring_type:
           $ref: '#/components/schemas/AcquiringType'
@@ -13482,7 +13487,7 @@ components:
           example: 1744689600
         crypto_address_id:
           type: string
-          description: The ID of the crypto address used for crypto withdrawal.
+          description: The ID of the crypto address used for crypto payouts.
           example: addr_ethusdt_20250429T134512_a8c31f
         payout_channel:
           $ref: '#/components/schemas/PayoutChannel'
@@ -13985,7 +13990,7 @@ components:
           example: '1.23'
         settled_amount:
           type: string
-          description: The total amount of the token that has been settled from the merchant's balance.
+          description: The total amount of the token that has been paid out from the merchant's balance.
           example: '1.23'
         refunded_amount:
           type: string
@@ -13993,11 +13998,17 @@ components:
           example: '1.23'
         total_balance:
           type: string
-          description: The total balance of the token for the merchant.
+          description: |
+
+            The total balance of the token available for payout or refund for the merchant.
+
+            `total_balance` = `total_received_amount` - `settled_amount` - `refunded_amount`
+
+            For more information, please refer to [Amounts and Balances](/v2_cn/payments/amounts-and-balances)
           example: '1.23'
         available_balance:
           type: string
-          description: Deprecated.
+          description: This field has been deprecated.
           example: '1.23'
     PspBalance:
       type: object
@@ -14014,14 +14025,20 @@ components:
           example: '1.23'
         settled_amount:
           type: string
-          description: The total amount of the token that has been settled from the developer's balance.
+          description: The total amount of the token that has been paid out from the developer's balance.
           example: '1.23'
         refunded_amount:
           type: string
           description: The total amount of the token that has been refunded from the developer's balance.
         total_balance:
           type: string
-          description: The total balance of the token for the developer.
+          description: |
+
+            The total balance of the token available for payout or refund for the developer.
+
+            `total_balance` = `developer_fee_amount` - `settled_amount` - `refunded_amount`
+
+            For more information, please refer to [Amounts and Balances](/v2_cn/payments/amounts-and-balances)
           example: '1.23'
         available_balance:
           type: string

@@ -837,36 +837,55 @@
                 "group": "Overview",
                 "pages": [
                   "v2/payments/overview",
-                  "v2/payments/changelog",
-                  "v2/payments/glossary",
-                  "v2/payments/preparation",
-                  "v2/payments/preparation-prod"
+                  "v2/payments/features",
+                  "v2/payments/changelog"
                 ]
               },
               {
-                "group": "Top-up mode",
+                "group": "Pay-ins",
                 "pages": [
-                  "v2/payments/top-up-mode-quick-start",
-                  "v2/payments/get-topup-addresses",
-                  "v2/payments/settle-topup",
-                  "v2/payments/handle-abnormality-topup"
+                  {
+                    "group": "Prerequisites",
+                    "pages": [
+                      "v2/payments/preparation",
+                      "v2/payments/preparation-prod"
+                    ]
+                  },
+                  {
+                    "group": "Collect payments",
+                    "pages": [
+                      "v2/payments/get-topup-addresses",
+                      "v2/payments/create-orders",
+                      "v2/payments/create-subscriptions"
+                    ]
+                  },
+                  {
+                    "group": "Build checkout page",
+                    "pages": [
+                      "v2/payments/checkout-sdk"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "Order mode",
+                "group": "Payouts",
                 "pages": [
-                  "v2/payments/order-mode-quick-start",
-                  "v2/payments/create-orders",
-                  "v2/payments/settle-orders",
-                  "v2/payments/handle-abnormality-order",
-                  "v2/payments/checkout-sdk"
+                  "v2/payments/destinations",
+                  "v2/payments/fiat-payouts",
+                  "v2/payments/crypto-payouts",
+                  "v2/payments/amounts-and-balances"
+                ]
+              },
+              {
+                "group": "Collection-on-behalf-of",
+                "pages": [
+                  "v2/payments/merchants"
                 ]
               },
               {
                 "group": "Reference",
                 "pages": [
                   "v2/payments/supported-chains-and-tokens",
-                  "v2/payments/amounts-and-balances",
                   "v2/payments/status-and-events",
                   "v2/payments/roles-and-permissions",
                   "v2/payments/api-reference"
@@ -1145,36 +1164,55 @@
                 "group": "概览",
                 "pages": [
                   "v2_cn/payments/overview",
-                  "v2_cn/payments/changelog",
-                  "v2_cn/payments/glossary",
-                  "v2_cn/payments/preparation",
-                  "v2_cn/payments/preparation-prod"
+                  "v2_cn/payments/features", 
+                  "v2_cn/payments/changelog"
                 ]
               },
               {
-                "group": "充值模式",
+                "group": "收款",
                 "pages": [
-                  "v2_cn/payments/top-up-mode-quick-start",
-                  "v2_cn/payments/get-topup-addresses",
-                  "v2_cn/payments/settle-topup",
-                  "v2_cn/payments/handle-abnormality-topup"
+                  {
+                    "group": "前置准备",
+                    "pages": [
+                      "v2_cn/payments/preparation",
+                      "v2_cn/payments/preparation-prod"
+                    ]
+                  },
+                  {
+                    "group": "发起收款",
+                    "pages": [
+                      "v2_cn/payments/get-topup-addresses",
+                      "v2_cn/payments/create-orders",
+                      "v2_cn/payments/create-subscriptions"
+                    ]
+                  },
+                  {
+                    "group": "搭建收款页面",
+                    "pages": [
+                      "v2_cn/payments/checkout-sdk"
+                    ]
+                  }
                 ]
-              },
+              },  
               {
-                "group": "订单模式",
+                "group": "资金转出",
                 "pages": [
-                  "v2_cn/payments/order-mode-quick-start",
-                  "v2_cn/payments/create-orders",
-                  "v2_cn/payments/settle-orders",
-                  "v2_cn/payments/handle-abnormality-order",
-                  "v2_cn/payments/checkout-sdk"
+                "v2_cn/payments/destinations",
+                "v2_cn/payments/fiat-payouts",
+                "v2_cn/payments/crypto-payouts",
+                "v2_cn/payments/amounts-and-balances"
+                ]
+              },              
+              {
+                "group": "代收款", 
+                "pages": [
+                  "v2_cn/payments/merchants"
                 ]
               },
               {
                 "group": "索引信息",
                 "pages": [
                   "v2_cn/payments/supported-chains-and-tokens",
-                  "v2_cn/payments/amounts-and-balances",
                   "v2_cn/payments/status-and-events",
                   "v2_cn/payments/roles-and-permissions",
                   "v2_cn/payments/api-reference"

@@ -1,0 +1,36 @@
+---
+title: "功能列表"
+lang: "zh-hans"
+---
+
+本文介绍 Cobo 支付解决方案的核心功能。
+
+## 收款
+
+- 提供灵活多样的收款模式，支持固定/不固定金额、限时/不限时支付、一次性/定期扣款等多种场景：
+  - **充值模式**：Cobo 会为每个付款方生成专用的充值地址，付款方可以随时向该地址充值任意金额。详情见[充值模式收款](/v2_cn/payments/get-topup-addresses)。
+  - **订单模式**：Cobo 会创建带有指定金额和有效期的支付订单，付款方需要在规定时间内完成支付。支持取消订单、退款，以及处理多付、少付、晚付等异常情况。详情见[订单模式收款](/v2_cn/payments/create-orders)。
+  - **订阅模式**：通过智能合约等方式定期、自动扣款。详情见[订阅模式收款](/v2_cn/payments/create-subscriptions)。
+- 链和币种支持：支持 USDC 和 USDT 两种主流稳定币，可在多个主流公链上使用。详情见[支持的币种与公链](/v2_cn/payments/supported-chains-and-tokens)。
+
+## 资金管理
+- AML/KYT 扫描：根据您选择的钱包类型，Cobo 提供不同的合规扫描方案：
+  - 全托管钱包：强制使用 Cobo KYT 进行资金合规扫描，确保交易安全合规
+  - MPC 钱包：您可以灵活选择使用 Cobo KYT 或 [Screening App](https://manuals.cobo.com/cn/apps/screening/introduction) 进行合规扫描，满足不同的合规需求
+- 兑换和跨链：您可以使用 [Token Swap App](https://manuals.cobo.com/cn/apps/token-swap/introduction)，将一种加密货币兑换成另一种，或将其转移到不同的公链。
+- 理财/DeFi：如果您希望投资闲置资金以获取收益，可以使用 Cobo 的 [Earn App](https://manuals.cobo.com/cn/apps/earn/introduction) 购买稳健的理财产品，或将闲置资金投入到不同的 DeFi 协议中。
+
+## 资金转出
+
+- **法币出金**：通过 OTC 供应商，将加密货币兑换成法币后转入您的银行账户。详情见[法币出金](/v2_cn/payments/fiat-payouts)。
+- **加密货币转账**：通过链上转账将加密货币转至外部钱包地址。详情见[加密货币转账](/v2_cn/payments/crypto-payouts)。
+
+
+## 代收款
+
+如果您是支付服务商（PSP）、电商平台等需要为下游商户提供服务的机构，可以通过商户管理模块代商户收款并进行资金结算。详情见[商户管理](/v2_cn/payments/merchants)。
+
+
+
+
+<Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

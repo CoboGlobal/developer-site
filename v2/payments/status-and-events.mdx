@@ -1,60 +1,56 @@
 ---
-title: "Events and statuses"
+title: "Events and status"
 lang: "en"
 description: ""
 ---
 
 <Note>**Disclaimer: This article contains AI translations and should only be used as reference.** Contact Cobo's support team through [help@cobo.com](mailto:help@cobo.com) if you have any questions.</Note>
 
-This document explains all webhook events involved in the payment collection, refund, and settlement processes, as well as status change workflows.
+This document introduces all webhook events involved in the payment collection, refund, and payout/transfer process, as well as the status change process.
 
 ## Webhook events
-| Event Name | Trigger Condition | Event Content |
+
+| Event name | Trigger condition | Event content |
 |---------|---------|----------|
-| `payment.status.updated` | [**Order mode only**] Payment order status changes. Payment order statuses include:<br></br>- `Pending`: Order created, awaiting payment. No deposit transaction detected yet.<br></br>- `Processing`: First deposit transaction detected at receiving address.<br></br>- `Completed`: Full payment received within order validity period.<br></br>- `Expired`: No completed deposit transactions within order validity period, or order was cancelled.<br></br>- `Underpaid`: Completed deposit transactions exist within order validity period, but received amount is less than required amount. | [PaymentOrder](/v2/payments/status-and-events#paymentorder) |
-| `payment.address.updated` | [**Top-up mode only**] Top-up address update | [PaymentAddressUpdate](/v2/payments/status-and-events#paymentaddressupdate) |
-| `payment.transaction.created` | New deposit transaction detected. In order mode, this event is triggered even if order has reached final status (`Underpaid`, `Expired` or `Completed`). | [PaymentTransaction](/v2/payments/status-and-events#paymenttransaction) |
-| `payment.transaction.late` | [**Order mode only**] Deposit transaction passed compliance screening but order is already in final status (`Underpaid`, `Expired` or `Completed`). | [PaymentTransaction](/v2/payments/status-and-events#paymenttransaction) |
-| `payment.transaction.held` | The deposit transaction is being screened for compliance. In order mode, this event is triggered even if order has reached final status (`Underpaid`, `Expired` or `Completed`). | [PaymentTransaction](/v2/payments/status-and-events#paymenttransaction) |
-| `payment.transaction.completed` | Deposit transaction passed compliance screening, funds successfully credited and included in received amount. | [PaymentTransaction](/v2/payments/status-and-events#paymenttransaction) |
-| `payment.refund.status.updated` | [**Order mode only**] Refund order status changes. Refund order statuses include:<br></br>- `Pending`: Refund order created but transaction not initiated yet.<br></br>- `Processing`: At least one refund transaction in progress.<br></br>- `Completed`: All refund transactions completed.<br></br>- `PartiallyCompleted`: Some refund transactions completed, some failed.<br></br>- `Failed`: All refund transactions failed. | [PaymentRefund](/v2/payments/status-and-events#paymentrefund) |
-| `payment.settlement.status.updated` | Settlement request status changes. Settlement request statuses include:<br></br>- `Pending`: Settlement request created, awaiting processing.<br></br>- `Processing`: Settlement request processing, at least one settlement in progress.<br></br>- `Completed`: All settlements completed.<br></br>- `PartiallyCompleted`: Some settlements completed, some failed.<br></br>- `Failed`: All settlements failed. | [PaymentSettlement](/v2/payments/status-and-events#paymentsettlement) |
+| `payment.status.updated` | [**Applicable only to order mode**]Pay-in order status has changed. Pay-in order statuses include:<br></br>- `Pending`: Order has been created, waiting for payment. No deposit transaction has been detected yet.<br></br>- `Processing`: The first deposit transaction has been detected at the receiving address.<br></br>- `Completed`: Full payment received within the order validity period<br></br>- `Expired`: No completed deposit transactions within the order validity period, or the order has been canceled.<br></br>- `Underpaid`: There are completed deposit transactions within the order validity period, but the actual received amount is less than the amount payable. | [PaymentOrder](/v2/payments/status-and-events#paymentorder) |
+| `payment.address.updated` | [**Applicable only to top-up mode**]Top-up address updated | [PaymentAddressUpdate](/v2/payments/status-and-events#paymentaddressupdate) |
+| `payment.transaction.created` | A new deposit transaction has been detected. In order mode, even if the order has reached a final state (`Underpaid`, `Expired`, or `Completed`), this event will still be triggered. | [PaymentTransaction](/v2/payments/status-and-events#paymenttransaction) |
+| `payment.transaction.late` | [**Applicable only to order mode**]The deposit transaction has passed compliance screening, but the order is already in a final state (`Underpaid`, `Expired`, or `Completed`). | [PaymentTransaction](/v2/payments/status-and-events#paymenttransaction) |
+| `payment.transaction.held` | The deposit transaction is undergoing compliance screening. In order mode, even if the order has reached a final state (`Underpaid`, `Expired`, or `Completed`), this event will still be triggered. | [PaymentTransaction](/v2/payments/status-and-events#paymenttransaction) |
+| `payment.transaction.completed` | The deposit transaction has passed compliance screening, and the funds have been successfully credited and counted towards the actual received amount.| [PaymentTransaction](/v2/payments/status-and-events#paymenttransaction) |
+| `payment.refund.status.updated` | [**Applicable only to order mode**]Refund order status has changed. Refund order statuses include:<br></br>- `Pending`: A refund order has been created, but no transaction has been initiated yet.<br></br>- `Processing`: At least one refund transaction is in progress.<br></br>- `Completed`: All refund transactions have been completed.<br></br>- `PartiallyCompleted`: Some refund transactions have been completed, and some refund transactions have failed.<br></br>- `Failed`: All refund transactions have failed. | [PaymentRefund](/v2/payments/status-and-events#paymentrefund) |
+| `payment.settlement.status.updated` | Payout/transfer request status has changed. Payout/transfer request statuses include:<br></br>- `Pending`: Payout/transfer request has been created, waiting for processing.<br></br>- `Processing`: Payout/transfer request is being processed, and at least one payout/transfer is in progress.<br></br>- `Completed`: All payouts/transfers have been completed.<br></br>- `PartiallyCompleted`: Some payouts/transfers have been completed, and some payouts/transfers have failed.<br></br>- `Failed`: All payouts/transfers have failed.| [PaymentSettlement](/v2/payments/status-and-events#paymentsettlement) |
 
-
-## Event Details
+## Event details
 
 ### PaymentOrder
-Refer to response parameters in [Get pay-in order information](/v2/api-references/payment/get-pay-in-order-information).
+Refer to the response parameter description of [Get pay-in order information](/v2/api-references/payment/get-pay-in-order-information).
 
 ### PaymentAddressUpdate
 
-This data structure contains the following fields:
+This data structure includes the following fields:
 
-- `custom_payer_id`: A unique identifier assigned by the developer to track and identify payers in their system
-- `payer_id`: A unique identifier assigned by Cobo to track and identify payers
-- `chain`: Chain ID, e.g. "ETH"
-- `previous_address`: Previous top-up address used by the payer
-- `updated_address`: New top-up address assigned to the payer
+- `custom_payer_id`: The unique identifier used in your system to track and identify the payer
+- `payer_id`: The unique identifier assigned by Cobo to track and identify the payer
+- `chain`: Chain ID, such as "ETH"
+- `previous_address`: Old address
+- `updated_address`: New address
 
 ### PaymentTransaction
 
-This data structure contains all fields from the [Get transaction information](/v2/api-references/transactions/get-transaction-information) response parameters, plus the following fields:
+This data structure includes all fields in the response parameters of [Get transaction information](/v2/api-references/transactions/get-transaction-information), and also includes the following fields:
 
-  - `acquiring_type`: Acquiring type. `Order` indicates order mode, `TopUp` indicates top-up mode.
+  - `acquiring_type`: Payment collection type. `Order` indicates order mode, `TopUp` indicates top-up mode.
   - `order_id`: Pay-in order ID.
-  - `psp_order_code`: A unique identifier in the developer's system to identify this order.
-  - `payer_id`: A unique identifier assigned by Cobo to track and identify payers.
-  - `custom_payer_id`: A unique identifier assigned by the developer to track and identify payers in their system.
+  - `psp_order_code`: The unique identifier used in your system to identify the order.
+  - `payer_id`: The unique identifier assigned by Cobo to track and identify the payer.
+  - `custom_payer_id`: The unique identifier used in your system to track and identify the payer.
 
 ### PaymentRefund
-Refer to response parameters in [Get refund order information](/v2/api-references/payment/get-refund-order-information)
+Refer to the response parameter description of [Get refund order information](/v2/api-references/payment/get-refund-order-information)
 
 ### PaymentSettlement
-Refer to response parameters in [Get settlement request information](/v2/api-references/payment/get-settlement-request-information)
-
-## Status transitions
-
-The diagram below shows the status transitions of pay-in orders and the trigger timing of various webhook events.
-<img src="/v2/images/payments/order_status.png" className="diagram" alt="Overall business process of the Cobo Payment Solution"></img>
+Refer to the response parameter description of [Get settlement request information](/v2/api-references/payment/get-settlement-request-information)
 
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>
+

@@ -1,144 +1,145 @@
 ---
-title: "Development Environment Preparation"
+title: "Preparation for development environment"
 lang: "en"
 description: ""
 ---
 
-This article explains how to complete the preparation work before integrating payment functionality in the development environment, helping you verify features and ensure proper integration.
+<Note>**Disclaimer: This article contains AI translations and should only be used as reference.** Contact Cobo's support team through [help@cobo.com](mailto:help@cobo.com) if you have any questions.</Note>
 
-**Next Steps:**
-After completing development environment verification, when you're ready to deploy payment functionality to the production environment, please refer to [Production Environment Preparation](/v2/payments/preparation-prod) for relevant guidance.
+This document introduces how to complete the preparatory work before integrating payment features in the development environment, helping you verify functions and ensure normal integration operation.
+
+**Next steps:**
+After completing development environment verification, when you are ready to deploy payment features to the production environment, refer to [Preparation for production environment](/v2/payments/preparation-prod) for related guidance.
 
 
 ## Prerequisites
 
-* [Contact our sales team](https://www.cobo.com/book-demo?utm_source=product-manual&utm_medium=product&utm_campaign=pricing-plan-intro&utm_content=enterprise-contact-sales) to get your account activation link.
+* [Contact our sales team](https://www.cobo.com/book-demo?utm_source=product-manual&utm_medium=product&utm_campaign=pricing-plan-intro&utm_content=enterprise-contact-sales) to obtain your account activation link.
 
-* An iOS device for running [Cobo Guard](/guard/introduction), our dedicated application for multi-factor authentication (MFA), operation approval, transaction signing, and private key shard management.
+* An iOS device for running [Cobo Guard](https://manuals.cobo.com/en/guard/introduction), which is our dedicated application for multi-factor authentication (MFA), operation approval, transaction signing, and key share management.
 
-## Basic Preparation
+## Basic preparation
 
-### Create Account and Set Up Cobo Guard
-As the first administrator of your team, use the activation link provided by our sales team to create your Cobo Portal development environment account. After creation, follow these steps to set up Cobo Guard:
+### Create account and set up Cobo Guard
+As the first admin of your team, please use the activation link provided by our sales team to create your Cobo Portal development environment account. After creation, please follow these steps to set up Cobo Guard:
 
-1. Log in to Cobo Portal [Development Environment](https://portal.dev.cobo.com/login).
-2. Click **Guide** in the bottom left corner, then click **Bind Cobo Guard**.
+1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login).
+2. Click **Guide** in the lower left corner, then click **Bind Cobo Guard**.
    <img src="/v2/images/payments/cobo-guard.png" className="screenshot_nav_bar" alt="Bind Cobo Guard"/>
 3. Follow the on-screen instructions to install Cobo Guard on your iOS device and associate your account with Cobo Guard.
 
-### Invite Members
-1. Log in to Cobo Portal [Development Environment](https://portal.dev.cobo.com/login).
-2. Click the profile icon in the bottom left corner, then click **Team**.
+### Invite members
+1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login).
+2. Click the profile icon in the lower left corner, then click **Organization**.
 3. Click **Members**. On the **Members** page, click **Invite Member**.
 4. Enter the member's email address and name, then select the appropriate [user role](/v2/payments/roles-and-permissions).
-<Note>Please confirm on Cobo Guard that this invitation was initiated by you. Additionally, according to default business control rules, at least half of the team administrators must approve the invitation request on Cobo Guard.</Note>
+<Note>Please confirm on Cobo Guard that this invitation was initiated by you. Additionally, according to the default governance policies, at least half of the team admins need to approve the invitation request on Cobo Guard.</Note>
 
    After receiving the invitation, new members should create their own accounts and set up Cobo Guard as described in the previous section.
 
-### Install Payment Management App
+### Install Payments App
 
-The Payment Management App provides a web interface for convenient daily operations such as merchant management, order queries, settlement processing, and exception handling. Follow these steps to install:
+Payments App provides a web interface that allows you to conveniently perform daily operations such as payment collection queries, fund management, and payouts. Installation steps are as follows:
 
-1. Log in to Cobo Portal [Development Environment](https://portal.dev.cobo.com/login).
+1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login).
 
-2. Click the **Payment Management** card on the homepage.
-<img src="/v2/images/payments/install-payment-app.png" className="screenshot_modal" alt="Payment Management App Intro" />
+2. On the homepage, click the **Payments** card.
+<img src="/v2/images/payments/install-payment-app.png" className="screenshot_modal" alt="Payments App Intro" />
 
-3. Click the **Install** button and follow the page instructions to complete installation. For **Wallet Scope**, select **Any Type of Wallet**.
+3. Click the **Install** button and follow the on-page instructions to complete installation. For **Wallet scope**, select **Any wallet type**.
 
-4. If administrator approval is required as indicated on the page, please notify administrators to approve in Cobo Guard. After approval, the App will automatically complete installation.
+4. If the page prompts that admin approval is needed, please notify the admin to approve on Cobo Guard. After approval, the App will automatically complete installation.
 
-## Technical Configuration
+## Technical configuration
 
-### Payment API Call Preparation
+### Payments API calling preparation
 
-If you need to call Payment APIs, follow these steps to configure your API Key.
+If you need to call Payments API, you need to follow these steps to complete API key configuration.
 
-1. Refer to the [Developer Guide](/v2/guides/get-started/get-started-with-waas) to generate an API Key and API Secret pair, and register the API Key in Cobo Portal. Note the following configurations:
-   * **User Role**: Select **Payment Administrator**
-   * **Wallet Scope**: Select **Any Type of Wallet**
+1. Refer to the [Developer guide](/v2/guides/get-started/get-started-with-waas) to generate an API key and API secret pair, and register the API key in Cobo Portal. Please note the following configurations:
+   * **User role**: Select **Payment admin**
+   * **Wallet scope**: Select **Any wallet type**
    * No need to configure Callback Endpoint
-   * **Key Type**: Select **Temporary**
+   * **Key type**: Select **Temporary**
 
-2. If you choose to use an SDK instead of manually writing API requests, install the SDK for your programming language:
-   - [Python SDK Quick Start](/v2/developer-tools/quickstart-python)
-   - [Java SDK Quick Start](/v2/developer-tools/quickstart-java) 
-   - [Go SDK Quick Start](/v2/developer-tools/quickstart-go)
-   - [JavaScript SDK Quick Start](/v2/developer-tools/quickstart-javascript)
+2. If you choose to use an SDK instead of manually writing API requests, you need to install the SDK for the corresponding programming language:
+   - [Python SDK quickstart](/v2/developer-tools/quickstart-python)
+   - [Java SDK quickstart](/v2/developer-tools/quickstart-java) 
+   - [Go SDK quickstart](/v2/developer-tools/quickstart-go)
+   - [JavaScript SDK quickstart](/v2/developer-tools/quickstart-javascript)
 
-<Note>Official release channels provide stable SDK versions. If you want to fully utilize the latest API features, you can contact the Cobo sales team to obtain Beta version SDKs.</Note>
+### Subscribe to webhook events
 
-### Subscribe to Webhook Events
+If you need to receive real-time notifications of payment-related events, you can set up and register a webhook endpoint to receive webhook events. Specific steps are as follows:
 
-If you need to receive real-time notifications for payment-related events, you can set up and register a Webhook Endpoint to receive Webhook events. Follow these steps:
-
-* Refer to the [Developer Guide](/v2/guides/webhooks-callbacks/set-up-endpoint) to set up a Webhook Endpoint.  
-* [Register the Webhook Endpoint](https://manuals.cobo.com/portal/developer-console/webhooks-create) in Cobo Portal and subscribe to [payment-related Webhook events](/v2/payments/status-and-events).
+* Refer to the [Developer guide](/v2/guides/webhooks-callbacks/set-up-endpoint) to set up a webhook endpoint.  
+* [Register the webhook endpoint](https://manuals.cobo.com/en/portal/developer-console/webhooks-create) in Cobo Portal and subscribe to [payment-related webhook events](/v2/payments/status-and-events).
 
 
-## Business Configuration
+## Business configuration
 
 
-### Create Wallet
+### Create wallet
 
-Before starting to receive payments, you need to create a wallet in Cobo Portal. The wallet will be used to generate and manage payment receiving addresses and is responsible for secure fund storage.
+Before starting to receive payments, you need to create a wallet in Cobo Portal. The wallet will be used to generate and manage addresses for receiving payments and is responsible for the secure storage of funds.
 
 
-Cobo provides two types of wallets, and you can choose the suitable wallet type based on your actual business needs.
+Cobo provides two wallet types, and you can choose the appropriate wallet type based on your actual business needs.
 
-| Wallet Type | Private Key Management Mode | Cobo KYT Compliance Scanning | Suitable Scenarios |
+| Wallet type | Private key management mode | Cobo KYT compliance screening | Applicable scenarios |
 | --- | --- | --- | --- |
-| [Custodial Wallet](/v2/payments/glossary#custodial-wallet) | Cobo manages [private keys](/v2/payments/glossary#private-key)<br/>No need to worry about private key security risks | ✅ Automatically enabled<br/>Mandatory compliance, meets regulatory requirements | • Customers seeking convenient management<br/>• Businesses with mandatory compliance requirements&nbsp;&nbsp;|
-| [MPC Wallet](/v2/payments/glossary#mpc-wallet) | You manage private keys yourself<br/>Achieve Self-Custody | ⚙️ Optional configuration<br/>Flexibly enabled based on business needs | • Customers needing complete private key control<br/>• Businesses with flexible compliance requirements&nbsp;&nbsp;|
+| Custodial Wallets | Cobo manages private keys<br/>No need to worry about private key security risks | ✅ Automatically enabled<br/>Mandatory compliance, meets regulatory requirements | • Customers pursuing convenient management<br/>• Businesses with mandatory compliance requirements&nbsp;&nbsp;|
+| MPC Wallets | You manage private keys yourself<br/>Achieve asset self-custody | ⚙️ Optional configuration<br/>Flexibly enable based on business needs | • Customers needing complete control of private keys<br/>• Businesses with more flexible compliance requirements&nbsp;&nbsp;|
 
 
-Depending on your chosen wallet type, the wallet service creation process will differ slightly.
-1. Log in to Cobo Portal [Development Environment](https://portal.dev.cobo.com/login).
+Depending on the wallet type you choose, the wallet service creation process will be slightly different.
+1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login).
 2. Click the **Create Wallet** button.
-   - For custodial wallets, click **Wallets**->**Custodial Wallets**->**Web3 Wallet** to enter the wallet creation page. On this page, you can click the **Create Wallet** button in the top right corner to create a new wallet.
+   - For Custodial Wallets, you need to click **Wallets**->**Custodial Wallets**->**Web3 Wallets** to enter the wallet creation page. On this page, you can click the **Create Wallet** button in the upper right corner to create a new wallet.
    <img src="/v2/images/payments/web3_wallet_entry.png" className="screenshot_modal" alt="Entry to Web3 Wallet" />
-   - For MPC wallets, click **Wallets**->**MPC Wallets**. On this page, you can click the **Create Wallet** button in the top right corner to create a new wallet.
-3. Enter the wallet name and check **Auto Sweep** to ensure smooth settlement and refund operations.
+   - For MPC Wallets, you need to click **Wallets**->**MPC Wallets**. On this page, you can click the **Create Wallet** button in the upper right corner to create a new wallet.
+3. Fill in the wallet name and check **Auto Sweeping** to ensure the smooth progress of subsequent payout and refund operations.
    <img src="/v2/images/payments/create-wallet-auto-sweep.png" className="screenshot_modal" alt="Entry to Web3 Wallet" />
-4. After creation, you can get the wallet ID on the wallet list page. Hover over the wallet name, and the wallet ID will automatically display. 
+4. After creation, you can obtain the wallet ID on the wallet list page. Hover the mouse over the wallet name, and the wallet ID will automatically display. 
      <img src="/v2/images/payments/wallet_name_hoverover.png" className="screenshot_modal" alt="Entry to Web3 Wallet" />
    
 
-### Create Merchant and Associate Wallet
+<a id="merchants"></a>
+### Create merchant and associate wallet
 
-You can use the Payment Management App or Payment API to create merchants and associate them with wallets. When you create orders or top-up addresses for a merchant, Cobo will create corresponding receiving addresses under that wallet. **Each merchant must correspond to a unique wallet, and one wallet can be associated with one or multiple merchants.**
+You can use Payments App or Payments API to create merchants and associate them with wallets. When you create an order or top-up address for the merchant, Cobo will create the corresponding receiving address under that wallet. **Each merchant needs to correspond to a unique wallet, and the same wallet can be associated with one or more merchants.**
 
-<Note>If you are a merchant (directly serving payers), you only need to create one merchant (the merchant name can be anything), and there's no need to configure developer fees. Developer fees only apply to merchant platforms (such as PSPs, e-commerce platforms) charging fees to their downstream merchants.</Note>
-
-#### Create Merchant Using App
-
-1. Log in to Cobo Portal [Development Environment](https://portal.dev.cobo.com/login).
-2. Click **Apps** in the left navigation bar, then click the **Payment Management** card to launch the App.
-3. Click **Merchants** in the App's left navigation bar.
-4. Click the **Create Merchant** button.
-5. Enter the merchant name and select the wallet to associate. If you choose to use top-up mode, you can also set the **Developer Fee Rate** to calculate developer fees for each top-up. For example, setting it to 0.01 means charging a 1% fee.
+<Note>
+- If you are a merchant (directly serving payers), you can create only one merchant and do not need to configure a developer fee rate. If you want to manage funds separately for different business lines, you can also create multiple merchants.
+- If you are a platform institution serving multiple downstream merchants, it is recommended to create multiple merchants and configure an exclusive developer fee rate for each merchant to achieve automatic allocation and settlement for merchants.
+- For more information on usage scenarios and descriptions of merchant management, refer to [Merchant management](/v2/payments/merchants).
+</Note>
 
 
+<Tabs>
+  <Tab title="Payments App" icon="pager">
+  1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login).
+  2. In the left navigation bar, click **Apps**, then click the **Payments** card to launch the App.
+  3. In the App's left navigation bar, click **Merchants**.
+  4. Click the **Create Merchant** button.
+  5. Fill in the merchant name and select the wallet to associate. If you choose to use top-up mode, you can also set the **Developer fee rate** to calculate the developer fee for each top-up. For example, setting it to 0.01 means charging a 1% fee.
+  6. If your subsequent operations involve API calls, you can click the **View Details** button after creation to obtain and save the merchant ID. You will need to use the merchant ID in subsequent API calls to identify the merchant.
 <img src="/v2/images/payments/create_merchant.png" className="screenshot_full_screen" alt="Create Merchant Modal" />
-
-#### Create Merchant Using Payment API
-
-Besides the Payment Management App, you can also use the Payment API to create merchants.
+  </Tab>
+  <Tab title="Payments API" icon="code">
 
 1. Call [Create merchant](/v2/api-references/payment/create-merchant) to create a merchant, passing the following information in the request:  
    * Merchant name (`name`)  
    * Wallet ID (`wallet_id`): The wallet ID you obtained when creating the wallet.
    * Developer fee rate (`developer_fee_rate`):
-     - Top-up mode: Set the developer fee rate through this field to calculate developer fees for each top-up. For example, setting it to 0.01 means charging a 1% fee.
-     - Order mode: You don't need to set this field. In order mode, merchants have no fixed rate; you need to specify developer fees separately when [creating orders](/v2/payments/create-orders).
-     
-     For detailed fee calculation methods, please refer to [Amount Definitions and Balance Calculations](/v2/payments/amounts-and-balances).
+     - Top-up mode: Set the developer fee rate through this field to calculate the developer fee for each top-up. For example, setting it to 0.01 means charging a 1% fee.
+     - Order mode: You do not need to set this field. In order mode, merchants do not have a fixed rate, and you need to specify the developer fee for each order separately when [creating orders](/v2/payments/create-orders).
+   
+   After the call, you will obtain the merchant ID (`merchant_id`), which serves as the unique identifier for the merchant in the Cobo system and is used to identify the merchant in subsequent API calls.
 
-   After the call, you will receive a merchant ID (`merchant_id`), which serves as the unique identifier for this merchant in the Cobo system, used to identify the merchant in subsequent API calls.
+**Call example**
 
-**Call Example**
-
-Here's an example code for calling [Create merchant](/v2/api-references/payment/create-merchant) to create a merchant:
+The following is sample code for calling [Create merchant](/v2/api-references/payment/create-merchant) to create a merchant:
 
 <Accordion title="Sample code in Python">
 ```py
@@ -207,37 +208,22 @@ public class Example {
 ```
 </Accordion>
 
-
-### Configure Settlement Accounts
-
-Based on your settlement needs, please call the Payment API or contact the Cobo sales team to register the appropriate settlement accounts.
-
-| Settlement Account Type | Description |
-| --- | --- |
-| **Cryptocurrency Address** | Call [Create crypto address](/v2/api-references/payment/create-crypto-address) or contact the Cobo sales team to register external cryptocurrency addresses. Funds will be transferred directly to these wallet addresses. |
-| **Bank Account** | Contact the Cobo sales team to register bank account information. Funds will be converted to fiat currency and settled to the account. Note: In the development environment, actual fiat currency conversion and settlement are not supported. You can call [List all bank accounts](/v2/api-references/payment/list-all-bank-accounts) to query registered bank account information. |
+  </Tab>
+</Tabs>
 
 
-### Top Up Fee Station
+### Top up Fee Station
 
-During your daily business operations, you need to manage various fees generated on Cobo through the [Fee Station](https://manuals.cobo.com/portal/fee-station/introduction).
+During your daily business operations, you need to manage various fees incurred on Cobo through [Fee Station](https://manuals.cobo.com/en/portal/fee-station/introduction). Before you start integration, please ensure that you have sufficient funds in your Fee Station to pay for fees generated during payouts, refunds, and other processes:
 
+- You can use USDT or USDC as the fee token
+- The recommended initial top-up amount is equivalent to approximately 50 USD in cryptocurrency. You can adjust the top-up amount based on actual business needs.
 
-Before you start integration, please ensure you have sufficient funds in your Fee Station to pay for fees generated during settlement, refunds, and other operations:
+For specific top-up operation steps, refer to the [Top up Fee Station](https://manuals.cobo.com/en/portal/fee-station/deposit) document.
 
-- You can use USDT or USDC as fee currencies
-- The recommended initial top-up amount is around $50 worth of cryptocurrency. You can adjust the top-up amount based on your actual business needs.
+## Next steps
 
-For specific top-up operation steps, please refer to the [Top Up Fee Station](https://manuals.cobo.com/portal/fee-station/deposit) documentation.
-
-
-## Next Steps
-
-Based on your chosen payment mode, you can refer to the following documentation to complete the subsequent integration steps:
-
-| Payment Mode | Documentation Links |
-| --- | --- |
-| Order Mode | • [Quick Start with Order Mode Using App](/v2/payments/order-mode-quick-start)<br/><br/>• API Integration:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Create Orders](/v2/payments/create-orders): Learn how to create payment orders<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Settlement](/v2/payments/settle-orders): Learn how to settle merchant and developer balances<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Exception Handling](/v2/payments/handle-abnormality-order): Learn how to handle overpayment, underpayment, refunds, and other exceptions |
-| Top-up Mode | • [Quick Start with Top-up Mode Using App](/v2/payments/top-up-mode-quick-start)<br/><br/>• API Integration:<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Get Top-up Addresses](/v2/payments/get-topup-addresses): Learn how to create top-up addresses<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Settlement](/v2/payments/settle-topup): Learn how to settle funds in top-up mode<br/>&nbsp;&nbsp;&nbsp;&nbsp;- [Exception Handling](/v2/payments/handle-abnormality-topup): Learn how to handle address changes, compliance exceptions, and other situations |
+Refer to the [Feature list](/v2/payments/features#payment-collection) to select the payment collection mode suitable for you and refer to the documentation to complete payment collection feature integration.
 
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>
+
