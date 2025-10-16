@@ -1,11 +1,16 @@
 ---
-openapi: get /payments/topup/payers
+openapi: post /fee_station/check_fee_station_usage
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_top_up_payers200_response import ListTopUpPayers200Response
+from cobo_waas2.models.fee_station_check_fee_station_usage import (
+    FeeStationCheckFeeStationUsage,
+)
+from cobo_waas2.models.fee_station_check_fee_station_usage_response import (
+    FeeStationCheckFeeStationUsageResponse,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -19,26 +24,25 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.PaymentApi(api_client)
-    limit = 10
-    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
-    merchant_id = "M1001"
-    payer_id = "P20250619T0310056d7aa"
+    api_instance = cobo_waas2.FeeStationApi(api_client)
+    fee_station_check_fee_station_usage = cobo_waas2.FeeStationCheckFeeStationUsage(
+        request_id="f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        amount="100.5",
+        token_id="ETH_USDT",
+        estimated_fee_amount="0.0021",
+        from_address="0x1234567890abcdef1234567890abcdef12345678",
+        from_wallet_id="f47ac10b-58cc-4372-a567-0e02b2c3d479"
+    )
 
     try:
-        # List payers
-        api_response = api_instance.list_top_up_payers(
-            limit=limit,
-            before=before,
-            after=after,
-            merchant_id=merchant_id,
-            payer_id=payer_id,
+        # Check Fee Station usage
+        api_response = api_instance.check_fee_station_usage(
+            fee_station_check_fee_station_usage=fee_station_check_fee_station_usage
         )
-        print("The response of PaymentApi->list_top_up_payers:\n")
+        print("The response of FeeStationApi->check_fee_station_usage:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->list_top_up_payers: %s\n" % e)
+        print("Exception when calling FeeStationApi->check_fee_station_usage: %s\n" % e)
 
 ```
 ```java Java
@@ -47,7 +51,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
+import com.cobo.waas2.api.FeeStationApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -59,18 +63,15 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    PaymentApi apiInstance = new PaymentApi();
-    Integer limit = 10;
-    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
-    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
-    String merchantId = "M1001";
-    String payerId = "P20250619T0310056d7aa";
+    FeeStationApi apiInstance = new FeeStationApi();
+    FeeStationCheckFeeStationUsage feeStationCheckFeeStationUsage =
+        new FeeStationCheckFeeStationUsage();
     try {
-      ListTopUpPayers200Response result =
-          apiInstance.listTopUpPayers(limit, before, after, merchantId, payerId);
+      FeeStationCheckFeeStationUsageResponse result =
+          apiInstance.checkFeeStationUsage(feeStationCheckFeeStationUsage);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#listTopUpPayers");
+      System.err.println("Exception when calling FeeStationApi#checkFeeStationUsage");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -92,11 +93,7 @@ import (
 )
 
 func main() {
-	limit := int32(10)
-	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
-	merchantId := "M1001"
-	payerId := "P20250619T0310056d7aa"
+	feeStationCheckFeeStationUsage := *coboWaas2.NewFeeStationCheckFeeStationUsage("f47ac10b-58cc-4372-a567-0e02b2c3d479", "100.5", "ETH_USDT", "0.0021", "0x1234567890abcdef1234567890abcdef12345678", "f47ac10b-58cc-4372-a567-0e02b2c3d479")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -109,19 +106,19 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.ListTopUpPayers(ctx).
-		Limit(limit).
-		Before(before).
-		After(after).
-		MerchantId(merchantId).
-		PayerId(payerId).
+	resp, r, err := apiClient.FeeStationAPI.CheckFeeStationUsage(ctx).
+		FeeStationCheckFeeStationUsage(feeStationCheckFeeStationUsage).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListTopUpPayers``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `FeeStationAPI.CheckFeeStationUsage``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListTopUpPayers`: ListTopUpPayers200Response
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListTopUpPayers`: %v\n", resp)
+	// response from `CheckFeeStationUsage`: FeeStationCheckFeeStationUsageResponse
+	fmt.Fprintf(os.Stdout, "Response from `FeeStationAPI.CheckFeeStationUsage`: %v\n", resp)
 }
 
 ```
@@ -134,15 +131,12 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.PaymentApi();
+const apiInstance = new CoboWaas2.FeeStationApi();
 const opts = {
-  limit: 10,
-  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
-  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
-  merchant_id: "M1001",
-  payer_id: "P20250619T0310056d7aa",
+  FeeStationCheckFeeStationUsage:
+    new CoboWaas2.FeeStationCheckFeeStationUsage(),
 };
-apiInstance.listTopUpPayers(opts).then(
+apiInstance.checkFeeStationUsage(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

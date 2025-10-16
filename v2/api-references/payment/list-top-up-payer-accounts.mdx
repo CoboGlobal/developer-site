@@ -1,11 +1,13 @@
 ---
-openapi: get /payments/topup/payers
+openapi: get /payments/topup/payer_accounts
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_top_up_payers200_response import ListTopUpPayers200Response
+from cobo_waas2.models.list_top_up_payer_accounts200_response import (
+    ListTopUpPayerAccounts200Response,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -27,18 +29,18 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     payer_id = "P20250619T0310056d7aa"
 
     try:
-        # List payers
-        api_response = api_instance.list_top_up_payers(
+        # List top-up payer accounts
+        api_response = api_instance.list_top_up_payer_accounts(
             limit=limit,
             before=before,
             after=after,
             merchant_id=merchant_id,
             payer_id=payer_id,
         )
-        print("The response of PaymentApi->list_top_up_payers:\n")
+        print("The response of PaymentApi->list_top_up_payer_accounts:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->list_top_up_payers: %s\n" % e)
+        print("Exception when calling PaymentApi->list_top_up_payer_accounts: %s\n" % e)
 
 ```
 ```java Java
@@ -66,11 +68,11 @@ public class Example {
     String merchantId = "M1001";
     String payerId = "P20250619T0310056d7aa";
     try {
-      ListTopUpPayers200Response result =
-          apiInstance.listTopUpPayers(limit, before, after, merchantId, payerId);
+      ListTopUpPayerAccounts200Response result =
+          apiInstance.listTopUpPayerAccounts(limit, before, after, merchantId, payerId);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#listTopUpPayers");
+      System.err.println("Exception when calling PaymentApi#listTopUpPayerAccounts");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -109,7 +111,7 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.ListTopUpPayers(ctx).
+	resp, r, err := apiClient.PaymentAPI.ListTopUpPayerAccounts(ctx).
 		Limit(limit).
 		Before(before).
 		After(after).
@@ -117,11 +119,11 @@ func main() {
 		PayerId(payerId).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListTopUpPayers``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListTopUpPayerAccounts``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListTopUpPayers`: ListTopUpPayers200Response
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListTopUpPayers`: %v\n", resp)
+	// response from `ListTopUpPayerAccounts`: ListTopUpPayerAccounts200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListTopUpPayerAccounts`: %v\n", resp)
 }
 
 ```
@@ -142,7 +144,7 @@ const opts = {
   merchant_id: "M1001",
   payer_id: "P20250619T0310056d7aa",
 };
-apiInstance.listTopUpPayers(opts).then(
+apiInstance.listTopUpPayerAccounts(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

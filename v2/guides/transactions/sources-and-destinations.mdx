@@ -20,7 +20,7 @@ Refer to the following table for the source and destination types corresponding 
 | Withdrawal - Transfers between Custodial Wallets (Asset Wallets)               | Asset                                                                            | CustodialWallet         |
 | Withdrawal - Transfers between Exchange Wallets    | Main<br />Sub                                                                                    | ExchangeWallet           |
 | Withdrawal - Other withdrawal transactions         | Asset<br />Web3<br />Org-Controlled<br />User-Controlled<br />Safe\{Wallet\}<br />Main<br />Sub                      | Address                  |
-| ContractCall                                      | Org-Controlled<br />User-Controlled<br />Safe\{Wallet\}<br />Web3                                               | EVM_Contract<br />SOL_Contract             |
+| ContractCall                                      | Org-Controlled<br />User-Controlled<br />Safe\{Wallet\}<br />Web3                                               | EVM_Contract<br />SOL_Contract<br />STELLAR_Contract             |
 | MessageSign                                       | Org-Controlled<br />User-Controlled<br />Web3                                                                | EVM_EIP_191_Signature<br />EVM_EIP_712_Signature<br />BTC_BIP_137_Signature<br />BTC_EIP_191_Signature<br />BTC_BIP_322_Signature<br />COSMOS_ADR_36_Signature<br />Raw_Message_Signature |
 | ExternalSafeTx                                    | Safe\{Wallet\}                                                                                   |       EVM_Contract        |
 | Stake                                    | Org-Controlled                                                                                  |    Address          |
@@ -75,6 +75,7 @@ The transaction destination types are as follows:
 - `ExchangeWallet`: An Exchange Wallet.
 - `EVM_Contract`: An Ethereum Virtual Machine (EVM) smart contract.
 - `SOL_Contract`: A Solana smart contract (program).
+- `Stellar_Contract`: A Stellar smart contract.
 - `EVM_EIP_191_Signature`: An EVM EIP-191 signature. For more details, see [Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191).
 - `EVM_EIP_712_Signature`: An EVM EIP-712 signature. For more details, see [Typed structured data hashing and signing](https://eips.ethereum.org/EIPS/eip-712).
 - `BTC_BIP_137_Signature`: A BTC BIP-137 signature. For more details, see [BIP-137](https://github.com/bitcoin/bips/blob/master/bip-0137.mediawiki).

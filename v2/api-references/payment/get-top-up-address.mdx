@@ -20,14 +20,14 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    merchant_id = "M1001"
     token_id = "ETH_USDT"
     custom_payer_id = "payer_0001"
+    merchant_id = "M1001"
 
     try:
         # Get top-up address
         api_response = api_instance.get_top_up_address(
-            merchant_id, token_id, custom_payer_id
+            token_id, custom_payer_id, merchant_id=merchant_id
         )
         print("The response of PaymentApi->get_top_up_address:\n")
         pprint(api_response)
@@ -54,11 +54,11 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    String merchantId = "M1001";
     String tokenId = "ETH_USDT";
     String customPayerId = "payer_0001";
+    String merchantId = "M1001";
     try {
-      TopUpAddress result = apiInstance.getTopUpAddress(merchantId, tokenId, customPayerId);
+      TopUpAddress result = apiInstance.getTopUpAddress(tokenId, customPayerId, merchantId);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentApi#getTopUpAddress");
@@ -83,9 +83,9 @@ import (
 )
 
 func main() {
-	merchantId := "M1001"
 	tokenId := "ETH_USDT"
 	customPayerId := "payer_0001"
+	merchantId := "M1001"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -99,9 +99,9 @@ func main() {
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
 	resp, r, err := apiClient.PaymentAPI.GetTopUpAddress(ctx).
-		MerchantId(merchantId).
 		TokenId(tokenId).
 		CustomPayerId(customPayerId).
+		MerchantId(merchantId).
 		Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.GetTopUpAddress``: %v\n", err)
@@ -122,10 +122,12 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
-const merchant_id = "M1001";
 const token_id = "ETH_USDT";
 const custom_payer_id = "payer_0001";
-apiInstance.getTopUpAddress(merchant_id, token_id, custom_payer_id).then(
+const opts = {
+  merchant_id: "M1001",
+};
+apiInstance.getTopUpAddress(token_id, custom_payer_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

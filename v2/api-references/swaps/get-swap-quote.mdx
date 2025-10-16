@@ -1,0 +1,307 @@
+---
+openapi: get /swaps/quote
+---
+
+<RequestExample>
+```python Python
+import cobo_waas2
+from cobo_waas2.models.swap_quote import SwapQuote
+from cobo_waas2.rest import ApiException
+from pprint import pprint
+
+# See configuration.py for a list of all supported configurations.
+configuration = cobo_waas2.Configuration(
+    # Replace `<YOUR_PRIVATE_KEY>` with your private key
+    api_private_key="<YOUR_PRIVATE_KEY>",
+    # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
+    host="https://api.dev.cobo.com/v2",
+)
+# Enter a context with an instance of the API client
+with cobo_waas2.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = cobo_waas2.SwapsApi(api_client)
+    wallet_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+    pay_token_id = "ETH"
+    receive_token_id = "USDT"
+    pay_amount = "1.5"
+    receive_amount = "2000"
+
+    try:
+        # Get swap quote
+        api_response = api_instance.get_swap_quote(
+            wallet_id,
+            pay_token_id,
+            receive_token_id,
+            pay_amount=pay_amount,
+            receive_amount=receive_amount,
+        )
+        print("The response of SwapsApi->get_swap_quote:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling SwapsApi->get_swap_quote: %s\n" % e)
+
+```
+```java Java
+// Import classes:
+import com.cobo.waas2.ApiClient;
+import com.cobo.waas2.ApiException;
+import com.cobo.waas2.Configuration;
+import com.cobo.waas2.Env;
+import com.cobo.waas2.api.SwapsApi;
+import com.cobo.waas2.model.*;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    // Select the development environment. To use the production environment, replace `Env.DEV` with
+    // `Env.PROD
+    defaultClient.setEnv(Env.DEV);
+
+    // Replace `<YOUR_PRIVATE_KEY>` with your private key
+    defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
+    SwapsApi apiInstance = new SwapsApi();
+    UUID walletId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+    String payTokenId = "ETH";
+    String receiveTokenId = "USDT";
+    String payAmount = "1.5";
+    String receiveAmount = "2000";
+    try {
+      SwapQuote result =
+          apiInstance.getSwapQuote(walletId, payTokenId, receiveTokenId, payAmount, receiveAmount);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling SwapsApi#getSwapQuote");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+
+```
+```go Go
+package main
+
+import (
+	"context"
+	"fmt"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
+	"os"
+)
+
+func main() {
+	walletId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+	payTokenId := "ETH"
+	receiveTokenId := "USDT"
+	payAmount := "1.5"
+	receiveAmount := "2000"
+
+	configuration := coboWaas2.NewConfiguration()
+	// Initialize the API client
+	apiClient := coboWaas2.NewAPIClient(configuration)
+	ctx := context.Background()
+
+	// Select the development environment. To use the production environment, replace coboWaas2.DevEnv with coboWaas2.ProdEnv
+	ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.DevEnv)
+	// Replace `<YOUR_PRIVATE_KEY>` with your private key
+	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
+		Secret: "<YOUR_PRIVATE_KEY>",
+	})
+	resp, r, err := apiClient.SwapsAPI.GetSwapQuote(ctx).
+		WalletId(walletId).
+		PayTokenId(payTokenId).
+		ReceiveTokenId(receiveTokenId).
+		PayAmount(payAmount).
+		ReceiveAmount(receiveAmount).
+		Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `SwapsAPI.GetSwapQuote``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `GetSwapQuote`: SwapQuote
+	fmt.Fprintf(os.Stdout, "Response from `SwapsAPI.GetSwapQuote`: %v\n", resp)
+}
+
+```
+```javascript JavaScript
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// Initialize the API client
+const apiClient = CoboWaas2.ApiClient.instance;
+// Select the development environment. To use the production environment, replace `Env.DEV` with `Env.PROD`
+apiClient.setEnv(CoboWaas2.Env.DEV);
+// Replace `<YOUR_PRIVATE_KEY>` with your private key
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// Call the API
+const apiInstance = new CoboWaas2.SwapsApi();
+const wallet_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
+const pay_token_id = "ETH";
+const receive_token_id = "USDT";
+const opts = {
+  pay_amount: "1.5",
+  receive_amount: "2000",
+};
+apiInstance.getSwapQuote(wallet_id, pay_token_id, receive_token_id, opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+
+```
+</RequestExample>
+
+<RequestExample>
+```python Python
+import cobo_waas2
+from cobo_waas2.models.swap_quote import SwapQuote
+from cobo_waas2.rest import ApiException
+from pprint import pprint
+
+# See configuration.py for a list of all supported configurations.
+configuration = cobo_waas2.Configuration(
+    # Replace `<YOUR_PRIVATE_KEY>` with your private key
+    api_private_key="<YOUR_PRIVATE_KEY>",
+    # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
+    host="https://api.dev.cobo.com/v2",
+)
+# Enter a context with an instance of the API client
+with cobo_waas2.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = cobo_waas2.SwapsApi(api_client)
+    wallet_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+    pay_token_id = "ETH"
+    receive_token_id = "USDT"
+    pay_amount = "1.5"
+    receive_amount = "2000"
+
+    try:
+        # Get swap quote
+        api_response = api_instance.get_swap_quote(
+            wallet_id,
+            pay_token_id,
+            receive_token_id,
+            pay_amount=pay_amount,
+            receive_amount=receive_amount,
+        )
+        print("The response of SwapsApi->get_swap_quote:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling SwapsApi->get_swap_quote: %s\n" % e)
+
+```
+```java Java
+// Import classes:
+import com.cobo.waas2.ApiClient;
+import com.cobo.waas2.ApiException;
+import com.cobo.waas2.Configuration;
+import com.cobo.waas2.Env;
+import com.cobo.waas2.api.SwapsApi;
+import com.cobo.waas2.model.*;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    // Select the development environment. To use the production environment, replace `Env.DEV` with
+    // `Env.PROD
+    defaultClient.setEnv(Env.DEV);
+
+    // Replace `<YOUR_PRIVATE_KEY>` with your private key
+    defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
+    SwapsApi apiInstance = new SwapsApi();
+    UUID walletId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+    String payTokenId = "ETH";
+    String receiveTokenId = "USDT";
+    String payAmount = "1.5";
+    String receiveAmount = "2000";
+    try {
+      SwapQuote result =
+          apiInstance.getSwapQuote(walletId, payTokenId, receiveTokenId, payAmount, receiveAmount);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling SwapsApi#getSwapQuote");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+
+```
+```go Go
+package main
+
+import (
+	"context"
+	"fmt"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
+	"os"
+)
+
+func main() {
+	walletId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+	payTokenId := "ETH"
+	receiveTokenId := "USDT"
+	payAmount := "1.5"
+	receiveAmount := "2000"
+
+	configuration := coboWaas2.NewConfiguration()
+	// Initialize the API client
+	apiClient := coboWaas2.NewAPIClient(configuration)
+	ctx := context.Background()
+
+	// Select the development environment. To use the production environment, replace coboWaas2.DevEnv with coboWaas2.ProdEnv
+	ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.DevEnv)
+	// Replace `<YOUR_PRIVATE_KEY>` with your private key
+	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
+		Secret: "<YOUR_PRIVATE_KEY>",
+	})
+	resp, r, err := apiClient.SwapsAPI.GetSwapQuote(ctx).
+		WalletId(walletId).
+		PayTokenId(payTokenId).
+		ReceiveTokenId(receiveTokenId).
+		PayAmount(payAmount).
+		ReceiveAmount(receiveAmount).
+		Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `SwapsAPI.GetSwapQuote``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `GetSwapQuote`: SwapQuote
+	fmt.Fprintf(os.Stdout, "Response from `SwapsAPI.GetSwapQuote`: %v\n", resp)
+}
+
+```
+```javascript JavaScript
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// Initialize the API client
+const apiClient = CoboWaas2.ApiClient.instance;
+// Select the development environment. To use the production environment, replace `Env.DEV` with `Env.PROD`
+apiClient.setEnv(CoboWaas2.Env.DEV);
+// Replace `<YOUR_PRIVATE_KEY>` with your private key
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// Call the API
+const apiInstance = new CoboWaas2.SwapsApi();
+const wallet_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
+const pay_token_id = "ETH";
+const receive_token_id = "USDT";
+const opts = {
+  pay_amount: "1.5",
+  receive_amount: "2000",
+};
+apiInstance.getSwapQuote(wallet_id, pay_token_id, receive_token_id, opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+
+```
+</RequestExample>

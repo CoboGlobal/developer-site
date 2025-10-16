@@ -320,7 +320,8 @@
                       "v2/api-references/feestation/list-all-fee-station-transactions",
                       "v2/api-references/feestation/list-fee-station-addresses",
                       "v2/api-references/feestation/list-fee-station-token-balances",
-                      "v2/api-references/feestation/estimate-fee-for-fee-station-transaction"
+                      "v2/api-references/feestation/estimate-fee-for-fee-station-transaction",
+                      "v2/api-references/feestation/check-fee-station-usage"
                     ]
                   }
                 ]
@@ -564,12 +565,6 @@
                     ]
                   },
                   {
-                    "group": "Exchange rates",
-                    "pages": [
-                      "v2/api-references/payment/get-exchange-rate"
-                    ]
-                  },
-                  {
                     "group": "Top-up",
                     "pages": [
                       "v2/api-references/payment/get-top-up-address",
@@ -619,6 +614,13 @@
                       "v2/api-references/payment/list-crypto-addresses",
                       "v2/api-references/payment/create-forced-sweep",
                       "v2/api-references/payment/list-forced-sweeps"
+                    ]
+                  },
+                  {
+                    "group": "Fees and exchange rates",
+                    "pages": [
+                      "v2/api-references/payment/get-exchange-rate",
+                      "v2/api-references/payment/estimate-fees"
                     ]
                   },
                   {

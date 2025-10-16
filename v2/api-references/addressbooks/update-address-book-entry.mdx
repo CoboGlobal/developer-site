@@ -22,7 +22,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.AddressBooksApi(api_client)
     entry_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
-    update_address_book_param = cobo_waas2.UpdateAddressBookParam(chain_ids="ETH")
+    update_address_book_param = cobo_waas2.UpdateAddressBookParam(chain_ids=["ETH"])
 
     try:
         # Update Address Book entry
@@ -58,7 +58,7 @@ public class Example {
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     AddressBooksApi apiInstance = new AddressBooksApi();
     UUID entryId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
-    UpdateAddressBookParam updateAddressBookParam = new UpdateAddressBookParam().chainIds("ETH");
+    UpdateAddressBookParam updateAddressBookParam = new UpdateAddressBookParam().chainIds(Arrays.asList("ETH"));
     try {
       AddressBook result = apiInstance.updateAddressBookById(entryId, updateAddressBookParam);
       System.out.println(result);
@@ -128,7 +128,7 @@ const apiInstance = new CoboWaas2.AddressBooksApi();
 const entry_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
 const opts = {
   UpdateAddressBookParam: CoboWaas2.UpdateAddressBookParam.constructFromObject({
-    chain_ids: "ETH",
+    chain_ids: ["ETH"],
   }),
 };
 apiInstance.updateAddressBookById(entry_id, opts).then(

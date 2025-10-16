@@ -6,6 +6,7 @@ openapi: get /payments/merchants
 ```python Python
 import cobo_waas2
 from cobo_waas2.models.list_merchants200_response import ListMerchants200Response
+from cobo_waas2.models.wallet_setup import WalletSetup
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -25,6 +26,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
     keyword = "keyword"
     wallet_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+    wallet_setup = cobo_waas2.WalletSetup("Default")
 
     try:
         # List all merchants
@@ -34,6 +36,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
             after=after,
             keyword=keyword,
             wallet_id=wallet_id,
+            wallet_setup=wallet_setup,
         )
         print("The response of PaymentApi->list_merchants:\n")
         pprint(api_response)
@@ -65,9 +68,10 @@ public class Example {
     String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
     String keyword = "keyword";
     UUID walletId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+    WalletSetup walletSetup = WalletSetup.fromValue("Default");
     try {
       ListMerchants200Response result =
-          apiInstance.listMerchants(limit, before, after, keyword, walletId);
+          apiInstance.listMerchants(limit, before, after, keyword, walletId, walletSetup);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentApi#listMerchants");
@@ -97,6 +101,7 @@ func main() {
 	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
 	keyword := "keyword"
 	walletId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+	walletSetup := coboWaas2.WalletSetup("Default")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -115,6 +120,7 @@ func main() {
 		After(after).
 		Keyword(keyword).
 		WalletId(walletId).
+		WalletSetup(walletSetup).
 		Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListMerchants``: %v\n", err)
@@ -141,6 +147,7 @@ const opts = {
   after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
   keyword: "keyword",
   wallet_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  wallet_setup: "Default",
 };
 apiInstance.listMerchants(opts).then(
   (data) => {
