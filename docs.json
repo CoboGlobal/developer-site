@@ -1442,17 +1442,6 @@
                     ]
                   },
                   {
-                    "group": "Trading",
-                    "pages": [
-                      "v1/api-references/custody-wallet/trading/trading_withdraw",
-                      "v1/api-references/custody-wallet/trading/trading_withdraw_info",
-                      "v1/api-references/custody-wallet/trading/trading_deposit",
-                      "v1/api-references/custody-wallet/trading/trading_deposit_info",
-                      "v1/api-references/custody-wallet/trading/trading_transfer",
-                      "v1/api-references/custody-wallet/trading/trading_transfer_info"
-                    ]
-                  },
-                  {
                     "group": "Gas Station",
                     "pages": [
                       "v1/api-references/custody-wallet/get_gas_station_balance",
