@@ -6,31 +6,57 @@ description: ""
 
 <Note>**Disclaimer: This article contains AI translations and should only be used as reference.** Contact Cobo's support team through [help@cobo.com](mailto:help@cobo.com) if you have any questions.</Note>
 
-The Cobo payments solution currently supports two mainstream stablecoins, USDC and USDT, and can be used on multiple mainstream chains. The following are the detailed support situations:
+The Cobo payments solution currently supports **USDC** and **USDT**, and can be used on multiple mainstream chains. This document details the support for various token and chain combinations for payment collection and fiat off-ramp scenarios.
 
-## Chains supported by USDC
-* Ethereum (ETH_USDC)
-* Arbitrum (ARBITRUM_USDCOIN)
-* Base (BASE_USDC)
-* Polygon (MATIC_USDC2)
-* BNB Smart Chain (BSC_USDC)
-* Solana (SOL_USDC)
+## Supported tokens and chains for payment collection
 
-## Chains supported by USDT
-* TRON (TRON_USDT)
-* Ethereum (ETH_USDT)
-* Arbitrum (ARBITRUM_USDT)
-* Base (BASE_USDT)
-* Polygon (MATIC_USDT) 
-* BNB Smart Chain (BSC_USDT)
-* Solana (SOL_USDT)
+The Cobo payments solution supports the following token and chain combinations for payment collection:
 
-## Use TTRON for testing
+| Stablecoin | Supported Chain | Token ID |
+|------------|-----------------|----------|
+| **USDC** | Ethereum | ETH_USDC |
+| | Arbitrum | ARBITRUM_USDCOIN |
+| | Base | BASE_USDC |
+| | Polygon | MATIC_USDC2 |
+| | BNB Smart Chain | BSC_USDC |
+| | Solana | SOL_USDC |
+| **USDT** | TRON | TRON_USDT |
+| | Ethereum | ETH_USDT |
+| | Arbitrum | ARBITRUM_USDT |
+| | Base | BASE_USDT |
+| | Polygon | MATIC_USDT |
+| | BNB Smart Chain | BSC_USDT |
+| | Solana | SOL_USDT |
 
-At the same time, you can also use TTRON (TRON testnet) for testing in the development environment. The Cobo payments solution currently supports the test token TTRON_USDT1:
+
+You can also use TTRON (TRON testnet) for testing in the development environment. The Cobo payments solution currently supports the test token TTRON_USDT1:
 
 * Token contract address: `TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf`
 * Test token faucet: https://nileex.io/join/getJoinPage
+
+
+## Fiat off-ramp support
+
+The following table lists the fiat off-ramp support for various token and chain combinations across different environments:
+
+| Token and Chain | Development Environment | Production Environment |
+|-----------------|-------------------------|------------------------|
+| ETH_USDC | ✅ Supported | ✅ Supported |
+| ARBITRUM_USDCOIN | ❌ Not supported | ✅ Supported (bridging fee required) |
+| BASE_USDC | ❌ Not supported | ✅ Supported (bridging fee required) |
+| MATIC_USDC2 | ❌ Not supported | ✅ Supported (bridging fee required) |
+| BSC_USDC | ❌ Not supported | ✅ Supported (bridging fee required) |
+| TRON_USDT | ✅ Supported | ✅ Supported |
+| ETH_USDT | ✅ Supported | ✅ Supported |
+| ARBITRUM_USDT | ❌ Not supported | ✅ Supported (bridging fee required) |
+| SOL_USDC | ❌ Not supported | ✅ Supported (bridging fee required) |
+| SOL_USDT | ❌ Not supported | ✅ Supported (bridging fee required) |
+| BASE_USDT | ❌ Not supported | ❌ Not supported |
+| MATIC_USDT | ✅ Supported (bridging fee required) | ✅ Supported (bridging fee required) |
+| BSC_USDT | ✅ Supported (bridging fee required) | ✅ Supported (bridging fee required) |
+| TTRON_USDT | ✅ Supported | ❌ Not supported |
+
+<Info>Token and chain combinations marked as "bridging fee required" incur additional bridging fees on top of regular fees when performing fiat off-ramp operations.</Info>
 
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>
 

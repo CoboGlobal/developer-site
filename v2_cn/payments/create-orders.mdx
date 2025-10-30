@@ -47,7 +47,7 @@ sequenceDiagram
 ### 实现步骤
 <Tabs>
   <Tab title="Payments API" icon="code">
-1. 付款方选择用于支付的币种和链之后，您可以先调用 [Get exchange rate](/v2/api-references/payment/get-exchange-rate) 获取实时的公允汇率。根据商品订单金额和汇率，您可以计算出预估的应付金额并展示给付款方。
+1. 付款方选择用于支付的币种和链之后，您可以先调用 [Get exchange rate](/v2/api-references/payment/get-exchange-rate) 获取实时参考汇率。根据商品订单金额和参考汇率，您可以计算出预估的应付金额并展示给付款方。
 
 2. 在付款方确认支付后，调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 创建支付订单。创建订单时需要提供以下关键参数：
    * **商户 ID**（`merchant_id`）：商户 ID，在您录入商户时由 Cobo 分配。
@@ -259,7 +259,7 @@ public class Example {
 
 | 异常情况 | 描述 | 影响 |
 |---------|------|----------|
-| **多付** | 在订单有效期内，付款方实付金额超过应付金额 | 订单最终状态为 `Completed`。|
+| **多付** | 在订单有效期内，付款方实付金额超过**应付金额的两倍** | 订单最终状态为 `Completed`。|
 | **少付** | 在订单有效期内，付款方实付金额少于应付金额 | 订单状态为 `Underpaid`（终态）。|
 | **晚付** | 付款方在订单过期后进行首次或再次付款 | 不会改变订单状态。每次晚付都会触发一次 `payment.transaction.late` Webhook 事件。|
 

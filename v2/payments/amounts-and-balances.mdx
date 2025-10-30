@@ -125,9 +125,10 @@ Special case handling:
 
 ### Refunds
 
-The fund allocation for refunds is based on the amount parameters set when creating the refund order. For example, when the refund amount (`payable_amount`) is 100 USDT and the developer fee (`merchant_fee_amount`) is 1 USDT, 1 USDT from the 100 USDT refund amount will be allocated as the developer fee, and the payer will actually receive 99 USDT. The source of the refund amount can be either the merchant balance or the developer balance, and the specific operation methods are:
-- If the refund amount source is the merchant balance, the system will transfer 1 USDT from the merchant balance to the developer balance, deduct 99 USDT from the merchant balance, and transfer it to the payer;
-- If the refund amount source is the developer balance, the system will deduct 99 USDT from the developer balance, transfer it to the payer, and retain 1 USDT as the developer fee.
+The source of the refund amount can be either the merchant balance or the developer balance.
+
+ - When the refund amount comes from the merchant balance, you can specify the developer fee amount. For example, when the refund amount (`payable_amount`) is 100 USDT and the developer fee (`merchant_fee_amount`) is 1 USDT, 1 USDT from the 100 USDT refund amount will be allocated as the developer fee, and the payer will actually receive 99 USDT.
+- When the refund amount comes from the developer balance, the developer fee field will be ignored, and the full refund amount will be deducted from the developer balance and transferred to the payer.
 
 
 The following diagram shows the allocation and flow of funds during the refund process (sample data):
@@ -135,18 +136,20 @@ The following diagram shows the allocation and flow of funds during the refund p
 ```mermaid
 %%{init: {'themeVariables': { 'fontSize': '12px'}}}%%
 graph TD
-    E[Create refund order<br/>Refund amount: 100 USDT<br/>Developer fee: 1 USDT] --> F[Select refund source]
+    F[Select refund source] -->|Refund from merchant balance| E1[Create refund order<br/>Refund amount: 100 USDT<br/>Developer fee: 1 USDT]
+    F -->|Refund from developer balance| E2[Create refund order<br/>Refund amount: 100 USDT]
     
-    F -->|Refund from merchant balance| G[Deduct 100 USDT from merchant balance]
-    F -->|Refund from developer balance| H[Deduct 99 USDT from developer balance]
+    E1 --> G[Deduct 100 USDT from merchant balance]
+    E2 --> H[Deduct 100 USDT from developer balance]
     
     G --> J[Payer actually receives<br/>99 USDT]
     G --> K[Developer balance increases<br/>1 USDT]
     
-    H --> L[Transfer to payer<br/>99 USDT]
+    H --> L[Transfer to payer<br/>100 USDT]
     
-    style E fill:#e3f2fd
     style F fill:#f3e5f5
+    style E1 fill:#e3f2fd
+    style E2 fill:#e3f2fd
     style G fill:#c8e6c9
     style H fill:#fff3e0
     style J fill:#c8e6c9

@@ -49,7 +49,7 @@ You have completed all the steps mentioned in [Preparation](/v2/payments/prepara
 ### Implementation steps
 <Tabs>
   <Tab title="Payments API" icon="code">
-1. After the payer selects the token and chain to use for payment, you can first call [Get exchange rate](/v2/api-references/payment/get-exchange-rate) to obtain the real-time fair exchange rate. Based on the product order amount and exchange rate, you can calculate the estimated amount payable and display it to the payer.
+1. After the payer selects the token and chain to use for payment, you can first call [Get exchange rate](/v2/api-references/payment/get-exchange-rate) to obtain the real-time reference exchange rate. Based on the product order amount and reference exchange rate, you can calculate the estimated amount payable and display it to the payer.
 
 2. After the payer confirms payment, call [Create pay-in order](/v2/api-references/payment/create-pay-in-order) to create a payment order. When creating an order, you need to provide the following key parameters:
    * **Merchant ID** (`merchant_id`): Merchant ID, assigned by Cobo when you register the merchant.
@@ -261,7 +261,7 @@ The following three exception situations may occur during the payment process:
 
 | Exception situation | Description | Impact |
 |---------|------|----------|
-| **Overpayment** | Within the order validity period, the payer's actual payment amount exceeds the amount payable | The final order status is `Completed`.|
+| **Overpayment** | Within the order validity period, the payer's actual payment amount exceeds **twice the payable amount** | The final order status is `Completed`.|
 | **Underpayment** | Within the order validity period, the payer's actual payment amount is less than the amount payable | The order status is `Underpaid` (final state).|
 | **Late payment** | The payer makes the first or subsequent payment after the order expires | Does not change the order status. Each late payment will trigger one `payment.transaction.late` webhook event.|
 

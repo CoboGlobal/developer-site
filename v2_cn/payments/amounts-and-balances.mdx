@@ -122,9 +122,10 @@ graph TD
 
 ### 退款
 
-退款时的资金分配基于创建退款订单时设定的金额参数。例如，当退款金额（`payable_amount`）为 100 USDT，开发者费用（`merchant_fee_amount`）为 1 USDT 时，100 USDT 的退款金额将分配 1 USDT 作为开发者费用，付款方实际收到 99 USDT。退款金额的来源可以是商户余额或开发者余额，具体操作方式为：
-- 如果退款金额来源为商户余额，则系统会从商户余额划转 1 USDT 至开发者余额，将 99 USDT 从商户余额中扣除，并转帐给付款方；
-- 如果退款金额来源为开发者余额，则系统会从开发者余额扣除 99 USDT，转账给付款方，并保留 1 USDT 作为开发者费用。
+退款金额的来源可以是商户余额或开发者余额。
+
+ - 当退款金额来源为商户余额时，您可以指定开发者费用金额。例如，当退款金额（`payable_amount`）为 100 USDT，开发者费用（`merchant_fee_amount`）为 1 USDT 时，100 USDT 的退款金额将分配 1 USDT 作为开发者费用，付款方实际收到 99 USDT。
+- 当退款金额来源为开发者余额时，开发者费用字段将被忽略，退款金额将全额从开发者余额中扣除并转给付款方。
 
 
 下图展示了退款过程中资金的分配和流向（示例数据）：
@@ -132,18 +133,20 @@ graph TD
 ```mermaid
 %%{init: {'themeVariables': { 'fontSize': '12px'}}}%%
 graph TD
-    E[创建退款订单<br/>退款金额: 100 USDT<br/>开发者费用: 1 USDT] --> F[选择退款来源]
+    F[选择退款来源] -->|从商户余额退款| E1[创建退款订单<br/>退款金额: 100 USDT<br/>开发者费用: 1 USDT]
+    F -->|从开发者余额退款| E2[创建退款订单<br/>退款金额: 100 USDT]
     
-    F -->|从商户余额退款| G[从商户余额扣除 100 USDT]
-    F -->|从开发者余额退款| H[从开发者余额扣除 99 USDT]
+    E1 --> G[从商户余额扣除 100 USDT]
+    E2 --> H[从开发者余额扣除 100 USDT]
     
     G --> J[付款方实际收到<br/>99 USDT]
     G --> K[开发者余额增加<br/>1 USDT]
     
-    H --> L[向付款方转账<br/>99 USDT]
+    H --> L[向付款方转账<br/>100 USDT]
     
-    style E fill:#e3f2fd
     style F fill:#f3e5f5
+    style E1 fill:#e3f2fd
+    style E2 fill:#e3f2fd
     style G fill:#c8e6c9
     style H fill:#fff3e0
     style J fill:#c8e6c9

@@ -1,0 +1,51 @@
+---
+title: "钱包手续费扣款方式"
+lang: "zh-hans"
+description: ""
+---
+终端用户使用加密货币钱包转账时，不同的网络费用（Gas 费）处理方式会影响实际收款金额。本文档介绍主流钱包的手续费扣款方式，帮助您了解可能导致用户不足额支付的情况。
+
+## 手续费扣款方式
+
+加密货币钱包的手续费扣款方式主要分为两种：
+
+- **外扣**：网络费用不从转账金额中扣除，转账金额保持不变。例如，转账 100 USDT，付款方需要额外支付 Gas 费，收款方收到完整的 100 USDT。
+
+- **内扣**：网络费用从转账金额中扣除，导致收款方实际收到的金额少于转账金额。例如，转账 100 USDT，Gas 费为 2 USDT，收款方实际只收到 98 USDT。
+
+
+当付款方使用内扣手续费的方式转账时，如果将订单应付金额直接作为转账金额，而没有考虑到 Gas 费会从中扣除，就会出现不足额支付的情况。
+
+
+## 主流钱包手续费扣款方式
+
+以下表格列出了主流钱包的网络费用扣款方式：
+
+<Note>以上测试结果仅覆盖主流钱包。部分小众钱包或特定功能（如代币兑换、跨链等）可能存在手续费内扣的情况。</Note>
+
+| 钱包名称 | 是否内扣手续费 | 备注 |
+|---------|---------------|------|
+| Binance Wallet | 钱包转账为外扣，但通过 Binance 交易平台转账时手续费为内扣 | 通过 Binance 交易平台转账：<img src="/v2_cn/images/payments/binance_wallet.jpg" className="screenshot_modal" alt="Binance Wallet" /> |
+| MetaMask | 否 | - |
+| Trust Wallet | 否 | - |
+| Rainbow | 否 | - |
+| Coinbase Wallet | 否 | - |
+| OKX Wallet | 否 | - |
+| TokenPocket | 否 | - |
+| Phantom | 否 | - |
+| Backpack | 否 | - |
+| Solflare | 否 | - |
+| Bitget Wallet | 否 | - |
+| TronLink | 否 | - |
+
+
+
+
+## 建议
+
+为了确保收款金额准确，建议：
+
+1. 提醒付款方注意内扣的问题，确保收款金额准确。
+2. 设置合理的订单金额容差，允许少付一定范围内的金额，以应对可能的内扣手续费情况。
+
+<Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>
