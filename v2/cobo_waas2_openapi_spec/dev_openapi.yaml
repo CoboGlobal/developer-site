@@ -4327,6 +4327,23 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /payments/links/orders:
+    post:
+      tags:
+        - Payment
+      operationId: create_order_link
+      summary: Create order link
+      description: |
+        This operation generates a payment link for a pay-in order. The link directs users to a hosted payment page where they can complete their payment for the order. You can share the link directly with users or embed the payment page in your website or application using an iframe.
+      requestBody:
+        $ref: '#/components/requestBodies/createPaymentOrderLinkRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/createPaymentLinkResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /auto_sweep/sweep_to_addresses:
     get:
       tags:
@@ -4353,7 +4370,7 @@ paths:
       tags:
         - AutoSweep
       operationId: create_wallet_sweep_to_addresses
-      summary: create sweep-to address
+      summary: Create sweep-to address
       description: |
         This operation creates a new sweep-to address for the specified wallet. The previously sweep-to address for the same token becomes invalid once the new one is created.
 
@@ -4971,17 +4988,89 @@ paths:
         - OAuth2:
             - compliance_funds.read
       parameters:
-        - name: transaction_id
-          in: query
-          required: true
-          description: The UUID of the transaction to query for disposition status.
-          schema:
-            type: string
-            format: uuid
-          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        - $ref: '#/components/parameters/TransactionIdParam'
       responses:
         '200':
           $ref: '#/components/responses/getDispositionResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /compliance/kyt/screenings/decisions:
+    post:
+      tags:
+        - Compliance
+      operationId: submit_kyt_screening_decisions
+      summary: Submit KYT screening decision
+      description: |
+        This operation submits a KYT (Know Your Transaction) screening decision for a specific transaction based on an external compliance review.
+
+        Use this endpoint to provide a screening decision (Approval, ApprovalWithAlert, Rejection, or ManualReview) after completing the external KYT screening process.
+
+        The submitted decision will be recorded for compliance audit purposes and regulatory reporting requirements.
+
+        <Note>Submitting a screening decision will update the transaction's KYT status and may automatically trigger downstream compliance workflows or notifications depending on the decision type.</Note>
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - compliance_kyt_decisions.update
+      requestBody:
+        $ref: '#/components/requestBodies/submitKytScreeningsDecisionBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/submitKytScreeningsDecisionResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /compliance/kyt/screenings/manual_review:
+    post:
+      tags:
+        - Compliance
+      operationId: submit_kyt_manual_review
+      summary: Submit KYT manual review result
+      description: |
+        This operation submits a manual review result for a KYT (Know Your Transaction) screening case that requires human analysis.
+
+        Use this endpoint when transactions flagged for manual review have been analyzed by compliance officers and require submission of review outcomes with detailed comments and justifications.
+
+        This endpoint is specifically designed for submitting comprehensive manual review findings rather than automated screening decisions.
+
+        <Note>Submitting a manual review result will update the KYT screening status and initiate appropriate compliance workflow actions based on the review outcome.</Note>
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - compliance_kyt_review.update
+      requestBody:
+        $ref: '#/components/requestBodies/submitKytScreeningsManualReviewBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/submitKytScreeningsReviewResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /compliance/kyt/screenings/status:
+    get:
+      tags:
+        - Compliance
+      operationId: get_kyt_screening_status
+      summary: Get KYT screening status
+      description: |
+        This operation retrieves the current KYT (Know Your Transaction) screening status, including review status and fund disposition status, for a specific transaction.
+
+        Use this endpoint to monitor the real-time screening progress for transactions processed through the KYT compliance system.
+
+        <Note>This endpoint provides comprehensive compliance monitoring capabilities to help maintain AML (Anti-Money Laundering) regulatory compliance and audit trail requirements.</Note>
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - compliance_kyt_status.read
+      parameters:
+        - $ref: '#/components/parameters/TransactionIdParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/getKytScreeningsResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -9624,9 +9713,7 @@ components:
       description: |
         The information about the transaction destination type `CustodialWallet`. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.
 
-        A Custodial Wallet (Asset Wallet) can only receive transfers from another Custodial Wallet (Asset Wallet) by using [Cobo Loop](https://manuals.cobo.com/en/portal/custodial-wallets/cobo-loop).
-
-        <Note>This destination type is available upon request. Please contact our [customer support](mailto:help@cobo.com) to enable it.</Note>
+        **Note: This destination type is deprecated and should no longer be used. Please use `Address` instead.**
 
         Switch between the tabs to display the properties for different transaction destinations.
       title: CustodialWallet
@@ -9687,6 +9774,8 @@ components:
       example: Address
       description: |
         The transaction destination type. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.
+
+        **Note: The `CustodialWallet` destination type is deprecated and should no longer be used. Please use `Address` instead.**
 
         Each destination type requires a different set of properties. Switch between the above tabs for details.
     TransferDestination:
@@ -10417,6 +10506,7 @@ components:
             - BalanceUpdateInfo
             - SuspendedToken
             - ComplianceDisposition
+            - ComplianceKytScreenings
           description: |-
 
             The data type of the event.
@@ -10437,6 +10527,7 @@ components:
             - `BalanceUpdateInfo`: The balance update event data.
             - `SuspendedToken`: The token suspension event data.
             - `ComplianceDisposition`: The compliance disposition event data.
+            - `ComplianceKytScreenings`: The compliance KYT screenings event data.
           example: Transaction
     WebhookEventData:
       oneOf:
@@ -10456,6 +10547,7 @@ components:
         - $ref: '#/components/schemas/PaymentTransactionEventData'
         - $ref: '#/components/schemas/PaymentAddressUpdateEventData'
         - $ref: '#/components/schemas/ComplianceDispositionUpdateEventData'
+        - $ref: '#/components/schemas/ComplianceKytScreeningsUpdateEventData'
       discriminator:
         propertyName: data_type
         mapping:
@@ -10475,6 +10567,7 @@ components:
           PaymentTransaction: '#/components/schemas/PaymentTransactionEventData'
           PaymentAddressUpdate: '#/components/schemas/PaymentAddressUpdateEventData'
           ComplianceDisposition: '#/components/schemas/ComplianceDispositionUpdateEventData'
+          ComplianceKytScreenings: '#/components/schemas/ComplianceKytScreeningsUpdateEventData'
     TransactionWebhookEventData:
       title: Transaction
       allOf:
@@ -10718,6 +10811,11 @@ components:
       allOf:
         - $ref: '#/components/schemas/WebhookEventDataType'
         - $ref: '#/components/schemas/DispositionEventData'
+    ComplianceKytScreeningsUpdateEventData:
+      title: KYT Screening Event Data
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - $ref: '#/components/schemas/KytScreeningsEventData'
     WebhookEventType:
       type: string
       enum:
@@ -10750,11 +10848,13 @@ components:
         - payment.transaction.late
         - payment.transaction.completed
         - payment.transaction.held
+        - payment.transaction.failed
         - payment.status.updated
         - payment.refund.status.updated
         - payment.settlement.status.updated
         - payment.address.updated
         - compliance.disposition.status.updated
+        - compliance.kyt.screenings.status.updated
       example: wallets.transaction.created
       description: |
         The event type. To learn the trigger condition of each event type, refer to [Webhook event types and event data](https://www.cobo.com/developers/v2/guides/webhooks-callbacks/webhook-event-type). 
@@ -13568,24 +13668,15 @@ components:
         token_id:
           type: string
           description: |
-            The ID of the cryptocurrency you want to settle. Specify this field when `payout_channel` is set to `Crypto`. Supported values: 
+            The ID of the cryptocurrency you want to settle. Specify this field when `payout_channel` is set to `Crypto`. Supported values:
             - USDC: `ETH_USDC`, `ARBITRUM_USDCOIN`, `SOL_USDC`, `BASE_USDC`, `MATIC_USDC2`, `BSC_USDC`
             - USDT: `TRON_USDT`, `ETH_USDT`, `ARBITRUM_USDT`, `SOL_USDT`, `BASE_USDT`, `MATIC_USDT`, `BSC_USDT`
           example: ETH_USDT
-        currency:
-          type: string
-          description: This field has been deprecated.
-          example: USD
         amount:
           type: string
           description: |
             The amount of cryptocurrency to be settled. When settling merchant balance from orders (`acquiring_type` is `Order` and `settlement_type` is `Merchant`), do not specify this field as the amount will be automatically calculated based on the order amounts.
           example: '500.00'
-        bank_account_id:
-          type: string
-          format: uuid
-          description: This field has been deprecated.
-          example: 123e457-e89b-12d3-a456-426614174004
         crypto_address_id:
           type: string
           description: |
@@ -13728,6 +13819,12 @@ components:
             $ref: '#/components/schemas/PaymentTransaction'
         settlement_status:
           $ref: '#/components/schemas/SettleStatus'
+        amount_tolerance:
+          type: string
+          description: |-
+            ｜ The maximum allowed deviation from the payable amount in the case of underpayment, specified as a positive value with up to one decimal place. If you provide more than one decimal place, an error will occur.
+            When the actual received amount is within this deviation (inclusive) of the payable amount, the order status will be set to `Completed` rather than `Underpaid`.
+          example: '0.5'
     OrderId:
       type: string
       description: |
@@ -14466,7 +14563,7 @@ components:
 
             `total_balance` = `total_received_amount` - `settled_amount` - `refunded_amount`
 
-            For more information, please refer to [Amounts and Balances](/v2_cn/payments/amounts-and-balances)
+            For more information, please refer to [Funds allocation and balances](https://www.cobo.com/developers/v2/payments/amounts-and-balances)
           example: '1.23'
         available_balance:
           type: string
@@ -14500,7 +14597,7 @@ components:
 
             `total_balance` = `developer_fee_amount` - `settled_amount` - `refunded_amount`
 
-            For more information, please refer to [Amounts and Balances](/v2_cn/payments/amounts-and-balances)
+            For more information, please refer to [Funds allocation and balances](https://www.cobo.com/developers/v2/payments/amounts-and-balances)
           example: '1.23'
         available_balance:
           type: string
@@ -14624,6 +14721,163 @@ components:
         - `Shared`: (Default) Multiple merchants share the same wallet. The wallet’s addresses may be used to receive payments for multiple merchants simultaneously.
         - `Separate`: Create a dedicated wallet for the merchant to achieve complete fund isolation. All addresses in this wallet are only used to receive payments for this merchant.
         - `Default`: The default wallet automatically created by the system for the default merchant (the merchant that shares the same name as your organization). **Do not select this option when creating a merchant.**
+    Link:
+      type: object
+      required:
+        - url
+        - token
+      properties:
+        url:
+          type: string
+          format: uri
+          description: |
+            The base URL of the payment page. This URL should be combined with the `token` parameter to form the complete payment link.
+          example: 'https://checkout.cobo.com/payment'
+        token:
+          type: string
+          description: |
+            The unique payment token that should be appended to the URL as a query parameter. This token authenticates and identifies the specific payment session.
+
+            The complete payment link should be constructed as: `[url]?token=[token]`
+          example: 01EJ5QW8KtSBesqnRZsmadPgihYf754OnVnNhimKKBi6QQO5PNyr9EXPyFRJGGOF
+    LinkDisplayInfo:
+      type: object
+      properties:
+        developer_name:
+          type: string
+          description: |
+            The brand name to display to end users during the payment process.
+          example: Acme Payment Solutions
+          maxLength: 128
+        logo:
+          type: string
+          description: |
+            The URL of your logo image to display to end users during the payment process.
+          example: 'https://example.com/logo.png'
+          format: uri
+    OrderLinkBusinessInfo:
+      type: object
+      required:
+        - currency
+        - token_ids
+        - fee_amount
+        - merchant_id
+        - order_amount
+        - psp_order_code
+      properties:
+        token_ids:
+          type: array
+          description: |
+            An array of token IDs representing the cryptocurrencies and chains available for payment. These options will be shown to users on the payment page for them to choose from. Supported token IDs include:
+              - USDC: `ETH_USDC`, `ARBITRUM_USDCOIN`, `SOL_USDC`, `BASE_USDC`, `MATIC_USDC2`, `BSC_USDC`
+              - USDT: `TRON_USDT`, `ETH_USDT`, `ARBITRUM_USDT`, `SOL_USDT`, `BASE_USDT`, `MATIC_USDT`, `BSC_USDT`
+          items:
+            type: string
+            example: ETH_USDT
+          example:
+            - ETH_USDT
+            - SOL_USDC
+            - TRON_USDT
+        custom_exchange_rates:
+          type: array
+          description: |
+            A list of custom exchange rates defining how much one unit of a specific cryptocurrency (`token_id`) is valued in the selected fiat or crypto currency (`currency`). If this field is omitted, the system’s default exchange rates will apply.
+
+            Each item specifies a `token_id` and its corresponding `exchange_rate`. For example, to treat 1 USDT (on Ethereum) as equivalent to 0.99 USD, provide:
+
+            ```json
+            {
+              "custom_exchange_rates": [
+                {
+                  "token_id": "ETH_USDT",
+                  "exchange_rate": "0.99"
+                }
+              ],
+              "currency": "USD"
+            }
+            ```
+          items:
+            type: object
+            properties:
+              token_id:
+                type: string
+                description: The token ID.
+                example: ETH_USDT
+              exchange_rate:
+                type: string
+                description: The exchange rate to use for this token.
+                example: '0.99'
+            required:
+              - token_id
+              - exchange_rate
+          example:
+            - token_id: ETH_USDT
+              exchange_rate: '0.99'
+            - token_id: SOL_USDC
+              exchange_rate: '1.02'
+        currency:
+          type: string
+          description: |
+            The currency in which both the order amount (`order_amount`) and the developer fee (`fee_amount`) are denominated. Only the following values are supported: `USD`, `USDT`, or `USDC`.
+          example: USD
+        fee_amount:
+          type: string
+          description: |
+            The developer fee for the order, denominated in the currency specified by `currency`.
+
+
+            If you are a merchant directly serving payers, set this field to `0`. Developer fees are only relevant for platforms like payment service providers (PSPs) that charge fees to their downstream merchants.
+
+            The developer fee is added to the base amount (`order_amount`) to determine the final charge. For example:
+            - Base amount (`order_amount`): "100.00"
+            - Developer fee (`fee_amount`): "2.00" 
+            - Total charged to customer: "102.00"
+
+            Values can contain up to two decimal places.
+          example: '2.00'
+        merchant_id:
+          type: string
+          description: The merchant ID.
+          example: '1001'
+        order_amount:
+          type: string
+          description: |
+            The base amount of the order, excluding the developer fee (specified in `fee_amount`), denominated in the currency specified by `currency`.
+
+            Values must be greater than `0` and contain two decimal places. 
+          example: '100.00'
+        merchant_order_code:
+          type: string
+          description: A unique reference code assigned by the merchant to identify this order in their system. The code should have a maximum length of 128 characters.
+          example: M20240201001
+        psp_order_code:
+          type: string
+          description: |
+            A unique reference code assigned by you as a developer to identify this order in your system. This code must be unique across all orders in your system. The code should have a maximum length of 128 characters.
+          example: P20240201001
+        expired_in:
+          type: integer
+          description: |
+            The number of seconds until the pay-in order expires, counted from when the request is sent. For example, if set to `1800`, the order will expire in 30 minutes. Must be greater than zero and cannot exceed 3 hours (10800 seconds). After expiration:
+
+            - The order status becomes final and cannot be changed
+            - The `received_token_amount` field will no longer be updated
+            - Funds received after expiration will be categorized as late payments and can only be settled from the developer balance.
+            - A late payment will trigger a `transactionLate` webhook event.
+          default: 1800
+          example: 1800
+        use_dedicated_address:
+          type: boolean
+          description: |
+            This field has been deprecated.
+          example: false
+        amount_tolerance:
+          type: string
+          description: |
+            The maximum allowed deviation from the payable amount in the case of underpayment, specified as a positive value with up to one decimal place. If you provide more than one decimal place, an error will occur.
+
+            When the actual received amount is within this deviation (inclusive) of the payable amount, the order status will be set to `Completed` rather than `Underpaid`.
+          example: '0.5'
     DispositionStatus:
       type: string
       description: The status of a disposition operation.
@@ -14801,6 +15055,164 @@ components:
           format: int64
           description: 'The time when the disposition was updated, in Unix timestamp format, measured in milliseconds.'
           example: 1610445878970
+    KytScreeningsEventData:
+      type: object
+      description: The KYT screening information about a transaction.
+      required:
+        - transaction_id
+        - transaction_type
+        - review_status
+        - funds_status
+        - updated_timestamp
+      properties:
+        transaction_id:
+          type: string
+          description: The transaction ID.
+          format: uuid
+          example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
+        transaction_type:
+          $ref: '#/components/schemas/KytScreeningsTransactionType'
+        review_status:
+          $ref: '#/components/schemas/ReviewStatusType'
+        funds_status:
+          $ref: '#/components/schemas/FundsStatusType'
+        updated_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the KYT screening information was updated, in Unix timestamp format, measured in milliseconds.'
+          example: 1610445878970
+    FundsStatusType:
+      type: string
+      description: 'The current status of transaction funds, indicating their disposition state in the compliance system.'
+      enum:
+        - Frozen
+        - Refunding
+        - Refunded
+        - RefundFailed
+        - Unfreezing
+        - Unfrozen
+        - UnfreezingFailed
+        - Isolating
+        - Isolated
+        - IsolationFailed
+        - CoboDisposition
+        - Normal
+      example: Frozen
+    KytScreeningsDecisionsType:
+      type: string
+      description: |
+        The KYT screening decision type for a specific transaction based on an external compliance review.
+
+        - `Approval`: Transaction is approved and can proceed without restrictions
+        - `ApprovalWithAlert`: Transaction is approved but flagged for monitoring or additional compliance attention
+        - `Rejection`: Transaction is rejected due to identified compliance risks and should be blocked
+        - `ManualReview`: Transaction requires manual review by compliance officers before final determination
+      enum:
+        - Approval
+        - ApprovalWithAlert
+        - Rejection
+        - ManualReview
+      example: Approval
+    KytScreeningsTransactionType:
+      type: string
+      enum:
+        - Deposit
+        - Withdrawal
+      example: Deposit
+      description: |
+        The transaction type. Possible values include: 
+          - `Deposit`: A deposit transaction.
+          - `Withdrawal`: A withdrawal transaction.
+    KytScreeningsTransaction:
+      type: object
+      description: KYT screening status information including the transaction’s review status and fund status.
+      required:
+        - transaction_id
+        - transaction_type
+        - review_status
+        - funds_status
+      properties:
+        transaction_id:
+          type: string
+          format: uuid
+          description: The UUID of the transaction that was screened.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        transaction_type:
+          $ref: '#/components/schemas/KytScreeningsTransactionType'
+        review_status:
+          $ref: '#/components/schemas/ReviewStatusType'
+        funds_status:
+          $ref: '#/components/schemas/FundsStatusType'
+    KytScreeningsReviewType:
+      type: string
+      description: |
+        The result of a manual KYT review performed by compliance officers.
+
+        - `Approval`: Transaction is approved after manual review and can proceed
+        - `Rejection`: Transaction is rejected due to compliance concerns and should be blocked
+
+        This field represents the final decision made by human reviewers for transactions that required manual intervention during the KYT screening process.
+      enum:
+        - Approval
+        - Rejection
+      example: Approval
+    ReviewStatusType:
+      type: string
+      description: 'Review status type, indicating the current stage of the compliance review process.'
+      enum:
+        - PendingScreening
+        - Screened
+        - PendingDecision
+        - PendingReview
+        - Approved
+        - Rejected
+        - Unsupported
+        - Bypassed
+      example: PendingScreening
+    SubmitKytResponse:
+      type: object
+      description: The response for a request to submit a KYT review result.
+      required:
+        - transaction_id
+        - submitted
+      properties:
+        transaction_id:
+          type: string
+          format: uuid
+          description: The UUID of the transaction being processed for KYT screening.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        submitted:
+          type: boolean
+          description: Indicates whether the KYT review result was successfully submitted.
+          example: true
+    SubmitKytScreeningsDecisionsBody:
+      type: object
+      description: The KYT screening decision submission containing the transaction ID and the screening decision based on an external compliance review.
+      required:
+        - transaction_id
+        - result
+      properties:
+        transaction_id:
+          type: string
+          format: uuid
+          description: The UUID of the transaction for KYT result submission. This identifies the specific transaction that the external KYT result applies to.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        result:
+          $ref: '#/components/schemas/KytScreeningsDecisionsType'
+    SubmitKytScreeningsReviewBody:
+      type: object
+      description: Submission of a manual KYT review result.
+      required:
+        - transaction_id
+        - result
+      properties:
+        transaction_id:
+          type: string
+          format: uuid
+          description: The UUID of the transaction that requires a manual KYT review.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        result:
+          $ref: '#/components/schemas/KytScreeningsReviewType'
     TSSKeyGenRequest:
       type: object
       properties:
@@ -17694,6 +18106,15 @@ components:
         type: string
         format: uuid
         example: 123e4567-e89b-12d3-a456-426614174000
+    TransactionIdParam:
+      name: transaction_id
+      in: query
+      required: true
+      description: The unique identifier (UUID) of the transaction to retrieve KYT screening status information for.
+      schema:
+        type: string
+        format: uuid
+      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     apilogIdParam:
       name: log_id
       in: path
@@ -19108,6 +19529,13 @@ components:
 
                   For example, if the fiat currency is USD and the cryptocurrency is USDT, setting `custom_exchange_rate` to `"0.99"` means that 1 USDT will be valued at 0.99 USD.
                 example: '1.00'
+              amount_tolerance:
+                type: string
+                description: |
+                  The maximum allowed deviation from the payable amount in the case of underpayment, specified as a positive value with up to one decimal place. If you provide more than one decimal place, an error will occur.
+
+                  When the actual received amount is within this deviation (inclusive) of the payable amount, the order status will be set to `Completed` rather than `Underpaid`.
+                example: '0.5'
     updatePaymentOrderBody:
       description: The request body to update a pay-in order.
       content:
@@ -19293,6 +19721,19 @@ components:
                 description: A list of token IDs and amounts for which fees will be calculated.
                 items:
                   $ref: '#/components/schemas/PaymentEstimateFee'
+    createPaymentOrderLinkRequest:
+      description: The request body to create a payment link for a pay-in order.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - business_info
+            properties:
+              business_info:
+                $ref: '#/components/schemas/OrderLinkBusinessInfo'
+              display_info:
+                $ref: '#/components/schemas/LinkDisplayInfo'
     estimateFeeStationFeeBody:
       description: The information about a Fee Station top-up transaction.
       content:
@@ -19399,6 +19840,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateAutoSweepTask'
+    submitKytScreeningsDecisionBody:
+      description: The request body to submit a KYT screening decision for a specific transaction based on external compliance review.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubmitKytScreeningsDecisionsBody'
+    submitKytScreeningsManualReviewBody:
+      description: The request body to submit a manual review result for a KYT screening case that requires human analysis.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubmitKytScreeningsReviewBody'
     createAddressBooksRequestBody:
       description: The request body of the create Address Books operation.
       content:
@@ -21194,6 +21647,12 @@ components:
                 description: A list of estimated fees for the requested operations.
                 items:
                   $ref: '#/components/schemas/PaymentEstimatedFee'
+    createPaymentLinkResponse:
+      description: Order link created successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Link'
     createDispositionResponse:
       description: Successfully created a disposition request.
       content:
@@ -21214,6 +21673,34 @@ components:
             disposition_type: Refund
             disposition_status: Refunded
             disposition_transaction_id: 550e8400-e29b-41d4-a716-446655440000
+    getKytScreeningsResponse:
+      description: Successfully retrieved KYT screening information.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/KytScreeningsTransaction'
+          example:
+            transaction_id: f47ac10b-58cc-4372-a567-0e02b2c3d479
+            review_status: PendingScreening
+            funds_status: Frozen
+    submitKytScreeningsDecisionResponse:
+      description: Successfully submitted a KYT screening decision for a specific transaction tranaction based on external compliance review.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubmitKytResponse'
+          example:
+            transaction_id: f47ac10b-58cc-4372-a567-0e02b2c3d479
+            submitted: true
+    submitKytScreeningsReviewResponse:
+      description: Successfully submitted a manual review result for a KYT screening case that requires human analysis.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubmitKytResponse'
+          example:
+            transaction_id: f47ac10b-58cc-4372-a567-0e02b2c3d479
+            submitted: true
     getFeeStationTokenBalancesResponse:
       description: The request was successful.
       content:
@@ -21520,5 +22007,8 @@ components:
             compliance_funds.isolate: Isolate compliance funds request
             compliance_funds.unfreeze: Unfreeze compliance funds request
             compliance_funds.read: Read compliance funds request information
+            compliance_kyt_review.update: Update KYT review status
+            compliance_kyt_decisions.update: Update KYT decision status
+            compliance_kyt_status.read: Read KYT screening status
 security:
   - CoboAuth: []

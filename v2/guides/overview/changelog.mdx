@@ -6,8 +6,22 @@ description: "Detailed changelog of all additions and changes to the WaaS 2.0 AP
 
 This changelog details all additions and changes to the WaaS 2.0 API. You can download the WaaS 2.0 API specification from [GitHub](https://github.com/CoboGlobal/developer-site/blob/master/v2/cobo_waas2_openapi_spec/dev_openapi.yaml).
 
-
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
+
+## v1.25.0
+
+This version was released on October 29, 2025.
+
+### New Features
+
+- Added new operations for compliance management:
+  - [Submit KYT screening decision](/v2/api-references/compliance/submit-kyt-screening-decision)
+  - [Submit KYT manual review result](/v2/api-references/compliance/submit-kyt-manual-review-result)
+  - [Get KYT screening status](/v2/api-references/compliance/get-kyt-screening-status)
+
+### Improvements
+
+- Introduced a new [webhook event type](/v2/guides/webhooks-callbacks/webhook-event-type#webhook-event-types) for KYT screening status changes: `compliance.kyt.screenings.status.updated`.
 
 ## v1.24.0
 
@@ -57,6 +71,7 @@ This version was released on September 17, 2025.
 
 - Added a property `chain_identifier` to the `chain` schema which groups chains by their execution logic. For example, `ETH` for all EVM-compatible chains (Ethereum, BNB Smart Chain, Polygon).
 - Added a property `biz_org_id` to the response schema of [Get organization information](/v2/api-references/organizations/get-organization-information) which can be provided to Cobo's customer support to help quickly locate the organization.
+- Introduced a new [webhook event type](/v2/guides/webhooks-callbacks/webhook-event-type#webhook-event-types) for compliance disposition status changes: `compliance.disposition.status.updated`.
 
 ## v1.22.0
 

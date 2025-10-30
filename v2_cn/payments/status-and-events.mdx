@@ -14,6 +14,7 @@ description: ""
 | `payment.transaction.created` | 检测到有新的充币交易。订单模式下，即使订单已达到终态（`Underpaid`、`Expired` 或 `Completed`），该事件仍会被触发。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
 | `payment.transaction.late` | [**仅适用于订单模式**]充币交易通过合规扫描，但订单已处于终态（`Underpaid`、`Expired` 或 `Completed`）。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
 | `payment.transaction.held` | 充币交易正在接受合规扫描。订单模式下，即使订单已达到终态（`Underpaid`、`Expired` 或 `Completed`），该事件仍会被触发。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
+| `payment.transaction.failed` | 充币交易合规扫描不通过。 | [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
 | `payment.transaction.completed` | 充币交易通过合规扫描，资金已成功入账并计入实收金额。| [PaymentTransaction](/v2_cn/payments/status-and-events#paymenttransaction) |
 | `payment.refund.status.updated` | [**仅适用于订单模式**]退款订单状态发生变更。退款订单状态包括：<br></br>- `Pending`：已创建退款订单，但尚未发起交易。<br></br>- `Processing`: 至少有一笔退款交易正在进行中。<br></br>- `Completed`: 所有退款交易均已完成。<br></br>- `PartiallyCompleted`: 部分退款交易已完成，部分退款交易失败。<br></br>- `Failed`: 所有退款交易均失败。 | [PaymentRefund](/v2_cn/payments/status-and-events#paymentrefund) |
 | `payment.settlement.status.updated` | 出金/转账请求状态变更。出金/转账请求状态包括：<br></br>- `Pending`: 已创建出金/转账请求，等待处理。<br></br>- `Processing`: 出金/转账请求处理中，至少有一笔出金/转账正在进行。<br></br>- `Completed`: 所有出金/转账已完成。<br></br>- `PartiallyCompleted`: 部分出金/转账已完成，部分出金/转账失败。<br></br>- `Failed`: 所有出金/转账均失败。| [PaymentSettlement](/v2_cn/payments/status-and-events#paymentsettlement) |

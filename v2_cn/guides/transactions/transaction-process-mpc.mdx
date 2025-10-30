@@ -1,0 +1,35 @@
+---
+title: "MPC 钱包与 Web3 钱包的交易状态流转"
+lang: "zh-hans"
+description: "WaaS 2.0 中 MPC 钱包与全托管钱包（Web3 钱包）交易流程的详细指南，包括充币和提币。"
+---
+<Note>本文档由 AI 辅助翻译。如需确认内容准确性，请参考[英文官方文档](https://www.cobo.com/developers/v2/guides/overview/introduction)。</Note>
+
+本文解释了 MPC 钱包与全托管钱包（Web3 钱包）的充币和提币交易是如何处理的。它概述了您和 Cobo 所采取的步骤，以及您的交易可能经历的各种交易状态和子状态。您可以参阅[交易状态和子状态](/v2/guides/transactions/status)来获取交易状态和子状态的完整列表，或者调用 [获取交易信息](/v2/api-references/transactions/get-transaction-information) 来查询交易的当前状态和子状态。
+
+## 充币流程
+
+下图说明了资金存入的处理过程：
+
+<img src="/v2_cn/images/guides/mpc-deposit-cn.svg" className="diagram" alt="充币流程" />
+
+- 如果充币交易违反合规规定，Cobo 保留拒绝该交易的权利。
+- 如果交易金额低于最低充币门槛，交易将不会被处理，也不会创建任何记录。您可以调用 [获取代币信息](/v2/api-references/wallets/get-token-information) 操作来检索每种代币类型的最低充币金额。
+
+## 提币流程
+
+下图说明了从钱包提币的处理过程。不同的颜色用于表示不同的子状态类型：
+
+- 黄色： 需要用户执行操作才能继续交易流转
+- 绿色： 交易已成功完成
+- 红色： 交易未成功，包括失败或被拒绝的情况
+
+<Note>在左侧没有箭头相连的子状态为可选状态，仅在特定情况下出现。</Note>
+
+<Info>为获得更好的查看效果，请在新标签页中打开图片。</Info>
+
+<img src="/v2_cn/images/guides/mpc-withdrawal-cn.png" className="diagram" alt="提币流程" />
+
+- 如果提币被拒绝或不成功，代币将返回到您的钱包，您的余额将保持不变。
+- 如果您的提币金额小于最低提币门槛，提币请求将收到错误。您可以调用 [获取代币信息](/v2/api-references/wallets/get-token-information) 操作来检索每种代币类型的最低提币金额。
+<Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

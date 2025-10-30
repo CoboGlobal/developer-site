@@ -224,7 +224,29 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+### Compliance events
 
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>Event Type</th>
+      <th>Event Data Type</th>
+      <th>When It Occurs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>compliance.disposition.status.updated</code></td>
+      <td><code>ComplianceDisposition</code></td>
+      <td>There are changes to the status of a compliance disposition.</td>
+    </tr>
+    <tr>
+      <td><code>compliance.kyt.screenings.status.updated</code></td>
+      <td><code>ComplianceKytScreenings</code></td>
+      <td>There are changes to the status of a KYT screening case.</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Data structure of webhook events           
 For a complete introduction of the webhook event data and its data structure, refer to the [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) property in the response of the Retrieve event information operation or the [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) property in the response of the List all webhook event operation. 

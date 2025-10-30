@@ -7,13 +7,8 @@ lang: "en"
 
 This document introduces how to transfer the cryptocurrency you received to an external cryptocurrency address.
 
-## Prerequisites
 
-Refer to [Destinations](/v2/payments/destinations) to register external cryptocurrency addresses and pass the review by the Cobo operations team.
-
-## Operation steps
-
-### 1. Create crypto payout request
+## 1. Create crypto payout request
 
 You can create crypto payout requests through Payments App or Payments API.
 
@@ -61,7 +56,7 @@ Depending on the source of funds, you need to specify different parameter combin
 </Tabs>
 
 
-### 2. Complete secondary confirmation, risk control review, and transaction signing
+## 2. Complete secondary confirmation, risk control review, and transaction signing
 
 After creating a transfer request, based on your submission method, risk control settings, and other factors, you need to complete the following operations:
 
@@ -70,7 +65,7 @@ After creating a transfer request, based on your submission method, risk control
 - Transaction signing: If you are using MPC Wallets, Mobile Co-Signer or Server Co-Signer needs to sign to finally complete the transfer operation.
 
 
-### 3. Follow up on transfer status
+## 3. Follow up on transfer status
 You can subscribe to the `payment.settlement.status.updated` event to receive real-time updates on transfer status. Refer to [Webhook reference](/v2/payments/status-and-events) to understand the detailed trigger conditions and returned data structure of each event.
 
 You can also actively query transfer request status through Payments App or Payments API.

@@ -6,13 +6,8 @@ lang: "zh-hans"
 
 本文介绍如何将您收到的加密货币转账至外部加密货币地址。
 
-## 前提条件
 
-参考[收款目的地管理](/v2_cn/payments/destinations)，录入外部加密货币地址，并通过 Cobo 运营团队的审核。
-
-## 操作步骤
-
-### 1. 创建加密货币转账请求
+## 1. 创建加密货币转账请求
 
 您可以通过 Payments App 或 Payments API 创建加密货币转账请求。
 
@@ -60,7 +55,7 @@ lang: "zh-hans"
 </Tabs>
 
 
-### 2. 完成二次确认、风控审核及交易签名
+## 2. 完成二次确认、风控审核及交易签名
 
 在创建转账请求后，基于您的提交方式、风控设置等因素，需要完成以下操作：
 
@@ -69,7 +64,7 @@ lang: "zh-hans"
 - 交易签名：如果您使用的是 MPC 钱包，则需要移动端签名人或服务端签名人签名，方可最终完成转账操作。
 
 
-### 3. 跟进转账状态
+## 3. 跟进转账状态
 您可以订阅 `payment.settlement.status.updated` 事件，获取转账状态的实时更新。请参考 [Webhook reference](/v2_cn/payments/status-and-events) 了解每个事件的详细触发条件和返回的数据结构。
 
 您也可以通过 Payments App 或 Payments API 主动查询转账请求状态。

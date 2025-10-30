@@ -9,6 +9,21 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.25.0
+
+本版本于 2025 年 10 月 15 日发布。
+
+### 新功能
+
+- 新增合规相关操作：
+  - [提交 KYT 扫描决定](/v2/api-references/compliance/submit-kyt-screening-decision)
+  - [提交 KYT 人工审核结果](/v2/api-references/compliance/submit-kyt-manual-review-result)
+  - [获取 KYT 扫描状态](/v2/api-references/compliance/get-kyt-screening-status)
+
+### 改进
+
+- 新增 [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type#webhook) 以支持 KYT 扫描状态更新通知：`compliance.kyt.screenings.status.updated`。
+
 ## v.1.24.0
 
 本版本于 2025 年 10 月 15 日发布。
@@ -56,6 +71,7 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 - 添加了 `chain_identifier` 属性到 `chain` 模式，用于按执行逻辑对链进行分组。例如，`ETH` 用于所有 EVM 兼容的链（以太坊、BNB Smart Chain、Polygon）。
 - 添加了 `biz_org_id` 属性到 [获取团队信息](/v2/api-references/organizations/get-organization-information) 操作的响应模式，用于提供给 Cobo 客户支持帮助快速定位团队。
+- 新增 [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type#webhook) 以支持合规处置状态更新通知：`compliance.disposition.status.updated`。
 
 ## v1.22.0
 

@@ -1,12 +1,11 @@
 ---
-openapi: post /auto_sweep/sweep_to_addresses
+openapi: get /compliance/kyt/screenings/status
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_sweep_to_address import CreateSweepToAddress
-from cobo_waas2.models.sweep_to_address import SweepToAddress
+from cobo_waas2.models.kyt_screenings_transaction import KytScreeningsTransaction
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -20,22 +19,17 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.AutoSweepApi(api_client)
-    create_sweep_to_address = cobo_waas2.CreateSweepToAddress(
-        wallet_id="f47ac10b-58cc-4372-a567-0e02b2c3d479", chain_id="ETH"
-    )
+    api_instance = cobo_waas2.ComplianceApi(api_client)
+    transaction_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
     try:
-        # Create sweep-to address
-        api_response = api_instance.create_wallet_sweep_to_addresses(
-            create_sweep_to_address=create_sweep_to_address
-        )
-        print("The response of AutoSweepApi->create_wallet_sweep_to_addresses:\n")
+        # Get KYT screening status
+        api_response = api_instance.get_kyt_screening_status(transaction_id)
+        print("The response of ComplianceApi->get_kyt_screening_status:\n")
         pprint(api_response)
     except Exception as e:
         print(
-            "Exception when calling AutoSweepApi->create_wallet_sweep_to_addresses: %s\n"
-            % e
+            "Exception when calling ComplianceApi->get_kyt_screening_status: %s\n" % e
         )
 
 ```
@@ -45,7 +39,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.AutoSweepApi;
+import com.cobo.waas2.api.ComplianceApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -57,14 +51,13 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    AutoSweepApi apiInstance = new AutoSweepApi();
-    CreateSweepToAddress createSweepToAddress =
-        new CreateSweepToAddress().walletId("f47ac10b-58cc-4372-a567-0e02b2c3d479").chainId("ETH");
+    ComplianceApi apiInstance = new ComplianceApi();
+    UUID transactionId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
     try {
-      SweepToAddress result = apiInstance.createWalletSweepToAddresses(createSweepToAddress);
+      KytScreeningsTransaction result = apiInstance.getKytScreeningStatus(transactionId);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling AutoSweepApi#createWalletSweepToAddresses");
+      System.err.println("Exception when calling ComplianceApi#getKytScreeningStatus");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,7 +79,7 @@ import (
 )
 
 func main() {
-	createSweepToAddress := *coboWaas2.NewCreateSweepToAddress("f47ac10b-58cc-4372-a567-0e02b2c3d479", "ETH")
+	transactionId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -99,19 +92,19 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.AutoSweepAPI.CreateWalletSweepToAddresses(ctx).
-		CreateSweepToAddress(createSweepToAddress).
+	resp, r, err := apiClient.ComplianceAPI.GetKytScreeningStatus(ctx).
+		TransactionId(transactionId).
 		Execute()
 	if err != nil {
 		fmt.Fprintf(
 			os.Stderr,
-			"Error when calling `AutoSweepAPI.CreateWalletSweepToAddresses``: %v\n",
+			"Error when calling `ComplianceAPI.GetKytScreeningStatus``: %v\n",
 			err,
 		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreateWalletSweepToAddresses`: SweepToAddress
-	fmt.Fprintf(os.Stdout, "Response from `AutoSweepAPI.CreateWalletSweepToAddresses`: %v\n", resp)
+	// response from `GetKytScreeningStatus`: KytScreeningsTransaction
+	fmt.Fprintf(os.Stdout, "Response from `ComplianceAPI.GetKytScreeningStatus`: %v\n", resp)
 }
 
 ```
@@ -124,14 +117,9 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.AutoSweepApi();
-const opts = {
-  CreateSweepToAddress: CoboWaas2.CreateSweepToAddress.constructFromObject({
-    wallet_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-    chain_id: "ETH",
-  }),
-};
-apiInstance.createWalletSweepToAddresses(opts).then(
+const apiInstance = new CoboWaas2.ComplianceApi();
+const transaction_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
+apiInstance.getKytScreeningStatus(transaction_id).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

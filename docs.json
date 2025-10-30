@@ -59,7 +59,8 @@
                     "group": "Transaction statuses",
                     "pages": [
                       "v2/guides/transactions/status",
-                      "v2/guides/transactions/transaction-process-custodial"
+                      "v2/guides/transactions/transaction-process-custodial",
+                      "v2/guides/transactions/transaction-process-mpc"
                     ]
                   },
                   "v2/guides/transactions/manage-transactions",
@@ -355,7 +356,10 @@
                       "/v2/api-references/compliance/isolate-funds",
                       "/v2/api-references/compliance/refund-funds",
                       "/v2/api-references/compliance/unfreeze-frozen-funds",
-                      "/v2/api-references/compliance/get-disposition-status"
+                      "/v2/api-references/compliance/get-disposition-status",
+                      "/v2/api-references/compliance/get-kyt-screening-status",
+                      "/v2/api-references/compliance/submit-kyt-screening-decision",
+                      "/v2/api-references/compliance/submit-kyt-manual-review-result"
                     ]
                   }
                 ]
@@ -578,7 +582,8 @@
                       "v2/api-references/payment/create-pay-in-order",
                       "v2/api-references/payment/update-pay-in-order",
                       "v2/api-references/payment/get-pay-in-order-information",
-                      "v2/api-references/payment/list-all-pay-in-orders"
+                      "v2/api-references/payment/list-all-pay-in-orders",
+                      "v2/api-references/payment/create-order-link"
                     ]
                   },
                   {
@@ -979,7 +984,8 @@
                     "group": "交易状态",
                     "pages": [
                       "v2_cn/guides/transactions/status",
-                      "v2_cn/guides/transactions/transaction-process-custodial"
+                      "v2_cn/guides/transactions/transaction-process-custodial",
+                      "v2_cn/guides/transactions/transaction-process-mpc"
                     ]
                   },
                   "v2_cn/guides/transactions/manage-transactions",
