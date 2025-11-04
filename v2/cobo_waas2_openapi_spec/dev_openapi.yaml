@@ -13821,6 +13821,13 @@ components:
             $ref: '#/components/schemas/PaymentTransaction'
         settlement_status:
           $ref: '#/components/schemas/SettleStatus'
+        amount_tolerance:
+          type: string
+          description: |
+            The maximum allowed deviation from the payable amount in the case of underpayment, specified as a positive value with up to one decimal place. If you provide more than one decimal place, an error will occur.
+
+            When the actual received amount is within this deviation (inclusive) of the payable amount, the order status will be set to `Completed` rather than `Underpaid`.
+          example: '0.5'
     OrderId:
       type: string
       description: |
