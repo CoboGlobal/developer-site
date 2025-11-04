@@ -869,8 +869,9 @@
                   {
                     "group": "Build checkout page",
                     "pages": [
-                      "v2/payments/checkout-sdk",
-                      "v2/payments/wallet-fee-deduction"
+                      "v2/payments/payment-link",
+                      "v2/payments/wallet-fee-deduction",
+                      "v2/payments/third-party-wallet-support"
                     ]
                   }
                 ]
@@ -1198,8 +1199,9 @@
                   {
                     "group": "搭建收款页面",
                     "pages": [
-                      "v2_cn/payments/checkout-sdk",
-                      "v2_cn/payments/wallet-fee-deduction"
+                      "v2_cn/payments/payment-link",
+                      "v2_cn/payments/wallet-fee-deduction",
+                      "v2_cn/payments/third-party-wallet-support"
                     ]
                   }
                 ]

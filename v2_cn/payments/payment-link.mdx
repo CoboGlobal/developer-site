@@ -1,0 +1,72 @@
+---
+title: "创建 Payment Link"
+lang: "zh-hans"
+---
+
+
+Payment Link 本质上是一个带 token 的 url，每个 token 都和订单唯一绑定，形式类似：  
+`https://checkout.cobo.com/payment?token=xxx`
+
+Payment Link 由 开发者 后端调用 Cobo Waas API 生成，并返回给 开发者 前端，开发者 前端可以直接跳转或者内嵌在 iframe 中。
+
+终端用户可以通过 Payment Link 完成后续支付流程，其中三方钱包的对接均由 Cobo 完成，目前支持 EVM、Tron、Solana 三类链，覆盖 PC 端钱包插件和移动端钱包 App。
+
+
+## Payment Link 接入流程
+
+Cobo 提供了接入 Demo：[https://github.com/CoboGlobal/cobo-checkout-sdk-demo](https://github.com/CoboGlobal/cobo-checkout-sdk-demo)
+
+Demo 中包含了 开发者 前端和后端的示例代码，均由 JavaScript 实现，仅用于快速演示。实际场景中，开发者 后端可以自由选择相应语言的 Cobo Waas SDK。
+
+前端代码位于：`src/main.ts`  
+后端代码位于：`server.js`
+
+首先需要在 Cobo Portal 中完成 API Key 的绑定激活，并将 API Key 和 API Secret 填入 `server.js`（如果已接入旧 Checkout SDK，API Key 和 API Secret 可以直接复用）。
+
+之后运行以下命令：
+
+```shell
+// 安装依赖
+pnpm install
+// 同时运行前端和后端
+npm run start
+```
+
+浏览器打开：[http://localhost:5173/](http://localhost:5173/)
+
+<img src="/v2_cn/images/payments/payment-link-demo-page.png" className="screenshot_full_screen" alt="Payment Link Demo 页面" />
+
+Demo 中提供了两种方式：Pay Now (By New Window) 是 url 模式，会跳转新浏览器标签页；Pay Now (By iframe) 是 iframe 模式，会内嵌在当前页面中。
+
+任意选择一种模式，点击 Pay Now 后可以看到如下请求，模拟了预下单流程：PSP 前端调用 PSP 后端，PSP 后端调用 Cobo Waas API，并将生成的 Payment Link 返回 PSP 前端。
+
+<img src="/v2_cn/images/payments/payment-link-request.png" className="screenshot_full_screen" alt="Payment Link 预下单请求" />
+
+## Payment Link 演示
+
+### 1. PC 端打开 Payment Link
+
+PC 端打开 Payment Link 后，页面如下所示：
+
+<img src="/v2_cn/images/payments/payment-link-pc-page.png" className="screenshot_full_screen" alt="PC 端 Payment Link 页面" />
+
+### 2. PC 端钱包选择
+
+终端用户连接三方钱包时，会动态展示所有受支持的钱包插件（取决于终端用户实际安装的浏览器插件），如下所示：
+
+<img src="/v2_cn/images/payments/payment-link-pc-wallet-select.png" className="screenshot_modal" alt="PC 端钱包选择界面" />
+
+### 3. 移动端打开 Payment Link
+
+移动端打开 Payment Link 后，页面如下所示：
+
+<img src="/v2_cn/images/payments/payment-link-mobile-page.png" className="screenshot_full_screen" alt="移动端 Payment Link 页面" />
+
+### 4. 移动端钱包选择
+
+终端用户连接三方钱包时，会静态罗列所有受支持的钱包 App（不论终端用户是否安装相应的 App），如下所示：
+
+<img src="/v2_cn/images/payments/payment-link-mobile-wallet-select.png" className="screenshot_full_screen" alt="移动端钱包选择界面" />
+
+<Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>
+
