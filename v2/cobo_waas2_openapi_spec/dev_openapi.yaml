@@ -16385,6 +16385,7 @@ components:
         - symbol
         - decimals
     TokenizationERC20WrappedTokenParams:
+      title: ERC20 Wrapped Token
       type: object
       properties:
         standard:
@@ -16448,6 +16449,7 @@ components:
         - symbol
         - decimals
     TokenizationSOLWrappedTokenParams:
+      title: Solana Wrapped Token
       type: object
       properties:
         standard:
@@ -22386,7 +22388,7 @@ components:
           schema:
             $ref: '#/components/schemas/TokenizationListTokenInfoResponse'
     tokenizationOperationResponse:
-      description: Tokenization operation transaction created successfully
+      description: Successfully created a tokenization operation.
       content:
         application/json:
           schema:
