@@ -22,7 +22,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
     update_top_up_address = cobo_waas2.UpdateTopUpAddress(
-        merchant_id="M1001", token_id="ETH_USDT", custom_payer_id="payer_0001"
+        token_id="ETH_USDT", custom_payer_id="payer_0001"
     )
 
     try:
@@ -56,10 +56,7 @@ public class Example {
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
     UpdateTopUpAddress updateTopUpAddress =
-        new UpdateTopUpAddress()
-            .merchantId("M1001")
-            .tokenId("ETH_USDT")
-            .customPayerId("payer_0001");
+        new UpdateTopUpAddress().tokenId("ETH_USDT").customPayerId("payer_0001");
     try {
       TopUpAddress result = apiInstance.updateTopUpAddress(updateTopUpAddress);
       System.out.println(result);
@@ -86,7 +83,7 @@ import (
 )
 
 func main() {
-	updateTopUpAddress := *coboWaas2.NewUpdateTopUpAddress("M1001", "ETH_USDT", "payer_0001")
+	updateTopUpAddress := *coboWaas2.NewUpdateTopUpAddress("ETH_USDT", "payer_0001")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -123,7 +120,6 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
   UpdateTopUpAddress: CoboWaas2.UpdateTopUpAddress.constructFromObject({
-    merchant_id: "M1001",
     token_id: "ETH_USDT",
     custom_payer_id: "payer_0001",
   }),

@@ -10,9 +10,8 @@ description: <Note>This content applies to WaaS 1.0 only. We highly recommend th
 <ParamField body="fee_rate" type="Float" required>transaction fees per byte</ParamField>
 <ParamField body="max_fee_amount" type="Int" >maximum fee for constructing the transaction. If the actual fee exceeds this limit, the creation will fail. The default is None.</ParamField>
 <ParamField body="staking_request_id" type="String">request ID of the staking transaction to be withdrawn</ParamField>
-<Tip>Please note that only staking transactions with status 520 are eligible to be withdrawn.</Tip>
 <ParamField body="unbonding_request_id" type="String">request ID of the unbonding transaction</ParamField>
-<Tip>Please note that the `staking_request_id` and `unbonding_request_id` parameters are mutually exclusive. If the staking transaction has naturally expired, please provide the `staking_request_id` parameter. If the staking transaction has been successfully unbonded, please provide the `unbonding_request_id` parameter.</Tip>
+<Tip>Please note that the `unbonding_request_id` parameter is deprecated and will no longer be used, please use only `staking_request_id` instead.</Tip>
 
 #### Response
 <ResponseField name="success" type="bool">request successful or failed</ResponseField>
@@ -27,7 +26,7 @@ request(
         "request_id": "1717059604245",
         "fee_rate": 9.5,
         "max_fee_amount": 2000,
-        "unbonding_request_id": "1717059601673",
+        "staking_request_id": "1717059601673",
     },
     api_key, api_secret, host
 )
@@ -37,7 +36,7 @@ coboFetch('POST', '/v1/custody/mpc/babylon/withdraw/', {
     "request_id": "1717059604245",
     "fee_rate": 9.5,
     "max_fee_amount": 2000,
-    "unbonding_request_id": "1717059601673",
+    "staking_request_id": "1717059601673",
 }, api_key, api_secret, host)
     .then(res => {
         res.json().then((data)=>{
@@ -52,7 +51,7 @@ Request("POST", "/v1/custody/mpc/babylon/withdraw/", map[string]string{
     "request_id": "1717059604245",
     "fee_rate": 9.5,
     "max_fee_amount": 2000,
-    "unbonding_request_id": "1717059601673",
+    "staking_request_id": "1717059601673",
 })
 ```
 </RequestExample>

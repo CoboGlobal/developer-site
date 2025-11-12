@@ -20,14 +20,14 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    merchant_id = "M1001"
     payer_id = "P20250619T0310056d7aa"
     token_id = "ETH_USDT"
+    merchant_id = "M1001"
 
     try:
         # Get payer balance
         api_response = api_instance.get_payer_balance_by_address(
-            merchant_id, payer_id, token_id
+            payer_id, token_id, merchant_id=merchant_id
         )
         print("The response of PaymentApi->get_payer_balance_by_address:\n")
         pprint(api_response)
@@ -56,12 +56,12 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    String merchantId = "M1001";
     String payerId = "P20250619T0310056d7aa";
     String tokenId = "ETH_USDT";
+    String merchantId = "M1001";
     try {
       List<ReceivedAmountPerAddress> result =
-          apiInstance.getPayerBalanceByAddress(merchantId, payerId, tokenId);
+          apiInstance.getPayerBalanceByAddress(payerId, tokenId, merchantId);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentApi#getPayerBalanceByAddress");
@@ -86,9 +86,9 @@ import (
 )
 
 func main() {
-	merchantId := "M1001"
 	payerId := "P20250619T0310056d7aa"
 	tokenId := "ETH_USDT"
+	merchantId := "M1001"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -102,9 +102,9 @@ func main() {
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
 	resp, r, err := apiClient.PaymentAPI.GetPayerBalanceByAddress(ctx).
-		MerchantId(merchantId).
 		PayerId(payerId).
 		TokenId(tokenId).
+		MerchantId(merchantId).
 		Execute()
 	if err != nil {
 		fmt.Fprintf(
@@ -129,10 +129,12 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
-const merchant_id = "M1001";
 const payer_id = "P20250619T0310056d7aa";
 const token_id = "ETH_USDT";
-apiInstance.getPayerBalanceByAddress(merchant_id, payer_id, token_id).then(
+const opts = {
+  merchant_id: "M1001",
+};
+apiInstance.getPayerBalanceByAddress(payer_id, token_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

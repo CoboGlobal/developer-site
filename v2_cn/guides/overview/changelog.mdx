@@ -9,6 +9,108 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.26.0  
+
+本版本于 2025 年 11 月 12 日发布。  
+
+### 新功能
+
+- 新增用于管理代币化合约权限的操作：  
+  - [列出代币权限](/v2/api-references/tokenization/list-token-permissions)  
+  - [更新代币权限](/v2/api-references/tokenization/update-token-permissions)  
+
+- 支持[发行](/v2/api-references/tokenization/issue-token)基于 **CoboERC20Wrapper** 和 **SOLWrapper** 标准的包装代币。
+
+### 改进
+
+- 在 `TokenizationTokenInfo` 模式中新增 `archived` 和 `token_standard` 属性。
+
+- 在 [列出代币化支持的链](/v2/api-references/tokenization/list-supported-chains-for-tokenization) 操作中新增 `token_standard` 查询参数，用于根据代币标准进行筛选。
+
+- 废弃重新发送交易操作，对于失败交易，请重新发起新的交易。
+
+- 废弃估算 Fee Station 交易费用操作。请改用[检查 Fee Station 可用性](/v2/api-references/feestation/check-fee-station-usage)操作。
+
+- 优化[检查 Fee Station 可用性](/v2/api-references/feestation/check-fee-station-usage)操作：
+  - `amount` 和 `token_id` 请求参数不再为必填参数。
+  - 新增 `fee_token_id` 请求参数，用于指定支付 gas 费用的代币。
+  - 新增 `sponsored_token_id` 响应字段，用于标识代付交易所使用的代币。
+
+- 新增 `DisableAutoFuel` 选项，可用于[代币转账](/v2/api-references/transactions/transfer-token) 和 [调用智能合约](/v2/api-references/transactions/call-smart-contract)操作的 `auto_fuel` 配置中。
+
+- 扩展 `cobo_category` 枚举，新增以下用于 Fee Station、Tokenization 与签名相关场景的枚举值：
+  - `GasFeeSponsor`
+  - `GasFeeSponsorRefund`
+  - `Tokenization`
+  - `TokenizationGasSponsor`
+  - `TokenSwap`
+  - `NonceAccountSign`
+  - `FeePayerSign`
+
+## v1.25.0
+
+本版本于 2025 年 10 月 15 日发布。
+
+### 新功能
+
+- 新增合规相关操作：
+  - [提交 KYT 扫描决定](/v2/api-references/compliance/submit-kyt-screening-decision)
+  - [提交 KYT 人工审核结果](/v2/api-references/compliance/submit-kyt-manual-review-result)
+  - [获取 KYT 扫描状态](/v2/api-references/compliance/get-kyt-screening-status)
+
+### 改进
+
+- 新增 [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type#webhook) 以支持 KYT 扫描状态更新通知：`compliance.kyt.screenings.status.updated`。
+
+## v.1.24.0
+
+本版本于 2025 年 10 月 15 日发布。
+
+### 新功能
+
+- 您现在可以使用 [Check Fee Station usage](/v2/api-references/feestation/check-fee-station-usage) 操作来检查 Fee Station 对于某笔交易是否适用。
+
+### 改进
+
+- 从 [Sign Message](/v2/api-references/transactions/sign-message) 操作中移除了 `BTC_EIP_191_Signature` 和 `Raw_Message_Signature` 模式。
+
+- 在 [Call smart contract](/v2/api-references/transactions/call-smart-contract) 操作中新增 `STELLAR_Contract`模式，用于管理 Stellar 网络上的 trustline。
+
+- 新增 `SolContractCallAddressLookupTableAccount` 模式，以支持使用 Solana Address Lookup Tables。
+
+- 在 `FuelingInfo` 模式中添加了 `main_transaction_id` 属性，用于指示主交易。
+
+## v.1.23.0
+
+本版本于 2025 年 9 月 17 日发布。
+
+### 重大变更
+
+- 更新了 [列出审批详情](/v2/api-references/transactions/list-approval-details) 操作的响应模式，添加和修改了多个字段。
+- 更新了 [列出地址簿条目](/v2/api-references/addressbooks/list-address-book-entries) 操作的行为：
+  - 当同时提供 `address` 和 `label` 时，结果现在仅在两个条件都匹配时返回（之前只要一个条件匹配就返回）。
+  - `chain_id` 参数已从必填改为选填。
+
+### 新功能
+
+- 您现在可以使用 WaaS 2.0 API 对交易进行合规处置，相关操作包括：
+  - [隔离资金](/v2/api-references/compliance/isolate-funds)
+  - [退款资金](/v2/api-references/compliance/isolate-funds)
+  - [解冻资金](/v2/api-references/compliance/unfreeze-frozen-funds)
+  - [获取处置状态](/v2/api-references/compliance/get-disposition-status)
+- 您现在可以使用 WaaS 2.0 API 管理地址簿条目，相关操作包括：
+  - [获取地址簿条目](/v2/api-references/addressbooks/get-address-book-entry)
+  - [创建地址簿条目](/v2/api-references/addressbooks/create-address-book-entries)
+  - [更新地址簿条目](/v2/api-references/addressbooks/update-address-book-entry)
+  - [删除地址簿条目](/v2/api-references/addressbooks/delete-address-book-entry)
+<Note>创建地址簿条目、更新地址簿条目和删除地址簿条目操作需申请开通。如需使用，请联系[客户支持](mailto:help@cobo.com)。</Note>
+
+### 改进
+
+- 添加了 `chain_identifier` 属性到 `chain` 模式，用于按执行逻辑对链进行分组。例如，`ETH` 用于所有 EVM 兼容的链（以太坊、BNB Smart Chain、Polygon）。
+- 添加了 `biz_org_id` 属性到 [获取团队信息](/v2/api-references/organizations/get-organization-information) 操作的响应模式，用于提供给 Cobo 客户支持帮助快速定位团队。
+- 新增 [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type#webhook) 以支持合规处置状态更新通知：`compliance.disposition.status.updated`。
+
 ## v1.22.0
 
 本版本于 2025 年 8 月 27 日发布。

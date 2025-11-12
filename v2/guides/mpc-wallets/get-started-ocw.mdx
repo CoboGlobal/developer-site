@@ -19,11 +19,11 @@ Following this guide, you'll learn how to:
 
 Before you begin, it's helpful to understand the technical architecture of MPC Wallets, including the relationships between vaults, wallets, addresses, and key shares. The following diagram illustrates the components within a fully-functioning MPC vault:
 
-<img src="/v2/images/guides/final.svg" className="diagram" alt="The components within a fully-functioning MPC vault"></img>
+<img src="/v2/images/guides/MPC_Technical Architecture.svg" className="diagram" alt="The components within a fully-functioning MPC vault" />
 
 - An Organization-Controlled Wallet is always associated with a vault. A vault is a collection of Organization-Controlled Wallets that share the same root extended public/private key pairs.
 - <a name="root-extended-public-keys"></a>Root extended public keys: A root extended public key is used in hierarchical deterministic (HD) wallets to derive multiple child public keys and addresses. Each vault has two root extended public keys, one derived from the Secp256k1 curve (used by chains such as Bitcoin and Ethereum) and the other derived from the EdDSA curve (used by chains such as Solona and TON). To learn more about root extended public keys, see [Key derivation](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#specification-key-derivation).
-- Key share holder groups: Each vault can have multiple key share holder groups. Each holder group has a set of TSS Nodes storing the private key shares that can collectively sign a transaction or recover the root extended private key. For Main Groups and Signing Groups, one key share holder will always be Cobo. To learn more about key share holder groups, see [Holder group overview](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-overview).
+- Key share holders: Each vault can have multiple types of key share holders, including Main Key, Signing Key, and Recovery Key. Each key share holder has a set of TSS Nodes storing the private key shares that can collectively sign a transaction or recover the root extended private key. For Main Key and Signing Key, one key share holder will always be Cobo. To learn more about key share holders, see [Key share holders overview](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-overview).
 - TSS key share groups: Each TSS key share group consists of two or three private key shares, depending on the number of holders. Each key share group can form a key pair with the root extended public key derived from the same curve. Each key share is unique.
 
 ## Prerequisites
@@ -36,7 +36,7 @@ Before you begin, it's helpful to understand the technical architecture of MPC W
 
 ## 1. Create a wallet
 
-Once you have set up a vault, create a key share holder group, and generate key shares, you can proceed to create a wallet. Call the [Create wallet](/v2/api-references/wallets/create-wallet) operation and specify the properties in the request body as follows:
+Once you have set up a vault, create a key share holder, and generate key shares, you can proceed to create a wallet. Call the [Create wallet](/v2/api-references/wallets/create-wallet) operation and specify the properties in the request body as follows:
 
 - `name`: Your wallet name.
 - `wallet_type`: `MPC`.
@@ -522,17 +522,18 @@ Implement handling logic](/v2/guides/webhooks-callbacks/set-up-endpoint#implemen
 
 #### Sign the transaction
 
-After the withdrawal is confirmed, one of your co-signers will be automatically selected to sign the transaction based on their online status and other criteria. To successfully sign a transaction, you need to ensure that at least one of your co-signers is online. The transaction will remain pending until it receives the necessary signature. 
+After the withdrawal is confirmed, it will be sent to the corresponding signers based on your signing mode and signer types. The transaction will remain pending until it receives the necessary signature. 
 
-You can check if a co-signer is online through Cobo Portal:
-1. Log in to [Cobo Portal](https://portal.cobo.com/login).
-2. Click <img src="/v2/images/guides/wallets-icon.svg" className="icon"></img> > **MPC Wallets**.
-3. Select your vault and then click the **Manage Share Management** icon <img src="/v2/images/guides/manage-key-share-group.svg" className="icon"></img> on the upper right hand corner.
-4. In the **Key Group Management** page, locate your key share holder group, and check the status indicator next to each key share holder:
-   - 🟢 Green dot: The co-signer is online and ready to sign transactions
-   - No dot: The co-signer is offline and cannot sign transactions.
+- For mobile signers, please notify them to open the Cobo Guard app and sign the transaction.
+- For server signers, you can check if a signer is online through Cobo Portal:
+    1. Log in to [Cobo Portal](https://portal.cobo.com/login).
+    2. Click <img src="/v2/images/guides/wallets-icon.svg" className="icon"></img> > **MPC Wallets**.
+    3. Select your vault and then click the **Key Share Management** icon <img src="/v2/images/guides/manage-key-share-group.svg" className="icon"></img> on the upper right hand corner.
+    4. In the **Key Share Management** page, locate your server signer, and check the status indicator:
+        - 🟢 Green dot: The signer is online and ready to sign transactions
+        - No dot: The signer is offline and cannot sign transactions.
 
-<img src="/v2/images/guides/main-group-active.png" className="screenshot_modal" alt="Key Share Management page showing co-signer status"/>
+        <img src="/v2/images/guides/greendot.png" className="screenshot_modal" alt="Key Share Management page showing signer status"/>
 
 #### Monitor the withdrawal status
 

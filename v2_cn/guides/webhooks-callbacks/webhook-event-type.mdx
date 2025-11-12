@@ -227,6 +227,30 @@ description: "WaaS 2.0 中 Webhook 事件类型的综合列表，详细说明每
   </tbody>
 </table>
 
+### 合规事件
+
+<table class="table-three-cols">
+  <thead>
+    <tr>
+      <th>事件类型</th>
+      <th>事件数据类型</th>
+      <th>发生时机</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>compliance.disposition.status.updated</code></td>
+      <td><code>ComplianceDisposition</code></td>
+      <td>合规处置的状态发生变化。</td>
+    </tr>
+    <tr>
+      <td><code>compliance.kyt.screenings.status.updated</code></td>
+      <td><code>ComplianceKytScreenings</code></td>
+      <td>KYT 扫描的状态发生变化。</td>
+    </tr>
+  </tbody>
+</table>
+
 ## Webhook 事件数据结构
 有关 webhook 事件数据和其数据结构的完整介绍，请参阅 Retrieve event information 操作的响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性或 List all webhook events 操作的响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。
 

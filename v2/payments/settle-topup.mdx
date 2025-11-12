@@ -22,19 +22,13 @@ You can settle merchant balances or developer balances in top-up mode through Pa
 
 ## API call process
 
-### 1. Query available balance
+### 1. Query balances
+Before creating a settlement request, call the following operations to check the balances that can be settled. This step helps you determine the maximum amount available for settlement and ensures you have sufficient funds:
 
-Call [Get withdrawable balances](/v2/api-references/payment/get-withdrawable-balances) to query specified merchant balance or developer balance and determine the maximum amount you can settle. In top-up mode, you need to set the `acquiring_type` field to `TopUp`.
+- [List merchant balances](/v2/api-references/payment/list-merchant-balances): Query the balance for specified merchants
+- [Get developer balance](/v2/api-references/payment/get-developer-balance): Query your developer balance
 
-The API returns two key balance fields:
-
-- `available_balance`: Available balance, which refers to funds that have reached the sweep threshold and can be used for settlement immediately
-- `total_balance`: Total balance, including both available balance and funds that have not reached the sweep threshold
-
-When `available_balance` is less than `total_balance`, it means some funds have not reached the [sweep threshold](/v2/payments/glossary#sweep-threshold). You have two options:
-
-- Wait for the balance on that address to increase to the sweep threshold.
-- Call [Create forced sweep](/v2/api-references/payment/create-forced-sweep) to perform forced sweep: Cobo will immediately sweep funds that have not reached the threshold to the sweep-to address. After sweeping is complete, you can use these funds for settlement.
+For both operations, set the `acquiring_type` field to `TopUp` since you are settling funds collected from top-up.
 
 ### 2. Create settlement request
 
@@ -92,97 +86,5 @@ After creating a settlement request, based on your wallet type, submission metho
 * **Query settlement details**: Call [Get settlement request information](/v2/api-references/payment/get-settlement-request-information) to query individual settlement request details, or call [List all settlement requests](/v2/api-references/payment/list-all-settlement-requests) to query all settlement requests
 * **Real-time status updates**: Listen to `payment.settlement.status.updated` events to get real-time updates on settlement status
 
-## Call example
-
-The following is sample code for calling [Create settlement request](/v2/api-references/payment/create-settlement-request) to settle merchant balance and perform crypto transfer.
-
-<Accordion title="Sample code in Python">
-```py
-from cobo_waas2 import PaymentApi, ApiClient, Configuration, AcquiringType, \
-    CreateSettlementRequestRequest, PayoutChannel, SettlementType, CreateSettlement
-
-# See configuration.py for a list of all supported configurations.
-configuration = Configuration(
-    # Replace `<YOUR_PRIVATE_KEY>` with your private key
-    api_private_key="<YOUR_PRIVATE_KEY>",
-    # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
-    host="https://api.dev.cobo.com/v2",
-)
-# Enter a context with an instance of the API client
-with ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = PaymentApi(api_client)
-
-    try:
-        settlement_request = CreateSettlementRequestRequest(
-            request_id="<YOUR_REQUEST_ID>",
-            acquiring_type=AcquiringType.TOPUP,
-            payout_channel=PayoutChannel.CRYPTO,
-            settlement_type=SettlementType.MERCHANT,
-            settlements=[
-                CreateSettlement(
-                    merchant_id="<YOUR_MERCHANT_ID>",
-                    token_id="TRON_USDT",
-                    crypto_address_id="<YOUR_CRYPTO_ADDRESS_ID>",
-  			        amount="<YOUR_SETTLEMENT_AMOUNT>",
-                    )])
-        settlement = api_instance.create_settlement_request(
-            create_settlement_request_request=settlement_request)
-        print(settlement)
-    except Exception as e:
-        print("Exception when calling PaymentApi->create_settlement_request: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        // Select the development environment. To use the production environment, replace `Env.DEV` with
-        // `Env.PROD
-        defaultClient.setEnv(Env.DEV);
-
-        // Replace `<YOUR_PRIVATE_KEY>` with your private key
-        defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-
-        PaymentApi apiInstance = new PaymentApi(defaultClient);
-
-        try {
-            CreateSettlement create_settlement = new CreateSettlement();
-            create_settlement.setTokenId("<TRON_USDT>");
-            create_settlement.setMerchantId("<YOUR_MERCHANT_ID>");
-  	        create_settlement.setAmount("<YOUR_SETTLEMENT_AMOUNT>");
-            create_settlement.setCryptoAddressId("<YOUR_CRYPTO_ADDRESS_ID>");
-            List<CreateSettlement> settlements = new ArrayList<>();
-            settlements.add(create_settlement);
-
-            CreateSettlementRequestRequest createSettlementRequestRequest = new CreateSettlementRequestRequest();
-            createSettlementRequestRequest.setRequestId("<YOUR_REQUEST_ID>");
-            createSettlementRequestRequest.setSettlementType(SettlementType.MERCHANT);
-            createSettlementRequestRequest.setPayoutChannel(PayoutChannel.CRYPTO);
-            createSettlementRequestRequest.setAcquiringType(AcquiringType.TOPUP);
-            createSettlementRequestRequest.setSettlements(settlements);
-            Settlement settlement = apiInstance.createSettlementRequest(createSettlementRequestRequest);
-
-            System.out.println(settlement);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling PaymentApi#createSettlementRequest");
-        }
-    }
-}
-```
-</Accordion>
 
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip> 

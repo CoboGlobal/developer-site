@@ -1,11 +1,11 @@
 ---
 title: "管理交易"
 lang: "zh-hans"
-description: "使用 WaaS 2.0 API 管理交易的综合指南，涵盖取消，重发，加速和放弃交易。"
+description: "使用 WaaS 2.0 API 管理交易的综合指南，涵盖取消，加速和放弃交易。"
 ---
 <Note>本文档由 AI 辅助翻译。如需确认内容准确性，请参考[英文官方文档](https://www.cobo.com/developers/v2/guides/overview/introduction)。</Note>
 
-本指南概述了取消、重发、加速和放弃交易的过程。掌握这些技术可以确保您的交易得到及时准确的处理。
+本指南概述了取消、加速和放弃交易的过程。掌握这些技术可以确保您的交易得到及时准确的处理。
 
 ## 取消交易
 
@@ -22,16 +22,6 @@ description: "使用 WaaS 2.0 API 管理交易的综合指南，涵盖取消，�
 - `PendingSignature`（仅当子状态为 `Queue`, `InsufficientBalance`, `InsufficientBalanceFundLocked`, `PendingSignerApproval`, `PendingSystemProcessing`, 或 `Built` 时）
     
 要通过 WaaS 2.0 API 取消交易，请使用 [取消交易](/v2/api-references/transactions/cancel-transaction) 操作。这需要您希望取消的交易的交易 ID。
-
-## 重发交易
-
-重发交易意味着重试先前失败的交易。
-
-<Note>此操作仅适用于 SOL 代币的 MPC 钱包的交易。</Note>
-
-重新发送交易是一项高风险操作。请确保原始交易尚未广播到区块链、已经过期且永远不会被确认。否则，同一笔交易可能会在链上被确认两次。
-
-要重发交易，请使用 [重发交易](/v2/api-references/transactions/resend-transaction) 操作。这需要您希望重发的交易的交易 ID。
 
 ## Replace-By-Fee (RBF) 交易
 

@@ -6,37 +6,40 @@ description: "Interactive API playground for the WaaS 2.0 API, allowing develope
 
 The API Playground is a web-based tool designed for developers looking to explore and experiment with the Cobo WaaS 2.0 API directly from the Developer Hub, all within the browser.
 
-<img src="/v2/images/api-reference/playground-overview.png" className="screenshot_full_screen" alt="API Playground overview" />
-
-## Overview
-
-The API Playground consists of two main parts:
-
-- Request composer located in the center. It allows easy modification of the authorization headers, path parameters, query parameters, and request body as needed.
-   <Note>For API requests sent via the API Playground, you only need to provide your API secret in the request headers. However, for actual API requests, you need to provide your API key, a nonce, and an API signature as request headers. For more details, see [Authentication](/v2/guides/overview/cobo-auth). </Note>
-- Request viewer and response viewer located on the right. They display sample codes of the WaaS SDKs and sample responses.
-   <Note>Before you use the sample codes of the WaaS SDKs, make sure that you have installed the SDKs. For more details, see the [corresponding get-started guide](/v2/developer-tools/quickstart-python).</Note>
-
 ## Prerequisites
 
-To use the API Playground, ensure the following:
+Before using the API Playground, make sure you have completed the following:
+- Set up your Cobo Account and create the required API key and API secret. For instructions, see [Set up Cobo Accounts](https://manuals.cobo.com/en/accounts/sign-up) and [Generate an API key and an API secret](/v2/guides/overview/cobo-auth#generate-an-api-key-and-an-api-secret).
+- Register the API key on Cobo Portal based on the environment that you use. For more details, refer to [Register the API key](/v2/guides/overview/cobo-auth#register-the-api-key) and [Environments](/v2/guides/overview/environments).
 
-- Create and configure your Cobo Account for the development environment. For instructions on creating and setting up a Cobo Account, see [Set up Cobo Accounts](https://manuals.cobo.com/en/accounts/sign-up). For more details about development environments, see [Environments](/v2/guides/overview/environments).
-- Generate an API key and an API secret specifically for the development environment and configure it on Cobo Portal. For more details, refer to [Generate an API key and an API secret](/v2/guides/overview/cobo-auth#generate-an-api-key-and-an-api-secret) and [Register the API key](/v2/guides/overview/cobo-auth#register-the-api-key). The API secret will be used in the following steps.
+## Steps
 
-<Note><ul><li>The API Playground only supports API keys registered in the development environment.</li><li>For security reasons, avoid using the API secret for API Playground testing in the production environment.</li></ul></Note>
+1. Go to any API operation in the API Reference and click **Try it**.  
 
-## Test an API operation
+   <img src="/v2/images/api-reference/playground-try.png" className="screenshot_full_screen" alt="API Playground try" />
 
-1. Select the API operation you want to test.
+   The API Playground panel will appear, showing a request editor, sample codes for different programming languages, and a response viewer.
+
+   <img src="/v2/images/api-reference/playground.png" className="screenshot_full_screen" alt="API Playground panel" />
+
 2. Modify the request as follows:
 
-   - Click **Authorization**, and then enter your API secret into the `BIZ-API-KEY` field.
+   - In the **Authorization** section, enter your API secret into the `BIZ-API-KEY` field.
+      <Note>For API requests sent via the API Playground, you only need to provide your API secret in the request headers. However, for actual API requests, you need to provide your API key, a nonce, and an API signature as request headers. For more details, see [Authentication](/v2/guides/overview/cobo-auth). </Note>
    - Set the path parameters, query parameters, and request body as needed.
 
-3. Click the **Send** button to submit the request.
+3. Choose the API base URL that you want to send requests to:
+   - Development environment: https://api.dev.cobo.com/v2/
+   - Production environment: https://api.cobo.com/v2/
 
-Upon successful submission, you will find the response returned from the WaaS service under the request composer.
-![API Playground response](/v2/images/api-reference/playground-response.png)
+   You can switch between development and production directly in the API Playground by clicking the arrow icon next to the base URL.
+
+   <img src="/v2/images/api-reference/playground-switch.png" className="screenshot_full_screen" alt="API Playground switch environment" />
+
+   <Note> For security reasons, it is strongly recommended to use the development environment for testing purposes. For more information about differences between the development and production environments, see [Environments](/v2/guides/overview/environments).</Note>
+
+4. Click the **Send** button to submit the request.
+
+Upon successful submission, you will find the response returned from the WaaS service in the response viewer.
 
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>

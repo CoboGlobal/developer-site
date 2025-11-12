@@ -28,9 +28,9 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
 
     try:
-        # List address book entries
+        # List Address Book entries
         api_response = api_instance.list_address_books(
-            chain_id,
+            chain_id=chain_id,
             address=address,
             label=label,
             limit=limit,
@@ -140,15 +140,15 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.AddressBooksApi();
-const chain_id = "ETH";
 const opts = {
+  chain_id: "ETH",
   address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
   label: "test",
   limit: 10,
   before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
   after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
 };
-apiInstance.listAddressBooks(chain_id, opts).then(
+apiInstance.listAddressBooks(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

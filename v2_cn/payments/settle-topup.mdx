@@ -20,19 +20,15 @@ description: ""
 
 ## 接口调用流程
 
-### 1. 查询可结算余额
+### 1. 查询余额
 
-调用 [Get withdrawable balances](/v2/api-references/payment/get-withdrawable-balances) 查询指定商户余额或开发者余额，确定您可以结算的最大金额。充值模式下，您需要将`acquiring_type` 字段设置为 `TopUp`。
+在创建结算请求前，请调用以下接口查询余额，用于确定可结算的最大金额：
 
-API 返回以下两个关键余额字段：
+- [查询商户余额](/v2/api-references/payment/list-merchant-balances)：查询指定商户的余额
+- [查询开发者余额](/v2/api-references/payment/get-developer-balance)：查询您的开发者余额
 
-- `available_balance`：可结算余额，即已达到[归集阈值](/v2_cn/payments/glossary#sweep-threshold（归集阈值）)且可立即用于结算的资金
-- `total_balance`：总余额，包括可结算余额和未达到归集阈值的资金
+对于以上两个操作，由于您要结算的是充值模式下的收入，因此需要将 `acquiring_type` 参数设置为 `TopUp`。
 
-当 `available_balance` 小于 `total_balance` 时，说明部分资金尚未达到归集阈值。您有两种处理方式：
-
-- 等待该地址上的余额增加至归集阈值。
-- 调用 [Create forced sweep](/v2/api-references/payment/create-forced-sweep) 进行强制归集：Cobo 会立即将未达到归集阈值的资金归集到归集地址。归集完成后，您可以将这部分资金用于结算。
 
 ### 2. 创建结算请求
 
@@ -90,96 +86,4 @@ API 返回以下两个关键余额字段：
 * **查询结算详情**：调用 [Get settlement request information](/v2/api-references/payment/get-settlement-request-information) 查询单个结算请求详情，或调用 [List all settlement requests](/v2/api-references/payment/list-all-settlement-requests) 查询所有结算请求
 * **实时状态更新**：监听 `payment.settlement.status.updated` 事件，获取结算状态的实时更新
 
-## 调用示例
-
-以下为调用 [Create settlement request](/v2/api-references/payment/create-settlement-request) 结算商户余额并进行加密货币转账的示例代码。
-
-<Accordion title="Sample code in Python">
-```py
-from cobo_waas2 import PaymentApi, ApiClient, Configuration, AcquiringType, \
-    CreateSettlementRequestRequest, PayoutChannel, SettlementType, CreateSettlement
-
-# See configuration.py for a list of all supported configurations.
-configuration = Configuration(
-    # Replace `<YOUR_PRIVATE_KEY>` with your private key
-    api_private_key="<YOUR_PRIVATE_KEY>",
-    # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
-    host="https://api.dev.cobo.com/v2",
-)
-# Enter a context with an instance of the API client
-with ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = PaymentApi(api_client)
-
-    try:
-        settlement_request = CreateSettlementRequestRequest(
-            request_id="<YOUR_REQUEST_ID>",
-            acquiring_type=AcquiringType.TOPUP,
-            payout_channel=PayoutChannel.CRYPTO,
-            settlement_type=SettlementType.MERCHANT,
-            settlements=[
-                CreateSettlement(
-                    merchant_id="<YOUR_MERCHANT_ID>",
-                    token_id="TRON_USDT",
-                    crypto_address_id="<YOUR_CRYPTO_ADDRESS_ID>",
-  			        amount="<YOUR_SETTLEMENT_AMOUNT>",
-                    )])
-        settlement = api_instance.create_settlement_request(
-            create_settlement_request_request=settlement_request)
-        print(settlement)
-    except Exception as e:
-        print("Exception when calling PaymentApi->create_settlement_request: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        // Select the development environment. To use the production environment, replace `Env.DEV` with
-        // `Env.PROD
-        defaultClient.setEnv(Env.DEV);
-
-        // Replace `<YOUR_PRIVATE_KEY>` with your private key
-        defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-
-        PaymentApi apiInstance = new PaymentApi(defaultClient);
-
-        try {
-            CreateSettlement create_settlement = new CreateSettlement();
-            create_settlement.setTokenId("<TRON_USDT>");
-            create_settlement.setMerchantId("<YOUR_MERCHANT_ID>");
-  	        create_settlement.setAmount("<YOUR_SETTLEMENT_AMOUNT>");
-            create_settlement.setCryptoAddressId("<YOUR_CRYPTO_ADDRESS_ID>");
-            List<CreateSettlement> settlements = new ArrayList<>();
-            settlements.add(create_settlement);
-
-            CreateSettlementRequestRequest createSettlementRequestRequest = new CreateSettlementRequestRequest();
-            createSettlementRequestRequest.setRequestId("<YOUR_REQUEST_ID>");
-            createSettlementRequestRequest.setSettlementType(SettlementType.MERCHANT);
-            createSettlementRequestRequest.setPayoutChannel(PayoutChannel.CRYPTO);
-            createSettlementRequestRequest.setAcquiringType(AcquiringType.TOPUP);
-            createSettlementRequestRequest.setSettlements(settlements);
-            Settlement settlement = apiInstance.createSettlementRequest(createSettlementRequestRequest);
-
-            System.out.println(settlement);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling PaymentApi#createSettlementRequest");
-        }
-    }
-}
-```
-</Accordion>
 <Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

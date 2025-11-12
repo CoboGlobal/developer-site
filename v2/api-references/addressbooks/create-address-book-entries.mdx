@@ -1,0 +1,159 @@
+---
+openapi: post /address_books
+---
+
+<RequestExample>
+```python Python
+import cobo_waas2
+from cobo_waas2.models.create_address_books201_response import (
+    CreateAddressBooks201Response,
+)
+from cobo_waas2.models.create_address_books_param import CreateAddressBooksParam
+from cobo_waas2.rest import ApiException
+from pprint import pprint
+
+# See configuration.py for a list of all supported configurations.
+configuration = cobo_waas2.Configuration(
+    # Replace `<YOUR_PRIVATE_KEY>` with your private key
+    api_private_key="<YOUR_PRIVATE_KEY>",
+    # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
+    host="https://api.dev.cobo.com/v2",
+)
+# Enter a context with an instance of the API client
+with cobo_waas2.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = cobo_waas2.AddressBooksApi(api_client)
+    create_address_books_param = cobo_waas2.CreateAddressBooksParam(
+        address_books=[
+            cobo_waas2.CreateAddressBookParam(
+                chain_ids=["ETH"], address="0x570f02f2b5fcf3ac56fb6703bd7039c0c9e33460"
+            )
+        ]
+    )
+
+    try:
+        # Create Address Book entries
+        api_response = api_instance.create_address_books(
+            create_address_books_param=create_address_books_param
+        )
+        print("The response of AddressBooksApi->create_address_books:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AddressBooksApi->create_address_books: %s\n" % e)
+
+```
+```java Java
+// Import classes:
+import com.cobo.waas2.ApiClient;
+import com.cobo.waas2.ApiException;
+import com.cobo.waas2.Configuration;
+import com.cobo.waas2.Env;
+import com.cobo.waas2.api.AddressBooksApi;
+import com.cobo.waas2.model.*;
+import java.util.Arrays;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    // Select the development environment. To use the production environment, replace `Env.DEV` with
+    // `Env.PROD
+    defaultClient.setEnv(Env.DEV);
+
+    // Replace `<YOUR_PRIVATE_KEY>` with your private key
+    defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
+    AddressBooksApi apiInstance = new AddressBooksApi();
+    CreateAddressBooksParam createAddressBooksParam =
+        new CreateAddressBooksParam()
+            .addressBooks(
+                Arrays.asList(
+                    new CreateAddressBookParam()
+                        .chainIds(Arrays.asList("ETH"))
+                        .address("0x570f02f2b5fcf3ac56fb6703bd7039c0c9e33460")));
+    try {
+      CreateAddressBooks201Response result =
+          apiInstance.createAddressBooks(createAddressBooksParam);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling AddressBooksApi#createAddressBooks");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+
+```
+```go Go
+package main
+
+import (
+	"context"
+	"fmt"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
+	"os"
+)
+
+func main() {
+	createAddressBooksParam := *coboWaas2.NewCreateAddressBooksParam([]coboWaas2.CreateAddressBookParam{*coboWaas2.NewCreateAddressBookParam([]string{"ETH"}, "0x570f02f2b5fcf3ac56fb6703bd7039c0c9e33460")})
+
+	configuration := coboWaas2.NewConfiguration()
+	// Initialize the API client
+	apiClient := coboWaas2.NewAPIClient(configuration)
+	ctx := context.Background()
+
+	// Select the development environment. To use the production environment, replace coboWaas2.DevEnv with coboWaas2.ProdEnv
+	ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.DevEnv)
+	// Replace `<YOUR_PRIVATE_KEY>` with your private key
+	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
+		Secret: "<YOUR_PRIVATE_KEY>",
+	})
+	resp, r, err := apiClient.AddressBooksAPI.CreateAddressBooks(ctx).
+		CreateAddressBooksParam(createAddressBooksParam).
+		Execute()
+	if err != nil {
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `AddressBooksAPI.CreateAddressBooks``: %v\n",
+			err,
+		)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `CreateAddressBooks`: CreateAddressBooks201Response
+	fmt.Fprintf(os.Stdout, "Response from `AddressBooksAPI.CreateAddressBooks`: %v\n", resp)
+}
+
+```
+```javascript JavaScript
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// Initialize the API client
+const apiClient = CoboWaas2.ApiClient.instance;
+// Select the development environment. To use the production environment, replace `Env.DEV` with `Env.PROD`
+apiClient.setEnv(CoboWaas2.Env.DEV);
+// Replace `<YOUR_PRIVATE_KEY>` with your private key
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// Call the API
+const apiInstance = new CoboWaas2.AddressBooksApi();
+const opts = {
+  CreateAddressBooksParam:
+    CoboWaas2.CreateAddressBooksParam.constructFromObject({
+      address_books: [
+        {
+          chain_ids: ["ETH"],
+          address: "0x570f02f2b5fcf3ac56fb6703bd7039c0c9e33460",
+        },
+      ],
+    }),
+};
+apiInstance.createAddressBooks(opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+
+```
+</RequestExample>

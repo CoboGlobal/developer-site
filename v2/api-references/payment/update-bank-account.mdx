@@ -6,7 +6,9 @@ openapi: put /payments/bank_accounts/{bank_account_id}
 ```python Python
 import cobo_waas2
 from cobo_waas2.models.bank_account import BankAccount
-from cobo_waas2.models.create_bank_account_request import CreateBankAccountRequest
+from cobo_waas2.models.update_bank_account_by_id_request import (
+    UpdateBankAccountByIdRequest,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -22,7 +24,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
     bank_account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
-    create_bank_account_request = cobo_waas2.CreateBankAccountRequest(
+    update_bank_account_by_id_request = cobo_waas2.UpdateBankAccountByIdRequest(
         info={
             "beneficiary_name": "John Doe",
             "beneficiary_address": "123 Main St, Anytown, USA",
@@ -36,7 +38,8 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     try:
         # Update bank account
         api_response = api_instance.update_bank_account_by_id(
-            bank_account_id, create_bank_account_request=create_bank_account_request
+            bank_account_id,
+            update_bank_account_by_id_request=update_bank_account_by_id_request,
         )
         print("The response of PaymentApi->update_bank_account_by_id:\n")
         pprint(api_response)
@@ -64,10 +67,10 @@ public class Example {
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
     UUID bankAccountId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
-    CreateBankAccountRequest createBankAccountRequest = new CreateBankAccountRequest();
+    UpdateBankAccountByIdRequest updateBankAccountByIdRequest = new UpdateBankAccountByIdRequest();
     try {
       BankAccount result =
-          apiInstance.updateBankAccountById(bankAccountId, createBankAccountRequest);
+          apiInstance.updateBankAccountById(bankAccountId, updateBankAccountByIdRequest);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentApi#updateBankAccountById");
@@ -93,7 +96,7 @@ import (
 
 func main() {
 	bankAccountId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
-	createBankAccountRequest := *coboWaas2.NewCreateBankAccountRequest(map[string]interface{}{"key": interface{}(123)})
+	updateBankAccountByIdRequest := *coboWaas2.NewUpdateBankAccountByIdRequest(map[string]interface{}{"key": interface{}(123)})
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -107,7 +110,7 @@ func main() {
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
 	resp, r, err := apiClient.PaymentAPI.UpdateBankAccountById(ctx, bankAccountId).
-		CreateBankAccountRequest(createBankAccountRequest).
+		UpdateBankAccountByIdRequest(updateBankAccountByIdRequest).
 		Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.UpdateBankAccountById``: %v\n", err)
@@ -130,16 +133,17 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 const apiInstance = new CoboWaas2.PaymentApi();
 const bank_account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
 const opts = {
-  CreateBankAccountRequest: new CoboWaas2.CreateBankAccountRequest({
-    info: {
-      beneficiary_name: "John Doe",
-      beneficiary_address: "123 Main St, Anytown, USA",
-      account_number: "4111111111111111",
-      bank_name: "ABC Bank",
-      bank_address: "456 Bank Ave, Cityville, USA",
-      swift_or_bic: "ABCDEFGH",
-    },
-  }),
+  UpdateBankAccountByIdRequest:
+    CoboWaas2.UpdateBankAccountByIdRequest.constructFromObject({
+      info: {
+        beneficiary_name: "John Doe",
+        beneficiary_address: "123 Main St, Anytown, USA",
+        account_number: "4111111111111111",
+        bank_name: "ABC Bank",
+        bank_address: "456 Bank Ave, Cityville, USA",
+        swift_or_bic: "ABCDEFGH",
+      },
+    }),
 };
 apiInstance.updateBankAccountById(bank_account_id, opts).then(
   (data) => {

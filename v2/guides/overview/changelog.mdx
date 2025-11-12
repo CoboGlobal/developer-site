@@ -6,8 +6,110 @@ description: "Detailed changelog of all additions and changes to the WaaS 2.0 AP
 
 This changelog details all additions and changes to the WaaS 2.0 API. You can download the WaaS 2.0 API specification from [GitHub](https://github.com/CoboGlobal/developer-site/blob/master/v2/cobo_waas2_openapi_spec/dev_openapi.yaml).
 
-
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
+
+## v1.26.0
+
+This version was released on November 12, 2025.
+
+### New Features
+
+- Added new operations for managing permissions for a tokenization contract:
+  - [List token permissions](/v2/api-references/tokenization/list-token-permissions)
+  - [Update token permissions](/v2/api-references/tokenization/update-token-permissions)
+
+- Added support for [issuing](/v2/api-references/tokenization/issue-token) wrapped tokens using the CoboERC20Wrapper and SOLWrapper standards.
+
+### Improvements
+
+- Added the `archived` and `token_standard` properties to the `TokenizationTokenInfo` schema.
+
+- Added the `token_standard` query parameter to the [List supported chains for tokenization](/v2/api-references/tokenization/list-supported-chains-for-tokenization) operation to allow filtering by token standard.
+
+- Deprecated the Resend transaction operation. To retry a failed transaction, please initiate a new transaction instead.
+
+- Deprecated the Estimate transaction fee operation for Fee Station. Please use the [Check Fee Station Usage](/v2/api-references/feestation/check-fee-station-usage) operation instead.
+
+- Enhanced [Check Fee Station Usage](/v2/api-references/feestation/check-fee-station-usage) operation
+  - The `amount` and `token_id` request parameters are no longer required.
+  - Added a new `fee_token_id` request parameter to specify the gas fee token.
+  - Added a `sponsored_token_id` response field to indicate the token used to sponsor the transaction.
+
+- Added a new `DisableAutoFuel` option for the `auto_fuel` configuration in the [Transfer token](/v2/api-references/transactions/transfer-token) and [Call smart contract](/v2/api-references/transactions/call-smart-contract) operations.
+
+- Extended `cobo_category` enums with new enums for Fee Station, tokenization, and signature-related scenarios:
+    - `GasFeeSponsor`
+    - `GasFeeSponsorRefund`
+    - `Tokenization`
+    - `TokenizationGasSponsor`
+    - `TokenSwap`
+    - `NonceAccountSign`
+    - `FeePayerSign`
+
+## v1.25.0
+
+This version was released on October 29, 2025.
+
+### New Features
+
+- Added new operations for compliance management:
+  - [Submit KYT screening decision](/v2/api-references/compliance/submit-kyt-screening-decision)
+  - [Submit KYT manual review result](/v2/api-references/compliance/submit-kyt-manual-review-result)
+  - [Get KYT screening status](/v2/api-references/compliance/get-kyt-screening-status)
+
+### Improvements
+
+- Introduced a new [webhook event type](/v2/guides/webhooks-callbacks/webhook-event-type#webhook-event-types) for KYT screening status changes: `compliance.kyt.screenings.status.updated`.
+
+## v1.24.0
+
+This version was released on October 15, 2025.
+
+### New Features
+
+- You can now check whether Fee Station is applicable for a transaction by using the [Check Fee Station usage](/v2/api-references/feestation/check-fee-station-usage) operation.
+
+### Improvements
+
+- Removed the `BTC_EIP_191_Signature` and `Raw_Message_Signature` schemas from the [Sign Message](/v2/api-references/transactions/sign-message) operation.
+
+- Added the `STELLAR_Contract` schema in the [Call smart contract](/v2/api-references/transactions/call-smart-contract) operation to support trustline management on the Stellar network.
+
+- Added a new schema `SolContractCallAddressLookupTableAccount` to support using Solana Address Lookup Tables.
+
+- Added the `main_transaction_id` property to indicate the main transaction in the `FuelingInfo` schema.
+
+## v1.23.0
+
+This version was released on September 17, 2025.
+
+### Breaking Changes
+
+- Updated the response schema of [List approval details](/v2/api-references/transactions/list-approval-details). Several properties were added or modified.
+- Updated the behavior of the [List Address Book Entries](/v2/api-references/addressbooks/list-address-book-entries) operation:
+  - When both `address` and `label` are provided, results are now returned only if both match (previously matched if either condition was true).
+  - The `chain_id` parameter has been changed from required to optional.
+
+### New Features
+
+- You can now manage transaction dispositions for compliance purposes with the WaaS 2.0 API. Available operations are as follows:
+  - [Isolate funds](/v2/api-references/compliance/isolate-funds)
+  - [Refund funds](/v2/api-references/compliance/isolate-funds)
+  - [Unfreeze funds](/v2/api-references/compliance/unfreeze-frozen-funds)
+  - [Get disposition status](/v2/api-references/compliance/get-disposition-status)
+
+- You can now get, create, update, and delete Address Book entries with the following operations:
+  - [Get Address Book entry](/v2/api-references/addressbooks/get-address-book-entry)
+  - [Create Address Book entries](/v2/api-references/addressbooks/create-address-book-entries)
+  - [Update Address Book entry](/v2/api-references/addressbooks/update-address-book-entry)
+  - [Delete Address Book entry](/v2/api-references/addressbooks/delete-address-book-entry)
+<Note>The Create Address Book entries, Update Address Book entry, and Delete Address Book entry operations are available upon request. Please contact our [customer support](mailto:help@cobo.com) to enable them.</Note>
+
+### Improvements
+
+- Added a property `chain_identifier` to the `chain` schema which groups chains by their execution logic. For example, `ETH` for all EVM-compatible chains (Ethereum, BNB Smart Chain, Polygon).
+- Added a property `biz_org_id` to the response schema of [Get organization information](/v2/api-references/organizations/get-organization-information) which can be provided to Cobo's customer support to help quickly locate the organization.
+- Introduced a new [webhook event type](/v2/guides/webhooks-callbacks/webhook-event-type#webhook-event-types) for compliance disposition status changes: `compliance.disposition.status.updated`.
 
 ## v1.22.0
 

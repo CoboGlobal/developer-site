@@ -21,9 +21,7 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    create_merchant_request = cobo_waas2.CreateMerchantRequest(
-        name="Merchant A", wallet_id="123e4567-e89b-12d3-a456-426614174001"
-    )
+    create_merchant_request = cobo_waas2.CreateMerchantRequest(name="Merchant A")
 
     try:
         # Create merchant
@@ -44,7 +42,6 @@ import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
 import com.cobo.waas2.api.PaymentApi;
 import com.cobo.waas2.model.*;
-import java.util.UUID;
 
 public class Example {
   public static void main(String[] args) {
@@ -56,10 +53,7 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    CreateMerchantRequest createMerchantRequest =
-        new CreateMerchantRequest()
-            .name("Merchant A")
-            .walletId(UUID.fromString("123e4567-e89b-12d3-a456-426614174001"));
+    CreateMerchantRequest createMerchantRequest = new CreateMerchantRequest().name("Merchant A");
     try {
       Merchant result = apiInstance.createMerchant(createMerchantRequest);
       System.out.println(result);
@@ -86,7 +80,7 @@ import (
 )
 
 func main() {
-	createMerchantRequest := *coboWaas2.NewCreateMerchantRequest("Merchant A", "123e4567-e89b-12d3-a456-426614174001")
+	createMerchantRequest := *coboWaas2.NewCreateMerchantRequest("Merchant A")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -124,7 +118,6 @@ const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
   CreateMerchantRequest: CoboWaas2.CreateMerchantRequest.constructFromObject({
     name: "Merchant A",
-    wallet_id: "123e4567-e89b-12d3-a456-426614174001",
   }),
 };
 apiInstance.createMerchant(opts).then(

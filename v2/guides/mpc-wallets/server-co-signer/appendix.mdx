@@ -29,14 +29,15 @@ It's recommended that you use the configuration file to configure the TSS Node. 
    
    └── tss-node.sh (startup script)
    ```
+4. Edit the `cobo-tss-node-config.yaml` file:
+   1. Open the configuration file in a text editor.
+   2. Review all configuration items in the file. Most items have reasonable default values, so you only need to modify specific items based on your actual needs. You can refer to [Configuration items](#configuration-items) to understand the meaning of key configuration items.
+   3. Modify necessary items according to your environment. For example:
+      - Set `env` to `production` for production environment
+      - Configure the `callback` section to set up the TSS Node Callback server
+      - Adjust log configurations as needed
+   4. Save changes and close the file.
 
-4. Edit the `cobo-tss-node-config.yaml` file by following these steps: 
-   1. Open the file in a text editor. 
-   2. Locate the config item that needs modification (e.g., `env`). 
-   3. Remove any remarks associated with the config item. 
-   4. Update the content of the configuration item. For instance, set `env` to `production`.
-
-Please be aware that the TSS Node uses reasonable default values for all configuration items. Only modify the items that require customization.
 
 ### Configuration items
 

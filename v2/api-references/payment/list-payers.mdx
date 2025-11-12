@@ -20,16 +20,20 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    merchant_id = "M1001"
     limit = 10
     before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
     after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    merchant_id = "M1001"
     payer_id = "P20250619T0310056d7aa"
 
     try:
         # List payers
         api_response = api_instance.list_top_up_payers(
-            merchant_id, limit=limit, before=before, after=after, payer_id=payer_id
+            limit=limit,
+            before=before,
+            after=after,
+            merchant_id=merchant_id,
+            payer_id=payer_id,
         )
         print("The response of PaymentApi->list_top_up_payers:\n")
         pprint(api_response)
@@ -56,14 +60,14 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    String merchantId = "M1001";
     Integer limit = 10;
     String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
     String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    String merchantId = "M1001";
     String payerId = "P20250619T0310056d7aa";
     try {
       ListTopUpPayers200Response result =
-          apiInstance.listTopUpPayers(merchantId, limit, before, after, payerId);
+          apiInstance.listTopUpPayers(limit, before, after, merchantId, payerId);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling PaymentApi#listTopUpPayers");
@@ -88,10 +92,10 @@ import (
 )
 
 func main() {
-	merchantId := "M1001"
 	limit := int32(10)
 	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
 	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	merchantId := "M1001"
 	payerId := "P20250619T0310056d7aa"
 
 	configuration := coboWaas2.NewConfiguration()
@@ -106,10 +110,10 @@ func main() {
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
 	resp, r, err := apiClient.PaymentAPI.ListTopUpPayers(ctx).
-		MerchantId(merchantId).
 		Limit(limit).
 		Before(before).
 		After(after).
+		MerchantId(merchantId).
 		PayerId(payerId).
 		Execute()
 	if err != nil {
@@ -131,14 +135,14 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
-const merchant_id = "M1001";
 const opts = {
   limit: 10,
   before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
   after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+  merchant_id: "M1001",
   payer_id: "P20250619T0310056d7aa",
 };
-apiInstance.listTopUpPayers(merchant_id, opts).then(
+apiInstance.listTopUpPayers(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

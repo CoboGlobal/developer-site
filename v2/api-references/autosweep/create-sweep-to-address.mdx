@@ -26,7 +26,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     )
 
     try:
-        # create sweep-to address
+        # Create sweep-to address
         api_response = api_instance.create_wallet_sweep_to_addresses(
             create_sweep_to_address=create_sweep_to_address
         )

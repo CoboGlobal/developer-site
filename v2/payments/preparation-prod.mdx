@@ -1,153 +1,158 @@
 ---
-title: "Production Environment Preparation"
+title: "Preparation for production environment"
 lang: "en"
 description: ""
 ---
 
-After completing functionality verification by following the [Development Environment Preparation](/v2/payments/preparation) and ensuring all features work properly, you need to repeat the same configuration process in the production environment. Additionally, the production environment requires extra configurations to meet business requirements and security needs, such as risk control settings and adding public chains.
+<Note>**Disclaimer: This article contains AI translations and should only be used as reference.** Contact Cobo's support team through [help@cobo.com](mailto:help@cobo.com) if you have any questions.</Note>
 
-This article will guide you through the specific configurations required for the production environment. You can access the Cobo Portal production environment at [https://portal.cobo.com/login](https://portal.cobo.com/login).
+After you complete function verification by referring to [Preparation for development environment](/v2/payments/preparation) and ensure that all functions are running normally, you need to repeat the same configuration process in the production environment. In addition, the production environment also requires additional configurations to meet business needs and security requirements, such as risk control configuration and adding chains.
 
-## Business Configuration
+This document will guide you through the specialized configurations required for the production environment. You can access the Cobo Portal production environment through [https://portal.cobo.com/login](https://portal.cobo.com/login).
 
-### Add Chains
+## Business configuration
 
-In the production environment, only some commonly used public chains are activated by default. Before starting, please first confirm in Cobo Portal whether the public chains required for your business are activated. If the chains you need are not activated, you need to manually add them to your team configuration. Here are the steps:
+### Add chains
+
+In the production environment, the system only activates some commonly used chains by default. Before starting to use it, please first confirm in Cobo Portal whether the chains required for your business have been activated. If the chains you need have not been activated, you need to manually add them to your team configuration. The steps to add are as follows:
 
    1. Log in to Cobo Portal [production environment](https://portal.cobo.com/login).
-   2. Click the profile icon in the lower left corner, then click **Plans**.
-   3. Navigate to **Available Chains** and click the **Manage** icon.
-   <img src="/v2/images/payments/add-chain.png" className="screenshot_full_screen" alt="Add Chain"/>
-   4. On the **Manage** page, review the list of available chains. If the chain you need is not in the list, click **Add Chain** to add more chains for your team.
-
-   <Info>To view the complete list of tokens and chains supported by Cobo, please refer to [Supported Tokens and Chains](https://manuals.cobo.com/en/portal/supported-tokens-and-chains).</Info>
-
+   2. Click the profile icon in the lower left corner, then click **Pricing Plan**.
+   3. Navigate to **Chains** and click the **Manage** icon.
+   <img src="/v2/images/payments/add-chain.png" className="screenshot_full_screen" alt="Add chains"/>
+   4. On the **Manage** page, view the list of available chains. If the chain you need is not in the list, click **Add Chain** to add more chains for your team.
 
 ### Enable Cobo KYT
-Cobo KYT is Cobo's Know Your Transaction (KYT) compliance scanning service, used to identify and prevent suspicious or high-risk transactions.
+Cobo KYT is a Know Your Transaction (KYT) compliance screening service provided by Cobo, used to identify and prevent suspicious or high-risk transactions.
 
-* **Custodial Wallet**: Cobo KYT service is enabled by default, no additional configuration needed.
-* **MPC Wallet**: You can:
-    - Contact Cobo sales team to enable Cobo KYT service
-    - Or perform compliance scanning on funds yourself through the [Screening App](https://manuals.cobo.com/en/apps/screening/introduction), and handle transactions that fail the screening.
+* **Custodial Wallets**: Cobo KYT service is enabled by default, and no additional configuration is required.
+* **MPC Wallets**: You can:
+    - Contact the Cobo sales team to enable Cobo KYT service
+    - Or use [Screening App](https://manuals.cobo.com/en/apps/screening/introduction) to conduct compliance screening on funds yourself and handle transactions that do not pass.
 
-## Security Configuration
-### Risk Control Configuration
+## Security configuration
+### Risk control configuration
 
-Cobo Portal provides various risk control mechanisms designed to enhance security when storing, managing, and transferring cryptocurrencies.
+Cobo Portal provides multiple risk control mechanisms designed to improve security when storing, managing, and transferring cryptocurrency.
 
-#### User Roles and Permissions
 
-User roles consist of predefined rules that can be used to assign specific permissions to designated members within the team.
+#### User roles and permissions
 
-- Configure at least 2 administrators for cross-validation and backup purposes. Other roles should be properly configured based on actual needs.
+User roles consist of predefined rules that can be used to assign specific permissions to designated members within a team.
+
+- Configure at least 2 admins, which can serve for cross-validation and act as backups for each other. Other roles should be appropriately configured based on actual needs.
 - It is not recommended to assign multiple roles to the same member.
 
-For more details, please refer to [User Roles and Permissions](https://manuals.cobo.com/en/portal/organization/roles-and-permissions).
+For more details, see [User roles and permissions](https://manuals.cobo.com/en/portal/organization/roles-and-permissions).
 
-#### Transaction Risk Control
+#### Transaction policies
 
-Transaction risk control is one of the important security measures for your team. It is recommended to strictly configure transaction risk control policies, especially in large withdrawal scenarios. Special attention should be paid to token transfer policies in off-chain transaction risk control to avoid high-risk situations, such as:
-- No risk control rules set
-- Transactions not covered by transaction risk control
-- All transactions automatically approved
-- Same role can both initiate withdrawals and approve them
+Transaction policies are one of the important security safeguards for your team. It is recommended that you strictly configure transaction policy rules, especially in large-amount withdrawal scenarios. Special attention should be paid to token transfer policies in off-chain transaction policies to avoid high-risk situations such as:
+- No risk control rules are set
+- There are transactions not covered by transaction policies
+- All transactions are automatically approved
+- The same role can both withdraw and approve
 
-For more details, please refer to [Transaction Risk Control Overview](https://manuals.cobo.com/en/portal/risk-controls/tx-policies-overview).
+For more details, see [Introduction to transaction policies](https://manuals.cobo.com/en/portal/risk-controls/tx-policies-overview).
 
-#### Business Risk Control
+#### Governance policies
 
-Business risk control determines the approval rules for approving or rejecting certain operations.
+Governance policies determine the approval rules on which an operation is approved or rejected.
 
-The following operations are important in Cobo Portal, and it is recommended to configure approval from 2 or more [administrators](https://manuals.cobo.com/en/portal/organization/roles-and-permissions).
+The following operations are important operations in Cobo Portal. It is recommended that you configure 2 or more [admins](https://manuals.cobo.com/en/portal/organization/roles-and-permissions) for approval.
 - Invite members
 - Change member user roles
-- Edit business risk control
-- Manage transaction risk control
-- Manage addresses in address list
+- Edit governance policies
+- Manage transaction policies
+- Manage addresses in the Address List
 - Cobo Portal Apps authorization
 - Change Cobo Portal Apps permissions
-- Change Cobo Portal Apps approval flow
-- Manage API Keys
+- Change Cobo Portal Apps approval flows
+- Manage API keys
 - Edit custom user roles
 
-For more details, please refer to [Business Risk Control Introduction](https://manuals.cobo.com/en/portal/organization/governance-intro).
+For more details, see [Introduction to governance policies](https://manuals.cobo.com/en/portal/organization/governance-intro).
 
-### Administrator Authentication
-To enhance security and reduce the risk of account theft, it is strongly recommended that all administrators enable at least two authentication methods, with Cobo Guard being one of them.
+### Admin identity authentication
+To improve security and reduce the risk of account theft, it is strongly recommended that all admins enable at least two authentication methods, with Cobo Guard being one of them.
 
 Recommended combinations include:
 - Cobo Guard and Google Authenticator (GA)
-- Cobo Guard and Security Key
+- Cobo Guard and security keys
 
-<Note>It is recommended to install GA on a different device from Cobo Guard to avoid being unable to access your account due to the loss of a single device.</Note>
+<Note>It is recommended to install GA on a different device from Cobo Guard to avoid being unable to access the account due to the loss of a single device.</Note>
 
-### API Key Settings
+### API key settings
 
-When registering API Keys in the production environment, please note:
+When registering an API key in the production environment, you need to note:
 
-   * **User Role**: Based on business needs, choose either **Payment Administrator** or **Payment Member**. You can refer to [User Roles and Permissions](/v2/payments/roles-and-permissions) to understand the permissions for different roles.
-   * **Wallet Scope**: It is recommended to only select the specific wallet types you actually need to access. For example, if you only use custodial wallets, only select **Custodial Wallet**. You can adjust the wallet scope anytime based on business development needs to ensure API access permissions follow the principle of least privilege.
-   * You do not need to configure a Callback Endpoint.
-   * **Key Type**: Select **Permanent (Static IP Required)** and set IP whitelisting.
+   * **User role**: Select **Payment admin** or **Payment member** based on your business needs. You can refer to [Roles and permissions](/v2/payments/roles-and-permissions) to understand the permissions of different roles.
+   * **Wallet scope**: It is recommended to only select the specific wallet types you actually need to access. For example, if you only use Custodial Wallets, only select **Custodial Wallets**. You can adjust the wallet scope at any time according to business development needs in the future to ensure that API access permissions follow the principle of least privilege.
+   * You do not need to configure Callback Endpoint.
+   * **Key type**: Select **Long-term (require static IP addresses)** and set the IP whitelist.
 
 
-### Payment Management App Settings
+### Payments App settings
 
-When installing the Payment Management App, it is recommended to only select the specific **Wallet Scope** that you actually need to access. For example, if you only use custodial wallets, only select **Custodial Wallet**. You can adjust the wallet scope anytime based on business development needs to ensure API access permissions follow the principle of least privilege.
+When installing Payments App, it is recommended that **Wallet scope** only select the specific wallet types you actually need to access. For example, if you only use Custodial Wallets, only select **Custodial Wallets**. You can adjust the wallet scope at any time according to business development needs in the future to ensure that API access permissions follow the principle of least privilege.
 
-### MPC Wallet Configuration
 
-If you are using an MPC wallet, you will need to create an MPC Vault and complete the key share configuration.
+### MPC Wallets related configuration
 
-<Note>To understand Vaults, key shares, and other related concepts, please refer to [Organization Wallet Introduction](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/introduction).</Note>
+If you are using MPC Wallets, you also need to create an MPC Vault and complete the configuration of key shares.
+
+<Note>To understand Vault, key shares, and other related concepts, see [Introduction to Organization-Controlled Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/introduction).</Note>
 
 #### 1. Create Main Group
 
-A group of key share holders is called a [Holder Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-overview). The Main Group is the first holder group you create before using MPC wallets.
+A group of key share holders is called a [holder group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-overview). The Main Group is the first holder group you create before using MPC Wallets.
 
-The diagram below shows a Main Group containing two key share holders. Cobo holds one key share, while your team holds the other.
+The following diagram shows a Main Group with two key share holders. Cobo holds one key share, and your team holds the other.
 
 <img src="/v2/images/payments/key-shares.svg" className="diagram" alt="Key shares"/>
 
 Follow these steps to create a Main Group in Cobo Portal:
 1. Log in to Cobo Portal [production environment](https://portal.cobo.com/login).
 2. Click <img src="/v2/images/guides/wallets-icon.svg" className="icon"></img> > **MPC Wallets**.
-3. Click **Create Vault**. Follow the interface guide to complete Vault creation.
-4. After creating the Vault, the **Generate Main Group Key Share** dialog will automatically pop up. In the dialog, navigate to the **Key Share Holder 2** section and configure the holder. For detailed information about signer types and their settings, please refer to [Signer Types](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-main-group#signer-type).
+3. Click **Create Vault**. Follow the on-screen instructions to complete Vault creation.
+4. After creating the Vault, the **Generate Main Group key shares** dialog box will automatically pop up. In the dialog box, navigate to the **Key share holder 2** section and configure the holder. For detailed information on signer types and their settings, see [Signer types](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-main-group#signer-type).
 
-    - Using Mobile Co-Signer: Select a holder from the dropdown list. The **TSS Node ID** field will be automatically populated. Click **Confirm**.
-    - Using Server Co-Signer: Enter the holder name, fill in the TSS Node ID, then click **Confirm**.
+    - Using Mobile Co-Signer: Select a holder from the drop-down list. The **TSS Node ID** field will be automatically filled. Click **Confirm**.
+    - Using Server Co-Signer: Enter the holder name, fill in the TSS Node ID, and click **Confirm**.
 
-5. Confirm that you initiated this request in your Cobo Guard application.
+5. Confirm in your Cobo Guard application that you initiated this request.
 
-#### 2. Generate Key Shares
+#### 2. Generate key shares
 
-After creating the Main Group, the next crucial step is generating key shares. This process varies depending on your signer type:
+After creating the Main Group, the next critical step is to generate key shares. This process varies depending on your signer type:
 
 * For Mobile Co-Signer:
-  - Wait for the **1 key share needs to be generated** popup message to appear on Cobo Guard (this may take a few seconds).
-  - Click the popup message to open the key generation interface.
+  - Wait for the pop-up message **1 key share needs to be generated** to appear on Cobo Guard (this may take a few seconds).
+  - Click the pop-up message to open the key generation interface.
   - Follow the on-screen instructions to complete the key share generation process.
-  - We recommend backing up your key share at this time for increased security. However, you can choose to do this step after completing this guide.
+  - We recommend that you back up your key shares at this time for added security. However, you can also choose to do this step after completing this guide.
 
 * For Server Co-Signer:
-  * Ensure the TSS Node server is brought online within 24 hours. When the server comes online, the key share generation process will start automatically.
-  * If a [TSS Node callback server](/v2/guides/mpc-wallets/server-co-signer/callback-server-overview) is configured, the generation process will only begin after the callback server approves.
+  * Make sure to bring the TSS Node server online within 24 hours. When the server comes online, the key share generation process will automatically start.
+  * If a [TSS Node callback server](https://www.cobo.com/developers/v2/guides/mpc-wallets/server-co-signer/callback-server-overview) is configured, the generation process will only start after the callback server approves.
 
 Once the key generation process is complete, the holder group status will change to **Active** on Cobo Portal. You may need to refresh the Cobo Portal page to see the updated result.
 
-#### 3. Key Share Backup and Recovery
+#### 3. Key share backup and recovery
 
-After generating key shares, you can back up the key share files to ensure the security and recoverability of key shares. Please securely store the recovery passphrase and encrypted database password for the key share backup. If lost, you will need to use the Recovery Group to recover key shares (if a Recovery Group has been set up).
+After generating key shares, you can back up the key share files to ensure the security and recoverability of key shares. Please keep the recovery passphrase and encrypted database password for the key share backup safe. If lost, you will need to use the Recovery Group to recover key shares (if a Recovery Group has been set up).
 
-For more details, please refer to [Mobile Co-Signer key share backup instructions](https://manuals.cobo.com/en/guard/generate-and-back-up-key-shares#back-up-key-shares) and [Server Co-Signer key share backup instructions](/v2/guides/mpc-wallets/server-co-signer/key-shares-backup).
-
-#### 4. Other Holder Group Configurations
-
-- **Holder Group Configuration**: In addition to the Main Group, you need to create at least one Signing Group and one Recovery Group. It is strongly recommended not to have the same key share holder (i.e., with the same [TSS Node ID](https://manuals.cobo.com/en/portal/glossary#tss-node)) belong to different types of holder groups simultaneously, for example, belonging to both the Main Group and a Signing Group. If this occurs, ensure there is more than one Signing Group.
-- **Signer Type**: Since there may be many [sweep](/v2/payments/glossary#sweep) transactions before settlement and transactions are concentrated in time, ensure you set up a [Server Co-Signer](/v2/guides/mpc-wallets/server-co-signer/tss-node-overview) in your [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-main-group) or [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-signing-group) to enable automated signing.
-- **Risk Control Configuration**: If you choose to use [TSS Node callback](/v2/guides/mpc-wallets/server-co-signer/callback-server-overview) as your Server Co-Signer's risk control mechanism, you need to add your wallet's sweep address to the callback server's whitelist. After adding, the Server Co-Signer will automatically sign withdrawal transactions from the sweep address during settlement or refund. For detailed whitelist configuration methods, please refer to [Risk Control Best Practices - Automated Sweep Implementation](/v2/guides/mpc-wallets/server-co-signer/risk-control-best-practices#automated-sweep-implementation). You can view a wallet's sweep address under the wallet's **Addresses** → **Sweep To** tab.<img src="/v2/images/payments/auto-sweep-address-list.png" className="screenshot_modal" alt="Wallet sweep address list" />
+For more details, see [Mobile Co-Signer backup key shares instructions](https://manuals.cobo.com/en/guard/generate-and-back-up-key-shares#back-up-key-shares) and [Server Co-Signer backup key shares instructions](/v2/guides/mpc-wallets/server-co-signer/key-shares-backup).
 
 
-<Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip> 
+#### 4. Other holder group related configurations
+
+- **Holder group configuration**: In addition to the Main Group, you need to create at least one Signing Group and one Recovery Group separately. It is strongly recommended not to have the same key share holder belong to different types of holder groups at the same time, for example, belonging to both the Main Group and a Signing Group. If this situation occurs, please ensure that there is more than one Signing Group.
+- **Signer type**: Since a large number of fund sweeping transactions may occur before settlement and the transaction times are concentrated, please ensure that you set up a [Server Co-Signer](/v2/guides/mpc-wallets/server-co-signer/tss-node-overview) in your [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-main-group) or [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-signing-group) to achieve automated signing.
+- **Risk control configuration**: If you choose to use [TSS Node callback](/v2/guides/mpc-wallets/server-co-signer/callback-server-overview) as the risk control mechanism for your Server Co-Signer, you need to add your wallet's sweep-to destination address to the whitelist of the callback server. After adding, the Server Co-Signer will automatically sign withdrawal transactions from the sweep-to destination address when performing payouts or refunds. For detailed whitelist configuration methods, refer to [Risk control best practices - Auto sweeping implementation](/v2/guides/mpc-wallets/server-co-signer/risk-control-best-practices#auto-sweeping-implementation). You can view the sweep-to destination address of a wallet under the **Addresses** → **Sweep To** tab of the wallet.<img src="/v2/images/payments/auto-sweep-address-list.png" className="screenshot_modal" alt="Wallet sweep-to destination address list" />
+
+
+
+
+<Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>
+
