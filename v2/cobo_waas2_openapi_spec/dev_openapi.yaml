@@ -10113,7 +10113,7 @@ components:
           description: |
             The destination address.
 
-            If you are deploying a new contract on an EVM chain, set the address to `0x0000000000000000000000000000000000000000`.
+            If you are deploying a new contract on an EVM chain, set this address to `0x0000000000000000000000000000000000000000`.
           example: '0x0406db8351aa6839169bb363f63c2c808fee8f99'
         value:
           type: string
