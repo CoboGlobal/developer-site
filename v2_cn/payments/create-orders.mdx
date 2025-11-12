@@ -38,116 +38,53 @@ sequenceDiagram
 
 ## 创建订单
 
-您可以通过 Payments API 或 Checkout SDK 创建支付订单。
+您可以通过两种方式创建订单：
+
+- 调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 直接创建一个支付订单。调用成功后，您将得到应付金额、付款地址等信息；
+- 调用 [Create order link](/v2/api-references/payment/create-order-link) 创建一个订单支付链接。该链接会跳转到由 Cobo 提供的支付页面，用户可在该页面创建订单并完成支付，无需您自行开发前端交互流程。您还可以通过 iFrame 方式将该支付页面嵌入到您的网站或应用中。
 
 ### 前提条件
-
 您已完成[前置准备](/v2_cn/payments/preparation)中提到的所有步骤。
 
-### 实现步骤
+### 操作步骤
+
 <Tabs>
-  <Tab title="Payments API" icon="code">
-1. 付款方选择用于支付的币种和链之后，您可以先调用 [Get exchange rate](/v2/api-references/payment/get-exchange-rate) 获取实时参考汇率。根据商品订单金额和参考汇率，您可以计算出预估的应付金额并展示给付款方。
+  <Tab title="使用 Payments API 创建支付订单" icon="code">
 
-2. 在付款方确认支付后，调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 创建支付订单。创建订单时需要提供以下关键参数：
-   * **商户 ID**（`merchant_id`）：商户 ID，在您录入商户时由 Cobo 分配。
-   * **币种及链**（`token_id`）：付款方选择的用于支付的币种及链类型。 
-   * **币种**（`currency`）：商品订单的币种，目前仅支持 `USD`。
-   * **商品订单金额**（`order_amount`）：商品订单的应付金额。
-   * **开发者费用**（`fee_amount`）：您向商户收取的开发者费用。如果您是直接服务于付款方的商户，可以将该字段设置为 `0`。请参考[资金分配与余额管理](/v2_cn/payments/amounts-and-balances)获取更多关于开发者费用的说明。
-   * **过期时间**（`expired_in`）：支付订单的有效期，以秒为单位。从创建订单请求的时间开始计算。当订单过期后：
-     - 订单状态变为最终状态且无法更改
-     - `received_token_amount` 字段不再更新
-     - 如果再次收到资金，将触发 `transactionLate` webhook 事件，且该资金不会计入该笔订单的实收资金
-   * **开发者订单号**（`psp_order_code`）：请将此字段设置为您系统中该订单的唯一编号。
+您可以调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 来创建一个支付订单。创建订单时，您需要指定商品订单金额、用户支付所用的加密货币等信息，系统会根据这些信息计算出订单的应付金额（`payable_amount`）。应付金额的计算公式为：
 
-   创建订单后，Cobo 会返回包括以下字段在内的订单信息：
+**应付金额** = **（商品订单金额 + 开发者费用）** / **汇率**
 
-   * **应付金额**（`payable_amount`）：付款方最终需要支付的金额。由于汇率波动的关系，该金额可能与您预估的应付金额存在差异。  
-   * **收币地址**（`receive_address`）：Cobo 根据付款方选择的币种和链，为该订单生成的收币地址。
+- **应付金额**：用户实际需支付的加密货币金额，以 `token_id` 指定的加密货币为单位。例如，若 `token_id` 为 `ETH_USDT`，则用户需通过 ETH 链支付相应金额的 USDT。
+- **商品订单金额**：您在创建订单时传入的 `order_amount` 字段。
+- **开发者费用**：您在创建订单时传入的 `fee_amount` 字段。如果您是服务多个下游商户的平台机构，需要在您和下游商户之间分配收入，可以通过设置该费用来实现。开发者费用和商品订单金额之间的比例决定了您和下游商户之间的收入分成比例。更多信息请参考[资金分配与余额管理](/v2_cn/payments/amounts-and-balances)。
+  <Info>如果您是商户（直接服务于用户），通常无需设置开发者费用。</Info>
+- **汇率**：
+  - 如果您只设置了 `token_id` 字段，未设置 `currency` 字段，则商品订单金额和开发者费用都以 `token_id` 指定的加密货币为单位。此时的汇率固定为 1，无需进行换算。
+  - 如果您设置了 `currency` 字段，则商品订单金额和开发者费用都以 `currency` 指定的法币为单位。
+    - 如果您设置了 `custom_exchange_rate` 字段，则汇率为 `custom_exchange_rate` 字段值。
+    - 如果您未设置 `custom_exchange_rate` 字段，则汇率为 `currency` 指定的法币与 `token_id` 指定的加密货币之间的实时汇率，以创建订单时调用 [Get exchange rate](/v2/api-references/payment/get-exchange-rate) 操作返回的汇率为准。 
+  
 
-**调用示例**
+下表展示了在四种不同设置下，系统如何计算应付金额：
 
-以下为调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 创建支付订单的示例代码：
 
-<Accordion title="Sample code in Python">
-```py
-import cobo_waas2
-from cobo_waas2 import PaymentApi
+|  | 场景 1 | 场景 2 | 场景 3 | 场景 4 |
+| :-- | :-- | :-- | :-- | :-- |
+| 场景描述 | - 订单金额以法币计价<br></br>- 无需设置开发者费用<br></br>- 使用默认汇率 | - 订单金额以加密货币计价<br></br>- 无需设置开发者费用<br></br>- 使用默认汇率  | - 订单金额以法币计价<br></br>- 设置开发者费用<br></br>- 使用自定义汇率 | - 订单金额以加密货币计价<br></br>- 设置开发者费用<br></br>- 使用默认汇率 |
+| `order_amount` | `"100"` | `"100"` | `"100"` | `"100"` |
+| `fee_amount` | `"0"` 或不设置 | `"0"` 或不设置 | `"2"` | `"2"` |
+| `currency` | `"USD"` | 不设置 | `"USD"` | 不设置 |
+| `token_id` | `"ETH_USDT"` | `"ETH_USDT"` | `"ETH_USDT"` | `"ETH_USDT"` |
+| `custom_exchange_rate` | 不设置 | 不设置 | `"0.98"` | 不设置 |
+| 实时汇率 | 0.99 | 1 | 0.99 | 1 |
+| 计算过程 | (100 + 0) / 0.99 | (100 + 0) / 1 | (100 + 2) / 0.98 | (100 + 2) / 1 |
+| `payable_amount`（用户最终应付的金额） | `"101.01"` | `"100"` | `"104.08"` | `"102"` |
 
-# See configuration.py for a list of all supported configurations.
-configuration = cobo_waas2.Configuration(
-   # Replace `<YOUR_PRIVATE_KEY>` with your private key
-   api_private_key="<YOUR_PRIVATE_KEY>",
-   # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
-   host="https://api.dev.cobo.com/v2",
-)
-# Enter a context with an instance of the API client
-with cobo_waas2.ApiClient(configuration) as api_client:
-   # Create an instance of the API class
-   api_instance = PaymentApi(api_client)
-   create_payment_order_request = cobo_waas2.CreatePaymentOrderRequest(
-       merchant_id="<YOUR_MERCHANT_ID>",
-       token_id="TRON_USDT",
-       currency="USD",
-       order_amount="10",
-       fee_amount="0.3",
-       psp_order_code="<YOUR_PSP_ORDER_CODE>",
-       expired_in=1800
-   )
-   try:
-       # Create payment order
-       api_response = api_instance.create_payment_order(
-           create_payment_order_request=create_payment_order_request
-       )
-       print("The response of PaymentApi->create_payment_order:\n")
-       print(api_response)
-   except Exception as e:
-       print("Exception when calling PaymentApi->create_payment_order: %s\n" % e)
-```
-</Accordion>
 
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-public class Example {
- public static void main(String[] args) {
-   ApiClient defaultClient = Configuration.getDefaultApiClient();
-   // Select the development environment. To use the production environment, replace `Env.DEV` with
-   // `Env.PROD
-   defaultClient.setEnv(Env.DEV);
-
-   // Replace `<YOUR_PRIVATE_KEY>` with your private key
-   defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-   
-   PaymentApi apiInstance = new PaymentApi(defaultClient);
-   CreatePaymentOrderRequest createPaymentOrderRequest = new CreatePaymentOrderRequest();
-   createPaymentOrderRequest.setMerchantId("<YOUR_MERCHANT_ID>");
-   createPaymentOrderRequest.setTokenId("TRON_USDT");
-   createPaymentOrderRequest.setCurrency("USD");
-   createPaymentOrderRequest.setOrderAmount("10");
-   createPaymentOrderRequest.setFeeAmount("0.3");
-   createPaymentOrderRequest.setPspOrderCode("<YOUR_PSP_ORDER_CODE>");
-   createPaymentOrderRequest.setExpiredIn(1800);
-
-   try {
-          Order paymentOrder = apiInstance.createPaymentOrder(createPaymentOrderRequest);
-          System.out.println(paymentOrder);
-   } catch (ApiException e) {
-     System.err.println("Exception when calling PaymentApi#createPaymentOrder");
-   }
- }
-```
-</Accordion>
-  </Tab>
-  <Tab title="Checkout SDK" icon="terminal">
-  Checkout SDK 提供开箱即用的支付页面前端组件。通过简单的 iFrame 集成，您可以快速开发一个安全可靠的加密货币支付页面，无需处理繁琐的 UI 设计和支付逻辑，从而显著降低开发成本和时间投入。详情请参考[集成 Checkout SDK](/v2_cn/payments/checkout-sdk)。
+</Tab>
+  <Tab title="使用 Payments API 创建支付链接" icon="browser">
+  您可以调用 [Create order link](/v2/api-references/payment/create-order-link) 创建一个订单支付链接。具体的支付页面效果和集成步骤请参考[创建订单支付链接](/v2_cn/payments/payment-link)。
   </Tab>
 </Tabs>
 
@@ -259,7 +196,7 @@ public class Example {
 
 | 异常情况 | 描述 | 影响 |
 |---------|------|----------|
-| **多付** | 在订单有效期内，付款方实付金额超过**应付金额的两倍** | 订单最终状态为 `Completed`。|
+| **多付** | 在订单有效期内，付款方实付金额超过应付金额 | 订单最终状态为 `Completed`。|
 | **少付** | 在订单有效期内，付款方实付金额少于应付金额 | 订单状态为 `Underpaid`（终态）。|
 | **晚付** | 付款方在订单过期后进行首次或再次付款 | 不会改变订单状态。每次晚付都会触发一次 `payment.transaction.late` Webhook 事件。|
 

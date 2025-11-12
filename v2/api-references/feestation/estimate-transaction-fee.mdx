@@ -1,14 +1,12 @@
 ---
-openapi: post /payments/estimate_fee
+openapi: post /fee_station/transactions/estimate_fee
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.payment_estimate_fee201_response import (
-    PaymentEstimateFee201Response,
-)
-from cobo_waas2.models.payment_estimate_fee_request import PaymentEstimateFeeRequest
+from cobo_waas2.models.estimated_fixed_fee import EstimatedFixedFee
+from cobo_waas2.models.fee_station_transfer import FeeStationTransfer
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -22,24 +20,20 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.PaymentApi(api_client)
-    payment_estimate_fee_request = cobo_waas2.PaymentEstimateFeeRequest(
-        estimate_fees=[
-            cobo_waas2.PaymentEstimateFee(
-                token_id="req_20251112145725", amount="500.00"
-            )
-        ]
-    )
+    api_instance = cobo_waas2.FeeStationApi(api_client)
+    fee_station_transfer = cobo_waas2.FeeStationTransfer(token_id="ETH_USDT")
 
     try:
-        # Estimate fees
-        api_response = api_instance.payment_estimate_fee(
-            payment_estimate_fee_request=payment_estimate_fee_request
+        # Estimate transaction fee
+        api_response = api_instance.estimate_fee_station_fee(
+            fee_station_transfer=fee_station_transfer
         )
-        print("The response of PaymentApi->payment_estimate_fee:\n")
+        print("The response of FeeStationApi->estimate_fee_station_fee:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->payment_estimate_fee: %s\n" % e)
+        print(
+            "Exception when calling FeeStationApi->estimate_fee_station_fee: %s\n" % e
+        )
 
 ```
 ```java Java
@@ -48,9 +42,8 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
+import com.cobo.waas2.api.FeeStationApi;
 import com.cobo.waas2.model.*;
-import java.util.Arrays;
 
 public class Example {
   public static void main(String[] args) {
@@ -61,18 +54,13 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    PaymentApi apiInstance = new PaymentApi();
-    PaymentEstimateFeeRequest paymentEstimateFeeRequest =
-        new PaymentEstimateFeeRequest()
-            .estimateFees(
-                Arrays.asList(
-                    new PaymentEstimateFee().tokenId("req_20251112145725").amount("500.00")));
+    FeeStationApi apiInstance = new FeeStationApi();
+    FeeStationTransfer feeStationTransfer = new FeeStationTransfer().tokenId("ETH_USDT");
     try {
-      PaymentEstimateFee201Response result =
-          apiInstance.paymentEstimateFee(paymentEstimateFeeRequest);
+      EstimatedFixedFee result = apiInstance.estimateFeeStationFee(feeStationTransfer);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#paymentEstimateFee");
+      System.err.println("Exception when calling FeeStationApi#estimateFeeStationFee");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -94,7 +82,7 @@ import (
 )
 
 func main() {
-	paymentEstimateFeeRequest := *coboWaas2.NewPaymentEstimateFeeRequest([]coboWaas2.PaymentEstimateFee{*coboWaas2.NewPaymentEstimateFee("TokenId_example", "500.00")})
+	feeStationTransfer := *coboWaas2.NewFeeStationTransfer("ETH_USDT")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -107,15 +95,19 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.PaymentEstimateFee(ctx).
-		PaymentEstimateFeeRequest(paymentEstimateFeeRequest).
+	resp, r, err := apiClient.FeeStationAPI.EstimateFeeStationFee(ctx).
+		FeeStationTransfer(feeStationTransfer).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.PaymentEstimateFee``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `FeeStationAPI.EstimateFeeStationFee``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `PaymentEstimateFee`: PaymentEstimateFee201Response
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.PaymentEstimateFee`: %v\n", resp)
+	// response from `EstimateFeeStationFee`: EstimatedFixedFee
+	fmt.Fprintf(os.Stdout, "Response from `FeeStationAPI.EstimateFeeStationFee`: %v\n", resp)
 }
 
 ```
@@ -128,14 +120,13 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.PaymentApi();
+const apiInstance = new CoboWaas2.FeeStationApi();
 const opts = {
-  PaymentEstimateFeeRequest:
-    CoboWaas2.PaymentEstimateFeeRequest.constructFromObject({
-      estimate_fees: [{ token_id: "req_20251112145725", amount: "500.00" }],
-    }),
+  FeeStationTransfer: CoboWaas2.FeeStationTransfer.constructFromObject({
+    token_id: "ETH_USDT",
+  }),
 };
-apiInstance.paymentEstimateFee(opts).then(
+apiInstance.estimateFeeStationFee(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

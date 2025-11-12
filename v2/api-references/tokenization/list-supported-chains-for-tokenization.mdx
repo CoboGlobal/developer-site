@@ -8,6 +8,7 @@ import cobo_waas2
 from cobo_waas2.models.tokenization_list_enabled_chains_response import (
     TokenizationListEnabledChainsResponse,
 )
+from cobo_waas2.models.tokenization_token_standard import TokenizationTokenStandard
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -22,6 +23,7 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.TokenizationApi(api_client)
+    token_standard = "ERC20"
     limit = 10
     after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
     before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
@@ -29,7 +31,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     try:
         # List supported chains for tokenization
         api_response = api_instance.list_tokenization_supported_chains(
-            limit=limit, after=after, before=before
+            token_standard=token_standard, limit=limit, after=after, before=before
         )
         print("The response of TokenizationApi->list_tokenization_supported_chains:\n")
         pprint(api_response)
@@ -59,12 +61,13 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     TokenizationApi apiInstance = new TokenizationApi();
+    TokenizationTokenStandard tokenStandard = TokenizationTokenStandard.fromValue("ERC20");
     Integer limit = 10;
     String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
     String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
     try {
       TokenizationListEnabledChainsResponse result =
-          apiInstance.listTokenizationSupportedChains(limit, after, before);
+          apiInstance.listTokenizationSupportedChains(tokenStandard, limit, after, before);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling TokenizationApi#listTokenizationSupportedChains");
@@ -89,6 +92,7 @@ import (
 )
 
 func main() {
+	tokenStandard := coboWaas2.TokenizationTokenStandard("ERC20")
 	limit := int32(10)
 	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
 	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
@@ -105,6 +109,7 @@ func main() {
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
 	resp, r, err := apiClient.TokenizationAPI.ListTokenizationSupportedChains(ctx).
+		TokenStandard(tokenStandard).
 		Limit(limit).
 		After(after).
 		Before(before).
@@ -137,6 +142,7 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.TokenizationApi();
 const opts = {
+  token_standard: "ERC20",
   limit: 10,
   after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
   before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",

@@ -294,7 +294,6 @@
                   {
                     "group": "Manage transactions",
                     "pages": [
-                      "v2/api-references/transactions/resend-transaction",
                       "v2/api-references/transactions/cancel-transaction",
                       "v2/api-references/transactions/drop-transaction",
                       "v2/api-references/transactions/speed-up-transaction",
@@ -321,7 +320,6 @@
                       "v2/api-references/feestation/list-all-fee-station-transactions",
                       "v2/api-references/feestation/list-fee-station-addresses",
                       "v2/api-references/feestation/list-fee-station-token-balances",
-                      "v2/api-references/feestation/estimate-fee-for-fee-station-transaction",
                       "v2/api-references/feestation/check-fee-station-usage"
                     ]
                   }
@@ -391,6 +389,13 @@
                       "v2/api-references/tokenization/call-token-contract",
                       "v2/api-references/tokenization/pause-token-contract",
                       "v2/api-references/tokenization/unpause-token-contract"
+                    ]
+                  },
+                  {
+                    "group": "Manage permissions",
+                    "pages": [
+                      "v2/api-references/tokenization/list-token-permissions",
+                      "v2/api-references/tokenization/update-token-permissions"
                     ]
                   },
                   {
@@ -590,6 +595,7 @@
                     "group": "Refund orders",
                     "pages": [
                       "v2/api-references/payment/create-refund-order",
+                      "v2/api-references/payment/create-refund-link",
                       "v2/api-references/payment/update-refund-order",
                       "v2/api-references/payment/cancel-refund-order",
                       "v2/api-references/payment/get-refund-order-information",

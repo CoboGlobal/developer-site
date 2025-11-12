@@ -56,16 +56,17 @@ WaaS 2.0 相较于 WaaS 1.0 进行了重大升级，面向支付、代币化、�
 
 下表列出了 WaaS 1.0 和 2.0 中常见钱包操作所需的 API 操作。在将代码从 1.0 迁移到 2.0 时，您可以参考此表。
 
-|        API 操作        | WaaS 1.0                                                     | WaaS 2.0                                                     |
+|                            | WaaS 1.0                                                     | WaaS 2.0                                                     |
 | -------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 创建钱包                   | 不支持，因为 API Key是钱包特定的           | [创建钱包](/v2/api-references/wallets/create-wallet) |
-| 创建地址                   |  <ul><li>**[全托管钱包]** [获取新充币地址](/v1/api-references/custody-wallet/new_address)</li><li>**[MPC 钱包]** [生成地址](/v1/api-references/mpc-wallet/mpc_generate_addresses) 和 [生成地址备注](/v1/api-references/mpc-wallet/mpc_generate_address_memo)</li></ul> | [在钱包中创建地址](/v2/api-references/wallets/create-addresses-in-wallet) |
+| 创建钱包                   | 不支持，因为 API Key 是钱包特定的                            | [创建钱包](/v2/api-references/wallets/create-wallet) |
+| 创建地址                   | <ul><li>**[全托管钱包]** [获取新充币地址](/v1/api-references/custody-wallet/new_address)</li><li>**[MPC 钱包]** [生成地址](/v1/api-references/mpc-wallet/mpc_generate_addresses) 和 [生成地址备注](/v1/api-references/mpc-wallet/mpc_generate_address_memo)</li></ul> | [在钱包中创建地址](/v2/api-references/wallets/create-addresses-in-wallet) |
 | 提取代币                   | <ul><li>**[全托管钱包]** [新建提币请求](/v1/api-references/custody-wallet/new_withdraw_request)</li><li>**[MPC 钱包]** [创建交易](/v1/api-references/mpc-wallet/mpc_create_transaction)</li></ul> | [转账代币](/v2/api-references/transactions/transfer-token) |
-| RBF 交易                   | <ul><li>**[全托管钱包]** [加速提币](/v1/api-references/custody-wallet/accelerate_withdraw)</li><li>**[MPC 钱包]** [加速交易](/v1/api-references/mpc-wallet/mpc_speedup_transaction)</li></ul> | [加速交易](/v2/api-references/transactions/speed-up-transaction) |
-| 获取地址                   | <ul><li>**[全托管钱包]** [获取地址列表](/v1/api-references/custody-wallet/addresses)</li><li>**[MPC 钱包]** [获取地址列表](/v1/api-references/mpc-wallet/mpc_list_addresses)</li></ul> | [列出钱包中的地址](/v2/api-references/wallets/list-addresses-in-wallet) |
-| 获取余额                   | <ul><li>**[全托管钱包]** [获取币种余额列表](/v1/api-references/custody-wallet/get_coin_info)</li><li>**[MPC 钱包]** [获取地址余额列表](/v1/api-references/mpc-wallet/mpc_list_address_balances)</li></ul> | [列出钱包中的代币余额](/v2/api-references/wallets/list-token-balances-in-wallet) |
-| 获取交易详情               | <ul><li>**[全托管钱包]** [获取交易详情](/v1/api-references/custody-wallet/transaction_by_id)</li><li>**[MPC 钱包]** [获取交易详情](/v1/api-references/mpc-wallet/mpc_get_transaction)</li></ul> | [获取交易详情](/v2/api-references/transactions/get-transaction-details) |
-| 获取交易历史               | <ul><li>**[全托管钱包]** [获取交易历史](/v1/api-references/custody-wallet/transaction_history)</li><li>**[MPC 钱包]** [获取交易历史](/v1/api-references/mpc-wallet/mpc_list_transactions)</li></ul> | [列出所有交易](/v2/api-references/transactions/list-all-transactions) |
+| RBF 交易（加速）           | **[MPC 钱包]** [加速交易](/v1/api-references/mpc-wallet/mpc_speedup_transaction) | [加速交易](/v2/api-references/transactions/speed-up-transaction) |
+| RBF 交易（放弃）           | **[MPC 钱包]** [放弃交易](/v1/api-references/mpc-wallet/mpc_drop_transaction) | [放弃交易](/v2/api-references/transactions/drop-transaction) |
+| 取消交易                   | 不支持                                                        | [取消交易](/v2/api-references/transactions/cancel-transaction) |
+| 调用合约                   | 不支持                                                        | [调用智能合约](/v2/api-references/transactions/call-smart-contract) |
+| 签名消息                   | 不支持                                                        | [签名消息](/v2/api-references/transactions/sign-message) |
+| 查询交易                   | <ul><li>**[全托管钱包]** [交易历史](/v1/api-references/custody-wallet/transaction_history)</li><li>**[MPC 钱包]** [获取交易列表](/v1/api-references/mpc-wallet/mpc_list_transactions)</li></ul> | <ul><li>[列出所有交易](/v2/api-references/transactions/list-all-transactions)</li><li>[获取交易信息](/v2/api-references/transactions/get-transaction-information)</li></ul>|
 
 ## 升级步骤
 

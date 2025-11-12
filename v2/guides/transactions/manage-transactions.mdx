@@ -1,10 +1,10 @@
 ---
 title: "Manage transactions"
 lang: "en"
-description: "Comprehensive guide on managing transactions in WaaS 2.0, covering canceling, resending, speeding up, and dropping transactions."
+description: "Comprehensive guide on managing transactions in WaaS 2.0, covering canceling, speeding up, and dropping transactions."
 ---
 
-This guide outlines the processes for canceling, resending, speeding up, and dropping transactions. By mastering these techniques, you can ensure that your transactions are processed promptly and accurately. 
+This guide outlines the processes for canceling, speeding up, and dropping transactions. By mastering these techniques, you can ensure that your transactions are processed promptly and accurately. 
 
 ## Cancel a transaction
 
@@ -22,15 +22,6 @@ A transaction can be cancelled if its status is either of the following:
     
 To cancel a transaction via the WaaS 2.0 API, use the [Cancel transaction](/v2/api-references/transactions/cancel-transaction) operation. This requires the transaction ID of the transaction you wish to cancel.
 
-## Resend a transaction
-
-Resending a transaction means retrying a previously failed transaction.
-
-<Note>This operation only applies to transactions from MPC Wallets in the SOL token.</Note>
-
-Resending a transaction is a high‑risk operation. Ensure that the original transaction has not been broadcast to the blockchain, has already expired, and will never be confirmed. Otherwise, the same transaction may be confirmed on‑chain twice.
-
-To resend a transaction, use the [Resend transaction](/v2/api-references/transactions/resend-transaction) operation. This requires the transaction ID of the transaction you wish to resend.
 
 ## Replace-By-Fee (RBF) transactions
 

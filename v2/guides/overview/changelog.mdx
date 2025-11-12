@@ -8,6 +8,44 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.26.0
+
+This version was released on November 12, 2025.
+
+### New Features
+
+- Added new operations for managing permissions for a tokenization contract:
+  - [List token permissions](/v2/api-references/tokenization/list-token-permissions)
+  - [Update token permissions](/v2/api-references/tokenization/update-token-permissions)
+
+- Added support for [issuing](/v2/api-references/tokenization/issue-token) wrapped tokens using the CoboERC20Wrapper and SOLWrapper standards.
+
+### Improvements
+
+- Added the `archived` and `token_standard` properties to the `TokenizationTokenInfo` schema.
+
+- Added the `token_standard` query parameter to the [List supported chains for tokenization](/v2/api-references/tokenization/list-supported-chains-for-tokenization) operation to allow filtering by token standard.
+
+- Deprecated the Resend transaction operation. To retry a failed transaction, please initiate a new transaction instead.
+
+- Deprecated the Estimate transaction fee operation for Fee Station. Please use the [Check Fee Station Usage](/v2/api-references/feestation/check-fee-station-usage) operation instead.
+
+- Enhanced [Check Fee Station Usage](/v2/api-references/feestation/check-fee-station-usage) operation
+  - The `amount` and `token_id` request parameters are no longer required.
+  - Added a new `fee_token_id` request parameter to specify the gas fee token.
+  - Added a `sponsored_token_id` response field to indicate the token used to sponsor the transaction.
+
+- Added a new `DisableAutoFuel` option for the `auto_fuel` configuration in the [Transfer token](/v2/api-references/transactions/transfer-token) and [Call smart contract](/v2/api-references/transactions/call-smart-contract) operations.
+
+- Extended `cobo_category` enums with new enums for Fee Station, tokenization, and signature-related scenarios:
+    - `GasFeeSponsor`
+    - `GasFeeSponsorRefund`
+    - `Tokenization`
+    - `TokenizationGasSponsor`
+    - `TokenSwap`
+    - `NonceAccountSign`
+    - `FeePayerSign`
+
 ## v1.25.0
 
 This version was released on October 29, 2025.

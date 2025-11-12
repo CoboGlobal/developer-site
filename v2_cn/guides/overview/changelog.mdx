@@ -9,6 +9,44 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.26.0  
+
+本版本于 2025 年 11 月 12 日发布。  
+
+### 新功能
+
+- 新增用于管理代币化合约权限的操作：  
+  - [列出代币权限](/v2/api-references/tokenization/list-token-permissions)  
+  - [更新代币权限](/v2/api-references/tokenization/update-token-permissions)  
+
+- 支持[发行](/v2/api-references/tokenization/issue-token)基于 **CoboERC20Wrapper** 和 **SOLWrapper** 标准的包装代币。
+
+### 改进
+
+- 在 `TokenizationTokenInfo` 模式中新增 `archived` 和 `token_standard` 属性。
+
+- 在 [列出代币化支持的链](/v2/api-references/tokenization/list-supported-chains-for-tokenization) 操作中新增 `token_standard` 查询参数，用于根据代币标准进行筛选。
+
+- 废弃重新发送交易操作，对于失败交易，请重新发起新的交易。
+
+- 废弃估算 Fee Station 交易费用操作。请改用[检查 Fee Station 可用性](/v2/api-references/feestation/check-fee-station-usage)操作。
+
+- 优化[检查 Fee Station 可用性](/v2/api-references/feestation/check-fee-station-usage)操作：
+  - `amount` 和 `token_id` 请求参数不再为必填参数。
+  - 新增 `fee_token_id` 请求参数，用于指定支付 gas 费用的代币。
+  - 新增 `sponsored_token_id` 响应字段，用于标识代付交易所使用的代币。
+
+- 新增 `DisableAutoFuel` 选项，可用于[代币转账](/v2/api-references/transactions/transfer-token) 和 [调用智能合约](/v2/api-references/transactions/call-smart-contract)操作的 `auto_fuel` 配置中。
+
+- 扩展 `cobo_category` 枚举，新增以下用于 Fee Station、Tokenization 与签名相关场景的枚举值：
+  - `GasFeeSponsor`
+  - `GasFeeSponsorRefund`
+  - `Tokenization`
+  - `TokenizationGasSponsor`
+  - `TokenSwap`
+  - `NonceAccountSign`
+  - `FeePayerSign`
+
 ## v1.25.0
 
 本版本于 2025 年 10 月 15 日发布。
