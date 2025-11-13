@@ -879,6 +879,12 @@
                       "v2/payments/wallet-fee-deduction",
                       "v2/payments/third-party-wallet-support"
                     ]
+                  },
+                  {
+                    "group": "Refund",
+                    "pages": [
+                      "v2/payments/create-refund-link"
+                    ]
                   }
                 ]
               },
@@ -1208,6 +1214,12 @@
                       "v2_cn/payments/payment-link",
                       "v2_cn/payments/wallet-fee-deduction",
                       "v2_cn/payments/third-party-wallet-support"
+                    ]
+                  },
+                  {
+                    "group": "退款",
+                    "pages": [
+                      "v2_cn/payments/create-refund-link"
                     ]
                   }
                 ]

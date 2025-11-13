@@ -4364,6 +4364,8 @@ paths:
         This operation creates a link that points to a Cobo-hosted refund page. The user can submit their desired refund address on the page.
 
         Once the address is submitted, Cobo will automatically create a refund order and initiate the refund process according to your configuration.
+
+        For details, see [Create refund link](/v2/payments/create-refund-link).
       requestBody:
         $ref: '#/components/requestBodies/createPaymentRefundLinkRequest'
       responses:
@@ -15043,7 +15045,7 @@ components:
           $ref: '#/components/schemas/RefundType'
         merchant_id:
           type: string
-          description: 'The merchant ID, required if `refund_source` is `Merchant`.'
+          description: 'The merchant ID, required if `refund_source` is `Merchant`. The fund will be deducted from the specified merchant''s balance.'
           example: M1001
         fee_amount:
           type: string
