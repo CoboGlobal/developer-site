@@ -1009,11 +1009,11 @@
                 "group": "MPC 钱包",
                 "pages": [
                   {
-                    "group": "服务器签名人",
+                    "group": "服务端签名人",
                     "pages": [
                       "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-overview",
                       {
-                        "group": "部署和配置服务器签名人",
+                        "group": "部署和配置服务端签名人",
                         "pages": [
                           "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-release-notes",
                           "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-network-environments",
