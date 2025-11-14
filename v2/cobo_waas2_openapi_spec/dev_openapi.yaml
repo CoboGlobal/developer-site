@@ -2060,7 +2060,7 @@ paths:
 
         You only need to provide the event type. By default, the payload contains dummy data with no impact on your real business transactions or activities. You can optionally provide the `override_data` property to customize the payload.
 
-        <Note>Currently, you can only trigger test webhook events with the event data types `Transaction` and `TSSRequest`.</Note>
+        <Note>Currently, you can only trigger test webhook events with the event data types [`Transaction`](https://www.cobo.com/developers/v2/guides/webhooks-callbacks/webhook-event-type#transaction-events-deposits%2Fwithdrawals%2Fcontract-calls%2Fmessage-signing) and [`TSSRequest`](https://www.cobo.com/developers/v2/guides/webhooks-callbacks/webhook-event-type#mpc-tss-request-events).</Note>
       operationId: trigger_test_webhook_event
       requestBody:
         $ref: '#/components/requestBodies/triggerTestEventBody'
@@ -10973,8 +10973,6 @@ components:
       example: wallets.transaction.created
       description: |
         The event type. To learn the trigger condition of each event type, refer to [Webhook event types and event data](https://www.cobo.com/developers/v2/guides/webhooks-callbacks/webhook-event-type). 
-
-        **Currently, you can only trigger test webhook events with the event data types `Transaction` and `TSSRequest`.**
     WebhookEventStatus:
       type: string
       enum:
