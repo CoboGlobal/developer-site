@@ -1616,6 +1616,8 @@ paths:
       description: |
         <Note>Resending failed transactions is not supported on the Solana network.</Note>
 
+        <Note>Resending failed transactions is not supported on the Solana network.</Note>
+
         This operation resends a specified transaction. Resending a transaction means retrying a previously failed transaction. For more details about resending a transaction, see [Resend a transaction](https://www.cobo.com/developers/v2/guides/transactions/manage-transactions#resend-a-transaction).
 
         Resending a transaction is a high‑risk operation. Ensure that the original transaction has not been broadcast to the blockchain, has already expired, and will never be confirmed. Otherwise, the same transaction may be confirmed on‑chain twice.
@@ -4354,25 +4356,6 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
-  /payments/links/refunds:
-    post:
-      tags:
-        - Payment
-      operationId: create_refund_link
-      summary: Create refund link
-      description: |
-        This operation creates a link that points to a Cobo-hosted refund page. The user can submit their desired refund address on the page.
-
-        Once the address is submitted, Cobo will automatically create a refund order and initiate the refund process according to your configuration.
-      requestBody:
-        $ref: '#/components/requestBodies/createPaymentRefundLinkRequest'
-      responses:
-        '201':
-          $ref: '#/components/responses/createPaymentLinkResponse'
-        4XX:
-          $ref: '#/components/responses/badRequestError'
-        5XX:
-          $ref: '#/components/responses/internalServerError'
   /auto_sweep/sweep_to_addresses:
     get:
       tags:
@@ -6275,7 +6258,7 @@ components:
           $ref: '#/components/schemas/KeyShareHolderType'
         tss_node_id:
           type: string
-          description: 'Key share holder''s TSS Node ID. You can obtain the TSS Node ID using either mobile co-signer or server co-signer. See the "Primary Purposes" row on the table in [Create a Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups#create-a-main-group).'
+          description: 'Key share holder''s TSS Node ID. For detailed information about signer types and their setup, see the [**Signer Type** table](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-main-group). Mobile signers can view their TSS Node ID in the [Cobo Guard app](https://manuals.cobo.com/en/guard/manage).'
           example: coboAbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefghi
         signer:
           type: boolean
@@ -15023,36 +15006,6 @@ components:
 
             When the actual received amount is within this deviation (inclusive) of the payable amount, the order status will be set to `Completed` rather than `Underpaid`.
           example: '0.5'
-    RefundLinkBusinessInfo:
-      type: object
-      required:
-        - transaction_id
-        - amount
-        - refund_source
-      properties:
-        transaction_id:
-          type: string
-          description: |
-            The transaction ID of the original order payment or top-up.  On the refund page, the from address of this transaction will be pre-filled as the default refund address.  The refund will be processed in the same token and on the same blockchain as this transaction.
-          example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
-        amount:
-          type: string
-          description: 'The amount to refund, denominated in the cryptocurrency of the original payment transaction. The amount must be a positive number and can have up to two decimal places.'
-          example: '0.0025'
-        refund_source:
-          $ref: '#/components/schemas/RefundType'
-        merchant_id:
-          type: string
-          description: 'The merchant ID, required if `refund_source` is `Merchant`.'
-          example: M1001
-        fee_amount:
-          type: string
-          description: |
-            The developer fee amount to charge the merchant, denominated in the cryptocurrency of the original payment transaction. This field is only valid when `refund_source` is `Merchant`. For more information, please refer to [Funds allocation and balances](https://www.cobo.com/developers/v2/payments/amounts-and-balances).
-            Must be:
-              - A positive integer with up to two decimal places.
-              - Less than the refund amount
-          example: '0.0001'
     DispositionStatus:
       type: string
       description: The status of a disposition operation.
@@ -16384,36 +16337,6 @@ components:
         - name
         - symbol
         - decimals
-    TokenizationERC20WrappedTokenParams:
-      type: object
-      properties:
-        standard:
-          $ref: '#/components/schemas/TokenizationTokenStandard'
-        name:
-          type: string
-          description: The name of the token.
-          example: My Awesome Token
-        symbol:
-          type: string
-          description: The symbol of the token.
-          example: MAT
-        permissions:
-          $ref: '#/components/schemas/TokenizationERC20WrappedTokenPermissionParams'
-        token_access_activated:
-          type: boolean
-          description: 'Whether the allowlist feature is activated for the token. When activated, only addresses in the allowlist can perform token operations.'
-          default: false
-          example: false
-        underlying_token:
-          type: string
-          description: The address of the underlying token that this tokenized asset represents.
-          example: '0xdac17f958d2ee523a2206206994597c13d831ec7'
-      required:
-        - standard
-        - name
-        - symbol
-        - decimals
-        - underlying_token
     TokenizationSOLTokenParams:
       title: Solana
       type: object
@@ -16447,35 +16370,6 @@ components:
         - name
         - symbol
         - decimals
-    TokenizationSOLWrappedTokenParams:
-      type: object
-      properties:
-        standard:
-          $ref: '#/components/schemas/TokenizationTokenStandard'
-        name:
-          type: string
-          description: The name of the token.
-          example: My Awesome Token
-        symbol:
-          type: string
-          description: The symbol of the token.
-          example: MAT
-        underlying_token:
-          type: string
-          description: The address of the underlying token that this tokenized asset represents.
-          example: 9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM
-        token_access_activated:
-          type: boolean
-          description: 'Whether the allowlist feature is activated for the token. When activated, only addresses in the allowlist can perform token operations.'
-          default: false
-          example: false
-        permissions:
-          $ref: '#/components/schemas/TokenizationSolWrappedTokenPermissionParams'
-      required:
-        - standard
-        - name
-        - symbol
-        - underlying_token
     TokenizationEstimateFeeRequest:
       type: object
       properties:
@@ -22386,7 +22280,7 @@ components:
           schema:
             $ref: '#/components/schemas/TokenizationListTokenInfoResponse'
     tokenizationOperationResponse:
-      description: Tokenization operation transaction created successfully
+      description: Successfully created a tokenization operation.
       content:
         application/json:
           schema:
