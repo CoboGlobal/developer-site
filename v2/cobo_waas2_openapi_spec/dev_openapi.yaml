@@ -9546,7 +9546,7 @@ components:
           type: string
           description: The wallet ID.
           format: uuid
-          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+          example: d3fcfaef-f415-4210-9e5c-fbed0e090495
     CustodialWeb3TransferSource:
       type: object
       description: |
