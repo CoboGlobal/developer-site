@@ -139,6 +139,7 @@
                 "group": "Development Tools and Resources",
                 "pages": [
                   "v2/api-references/playground",
+                  "v2/api-references/use-postman-to-call-waas-api",
                   "v2/api-references/pagination",
                   "v2/api-references/error-codes"
                 ]
@@ -1076,7 +1077,8 @@
               {
                 "group": "概览",
                 "pages": [
-                  "v2_cn/api-references/overview"
+                  "v2_cn/api-references/overview",
+                  "v2_cn/api-references/use-postman-to-call-waas-api"
                 ]
               }
             ]
