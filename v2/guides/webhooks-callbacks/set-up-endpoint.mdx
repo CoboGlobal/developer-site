@@ -100,6 +100,65 @@ To see examples of how to implement the handling logic, refer to the following f
 - JavaScript: [ServerDemo.js](https://github.com/CoboGlobal/cobo-waas2-js-sdk/blob/master/src/ServerDemo.js)
 - Go: [server_demo.go](https://github.com/CoboGlobal/cobo-waas2-go-sdk/blob/master/cobo_waas2/demo/server_demo.go)
 
+## Advanced usage
+
+### Wallet-level webhook routing
+
+In certain business scenarios, you may need to apply different Webhook handling logic for different wallets. For example:
+
+- Multiple business teams share the same WaaS account
+- A single system manages multiple independent projects
+- Webhook events need to be forwarded to different microservices
+
+In such cases, you can route incoming Webhook events based on the `wallet_id`.
+The following example demonstrates how to extend the Cobo-provided Webhook/Callback sample code ([server_demo.py](https://github.com/CoboGlobal/cobo-waas2-python-sdk/blob/master/cobo_waas2/server_demo.py)) to implement wallet-level Webhook routing.
+
+This example uses Python for demonstration, but the same logic can be applied to other languages. You may adapt this approach in the sample code of the language you are using.
+
+```python
+@app.post("/api/webhook")
+async def handle_webhook(
+    request: Request,
+    biz_timestamp: Optional[str] = Header(None),
+    biz_resp_signature: Optional[str] = Header(None),
+):
+    raw_body = await request.body()
+    sig_valid = verify_signature(
+        pubkey,
+        biz_resp_signature,
+        f"{raw_body.decode('utf8')}|{biz_timestamp}"
+    )
+    if not sig_valid:
+        raise HTTPException(status_code=401, detail="Signature verification failed")
+
+    import requests
+    event = WebhookEvent.from_dict(json.loads(raw_body.decode('utf8')))
+    data = event.data.actual_instance
+
+    # Route Webhook events based on Wallet ID
+    # Replace "wallet_id_xxx" and the target URLs with your actual wallet IDs
+    # and the corresponding Webhook endpoints in your own system.
+    if data.data_type == "Transaction":
+        if data.wallet_id == "wallet_id_1":
+            # Example: Forward events for wallet_id_1 to Service A
+            requests.post("http://wallet1.example.com/webhook", json=data.model_dump())
+
+        elif data.wallet_id == "wallet_id_2":
+            # Example: Forward events for wallet_id_2 to Service B
+            requests.post("http://wallet2.example.com/webhook", json=data.model_dump())
+
+        elif data.wallet_id == "wallet_id_3":
+            # Example: Forward events for wallet_id_3 to Service C
+            requests.post("http://wallet3.example.com/webhook", json=data.model_dump())
+
+        else:
+            # Default handling logic (optional)
+            pass
+
+    logger.info(event)
+    logger.info(event.data)
+```
+
 ## ⚠️⚠️⚠️Important notes
 
 <Warning>
