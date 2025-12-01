@@ -1,12 +1,11 @@
 ---
-openapi: post /payments/links/refunds
+openapi: get /payments/exchange_rates
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_refund_link_request import CreateRefundLinkRequest
-from cobo_waas2.models.link import Link
+from cobo_waas2.models.exchange_rate import ExchangeRate
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,23 +20,16 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    create_refund_link_request = cobo_waas2.CreateRefundLinkRequest(
-        business_info=cobo_waas2.RefundLinkBusinessInfo(
-            transaction_id="aff0e1cb-15b2-4e1f-9b9d-a9133715986f",
-            amount="0.0025",
-            refund_source="Merchant",
-        )
-    )
+    token_ids = "ETH_USDT,ETH_USDC,BTC_USDT"
+    currencies = "USD"
 
     try:
-        # Create refund link
-        api_response = api_instance.create_refund_link(
-            create_refund_link_request=create_refund_link_request
-        )
-        print("The response of PaymentApi->create_refund_link:\n")
+        # Batch get exchange rates
+        api_response = api_instance.batch_get_exchange_rates(token_ids, currencies)
+        print("The response of PaymentApi->batch_get_exchange_rates:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_refund_link: %s\n" % e)
+        print("Exception when calling PaymentApi->batch_get_exchange_rates: %s\n" % e)
 
 ```
 ```java Java
@@ -59,18 +51,13 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    CreateRefundLinkRequest createRefundLinkRequest =
-        new CreateRefundLinkRequest()
-            .businessInfo(
-                new RefundLinkBusinessInfo()
-                    .transactionId("aff0e1cb-15b2-4e1f-9b9d-a9133715986f")
-                    .amount("0.0025")
-                    .refundSource(RefundType.MERCHANT));
+    String tokenIds = "ETH_USDT,ETH_USDC,BTC_USDT";
+    String currencies = "USD";
     try {
-      Link result = apiInstance.createRefundLink(createRefundLinkRequest);
+      List<ExchangeRate> result = apiInstance.batchGetExchangeRates(tokenIds, currencies);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createRefundLink");
+      System.err.println("Exception when calling PaymentApi#batchGetExchangeRates");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -92,7 +79,8 @@ import (
 )
 
 func main() {
-	createRefundLinkRequest := *coboWaas2.NewCreateRefundLinkRequest(*coboWaas2.NewRefundLinkBusinessInfo("aff0e1cb-15b2-4e1f-9b9d-a9133715986f", "0.0025", coboWaas2.RefundType("Merchant")))
+	tokenIds := "ETH_USDT,ETH_USDC,BTC_USDT"
+	currencies := "USD"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -105,15 +93,16 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreateRefundLink(ctx).
-		CreateRefundLinkRequest(createRefundLinkRequest).
+	resp, r, err := apiClient.PaymentAPI.BatchGetExchangeRates(ctx).
+		TokenIds(tokenIds).
+		Currencies(currencies).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.CreateRefundLink``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.BatchGetExchangeRates``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreateRefundLink`: Link
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreateRefundLink`: %v\n", resp)
+	// response from `BatchGetExchangeRates`: []ExchangeRate
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.BatchGetExchangeRates`: %v\n", resp)
 }
 
 ```
@@ -127,17 +116,9 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
-const opts = {
-  CreateRefundLinkRequest:
-    CoboWaas2.CreateRefundLinkRequest.constructFromObject({
-      business_info: {
-        transaction_id: "aff0e1cb-15b2-4e1f-9b9d-a9133715986f",
-        amount: "0.0025",
-        refund_source: "Merchant",
-      },
-    }),
-};
-apiInstance.createRefundLink(opts).then(
+const token_ids = "ETH_USDT,ETH_USDC,BTC_USDT";
+const currencies = "USD";
+apiInstance.batchGetExchangeRates(token_ids, currencies).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

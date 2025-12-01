@@ -575,15 +575,15 @@
                     ]
                   },
                   {
-                    "group": "Top-up",
+                    "group": "Pay-ins (top-up mode)",
                     "pages": [
-                      "v2/api-references/payment/get-top-up-address",
+                      "v2/api-references/payment/createget-top-up-address",
                       "v2/api-references/payment/update-top-up-address",
                       "v2/api-references/payment/list-payers"
                     ]
                   },
                   {
-                    "group": "Pay-in orders",
+                    "group": "Pay-ins (order mode)",
                     "pages": [
                       "v2/api-references/payment/create-pay-in-order",
                       "v2/api-references/payment/update-pay-in-order",
@@ -593,7 +593,7 @@
                     ]
                   },
                   {
-                    "group": "Refund orders",
+                    "group": "Refunds",
                     "pages": [
                       "v2/api-references/payment/create-refund-order",
                       "v2/api-references/payment/create-refund-link",
@@ -608,7 +608,6 @@
                     "pages": [
                       "v2/api-references/payment/list-merchant-balances",
                       "v2/api-references/payment/get-developer-balance",
-                      "v2/api-references/payment/get-payer-balance",
                       "v2/api-references/payment/get-withdrawable-balances",
                       "v2/api-references/payment/list-payment-wallet-balances"
                     ]
@@ -632,6 +631,7 @@
                     "group": "Fees and exchange rates",
                     "pages": [
                       "v2/api-references/payment/get-exchange-rate",
+                      "v2/api-references/payment/batch-get-exchange-rates",
                       "v2/api-references/payment/estimate-fees"
                     ]
                   },
@@ -877,8 +877,8 @@
                     "group": "Build checkout page",
                     "pages": [
                       "v2/payments/payment-link",
-                      "v2/payments/wallet-fee-deduction",
-                      "v2/payments/third-party-wallet-support"
+                      "v2/payments/third-party-wallet-support",
+                      "v2/payments/wallet-fee-deduction"
                     ]
                   },
                   {
@@ -1214,8 +1214,8 @@
                     "group": "搭建收款页面",
                     "pages": [
                       "v2_cn/payments/payment-link",
-                      "v2_cn/payments/wallet-fee-deduction",
-                      "v2_cn/payments/third-party-wallet-support"
+                      "v2_cn/payments/third-party-wallet-support",
+                      "v2_cn/payments/wallet-fee-deduction"
                     ]
                   },
                   {

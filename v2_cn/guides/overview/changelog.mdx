@@ -9,6 +9,14 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.27.0
+
+本版本于 2025 年 11 月 26 日发布。
+
+### 改进
+
+- 新增对 TRON 链智能合约的支持。现在您可以使用[调用智能合约](/v2/api-references/transactions/call-smart-contract)、[列出所有交易](/v2/api-references/transactions/list-all-transactions) 和[获取交易信息](/v2/api-references/transactions/get-transaction-information) 操作来调用和检索与 TRON 智能合约相关的交易。
+
 ## v1.26.0  
 
 本版本于 2025 年 11 月 12 日发布。  
@@ -204,7 +212,7 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 新功能
 - 添加了以下支付者和充值地址管理操作：
-  - [Get top-up address](/v2/api-references/payment/get-top-up-address)
+  - [Create/Get top-up address](/v2/api-references/payment/createget-top-up-address)
   - [List payers](/v2/api-references/payment/list-payers)
 - 添加了 [Get organization information](/v2/api-references/organizations/get-organization-information) 操作，用于获取与当前 API Key 关联的团队的详细信息。
 

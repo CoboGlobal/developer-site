@@ -1,72 +1,118 @@
 ---
-title: "创建 Payment Link"
+title: "创建订单支付链接"
 lang: "zh-hans"
 ---
 
+如果您选择通过订单模式进行收款，并希望节省自建支付页面的开发时间，可以调用 [Create order link](/v2/api-references/payment/create-order-link) 创建一个订单支付链接。
 
-Payment Link 本质上是一个带 token 的 url，每个 token 都和订单唯一绑定，形式类似：  
-`https://checkout.cobo.com/payment?token=xxx`
+- 打开支付链接后，付款方将被引导至由 Cobo 托管的支付页面。付款方可以在该页面查看订单详情并完成支付，无需您自行开发前端交互流程。您还可以将支付页面通过 iFrame 方式嵌入到您的网站或应用中。
 
-Payment Link 由 开发者 后端调用 Cobo Waas API 生成，并返回给 开发者 前端，开发者 前端可以直接跳转或者内嵌在 iframe 中。
+- 该支付链接兼容 PC 端和移动端，支持付款方唤起本地第三方钱包 App 或插件进行支付。详细的第三方钱包支持情况可参考[第三方钱包 App 支持范围](/v2_cn/payments/third-party-wallet-support)。
 
-终端用户可以通过 Payment Link 完成后续支付流程，其中三方钱包的对接均由 Cobo 完成，目前支持 EVM、Tron、Solana 三类链，覆盖 PC 端钱包插件和移动端钱包 App。
+- 订单支付链接的标准格式为：`https://payment-link.dev.cobo.com/payment?token=<token>`，其中 `<token>` 是 Cobo 生成的唯一标识符，每个 token 与一笔支付订单唯一对应。
 
 
-## Payment Link 接入流程
+## 支付页面效果展示
 
-Cobo 提供了接入 Demo：[https://github.com/CoboGlobal/cobo-payment-link-demo](https://github.com/CoboGlobal/cobo-payment-link-demo)
+### 移动端
 
-Demo 中包含了 开发者 前端和后端的示例代码，均由 JavaScript 实现，仅用于快速演示。实际场景中，开发者 后端可以自由选择相应语言的 Cobo Waas SDK。
+下图展示了订单支付页面在移动端的交互流程（以连接第三方钱包为例）：
+1. 付款方选择币种和链
+2. 确认订单信息，并选择使用第三方钱包支付
+3. 在第三方钱包列表选择钱包并完成支付。
+4. 页面将自动跳转至支付成功页面。
+<img src="/v2_cn/images/payments/payment-link-mobile.png" className="screenshot_full_screen" alt="移动端 支付链接 页面" />
 
-前端代码位于：`src/main.ts`  
-后端代码位于：`server.js`
+### PC 端
+下图展示了订单支付页面在 PC 端的交互流程（以连接第三方钱包为例）：
+1. 付款方选择币种和链
+2. 确认订单信息，并选择使用第三方钱包支付
+3. 在第三方钱包列表选择钱包并完成支付。
+4. 页面将自动跳转至支付成功页面。
+<img src="/v2_cn/images/payments/payment-link-desktop.png" className="screenshot_full_screen" alt="PC 支付链接 页面" />
 
-首先需要在 Cobo Portal 中完成 API Key 的绑定激活，并将 API Key 和 API Secret 填入 `server.js`（如果已接入旧 Checkout SDK，API Key 和 API Secret 可以直接复用）。
 
-之后运行以下命令：
+## 示例项目
 
-```shell
-// 安装依赖
-pnpm install
-// 同时运行前端和后端
-npm run start
+我们为集成订单支付链接提供了一个[完整示例项目](https://github.com/CoboGlobal/cobo-payment-link-demo)。该项目包含前端与后端的源码（均为 JavaScript 实现），可帮助您快速体验和参考集成流程。  
+- 前端主代码位于 `src/main.ts`，负责页面展示与支付流程触发。  
+- 后端代码集中在 `server.js`，负责与 Payments API 通信及订单支付链接的生成。
+
+<img src="/v2_cn/images/payments/payment-link-demo-page.png" className="screenshot_full_screen" alt="支付链接 Demo 页面" />
+
+示例项目包含两种集成方式：点击 **Pay Now (By New Window)** 会在新标签页打开支付页面，点击 **Pay Now (By iframe)** 则会在当前页面以 iframe 形式嵌入支付窗口。
+
+该示例项目前后端的交互流程如下：
+
+1. 付款方点击 **Pay Now** 按钮后，前端会向后端发起请求，申请创建订单支付链接。
+2. 后端收到请求后，通过调用 [Create order link](/v2/api-references/payment/create-order-link)，生成对应的订单支付链接。
+3. 后端将该支付链接返回给前端。前端根据返回的链接，通过新窗口打开或在 iframe 中嵌入支付页面，付款方即可在该页面完成支付操作。
+
+您可以在浏览器中打开开发者工具，查看网络请求的详细内容：
+
+<img src="/v2_cn/images/payments/payment-link-request.png" className="screenshot_full_screen" alt="支付链接 预下单请求" />
+
+## 集成步骤
+
+您可以调用 [Create order link](/v2/api-references/payment/create-order-link) 来创建一个订单支付链接。
+
+### 交互流程
+下图展示了付款方、您的应用前后端与 Cobo 之间的完整交互流程：
+<div style={{maxWidth: '800px', margin: '0 auto'}}>
+```mermaid
+sequenceDiagram
+    participant 付款方
+    participant 您的应用前端
+    participant 您的应用后端
+    participant Cobo
+    participant 订单支付链接
+    participant 第三方钱包
+    付款方 ->> 您的应用前端: 选择使用加密货币支付
+    您的应用前端 ->> 您的应用后端: 申请创建订单支付链接
+    您的应用后端 ->> Cobo: 调用 API 创建订单支付链接
+    Cobo -->> 您的应用后端: 返回支付链接
+    您的应用后端 -->> 您的应用前端: 返回支付链接
+    付款方 ->> 您的应用前端: 点击按钮打开支付链接
+    您的应用前端 ->> 订单支付链接: 打开支付链接 (直接跳转 / iframe 嵌套)
+    付款方 ->> 订单支付链接: 选择币种和链，确认下单
+    订单支付链接 ->> 第三方钱包: 连接钱包/扫码支付
+    Cobo ->> Cobo: 监听链上结果
+    付款方 ->> 第三方钱包: 完成支付
+    Cobo -->> 您的应用后端: Webhook 通知订单状态更新
+    您的应用后端 -->> 您的应用前端: 通知支付结果
 ```
+</div>
 
-浏览器打开：[http://localhost:5173/](http://localhost:5173/)
+### 应付金额计算
 
-<img src="/v2_cn/images/payments/payment-link-demo-page.png" className="screenshot_full_screen" alt="Payment Link Demo 页面" />
+创建订单支付链接时，您需要指定商品订单金额、开发者费用等关键参数。付款方进入支付页面后，可自行选择支付所用的币种和链。系统会结合您的设置与付款方的选择，自动计算出对应的应付金额，并在界面上实时展示。应付金额的计算方式如下：
 
-Demo 中提供了两种方式：Pay Now (By New Window) 是 url 模式，会跳转新浏览器标签页；Pay Now (By iframe) 是 iframe 模式，会内嵌在当前页面中。
+**应付金额** = **（商品订单金额 + 开发者费用）** / **汇率**
 
-任意选择一种模式，点击 Pay Now 后可以看到如下请求，模拟了预下单流程：PSP 前端调用 PSP 后端，PSP 后端调用 Cobo Waas API，并将生成的 Payment Link 返回 PSP 前端。
+- **应付金额**：付款方实际需支付的加密货币金额。
+- **商品订单金额**：您在创建订单支付链接时传入的 `order_amount` 字段。
+- **开发者费用**：您在创建订单时传入的 `fee_amount` 字段。如果您是服务多个下游商户的平台机构，需要在您和下游商户之间分配收入，可以通过设置该费用来实现。开发者费用和商品订单金额之间的比例决定了您和下游商户之间的收入分成比例。更多信息请参考[资金分配与余额管理](/v2_cn/payments/amounts-and-balances)。
+  <Info>如果您是商户（直接服务于付款方），通常无需设置开发者费用。</Info>
+- **汇率**：
+    - 如果您设置了 `custom_exchange_rates` 字段，则汇率为 `custom_exchange_rates` 字段值。
+    - 如果您未设置 `custom_exchange_rates` 字段，则系统会采用您设置的 `currency`（订单金额计价币种）与付款方实际选择的加密货币之间的实时汇率。该汇率以付款方下单时调用 [Get exchange rate](/v2/api-references/payment/get-exchange-rate) 返回的汇率为准。
+  
 
-<img src="/v2_cn/images/payments/payment-link-request.png" className="screenshot_full_screen" alt="Payment Link 预下单请求" />
+下表展示了在四种不同设置下，系统如何计算应付金额：
 
-## Payment Link 演示
 
-### 1. PC 端打开 Payment Link
+|  | 场景 1 | 场景 2 | 场景 3 | 场景 4 |
+| :-- | :-- | :-- | :-- | :-- |
+| 场景描述 | - 订单金额以法币计价<br></br>- 无需设置开发者费用<br></br>- 使用默认汇率 | - 订单金额以 USDT 计价<br></br>- 无需设置开发者费用<br></br>- 使用默认汇率  | - 订单金额以法币计价<br></br>- 设置开发者费用<br></br>- 使用自定义汇率 | - 订单金额以 USDT 计价<br></br>- 设置开发者费用<br></br>- 使用默认汇率 |
+| `order_amount` | `"100"` | `"100"` | `"100"` | `"100"` |
+| `fee_amount` | `"0"` 或不设置 | `"0"` 或不设置 | `"2"` | `"2"` |
+| `currency` | `"USD"` | `"USDT"` | `"USD"` | `"USDT"` |
+| 用户选择的币种 | `"ETH_USDT"` | `"ETH_USDT"` | `"ETH_USDT"` | `"ETH_USDT"` |
+| `custom_exchange_rates` | 不设置 | 不设置 |     `{"token_id": "ETH_USDT", "exchange_rate": "0.98"}` | 不设置 |
+| 实时汇率 | 0.99 | 1 | 0.99 | 1 |
+| 计算过程 | (100 + 0) / 0.99 | (100 + 0) / 1 | (100 + 2) / 0.98 | (100 + 2) / 1 |
+| `payable_amount`（付款方最终应付的金额） | `"101.01"` | `"100"` | `"104.08"` | `"102"` |
 
-PC 端打开 Payment Link 后，页面如下所示：
-
-<img src="/v2_cn/images/payments/payment-link-pc-page.png" className="screenshot_full_screen" alt="PC 端 Payment Link 页面" />
-
-### 2. PC 端钱包选择
-
-终端用户连接三方钱包时，会动态展示所有受支持的钱包插件（取决于终端用户实际安装的浏览器插件），如下所示：
-
-<img src="/v2_cn/images/payments/payment-link-pc-wallet-select.png" className="screenshot_modal" alt="PC 端钱包选择界面" />
-
-### 3. 移动端打开 Payment Link
-
-移动端打开 Payment Link 后，页面如下所示：
-
-<img src="/v2_cn/images/payments/payment-link-mobile-page.png" className="screenshot_full_screen" alt="移动端 Payment Link 页面" />
-
-### 4. 移动端钱包选择
-
-终端用户连接三方钱包时，会静态罗列所有受支持的钱包 App（不论终端用户是否安装相应的 App），如下所示：
-
-<img src="/v2_cn/images/payments/payment-link-mobile-wallet-select.png" className="screenshot_full_screen" alt="移动端钱包选择界面" />
 
 <Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>
 

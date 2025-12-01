@@ -1,12 +1,11 @@
 ---
-openapi: post /payments/links/refunds
+openapi: get /payments/topup/address
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_refund_link_request import CreateRefundLinkRequest
-from cobo_waas2.models.link import Link
+from cobo_waas2.models.top_up_address import TopUpAddress
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,23 +20,19 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    create_refund_link_request = cobo_waas2.CreateRefundLinkRequest(
-        business_info=cobo_waas2.RefundLinkBusinessInfo(
-            transaction_id="aff0e1cb-15b2-4e1f-9b9d-a9133715986f",
-            amount="0.0025",
-            refund_source="Merchant",
-        )
-    )
+    token_id = "ETH_USDT"
+    custom_payer_id = "payer_0001"
+    merchant_id = "M1001"
 
     try:
-        # Create refund link
-        api_response = api_instance.create_refund_link(
-            create_refund_link_request=create_refund_link_request
+        # Get top-up address
+        api_response = api_instance.get_top_up_address(
+            token_id, custom_payer_id, merchant_id=merchant_id
         )
-        print("The response of PaymentApi->create_refund_link:\n")
+        print("The response of PaymentApi->get_top_up_address:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_refund_link: %s\n" % e)
+        print("Exception when calling PaymentApi->get_top_up_address: %s\n" % e)
 
 ```
 ```java Java
@@ -59,18 +54,14 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    CreateRefundLinkRequest createRefundLinkRequest =
-        new CreateRefundLinkRequest()
-            .businessInfo(
-                new RefundLinkBusinessInfo()
-                    .transactionId("aff0e1cb-15b2-4e1f-9b9d-a9133715986f")
-                    .amount("0.0025")
-                    .refundSource(RefundType.MERCHANT));
+    String tokenId = "ETH_USDT";
+    String customPayerId = "payer_0001";
+    String merchantId = "M1001";
     try {
-      Link result = apiInstance.createRefundLink(createRefundLinkRequest);
+      TopUpAddress result = apiInstance.getTopUpAddress(tokenId, customPayerId, merchantId);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createRefundLink");
+      System.err.println("Exception when calling PaymentApi#getTopUpAddress");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -92,7 +83,9 @@ import (
 )
 
 func main() {
-	createRefundLinkRequest := *coboWaas2.NewCreateRefundLinkRequest(*coboWaas2.NewRefundLinkBusinessInfo("aff0e1cb-15b2-4e1f-9b9d-a9133715986f", "0.0025", coboWaas2.RefundType("Merchant")))
+	tokenId := "ETH_USDT"
+	customPayerId := "payer_0001"
+	merchantId := "M1001"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -105,15 +98,17 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreateRefundLink(ctx).
-		CreateRefundLinkRequest(createRefundLinkRequest).
+	resp, r, err := apiClient.PaymentAPI.GetTopUpAddress(ctx).
+		TokenId(tokenId).
+		CustomPayerId(customPayerId).
+		MerchantId(merchantId).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.CreateRefundLink``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.GetTopUpAddress``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreateRefundLink`: Link
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreateRefundLink`: %v\n", resp)
+	// response from `GetTopUpAddress`: TopUpAddress
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.GetTopUpAddress`: %v\n", resp)
 }
 
 ```
@@ -127,17 +122,12 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
+const token_id = "ETH_USDT";
+const custom_payer_id = "payer_0001";
 const opts = {
-  CreateRefundLinkRequest:
-    CoboWaas2.CreateRefundLinkRequest.constructFromObject({
-      business_info: {
-        transaction_id: "aff0e1cb-15b2-4e1f-9b9d-a9133715986f",
-        amount: "0.0025",
-        refund_source: "Merchant",
-      },
-    }),
+  merchant_id: "M1001",
 };
-apiInstance.createRefundLink(opts).then(
+apiInstance.getTopUpAddress(token_id, custom_payer_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

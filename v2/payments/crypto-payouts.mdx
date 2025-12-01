@@ -18,7 +18,7 @@ You can create crypto payout requests through Payments App or Payments API.
 2. In the left navigation bar, click **Apps**, then click the **Payments** card to launch the App.
 3. In the App's left navigation bar, click **Settlement**.
 4. You can choose to withdraw from **Merchant balance** or **Developer balance**. In this example, we choose to withdraw from the merchant balance. Click the **Settle** button on the **Merchant balance** card.
-5. In the pop-up window, select **Crypto Payouts**. The payment collection mode can be **Order** or **Top-up**, corresponding to order mode and top-up mode payment balances respectively.
+5. In the pop-up window, select **Crypto Payouts**. The pay-in type can be **Order** or **Top-up**, corresponding to order mode and top-up mode payment balances respectively.
 6. Fill in the transfer information, including token and network, related orders or amount, and receiving address.
 7. Follow the on-page prompts to confirm and submit the transfer request.
   </Tab>
@@ -31,7 +31,7 @@ You can create crypto payout requests through Payments App or Payments API.
 
 **Basic parameters**
 * `request_id`: The unique request ID you provide to track the transfer request
-* `acquiring_type`: Payment collection mode. Can be set to `Order` or `TopUp`, corresponding to order mode and top-up mode payment balances respectively
+* `acquiring_type`: Pay-in type. Can be set to `Order` or `TopUp`, corresponding to order mode and top-up mode payment balances respectively
 * `settlement_type`: Set to `Merchant` or `Psp`, corresponding to merchant balance and developer balance respectively
 * `payout_channel`: Set to `Crypto` for crypto payouts
 
