@@ -26,7 +26,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     payment_estimate_fee_request = cobo_waas2.PaymentEstimateFeeRequest(
         estimate_fees=[
             cobo_waas2.PaymentEstimateFee(
-                token_id="req_20251112145725", amount="500.00"
+                token_id="ETH_USDT", amount="500.00"
             )
         ]
     )
@@ -66,7 +66,7 @@ public class Example {
         new PaymentEstimateFeeRequest()
             .estimateFees(
                 Arrays.asList(
-                    new PaymentEstimateFee().tokenId("req_20251112145725").amount("500.00")));
+                    new PaymentEstimateFee().tokenId("ETH_USDT").amount("500.00")));
     try {
       PaymentEstimateFee201Response result =
           apiInstance.paymentEstimateFee(paymentEstimateFeeRequest);
@@ -94,7 +94,7 @@ import (
 )
 
 func main() {
-	paymentEstimateFeeRequest := *coboWaas2.NewPaymentEstimateFeeRequest([]coboWaas2.PaymentEstimateFee{*coboWaas2.NewPaymentEstimateFee("TokenId_example", "500.00")})
+	paymentEstimateFeeRequest := *coboWaas2.NewPaymentEstimateFeeRequest([]coboWaas2.PaymentEstimateFee{*coboWaas2.NewPaymentEstimateFee("ETH_USDT", "500.00")})
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -132,7 +132,7 @@ const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
   PaymentEstimateFeeRequest:
     CoboWaas2.PaymentEstimateFeeRequest.constructFromObject({
-      estimate_fees: [{ token_id: "req_20251112145725", amount: "500.00" }],
+      estimate_fees: [{ token_id: "ETH_USDT", amount: "500.00" }],
     }),
 };
 apiInstance.paymentEstimateFee(opts).then(

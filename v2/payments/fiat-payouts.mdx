@@ -26,7 +26,7 @@ You can create off-ramp requests through Payments App or Payments API.
 2. In the left navigation bar, click **Apps**, then click the **Payments** card to launch the App.
 3. In the App's left navigation bar, click **Settlement**.
 4. You can choose to withdraw from **Merchant balance** or **Developer balance**. In this example, we choose to withdraw from the merchant balance. Click the **Settle** button on the **Merchant balance** card.
-5. In the pop-up window, select **Fiat withdrawal**. The payment collection mode can be **Order** or **Top-up**, corresponding to order mode and top-up mode payment balances respectively. In this example, we select order mode.
+5. In the pop-up window, select **Fiat withdrawal**. The pay-in type can be **Order** or **Top-up**, corresponding to order mode and top-up mode payment balances respectively. In this example, we select order mode.
 6. Fill in the withdrawal information:
    - Select the orders you want to withdraw from. The system will automatically calculate the total cryptocurrency amount for this withdrawal.
    - Select the bank account to receive fiat currency. To add a new bank account, refer to [Destinations](/v2/payments/destinations).
@@ -50,7 +50,7 @@ On the off-ramp page, you can view the detailed fee breakdown and estimated arri
 
 **Basic parameters**
 * `request_id`: The unique request ID you provide to track the withdrawal request
-* `acquiring_type`: Payment collection mode. Can be set to `Order` or `TopUp`, corresponding to order mode and top-up mode payment balances respectively
+* `acquiring_type`: Pay-in type. Can be set to `Order` or `TopUp`, corresponding to order mode and top-up mode payment balances respectively
 * `settlement_type`: Set to `Merchant` or `Psp`, corresponding to merchant balance and developer balance respectively
 * `payout_channel`: Set to `OffRamp` for off-ramp
 

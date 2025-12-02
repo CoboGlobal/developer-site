@@ -59,7 +59,7 @@ sequenceDiagram
   
   
   <Tab title="Payments API" icon="code">
-1. 调用 [Get top-up address](/v2/api-references/payment/get-top-up-address) 创建充值地址。请求中的关键参数包括：
+1. 调用 [Create/Get top-up address](/v2/api-references/payment/createget-top-up-address) 创建充值地址。请求中的关键参数包括：
    * **商户 ID** (`merchant_id`)：商户在 Cobo 系统中的唯一标识，由 Cobo 分配。
    * **自定义付款方 ID** (`custom_payer_id`)：付款方在您的系统中的唯一标识。
    * **Token ID** (`token_id`)：指定充值地址需要支持的加密货币和区块链网络。
@@ -67,7 +67,7 @@ sequenceDiagram
 
 **调用示例**
 
-以下为调用 [Get top-up address](/v2/api-references/payment/get-top-up-address) 获取充值地址的示例代码：
+以下为调用 [Create/Get top-up address](/v2/api-references/payment/createget-top-up-address) 获取充值地址的示例代码：
 <Accordion title="Sample code in Python">
 ```py
 import cobo_waas2

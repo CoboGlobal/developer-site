@@ -65,4 +65,69 @@ When a transaction is being dropped, any subsequent drop or speed up operations 
 
 <Info>If you drop a transaction from a Smart Contract Wallet, two RBF transactions will be triggered, one for the transaction from the Smart Contract Wallet, and the other for the transaction from the Delegate.</Info>
 
+## Cobo-defined categories
+
+This field `cobo_category` is defined by Cobo to indicate the logical category or purpose of a transaction, helping users identify what type of operation the transaction belongs to.
+
+### Fee Station related
+
+| Category | Description |
+|---------|-------------|
+| AutoFueling | A transaction where Fee Station pays the gas fee. |
+| AutoFuelingRefund | A transaction where Fee Station refunds a previously paid gas fee. |
+| BillPayment | A transaction where Fee Station pays Cobo Bills. |
+| BillRefund | A transaction where Fee Station refunds previously paid Cobo Bills. |
+| GasFeeSponsor | A transaction where Fee Station pays the gas fee using USD stablecoins. |
+| GasFeeSponsorRefund | A transaction where Fee Station refunds a gas fee previously paid in USD stablecoins. |
+| CommissionFeeCharge | A transaction where Fee Station pays the commission fee. |
+| CommissionFeeRefund | A transaction where Fee Station refunds a previously paid commission fee. |
+
+<Note>Fee Station transactions, including their categories, can be retrieved only through [Get Fee Station transaction information](/v2/api-references/feestation/get-fee-station-transaction-information) and [List all Fee Station transactions](/v2/api-references/feestation/list-all-fee-station-transactions).</Note>
+
+### Screening related
+
+| Category | Description |
+|---------|-------------|
+|ScreenAppRefund | A refund transaction initiated through the Screening App. |
+|ScreenAppIsolate | An isolation transaction initiated through the Screening App. |
+|ComplianceRefund | A refund transaction initiated by Cobo KYT. |
+|ComplianceIsolate | An isolation transaction initiated by Cobo KYT. |
+
+### Staking related
+
+| Category | Description |
+|---------|-------------|
+|StakingBabylonBtcDelegation | A transaction for delegating BTC in Babylon staking. |
+|StakingBabylonBtcSignBabylon | A transaction for signing Babylon operations with BTC. |
+|StakingBabylonClaim | A transaction for claiming rewards from Babylon staking. |
+|StakingBabylonSlashing | A transaction related to slashing penalties in Babylon staking. |
+|StakingBabylonStake | A transaction for staking assets in the Babylon platform. |
+|StakingBabylonUnstake | A transaction for unstaking assets from the Babylon platform. |
+|StakingBabylonWithdraw | A transaction for withdrawing assets from Babylon staking. |
+|StakingBithiveClaim | A transaction for claiming rewards from BitHive staking. |
+|StakingBithiveStake | A transaction for staking assets in the BitHive platform. |
+|StakingBithiveUnstake | A transaction for unstaking assets from the BitHive platform. |
+|StakingBithiveWithdraw | A transaction for withdrawing assets from BitHive staking. |
+|StakingCoreStake | A transaction for staking assets in the Core staking platform.
+|StakingCoreWithdraw | A transaction for withdrawing assets from Core staking.
+|StakingEthClaim | A transaction for claiming rewards from ETH staking.
+|StakingEthStake | A transaction for staking ETH assets.
+|StakingEthUnstake | A transaction for unstaking ETH assets.
+|StakingSkyfarmClaim | A transaction for claiming rewards from Skyfarm staking.
+|StakingSkyfarmStake | A transaction for staking assets in the Skyfarm platform.
+|StakingSkyfarmUnstake | A transaction for unstaking assets from the Skyfarm platform.
+
+### Other categories
+
+| Category | Description |
+|---------|-------------|
+| AutoSweep | A transaction where tokens are automatically swept to a consolidated address. |
+| Tokenization | A transaction for managing tokenized assets, such as minting or wrapping tokens, through the Tokenization app. |
+| TokenizationGasSponsor | A transaction where gas fees are sponsored for tokenization-related operations, ensuring the transaction proceeds even if the source address lacks sufficient balance, through the Tokenization app. |
+| TokenSwap | A transaction for token swapping or cross-chain bridging through the Token Swap app. |
+| SafeTxMessage | A message signing transaction initiated by an MPC wallet to authorize a Smart Contract Wallet (Safe\{Wallet\}) transaction. |
+| StellarChangeTrust | A transaction for establishing a trustline on the Stellar network. |
+| NonceAccountSign | A transaction signed using a Solana nonce account, enabling deterministic and replay-safe transaction execution on the Solana network. |
+| FeePayerSign | A transaction where a designated Solana fee payer account covers the transaction fees, separating the fee payment from the main signer or source account. |
+
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>

@@ -14,7 +14,23 @@ description: ""
   - 对已支付订单发起退款
   - 处理多付、少付、晚付等支付异常
 
-下图展示了订单支付过程中，付款方、商户与 Cobo 之间的完整交互流程：
+
+## 创建订单
+
+您可以通过两种方式创建订单：
+
+- 调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 直接创建一个支付订单。调用成功后，您将得到应付金额、付款地址等信息；
+- 调用 [Create order link](/v2/api-references/payment/create-order-link) 创建一个订单支付链接。该链接会跳转到由 Cobo 提供的支付页面，付款方可在该页面创建订单并完成支付，无需您自行开发前端交互流程。您还可以通过 iFrame 方式将该支付页面嵌入到您的网站或应用中。
+
+### 前提条件
+您已完成[前置准备](/v2_cn/payments/preparation)中提到的所有步骤。
+
+### 操作步骤
+
+<Tabs>
+  <Tab title="使用 Payments API 创建支付订单" icon="code">
+
+您可以调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 来创建一个支付订单。下图展示了付款方、商户与 Cobo 之间的完整交互流程：
 <div style={{maxWidth: '600px', margin: '0 auto'}}>
 ```mermaid
 sequenceDiagram
@@ -22,8 +38,8 @@ sequenceDiagram
     participant 商户
     participant Cobo
     付款方 ->> 商户: 确定用于支付的币种和链
-    商户 ->> Cobo: ① 查询汇率
-    Cobo ->> 商户: 返回汇率
+    商户 ->> Cobo: ① （可选）查询汇率
+    Cobo ->> 商户: （可选）返回汇率
     商户 ->> 付款方: 返回预估的应付金额
     付款方 ->> 商户: 确认支付订单
     商户 ->> Cobo: ② 请求创建支付订单
@@ -36,29 +52,16 @@ sequenceDiagram
 ```
 </div>
 
-## 创建订单
 
-您可以通过两种方式创建订单：
 
-- 调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 直接创建一个支付订单。调用成功后，您将得到应付金额、付款地址等信息；
-- 调用 [Create order link](/v2/api-references/payment/create-order-link) 创建一个订单支付链接。该链接会跳转到由 Cobo 提供的支付页面，用户可在该页面创建订单并完成支付，无需您自行开发前端交互流程。您还可以通过 iFrame 方式将该支付页面嵌入到您的网站或应用中。
-
-### 前提条件
-您已完成[前置准备](/v2_cn/payments/preparation)中提到的所有步骤。
-
-### 操作步骤
-
-<Tabs>
-  <Tab title="使用 Payments API 创建支付订单" icon="code">
-
-您可以调用 [Create pay-in order](/v2/api-references/payment/create-pay-in-order) 来创建一个支付订单。创建订单时，您需要指定商品订单金额、用户支付所用的加密货币等信息，系统会根据这些信息计算出订单的应付金额（`payable_amount`）。应付金额的计算公式为：
+创建订单时，您需要指定商品订单金额、付款方支付所用的加密货币等信息，系统会根据这些信息计算出订单的应付金额（`payable_amount`）。应付金额的计算公式为：
 
 **应付金额** = **（商品订单金额 + 开发者费用）** / **汇率**
 
-- **应付金额**：用户实际需支付的加密货币金额，以 `token_id` 指定的加密货币为单位。例如，若 `token_id` 为 `ETH_USDT`，则用户需通过 ETH 链支付相应金额的 USDT。
+- **应付金额**：付款方实际需支付的加密货币金额，以 `token_id` 指定的加密货币为单位。例如，若 `token_id` 为 `ETH_USDT`，则付款方需通过 ETH 链支付相应金额的 USDT。
 - **商品订单金额**：您在创建订单时传入的 `order_amount` 字段。
 - **开发者费用**：您在创建订单时传入的 `fee_amount` 字段。如果您是服务多个下游商户的平台机构，需要在您和下游商户之间分配收入，可以通过设置该费用来实现。开发者费用和商品订单金额之间的比例决定了您和下游商户之间的收入分成比例。更多信息请参考[资金分配与余额管理](/v2_cn/payments/amounts-and-balances)。
-  <Info>如果您是商户（直接服务于用户），通常无需设置开发者费用。</Info>
+  <Info>如果您是商户（直接服务于付款方），通常无需设置开发者费用。</Info>
 - **汇率**：
   - 如果您只设置了 `token_id` 字段，未设置 `currency` 字段，则商品订单金额和开发者费用都以 `token_id` 指定的加密货币为单位。此时的汇率固定为 1，无需进行换算。
   - 如果您设置了 `currency` 字段，则商品订单金额和开发者费用都以 `currency` 指定的法币为单位。
@@ -79,7 +82,7 @@ sequenceDiagram
 | `custom_exchange_rate` | 不设置 | 不设置 | `"0.98"` | 不设置 |
 | 实时汇率 | 0.99 | 1 | 0.99 | 1 |
 | 计算过程 | (100 + 0) / 0.99 | (100 + 0) / 1 | (100 + 2) / 0.98 | (100 + 2) / 1 |
-| `payable_amount`（用户最终应付的金额） | `"101.01"` | `"100"` | `"104.08"` | `"102"` |
+| `payable_amount`（付款方最终应付的金额） | `"101.01"` | `"100"` | `"104.08"` | `"102"` |
 
 
 </Tab>

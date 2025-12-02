@@ -1495,7 +1495,7 @@ paths:
 
         You need to provide details such as the source address, destination address, and the calldata. You can specify the fee-related properties to limit the transaction fee. A transaction request for tracking is returned upon successful operation.
 
-        <Note>Currently, this operation only applies to transactions from Custodial Wallets (Web3 Wallets), MPC Wallets, or Smart Contract Wallets on EVM-compatible chains and Solana.</Note>
+        <Note>Currently, this operation only applies to transactions from Custodial Wallets (Web3 Wallets), MPC Wallets, or Smart Contract Wallets. Refer to the `destination` property for supported contract types.</Note>
 
         <Info>If you initiate a transaction from a Smart Contract Wallet, a relevant transaction will be triggered from the Delegate to the Cobo Safe's address of the Smart Contract Wallet, with a transfer amount of <code>0</code>.</Info>
       security:
@@ -1916,6 +1916,8 @@ paths:
       operationId: exchange_permission_token
       summary: Get Access Token
       description: |
+
+        <Warning>This operation has been deprecated.</Warning>
         This operation acquires an Access Token and a Refresh Token for the [Checkout SDK](https://www.cobo.com/developers/v2_cn/payments/checkout-sdk).
 
         For security purposes, an Access Token expires after a certain period. Once it expires, you need to call the [Refresh Access Token](https://www.cobo.com/developers/v2/api-references/oauth/refresh-access-token) operation to get a new Access Token and a new Refresh Token.
@@ -1935,6 +1937,8 @@ paths:
       operationId: refresh_permission_token
       summary: Refresh Access Token
       description: |
+
+        <Warning>This operation has been deprecated.</Warning>
         This operation refreshes the Access Token and Refresh Token for the [Checkout SDK](https://www.cobo.com/developers/v2_cn/payments/checkout-sdk).
 
         For security purposes, an Access Token expires after a certain period. Once it expires, you need to call this operation to get a new Access Token and Refresh Token.
@@ -2060,7 +2064,7 @@ paths:
 
         You only need to provide the event type. By default, the payload contains dummy data with no impact on your real business transactions or activities. You can optionally provide the `override_data` property to customize the payload.
 
-        <Note>Currently, you can only trigger test webhook events with the event data types `Transaction` and `TSSRequest`.</Note>
+        <Note>Currently, you can only trigger test webhook events with the event data types [`Transaction`](https://www.cobo.com/developers/v2/guides/webhooks-callbacks/webhook-event-type#transaction-events-deposits%2Fwithdrawals%2Fcontract-calls%2Fmessage-signing) and [`TSSRequest`](https://www.cobo.com/developers/v2/guides/webhooks-callbacks/webhook-event-type#mpc-tss-request-events).</Note>
       operationId: trigger_test_webhook_event
       requestBody:
         $ref: '#/components/requestBodies/triggerTestEventBody'
@@ -3863,6 +3867,42 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /payments/exchange_rates:
+    get:
+      tags:
+        - Payment
+      operationId: batch_get_exchange_rates
+      summary: Batch get exchange rates
+      description: |
+        This operation retrieves the current exchange rates between multiple fiat currencies and cryptocurrencies.
+      parameters:
+        - name: token_ids
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 'ETH_USDT,ETH_USDC,BTC_USDT'
+          description: |
+
+            A list of token IDs, separated by comma. Supported values include: 
+                 
+              - USDC: `ETH_USDC`, `ARBITRUM_USDCOIN`, `SOL_USDC`, `BASE_USDC`, `MATIC_USDC2`, `BSC_USDC`
+              - USDT: `TRON_USDT`, `ETH_USDT`, `ARBITRUM_USDT`, `SOL_USDT`, `BASE_USDT`, `MATIC_USDT`, `BSC_USDT`
+        - name: currencies
+          in: query
+          required: true
+          schema:
+            type: string
+            example: USD
+          description: |
+            A list of fiat currencies, separated by comma. Currently, only `USD` is supported.
+      responses:
+        '200':
+          $ref: '#/components/responses/batchGetExchangeRatesResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /payments/settlement_info:
     get:
       tags:
@@ -4075,9 +4115,16 @@ paths:
       tags:
         - Payment
       operationId: get_top_up_address
-      summary: Get top-up address
+      summary: Create/Get top-up address
       description: |
-        This operation retrieves the information of the dedicated top-up address assigned to a specific payer under a merchant on a specified chain.
+        This operation creates or retrieves a unique top-up address for a payer. 
+
+        In the request, you need to provide the `custom_payer_id` parameter to identify the payer in your system and link them to the top-up address.
+
+        - If no address exists for the payer on the specified chain, a new address will be created and returned.
+        - If an address already exists for the payer on the specified chain, the existing address details will be returned.
+
+        You can also provide the `merchant_id` parameter to specify the merchant to which the payer belongs. If not provided, the default merchant will be used.
       parameters:
         - $ref: '#/components/parameters/TokenIdQueryRequiredParam'
         - $ref: '#/components/parameters/CustomPayerIdRequiredParam'
@@ -4287,29 +4334,6 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
-  /payments/balance/payer/address:
-    get:
-      tags:
-        - Payment
-      operationId: get_payer_balance_by_address
-      summary: Get payer balance
-      description: |
-        This operation retrieves the total amount received for a specific payer. The information is grouped by token and receiving address.
-      security:
-        - CoboAuth: []
-        - OAuth2:
-            - payment_balance.read
-      parameters:
-        - $ref: '#/components/parameters/MerchantIdOptionalParam'
-        - $ref: '#/components/parameters/PayerIdRequiredParam'
-        - $ref: '#/components/parameters/TokenIdQueryRequiredParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/getPayerBalanceByAddressResponse'
-        4XX:
-          $ref: '#/components/responses/badRequestError'
-        5XX:
-          $ref: '#/components/responses/internalServerError'
   /payments/settlement_details:
     get:
       tags:
@@ -4365,12 +4389,533 @@ paths:
 
         Once the address is submitted, Cobo will automatically create a refund order and initiate the refund process according to your configuration.
 
-        For details, see [Create refund link](/v2/payments/create-refund-link).
+        For details, see [Create refund link](https://www.cobo.com/developers/v2/payments/create-refund-link).
       requestBody:
         $ref: '#/components/requestBodies/createPaymentRefundLinkRequest'
       responses:
         '201':
           $ref: '#/components/responses/createPaymentLinkResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /payments/counterparty:
+    post:
+      tags:
+        - Payment
+      operationId: create_counterparty
+      summary: Create counterparty
+      description: |
+        This operation creates a counterparty.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_counterparty.create
+      requestBody:
+        $ref: '#/components/requestBodies/createCounterpartyBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/counterPartyDetailResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: list_counterparties
+      summary: List all counterparties
+      description: |
+        This operation retrieves the information of all counterparties. 
+
+        You can filter the results by using a keyword for fuzzy search on counterparty names.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_counterparty.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/KeywordOptionalParam'
+        - $ref: '#/components/parameters/CounterpartyTypeOptionalParam'
+        - $ref: '#/components/parameters/CountryOptionalParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listCounterpartiesResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/counterparty/{counterparty_id}/update':
+    put:
+      tags:
+        - Payment
+      operationId: update_counterparty_by_id
+      summary: Update counterparty
+      description: |
+        This operation updates the information of a specified counterparty.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_counterparty.update
+      parameters:
+        - $ref: '#/components/parameters/CounterpartyIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/updateCounterpartyBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/counterpartyResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/counterparty/{counterparty_id}/detail':
+    get:
+      tags:
+        - Payment
+      operationId: get_counterparty_detail_by_id
+      summary: Get counterparty information
+      description: |
+        This operation retrieves the detailed information about a specified counterparty.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_counterparty.read
+      parameters:
+        - $ref: '#/components/parameters/CounterpartyIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/counterPartyDetailResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/counterparty/{counterparty_id}/delete':
+    put:
+      tags:
+        - Payment
+      operationId: delete_counterparty
+      summary: Delete counterparty
+      description: |
+        This operation deletes a counterparty.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_counterparty.delete
+      parameters:
+        - $ref: '#/components/parameters/CounterpartyIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/deleteCounterpartyResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+  /payments/counterparty/wallet_address:
+    post:
+      tags:
+        - Payment
+      operationId: create_counterparty_wallet_address
+      summary: Create counterparty wallet address
+      description: |
+        This operation creates a counterparty wallet address.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_counterparty.create
+      requestBody:
+        $ref: '#/components/requestBodies/createCounterpartyWalletAddressBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/walletAddressDetailResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: list_counterparty_wallet_address
+      summary: List counterparty wallet addresses
+      description: |
+        This operation retrieves the information of counterparty wallet addresses.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_counterparty.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/CounterpartyIdOptionalParam'
+        - $ref: '#/components/parameters/ChainIdsOptionalParam'
+        - $ref: '#/components/parameters/WalletAddressOptionalParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listCounterpartyWalletAddressResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/counterparty/wallet_address/{wallet_address_id}/delete':
+    put:
+      tags:
+        - Payment
+      operationId: delete_counterparty_wallet_address
+      summary: Delete counterparty wallet address
+      description: |
+        This operation deletes a counterparty wallet address.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_counterparty.delete
+      parameters:
+        - $ref: '#/components/parameters/WalletAddressIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/deleteCounterpartyWalletAddressResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+  /payments/destination:
+    post:
+      tags:
+        - Payment
+      operationId: create_destination
+      summary: Create destination
+      description: |
+        This operation creates a destination.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.create
+      requestBody:
+        $ref: '#/components/requestBodies/createDestinationBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/destinationDetailResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: list_destinations
+      summary: List all destinations
+      description: |
+        This operation retrieves the information of all destinations. 
+
+        You can filter the results by using a keyword for fuzzy search on destination names.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/KeywordOptionalParam'
+        - $ref: '#/components/parameters/DestinationTypeOptionalParam'
+        - $ref: '#/components/parameters/CountryOptionalParam'
+        - $ref: '#/components/parameters/MerchantIdsParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listDestinationsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/destination/{destination_id}/update':
+    put:
+      tags:
+        - Payment
+      operationId: update_destination_by_id
+      summary: Update destination
+      description: |
+        This operation updates the information of a specified destination.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.update
+      parameters:
+        - $ref: '#/components/parameters/DestinationIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/updateDestinationBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/destinationResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/destination/{destination_id}/detail':
+    get:
+      tags:
+        - Payment
+      operationId: get_destination_detail_by_id
+      summary: Get destination information
+      description: |
+        This operation retrieves the detailed information about a specified destination.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.read
+      parameters:
+        - $ref: '#/components/parameters/DestinationIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/destinationDetailResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/destination/{destination_id}/delete':
+    put:
+      tags:
+        - Payment
+      operationId: delete_destination
+      summary: Delete destination
+      description: |
+        This operation deletes a destination.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.delete
+      parameters:
+        - $ref: '#/components/parameters/DestinationIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/deleteDestinationResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+  /payments/destination/bank_account:
+    post:
+      tags:
+        - Payment
+      operationId: create_destination_bank_account
+      summary: Create destination bank account
+      description: |
+        This operation creates a destination bank account.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.create
+      requestBody:
+        $ref: '#/components/requestBodies/createDestinationBankAccountBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/destinationBankAccountResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: list_destination_bank_accounts
+      summary: List destination bank accounts
+      description: |
+        This operation retrieves the information of destination bank accounts.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/KeywordOptionalParam'
+        - $ref: '#/components/parameters/DestinationIdOptionalParam'
+        - $ref: '#/components/parameters/BankAccountStatusOptionalParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listDestinationBankAccountResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/destination/bank_account/{bank_account_id}/update':
+    put:
+      tags:
+        - Payment
+      operationId: update_destination_bank_account_by_id
+      summary: Update destination bank account
+      description: |
+        This operation updates the information of a specified destination bank account.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.update
+      parameters:
+        - $ref: '#/components/parameters/BankIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/updateDestinationBankAccountBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/destinationBankAccountResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/destination/bank_account/{bank_account_id}/detail':
+    get:
+      tags:
+        - Payment
+      operationId: get_destination_bank_account_detail_by_id
+      summary: Get destination bank account information
+      description: |
+        This operation retrieves the detailed information about a specified destination bank account.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.read
+      parameters:
+        - $ref: '#/components/parameters/BankIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/destinationBankAccountDetailResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/destination/bank_account/{bank_account_id}/delete':
+    put:
+      tags:
+        - Payment
+      operationId: delete_destination_bank_account
+      summary: Delete destination bank account
+      description: |
+        This operation deletes a destination bank account.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.delete
+      parameters:
+        - $ref: '#/components/parameters/BankIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/deleteDestinationBankAccountResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+  /payments/destination/wallet_address:
+    post:
+      tags:
+        - Payment
+      operationId: create_destination_wallet_address
+      summary: Create destination wallet address
+      description: |
+        This operation creates a destination wallet address.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.create
+      requestBody:
+        $ref: '#/components/requestBodies/createDestinationWalletAddressBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/walletAddressDetailResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: list_destination_wallet_addresses
+      summary: List destination wallet addresses
+      description: |
+        This operation retrieves the information of destination wallet addresses.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/DestinationIdOptionalParam'
+        - $ref: '#/components/parameters/ChainIdsOptionalParam'
+        - $ref: '#/components/parameters/WalletAddressOptionalParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listDestinationWalletAddressResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/destination/wallet_address/{wallet_address_id}/delete':
+    put:
+      tags:
+        - Payment
+      operationId: delete_destination_wallet_address
+      summary: Delete destination wallet address
+      description: |
+        This operation deletes a destination wallet address.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.delete
+      parameters:
+        - $ref: '#/components/parameters/WalletAddressIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/deleteDestinationWalletAddressResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+  /payments/destination/enable_whitelist:
+    post:
+      tags:
+        - Payment
+      operationId: enable_destination_whitelist
+      summary: Enable or disable destination whitelist
+      description: |
+        This operation enables or disables the whitelist for a destination.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.update
+      requestBody:
+        $ref: '#/components/requestBodies/enableDestinationWhitelistBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/enableDestinationWhitelistResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: query_destination_whitelist_enabled
+      summary: Query destination whitelist enabled status
+      description: |
+        This operation retrieves the information of whether the destination whitelist is enabled.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_destination.read
+      responses:
+        '200':
+          $ref: '#/components/responses/enableDestinationWhitelistResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -7318,6 +7863,7 @@ components:
             - $ref: '#/components/schemas/TransactionBIP322Destination'
             - $ref: '#/components/schemas/TransactionCosmosAdr36Destination'
             - $ref: '#/components/schemas/TransactionStellarDestination'
+            - $ref: '#/components/schemas/TransactionTronContractDestination'
           discriminator:
             propertyName: destination_type
             mapping:
@@ -7336,6 +7882,7 @@ components:
               DepositToAddress: '#/components/schemas/TransactionDepositToAddressDestination'
               DepositToWallet: '#/components/schemas/TransactionDepositToWalletDestination'
               STELLAR_Contract: '#/components/schemas/TransactionStellarDestination'
+              TRON_Contract: '#/components/schemas/TransactionTronContractDestination'
         result:
           $ref: '#/components/schemas/TransactionResult'
         fee:
@@ -7411,15 +7958,7 @@ components:
             type: string
             example: AutoFueling
           description: |
-            The transaction category defined by Cobo. Possible values include: 
-            - `AutoSweep`: An auto-sweep transaction.
-            - `AutoFueling`: A transaction where Fee Station pays transaction fees to an address within your wallet.
-            - `AutoFuelingRefund`: A refund for an auto-fueling transaction.
-            - `SafeTxMessage`: A message signing transaction to authorize a Smart Contract Wallet (Safe\{Wallet\}) transaction.
-            - `BillPayment`: A transaction to pay Cobo bills through Fee Station.
-            - `BillRefund`: A refund for a previously made bill payment.
-            - `CommissionFeeCharge`: A transaction to charge commission fees via Fee Station.
-            - `CommissionFeeRefund`: A refund of previously charged commission fees.
+            The transaction category defined by Cobo. For more details, refer to [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories).
         extra:
           type: array
           items:
@@ -7959,6 +8498,7 @@ components:
         - SOL_Contract
         - STELLAR_Contract
         - COSMOS_Contract
+        - TRON_Contract
         - EVM_EIP_191_Signature
         - EVM_EIP_712_Signature
         - BTC_BIP_137_Signature
@@ -8148,6 +8688,34 @@ components:
           example: 0xa22cb4650000000000000000000000001e0049783f008a0085193e00003d00cd54003c71000000000000000000000000000000000000000000000000000000000000DEMO
         calldata_info:
           $ref: '#/components/schemas/TransactionEvmCalldataInfo'
+    TransactionTronContractDestination:
+      title: TRON_Contract
+      type: object
+      description: |
+        Information about the transaction destination type `TRON_Contract`. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.
+
+        Switch between the tabs to display the properties for different transaction destinations.
+      required:
+        - destination_type
+        - address
+        - calldata
+      properties:
+        destination_type:
+          $ref: '#/components/schemas/TransactionDestinationType'
+        address:
+          type: string
+          description: The destination address.
+          example: '0x0406db8351aa6839169bb363f63c2c808fee8f99'
+        value:
+          type: string
+          description: |
+            The transfer amount. For example, if you trade 1.5 TRX, then the value is `1.5`.
+          example: '1.5'
+        calldata:
+          type: string
+          description: |
+            The data that is used to invoke a specific function or method within the specified contract at the destination address.
+          example: 0xa22cb4650000000000000000000000001e0049783f008a0085193e00003d00cd54003c71000000000000000000000000000000000000000000000000000000000000DEMO
     TransactionSolContractDestination:
       title: SOL_Contract
       type: object
@@ -8199,7 +8767,7 @@ components:
         contract_param:
           $ref: '#/components/schemas/TransactionStellarContractParam'
     TransactionCosmosContractDestination:
-      title: Cosmos Contract
+      title: Cosmos_Contract
       type: object
       description: |
         Information about the transaction destination type `COSMOS_Contract`. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.
@@ -9546,7 +10114,7 @@ components:
           type: string
           description: The wallet ID.
           format: uuid
-          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+          example: d3fcfaef-f415-4210-9e5c-fbed0e090495
     CustodialWeb3TransferSource:
       type: object
       description: |
@@ -10096,6 +10664,7 @@ components:
         - EVM_Contract
         - SOL_Contract
         - STELLAR_Contract
+        - TRON_Contract
       example: EVM_Contract
       description: |
         The type of the contract format. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.
@@ -10126,6 +10695,31 @@ components:
           type: string
           description: |
             The data used to invoke a specific function or method within the specified contract at the destination address, with a maximum length of 65,000 characters.
+          example: 0xa22cb4650000000000000000000000001e0049783f008a0085193e00003d00cd54003c71000000000000000000000000000000000000000000000000000000000000DEMO
+    TronContractCallDestination:
+      title: TRON_Contract
+      type: object
+      description: 'The information about the transaction destination. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.'
+      required:
+        - destination_type
+        - address
+        - calldata
+      properties:
+        destination_type:
+          $ref: '#/components/schemas/ContractCallDestinationType'
+        address:
+          type: string
+          description: The destination address.
+          example: '0x0406db8351aa6839169bb363f63c2c808fee8f99'
+        value:
+          type: string
+          description: |
+            The transfer amount. For example, if you trade 1.5 TRX, then the value is `1.5`.
+          example: '1.5'
+        calldata:
+          type: string
+          description: |
+            The data that is used to invoke a specific function or method within the specified contract at the destination address.
           example: 0xa22cb4650000000000000000000000001e0049783f008a0085193e00003d00cd54003c71000000000000000000000000000000000000000000000000000000000000DEMO
     CosmosContractCallMessage:
       title: Cosmos Message
@@ -10306,12 +10900,14 @@ components:
         - $ref: '#/components/schemas/EvmContractCallDestination'
         - $ref: '#/components/schemas/SolContractCallDestination'
         - $ref: '#/components/schemas/StellarContractCallDestination'
+        - $ref: '#/components/schemas/TronContractCallDestination'
       discriminator:
         propertyName: destination_type
         mapping:
           EVM_Contract: '#/components/schemas/EvmContractCallDestination'
           SOL_Contract: '#/components/schemas/SolContractCallDestination'
           STELLAR_Contract: '#/components/schemas/StellarContractCallDestination'
+          TRON_Contract: '#/components/schemas/TronContractCallDestination'
     ContractCallParams:
       type: object
       description: The information about a transaction that interacts with a smart contract
@@ -10973,8 +11569,6 @@ components:
       example: wallets.transaction.created
       description: |
         The event type. To learn the trigger condition of each event type, refer to [Webhook event types and event data](https://www.cobo.com/developers/v2/guides/webhooks-callbacks/webhook-event-type). 
-
-        **Currently, you can only trigger test webhook events with the event data types `Transaction` and `TSSRequest`.**
     WebhookEventStatus:
       type: string
       enum:
@@ -13826,6 +14420,13 @@ components:
 
             Call [List crypto addresses](https://www.cobo.com/developers/v2/api-references/payment/list-crypto-addresses) to retrieve registered crypto addresses.
           example: addr_ethusdt_20250506T123456_ab12cd
+        crypto_address:
+          type: string
+          description: |
+            Only used in Crypto payout channel.
+            The actual blockchain address to which funds will be transferred.
+            If enable destination whitelist, this address must be associated with a destination.
+          example: '0xabc123456789def0000000000000000000000000'
         order_ids:
           type: array
           items:
@@ -13979,7 +14580,7 @@ components:
 
         **Usage conditions**
         - Only applicable when `settlement_type` is set to `Merchant`
-        - Cannot be used together with `order_ids` or `amount` parameters
+        - Cannot be used together with `amount` parameter
 
             
       example: O20250304-M1001-1001
@@ -14261,6 +14862,10 @@ components:
           type: string
           description: The ID of the crypto address used for crypto payouts.
           example: addr_ethusdt_20250429T134512_a8c31f
+        crypto_address:
+          type: string
+          description: The actual blockchain address to which funds were transferred.
+          example: '0xabc123456789def0000000000000000000000000'
         payout_channel:
           $ref: '#/components/schemas/PayoutChannel'
         acquiring_type:
@@ -14381,6 +14986,10 @@ components:
           example: '0.15'
         status:
           $ref: '#/components/schemas/TransactionStatus'
+        counterparty:
+          $ref: '#/components/schemas/Counterparty'
+        destination:
+          $ref: '#/components/schemas/Destination'
         created_timestamp:
           type: integer
           format: int64
@@ -14750,26 +15359,6 @@ components:
           type: string
           description: This field has been deprecated.
           example: '1.23'
-    PayerBalanceByAddress:
-      type: array
-      description: The total amount received for a specific payer on a list of receiving addresses.
-      items:
-        $ref: '#/components/schemas/ReceivedAmountPerAddress'
-    ReceivedAmountPerAddress:
-      type: object
-      description: The total amount of the token that has been received at a given address.
-      required:
-        - address
-        - total_received_amount
-      properties:
-        address:
-          type: string
-          description: The receiving address.
-          example: '0xF8e4bfc10A2821DF52D3322cB5170E5E9276b537'
-        total_received_amount:
-          type: string
-          description: The total amount of the token that has been received at this address.
-          example: '0.15'
     BridgingFee:
       type: object
       required:
@@ -15055,6 +15644,658 @@ components:
               - A positive integer with up to two decimal places.
               - Less than the refund amount
           example: '0.0001'
+    DestinationBankAccount:
+      type: object
+      required:
+        - bank_account_id
+        - account_alias
+        - account_number
+        - swift_code
+        - currency
+        - beneficiary_name
+        - beneficiary_address
+        - bank_name
+        - bank_address
+        - bank_account_status
+      properties:
+        bank_account_id:
+          type: string
+          format: uuid
+          description: The destination bank account ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        account_alias:
+          type: string
+          description: The alias of the bank account.
+          example: Main Payout Account
+        account_number:
+          type: string
+          description: The bank account number.
+          example: '4111111111111111'
+        swift_code:
+          type: string
+          description: The SWIFT or BIC code of the bank.
+          example: BOFAUS33
+        currency:
+          type: string
+          description: The currency of the bank account.
+          example: USD
+        beneficiary_name:
+          type: string
+          description: The name of the account holder.
+          example: John Doe
+        beneficiary_address:
+          type: string
+          description: The address of the account holder.
+          example: '123 Main St, Anytown, USA'
+        bank_name:
+          type: string
+          description: The name of the bank.
+          example: ABC Bank
+        bank_address:
+          type: string
+          description: The address of the bank.
+          example: '456 Bank Ave, Cityville, USA'
+        iban_code:
+          type: string
+          description: The IBAN code of the bank account.
+          example: '12345678901234567890'
+        further_credit:
+          type: string
+          description: The further credit of the bank account.
+          example: further credit sample
+        intermediary_bank_info:
+          $ref: '#/components/schemas/IntermediaryBankInfo'
+        bank_account_status:
+          $ref: '#/components/schemas/BankAccountStatus'
+        created_timestamp:
+          type: integer
+          description: 'The created time of the bank account, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the bank account, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    WalletAddress:
+      type: object
+      required:
+        - wallet_address_id
+        - address
+        - chain_id
+        - updated_timestamp
+      properties:
+        wallet_address_id:
+          type: string
+          format: uuid
+          description: The wallet address ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        address:
+          type: string
+          example: 0x1234567890abcdef...
+          description: The wallet address.
+        chain_id:
+          type: string
+          description: The chain ID of the cryptocurrency.
+          example: TRON
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the wallet address, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    CounterpartyType:
+      type: string
+      enum:
+        - Individual
+        - Organization
+      example: Individual
+      description: |
+        CounterpartyType defines the type of the counterparty:
+        - `Individual`: The counterparty is an individual.
+        - `Organization`: The counterparty is an organization.
+    Counterparty:
+      type: object
+      required:
+        - counterparty_type
+        - counterparty_name
+        - created_timestamp
+        - updated_timestamp
+      properties:
+        counterparty_id:
+          type: string
+          format: uuid
+          description: The counterparty ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        counterparty_type:
+          $ref: '#/components/schemas/CounterpartyType'
+        counterparty_name:
+          type: string
+          description: The counterparty name.
+          example: Counterparty A
+        country:
+          type: string
+          description: 'The country of the counterparty, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        email:
+          type: string
+          description: The email of the counterparty.
+          example: counterparty@example.com
+        contact_address:
+          type: string
+          description: The contact address of the counterparty.
+          example: '123 Main St, Anytown, USA'
+        created_timestamp:
+          type: integer
+          description: 'The created time of the counterparty, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the counterparty, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    Destination:
+      type: object
+      required:
+        - destination_type
+        - destination_name
+        - created_timestamp
+        - updated_timestamp
+      properties:
+        destination_id:
+          type: string
+          format: uuid
+          description: The destination ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        destination_type:
+          $ref: '#/components/schemas/DestinationType'
+        destination_name:
+          type: string
+          description: The destination name.
+          example: Destination A
+        country:
+          type: string
+          description: 'The country of the destination, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        email:
+          type: string
+          description: The email of the destination.
+          example: destination@example.com
+        contact_address:
+          type: string
+          description: The contact address of the destination.
+          example: '123 Main St, Anytown, USA'
+        merchant_id:
+          type: string
+          description: The ID of the merchant linked to the destination.
+          example: M1001
+        created_timestamp:
+          type: integer
+          description: 'The created time of the destination, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the destination, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    DestinationType:
+      type: string
+      enum:
+        - Individual
+        - Organization
+      example: Individual
+      description: |
+        DestinationType defines the type of the destination:
+        - `Individual`: The destination is an individual.
+        - `Organization`: The destination is an organization.
+    CreateDestinationBankAccount:
+      type: object
+      required:
+        - account_alias
+        - account_number
+        - swift_code
+        - currency
+        - beneficiary_name
+        - beneficiary_address
+        - bank_name
+        - bank_address
+      properties:
+        account_alias:
+          type: string
+          description: The alias of the bank account.
+          example: Main Payout Account
+        account_number:
+          type: string
+          description: The bank account number.
+          example: '4111111111111111'
+        swift_code:
+          type: string
+          description: The SWIFT or BIC code of the bank.
+          example: BOFAUS33
+        currency:
+          type: string
+          description: The currency of the bank account.
+          example: USD
+        beneficiary_name:
+          type: string
+          description: The name of the account holder.
+          example: John Doe
+        beneficiary_address:
+          type: string
+          description: The address of the account holder.
+          example: '123 Main St, Anytown, USA'
+        bank_name:
+          type: string
+          description: The name of the bank.
+          example: ABC Bank
+        bank_address:
+          type: string
+          description: The address of the bank.
+          example: '456 Bank Ave, Cityville, USA'
+        iban_code:
+          type: string
+          description: The IBAN code of the bank account.
+          example: '12345678901234567890'
+        further_credit:
+          type: string
+          description: The further credit of the bank account.
+          example: further credit sample
+        intermediary_bank_info:
+          $ref: '#/components/schemas/IntermediaryBankInfo'
+    CreateWalletAddress:
+      type: object
+      required:
+        - address
+        - chain_id
+      properties:
+        address:
+          type: string
+          example: 0x1234567890abcdef...
+          description: The wallet address.
+        chain_id:
+          type: string
+          description: The chain ID of the cryptocurrency.
+          example: TRON
+    IntermediaryBankInfo:
+      type: object
+      required:
+        - bank_name
+        - bank_address
+        - bank_swift_code
+      properties:
+        bank_name:
+          type: string
+          description: The name of the intermediary bank.
+          example: Intermediary Bank
+        bank_address:
+          type: string
+          description: The address of the intermediary bank.
+          example: '456 Bank Ave, Cityville, USA'
+        bank_swift_code:
+          type: string
+          description: The SWIFT or BIC code of the intermediary bank.
+          example: BOFAUS33
+    UpdateDestinationBankAccount:
+      type: object
+      required:
+        - account_alias
+        - account_number
+        - swift_code
+        - currency
+        - beneficiary_name
+        - beneficiary_address
+        - bank_name
+        - bank_address
+      properties:
+        account_alias:
+          type: string
+          description: The alias of the bank account.
+          example: Main Payout Account
+        account_number:
+          type: string
+          description: The bank account number.
+          example: '4111111111111111'
+        swift_code:
+          type: string
+          description: The SWIFT or BIC code of the bank.
+          example: BOFAUS33
+        currency:
+          type: string
+          description: The currency of the bank account.
+          example: USD
+        beneficiary_name:
+          type: string
+          description: The name of the account holder.
+          example: John Doe
+        beneficiary_address:
+          type: string
+          description: The address of the account holder.
+          example: '123 Main St, Anytown, USA'
+        bank_name:
+          type: string
+          description: The name of the bank.
+          example: ABC Bank
+        bank_address:
+          type: string
+          description: The address of the bank.
+          example: '456 Bank Ave, Cityville, USA'
+        iban_code:
+          type: string
+          description: The IBAN code of the bank account.
+          example: '12345678901234567890'
+        further_credit:
+          type: string
+          description: The further credit of the bank account.
+          example: further credit sample
+        intermediary_bank_info:
+          $ref: '#/components/schemas/IntermediaryBankInfo'
+    CounterpartyDetail:
+      type: object
+      required:
+        - counterparty_type
+        - counterparty_name
+        - wallet_addresses
+        - created_timestamp
+        - updated_timestamp
+      properties:
+        counterparty_id:
+          type: string
+          format: uuid
+          description: The counterparty ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        counterparty_type:
+          $ref: '#/components/schemas/CounterpartyType'
+        counterparty_name:
+          type: string
+          description: The counterparty name.
+          example: Counterparty A
+        country:
+          type: string
+          description: 'The country of the counterparty, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        email:
+          type: string
+          description: The email of the counterparty.
+          example: counterparty@example.com
+        contact_address:
+          type: string
+          description: The contact address of the counterparty.
+          example: '123 Main St, Anytown, USA'
+        wallet_addresses:
+          type: array
+          description: The wallet addresses of the counterparty.
+          items:
+            $ref: '#/components/schemas/WalletAddress'
+        created_timestamp:
+          type: integer
+          description: 'The created time of the counterparty, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the counterparty, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    DestinationDetail:
+      type: object
+      required:
+        - destination_id
+        - destination_type
+        - destination_name
+        - created_timestamp
+        - updated_timestamp
+      properties:
+        destination_id:
+          type: string
+          format: uuid
+          description: The destination ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        destination_type:
+          $ref: '#/components/schemas/DestinationType'
+        destination_name:
+          type: string
+          description: The destination name.
+          example: Destination A
+        country:
+          type: string
+          description: 'The country of the destination, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        email:
+          type: string
+          description: The email of the destination.
+          example: destination@example.com
+        contact_address:
+          type: string
+          description: The contact address of the destination.
+          example: '123 Main St, Anytown, USA'
+        wallet_addresses:
+          type: array
+          description: The wallet addresses of the destination.
+          items:
+            $ref: '#/components/schemas/WalletAddress'
+        bank_accounts:
+          type: array
+          description: The bank accounts of the destination.
+          items:
+            $ref: '#/components/schemas/DestinationBankAccount'
+        merchant_id:
+          type: string
+          description: The ID of the merchant linked to the destination.
+          example: M1001
+        created_timestamp:
+          type: integer
+          description: 'The created time of the destination, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the destination, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    BankAccountStatus:
+      type: string
+      enum:
+        - Pending
+        - Approved
+        - Rejected
+      example: Pending
+      description: |
+        BankAccountStatus defines the status of the bank account:
+        - `Pending`: The bank account is pending verification by Cobo.
+        - `Approved`: The bank account has been approved by Cobo.
+        - `Rejected`: The bank account has been rejected by Cobo.
+    CounterpartyWalletAddressDetail:
+      type: object
+      required:
+        - counterparty_id
+        - counterparty_name
+        - counterparty_type
+        - wallet_address_id
+        - address
+        - chain_id
+        - updated_timestamp
+      properties:
+        counterparty_id:
+          type: string
+          format: uuid
+          description: The counterparty ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        counterparty_name:
+          type: string
+          description: The name of the counterparty.
+          example: Counterparty A
+        counterparty_type:
+          $ref: '#/components/schemas/CounterpartyType'
+        wallet_address_id:
+          type: string
+          format: uuid
+          description: The wallet address ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        address:
+          type: string
+          example: 0x1234567890abcdef...
+          description: The wallet address.
+        chain_id:
+          type: string
+          description: The chain ID of the cryptocurrency.
+          example: TRON
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the wallet address, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    DestinationWalletAddressDetail:
+      type: object
+      required:
+        - destination_id
+        - destination_name
+        - destination_type
+        - wallet_address_id
+        - address
+        - chain_id
+        - updated_timestamp
+      properties:
+        destination_id:
+          type: string
+          format: uuid
+          description: The destination ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        destination_name:
+          type: string
+          description: The name of the destination.
+          example: Destination A
+        destination_type:
+          $ref: '#/components/schemas/DestinationType'
+        merchant_id:
+          type: string
+          description: The ID of the merchant linked to the destination.
+          example: M1001
+        wallet_address_id:
+          type: string
+          format: uuid
+          description: The wallet address ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        address:
+          type: string
+          example: 0x1234567890abcdef...
+          description: The wallet address.
+        chain_id:
+          type: string
+          description: The chain ID of the cryptocurrency.
+          example: TRON
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the wallet address, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    DestinationBankAccountDetail:
+      type: object
+      required:
+        - destination_id
+        - destination_name
+        - destination_type
+        - bank_account_id
+        - account_alias
+        - account_number
+        - swift_code
+        - currency
+        - beneficiary_name
+        - beneficiary_address
+        - bank_name
+        - bank_address
+        - bank_account_status
+      properties:
+        destination_id:
+          type: string
+          format: uuid
+          description: The destination ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        destination_name:
+          type: string
+          description: The name of the destination.
+          example: Destination A
+        destination_type:
+          $ref: '#/components/schemas/DestinationType'
+        destination_email:
+          type: string
+          description: The email of the destination.
+          example: destination@example.com
+        destination_country:
+          type: string
+          description: 'The country of the destination, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        destination_contact_address:
+          type: string
+          description: The contact address of the destination.
+          example: '123 Main St, Anytown, USA'
+        destination_merchant_id:
+          type: string
+          description: The ID of the merchant linked to the destination.
+          example: M1001
+        bank_account_id:
+          type: string
+          format: uuid
+          description: The destination bank account ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        account_alias:
+          type: string
+          description: The alias of the bank account.
+          example: Main Payout Account
+        account_number:
+          type: string
+          description: The bank account number.
+          example: '4111111111111111'
+        swift_code:
+          type: string
+          description: The SWIFT or BIC code of the bank.
+          example: BOFAUS33
+        currency:
+          type: string
+          description: The currency of the bank account.
+          example: USD
+        beneficiary_name:
+          type: string
+          description: The name of the account holder.
+          example: John Doe
+        beneficiary_address:
+          type: string
+          description: The address of the account holder.
+          example: '123 Main St, Anytown, USA'
+        bank_name:
+          type: string
+          description: The name of the bank.
+          example: ABC Bank
+        bank_address:
+          type: string
+          description: The address of the bank.
+          example: '456 Bank Ave, Cityville, USA'
+        iban_code:
+          type: string
+          description: The IBAN code of the bank account.
+          example: '12345678901234567890'
+        further_credit:
+          type: string
+          description: The further credit of the bank account.
+          example: further credit sample
+        intermediary_bank_info:
+          $ref: '#/components/schemas/IntermediaryBankInfo'
+        bank_account_status:
+          $ref: '#/components/schemas/BankAccountStatus'
+        created_timestamp:
+          type: integer
+          description: 'The created time of the bank account, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+        updated_timestamp:
+          type: integer
+          description: 'The updated time of the bank account, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    ExchangeRate:
+      type: object
+      required:
+        - token_id
+        - currency
+        - rate
+      properties:
+        token_id:
+          type: string
+          description: 'The token ID, which identifies the cryptocurrency.'
+          example: ETH_USDT
+        currency:
+          type: string
+          description: The fiat currency.
+          example: USD
+        rate:
+          type: string
+          description: 'The current exchange rate between the specified currency pair. Expressed as the amount of fiat currency per one unit of cryptocurrency. For example, if the cryptocurrency is USDT and the fiat currency is USD, a rate of "0.99" means 1 USDT = 0.99 USD.'
+          example: '1.00'
     DispositionStatus:
       type: string
       description: The status of a disposition operation.
@@ -19074,7 +20315,7 @@ components:
       name: custom_payer_id
       in: query
       required: true
-      description: A unique identifier assigned by the developer to track and identify individual payers in their system.
+      description: A unique identifier to track and identify individual payers in your system.
       schema:
         type: string
       example: payer_0001
@@ -19123,6 +20364,106 @@ components:
         type: string
         description: The crypto address ID.
       example: addr_ethusdt_20250506T123456_ab12cd
+    CounterpartyIdPathParam:
+      name: counterparty_id
+      in: path
+      required: true
+      description: The counterparty ID.
+      schema:
+        type: string
+        description: The counterparty ID.
+      example: 5b0ed293-f728-40b4-b1f6-86b88cd51384
+    DestinationIdPathParam:
+      name: destination_id
+      in: path
+      required: true
+      description: The destination ID.
+      schema:
+        type: string
+        description: The destination ID.
+      example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+    WalletAddressIdPathParam:
+      name: wallet_address_id
+      in: path
+      required: true
+      description: The wallet address ID.
+      schema:
+        type: string
+        description: The wallet address ID.
+      example: 445bac57-7428-4d25-bce1-b3cd017f47a1
+    CountryOptionalParam:
+      name: country
+      in: query
+      required: false
+      description: 'The country of the destination, in ISO 3166-1 alpha-3 format.'
+      schema:
+        type: string
+      example: USA
+    CounterpartyTypeOptionalParam:
+      name: counterparty_type
+      in: query
+      required: false
+      description: |
+        CounterpartyType defines the type of the counterparty:
+        - `Individual`: The counterparty is an individual.
+        - `Organization`: The counterparty is an organization.
+      schema:
+        $ref: '#/components/schemas/CounterpartyType'
+    DestinationTypeOptionalParam:
+      name: destination_type
+      in: query
+      required: false
+      description: |
+        DestinationType defines the type of the destination:
+        - `Individual`: The destination is an individual.
+        - `Organization`: The destination is an organization.
+      schema:
+        $ref: '#/components/schemas/DestinationType'
+    BankAccountStatusOptionalParam:
+      name: bank_account_status
+      in: query
+      required: false
+      description: |
+        BankAccountStatus defines the status of the bank account:
+        - `Pending`: The bank account is pending verification by Cobo.
+        - `Approved`: The bank account has been approved by Cobo.
+        - `Rejected`: The bank account has been rejected by Cobo.
+      schema:
+        $ref: '#/components/schemas/BankAccountStatus'
+    ChainIdsOptionalParam:
+      name: chain_ids
+      in: query
+      required: false
+      description: 'The chain ID, which is the unique identifier of a blockchain. You can retrieve the IDs of all the chains you can use by calling [List enabled chains](https://www.cobo.com/developers/v2/api-references/wallets/list-enabled-chains).'
+      schema:
+        type: string
+      example: 'BTC,ETH'
+    CounterpartyIdOptionalParam:
+      name: counterparty_id
+      in: query
+      required: false
+      description: The counterparty ID.
+      schema:
+        type: string
+        description: The counterparty ID.
+      example: 5b0ed293-f728-40b4-b1f6-86b88cd51384
+    DestinationIdOptionalParam:
+      name: destination_id
+      in: query
+      required: false
+      description: The destination ID.
+      schema:
+        type: string
+        description: The destination ID.
+      example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+    WalletAddressOptionalParam:
+      name: wallet_address
+      in: query
+      required: false
+      description: The wallet address.
+      schema:
+        type: string
+      example: 0x1234567890abcdef...
     tokenizationActivityIdPathParam:
       name: activity_id
       in: path
@@ -20241,6 +21582,273 @@ components:
                 $ref: '#/components/schemas/RefundLinkBusinessInfo'
               display_info:
                 $ref: '#/components/schemas/LinkDisplayInfo'
+    createCounterpartyBody:
+      description: The request body to create a counterparty.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - counterparty_name
+              - counterparty_type
+              - wallet_addresses
+            properties:
+              counterparty_name:
+                type: string
+                description: The counterparty name.
+                example: Counterparty A
+              counterparty_type:
+                $ref: '#/components/schemas/CounterpartyType'
+              wallet_addresses:
+                type: array
+                description: The wallet addresses of the counterparty.
+                items:
+                  $ref: '#/components/schemas/CreateWalletAddress'
+              country:
+                type: string
+                description: 'The country of the counterparty, in ISO 3166-1 alpha-3 format.'
+                example: USA
+              email:
+                type: string
+                description: The email of the counterparty.
+                example: counterparty@example.com
+              contact_address:
+                type: string
+                description: The contact address of the counterparty.
+                example: '123 Main St, Anytown, USA'
+    updateCounterpartyBody:
+      description: The request body to update a counterparty.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - counterparty_name
+              - counterparty_type
+            properties:
+              counterparty_name:
+                type: string
+                description: The counterparty name.
+                example: Counterparty A
+              counterparty_type:
+                $ref: '#/components/schemas/CounterpartyType'
+              country:
+                type: string
+                description: 'The country of the counterparty, in ISO 3166-1 alpha-3 format.'
+                example: USA
+              email:
+                type: string
+                description: The email of the counterparty.
+                example: counterparty@example.com
+              contact_address:
+                type: string
+                description: The contact address of the counterparty.
+                example: '123 Main St, Anytown, USA'
+    createDestinationBody:
+      description: The request body to create a destination.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - destination_name
+              - destination_type
+            properties:
+              destination_name:
+                type: string
+                description: The destination name.
+                example: Destination A
+              destination_type:
+                $ref: '#/components/schemas/DestinationType'
+              wallet_addresses:
+                type: array
+                description: The wallet addresses of the destination.
+                items:
+                  $ref: '#/components/schemas/CreateWalletAddress'
+              bank_accounts:
+                type: array
+                description: The bank accounts of the destination.
+                items:
+                  $ref: '#/components/schemas/CreateDestinationBankAccount'
+              merchant_id:
+                type: string
+                description: The ID of the merchant linked to the destination.
+                example: M1001
+              country:
+                type: string
+                description: 'The country of the destination, in ISO 3166-1 alpha-3 format.'
+                example: USA
+              email:
+                type: string
+                description: The email of the destination.
+                example: counterparty@example.com
+              contact_address:
+                type: string
+                description: The contact address of the destination.
+                example: '123 Main St, Anytown, USA'
+    updateDestinationBody:
+      description: The request body to create a destination.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - destination_name
+              - destination_type
+            properties:
+              destination_name:
+                type: string
+                description: The destination name.
+                example: Destination A
+              destination_type:
+                $ref: '#/components/schemas/DestinationType'
+              merchant_id:
+                type: string
+                description: The ID of the merchant linked to the destination.
+                example: M1001
+              country:
+                type: string
+                description: 'The country of the destination, in ISO 3166-1 alpha-3 format.'
+                example: USA
+              email:
+                type: string
+                description: The email of the destination.
+                example: destination@example.com
+              contact_address:
+                type: string
+                description: The contact address of the destination.
+                example: '123 Main St, Anytown, USA'
+    createCounterpartyWalletAddressBody:
+      description: The request body to create a counterparty wallet address.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - counterparty_id
+              - address
+              - chain_id
+            properties:
+              counterparty_id:
+                type: string
+                format: uuid
+                description: The counterparty ID.
+                example: 123e4567-e89b-12d3-a456-426614174003
+              address:
+                type: string
+                example: 0x1234567890abcdef...
+                description: The wallet address.
+              chain_id:
+                type: string
+                description: The chain ID of the cryptocurrency.
+                example: TRON
+    createDestinationWalletAddressBody:
+      description: The request body to create a destination wallet address.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - destination_id
+              - address
+              - chain_id
+            properties:
+              destination_id:
+                type: string
+                format: uuid
+                description: The destination ID.
+                example: 123e4567-e89b-12d3-a456-426614174003
+              address:
+                type: string
+                example: 0x1234567890abcdef...
+                description: The wallet address.
+              chain_id:
+                type: string
+                description: The chain ID of the cryptocurrency.
+                example: TRON
+    createDestinationBankAccountBody:
+      description: The request body to create a destination bank account.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - destination_id
+              - account_alias
+              - account_number
+              - swift_code
+              - currency
+              - beneficiary_name
+              - beneficiary_address
+              - bank_name
+              - bank_address
+            properties:
+              destination_id:
+                type: string
+                format: uuid
+                description: The destination ID.
+                example: 123e4567-e89b-12d3-a456-426614174003
+              account_alias:
+                type: string
+                description: The alias of the bank account.
+                example: Main Payout Account
+              account_number:
+                type: string
+                description: The bank account number.
+                example: '4111111111111111'
+              swift_code:
+                type: string
+                description: The SWIFT or BIC code of the bank.
+                example: BOFAUS33
+              currency:
+                type: string
+                description: The currency of the bank account.
+                example: USD
+              beneficiary_name:
+                type: string
+                description: The name of the account holder.
+                example: John Doe
+              beneficiary_address:
+                type: string
+                description: The address of the account holder.
+                example: '123 Main St, Anytown, USA'
+              bank_name:
+                type: string
+                description: The name of the bank.
+                example: ABC Bank
+              bank_address:
+                type: string
+                description: The address of the bank.
+                example: '456 Bank Ave, Cityville, USA'
+              iban_code:
+                type: string
+                description: The IBAN code of the bank account.
+                example: '12345678901234567890'
+              further_credit:
+                type: string
+                description: The further credit of the bank account.
+                example: further credit sample
+              intermediary_bank_info:
+                $ref: '#/components/schemas/IntermediaryBankInfo'
+    updateDestinationBankAccountBody:
+      description: The request body to update a destination bank account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateDestinationBankAccount'
+    enableDestinationWhitelistBody:
+      description: The request body to enable or disable the destination whitelist.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - enable_destination_whitelist
+            properties:
+              enable_destination_whitelist:
+                type: boolean
+                description: Indicates whether to enable the destination whitelist.
+                example: false
     estimateFeeStationFeeBody:
       description: The information about a Fee Station top-up transaction.
       content:
@@ -21954,7 +23562,7 @@ components:
             properties:
               token_id:
                 type: string
-                description: 'The token ID, which is a unique identifier that specifies both the blockchain network and cryptocurrency token in the format `{CHAIN}_{TOKEN}`.'
+                description: 'The token ID, which identifies the cryptocurrency.'
                 example: ETH_USDT
               currency:
                 type: string
@@ -21964,6 +23572,14 @@ components:
                 type: string
                 description: 'The current exchange rate between the specified currency pair. Expressed as the amount of fiat currency per one unit of cryptocurrency. For example, if the cryptocurrency is USDT and the fiat currency is USD, a rate of "0.99" means 1 USDT = 0.99 USD.'
                 example: '1.00'
+    batchGetExchangeRatesResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ExchangeRate'
     getSettlementInfoResponse:
       description: The request was successful.
       content:
@@ -22119,12 +23735,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PspBalance'
-    getPayerBalanceByAddressResponse:
-      description: The request was successful.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PayerBalanceByAddress'
     listMerchantBalancesResponse:
       description: The request was successful.
       content:
@@ -22167,6 +23777,191 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Link'
+    counterPartyDetailResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CounterpartyDetail'
+    listCounterpartiesResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Counterparty'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    deleteCounterpartyResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - counterparty_id
+            properties:
+              counterparty_id:
+                type: string
+                description: The counterparty ID.
+                example: 5b0ed293-f728-40b4-b1f6-86b88cd51384
+    destinationDetailResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DestinationDetail'
+    listDestinationsResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Destination'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    deleteDestinationResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - destination_id
+            properties:
+              destination_id:
+                type: string
+                description: The destination ID.
+                example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+    deleteDestinationBankAccountResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - bank_account_id
+            properties:
+              bank_account_id:
+                type: string
+                description: The destination bank account ID.
+                example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+    deleteCounterpartyWalletAddressResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - wallet_address_id
+            properties:
+              wallet_address_id:
+                type: string
+                description: The wallet address ID under the counterparty.
+                example: 445bac57-7428-4d25-bce1-b3cd017f47a1
+    deleteDestinationWalletAddressResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - wallet_address_id
+            properties:
+              wallet_address_id:
+                type: string
+                description: The wallet address ID under the destination.
+                example: 445bac57-7428-4d25-bce1-b3cd017f47a1
+    destinationBankAccountResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DestinationBankAccount'
+    destinationBankAccountDetailResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DestinationBankAccountDetail'
+    enableDestinationWhitelistResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - enable_destination_whitelist
+            properties:
+              enable_destination_whitelist:
+                type: boolean
+                description: Indicates whether the destination whitelist is enabled.
+                example: false
+    walletAddressDetailResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WalletAddress'
+    counterpartyResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Counterparty'
+    destinationResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Destination'
+    listCounterpartyWalletAddressResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CounterpartyWalletAddressDetail'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    listDestinationWalletAddressResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DestinationWalletAddressDetail'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    listDestinationBankAccountResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DestinationBankAccountDetail'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     createDispositionResponse:
       description: Successfully created a disposition request.
       content:

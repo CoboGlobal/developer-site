@@ -9,7 +9,7 @@ This document introduces the core features of the Cobo payments solution.
 
 ## Pay-ins
 
-- Provides flexible and diverse payment collection modes, supporting various scenarios such as fixed/unfixed amounts, timed/untimed payments, and one-time/recurring deductions:
+- Provides flexible and diverse pay-in types, supporting various scenarios such as fixed/unfixed amounts, timed/untimed payments, and one-time/recurring deductions:
   - **Top-up mode**: Cobo generates a dedicated top-up address for each payer, and payers can top up any amount to that address at any time. For details, see [Payment collection in top-up mode](/v2/payments/get-topup-addresses).
   - **Order mode**: Cobo creates payment orders with a specified amount and validity period, and payers need to complete payment within the specified time. Supports order cancellation, refunds, and handling abnormal situations such as overpayment, underpayment, and late payment. For details, see [Payment collection in order mode](/v2/payments/create-orders).
   - **Subscription mode**: Periodic, automatic deductions through smart contracts and other methods. For details, see [Payment collection in subscription mode](/v2/payments/create-subscriptions).

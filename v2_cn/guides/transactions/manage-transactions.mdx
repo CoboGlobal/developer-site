@@ -65,4 +65,69 @@ RBF 的两个最常见用例是加速和放弃交易。
 
 <Info>如果您放弃智能合约钱包的交易，将触发两个 RBF 交易：一个用于智能合约钱包的交易，另一个用于委托人的交易。</Info>
 
+## Cobo 定义的交易类别
+
+字段 `cobo_category` 由 Cobo 定义，用于表示交易的逻辑类别或用途，帮助用户识别交易属于哪类操作。
+
+### Fee Station 相关
+
+| 类别 | 描述 |
+|---------|-------------|
+| AutoFueling | Fee Station 代付 gas 费用的交易。 |
+| AutoFuelingRefund | Fee Station 退回已代付 gas 费用的交易。 |
+| BillPayment | Fee Station 为用户代付 Cobo Bills 的交易。 |
+| BillRefund | Fee Station 退回已代付的 Cobo Bills 的交易。 |
+| GasFeeSponsor | Fee Station 使用美元稳定币代付 gas 费用的交易。 |
+| GasFeeSponsorRefund | Fee Station 退回使用美元稳定币代付的 gas 费用的交易。 |
+| CommissionFeeCharge | Fee Station 代付一价全包费用的交易。 |
+| CommissionFeeRefund | Fee Station 退回已代付的一价全包费用的交易。 |
+
+<Note>Fee Station 相关交易及其类别，仅能通过 [Get Fee Station transaction information](/v2/api-references/feestation/get-fee-station-transaction-information) 和 [List all Fee Station transactions](/v2/api-references/feestation/list-all-fee-station-transactions) 获取。</Note>
+
+### Screening 相关
+
+| 类别 | 描述 |
+|---------|-------------|
+| ScreenAppRefund | 由 Screening App 发起的隔离交易退款。 |
+| ScreenAppIsolate | 由 Screening App 发起的风险隔离交易。 |
+| ComplianceRefund | 由 Cobo KYT 发起的合规隔离交易退款。 |
+| ComplianceIsolate | 由 Cobo KYT 发起的合规隔离交易。 |
+
+### Staking 相关
+
+| 类别 | 描述 |
+|---------|-------------|
+| StakingBabylonBtcDelegation | 在 Babylon 质押中委托 BTC 的交易。 |
+| StakingBabylonBtcSignBabylon | 在 Babylon BTC 质押流程中执行签名的交易。 |
+| StakingBabylonClaim | 从 Babylon 质押中领取奖励的交易。 |
+| StakingBabylonSlashing | Babylon 质押中与惩罚相关的交易。 |
+| StakingBabylonStake | 在 Babylon 平台中质押资产的交易。 |
+| StakingBabylonUnstake | 在 Babylon 平台中发起赎回的交易。 |
+| StakingBabylonWithdraw | 从 Babylon 质押中提取资产的交易。 |
+| StakingBithiveClaim | 从 BitHive 质押中领取奖励的交易。 |
+| StakingBithiveStake | 在 BitHive 平台中质押资产的交易。 |
+| StakingBithiveUnstake | 在 BitHive 平台中发起赎回的交易。 |
+| StakingBithiveWithdraw | 从 BitHive 质押中提取资产的交易。 |
+| StakingCoreStake | 在 Core 质押平台中质押资产的交易。 |
+| StakingCoreWithdraw | 从 Core 质押平台中提取资产的交易。 |
+| StakingEthClaim | 从 ETH 质押中领取奖励的交易。 |
+| StakingEthStake | 质押 ETH 资产的交易。 |
+| StakingEthUnstake | 赎回 ETH 资产的交易。 |
+| StakingSkyfarmClaim | 从 Skyfarm 质押中领取奖励的交易。 |
+| StakingSkyfarmStake | 在 Skyfarm 平台中质押资产的交易。 |
+| StakingSkyfarmUnstake | 在 Skyfarm 平台中发起赎回的交易。 |
+
+### 其他类别
+
+| 类别 | 描述 |
+|---------|-------------|
+| AutoSweep | 自动将代币归集至统一地址的交易。 |
+| Tokenization | 通过 Tokenization app 管理代币化资产（如 mint、wrap）的交易。 |
+| TokenizationGasSponsor | 通过 Tokenization app 进行代币化操作时，由系统代付 gas 费用的交易，即使源地址余额不足也能继续执行。 |
+| TokenSwap | 通过 Token Swap app 执行代币兑换或跨链桥接的交易。 |
+| SafeTxMessage | 由 MPC 钱包发起的消息签名交易，用于授权智能合约钱包（Safe{Wallet}）的操作。 |
+| StellarChangeTrust | 在 Stellar 网络上建立 trustline 的交易。 |
+| NonceAccountSign | 使用 Solana nonce account 进行签名的交易，支持确定性且防重放的执行模式。 |
+| FeePayerSign | 由 Solana 指定 fee payer 账户代付交易费用的交易，该账户与主签名账户相互独立。 |
+
 <Tip>欢迎您[提交反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI)来帮助改进我们的文档！</Tip>

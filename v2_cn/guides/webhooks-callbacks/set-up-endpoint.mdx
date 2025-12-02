@@ -101,6 +101,53 @@ Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以
 - JavaScript：[ServerDemo.js](https://github.com/CoboGlobal/cobo-waas2-js-sdk/blob/master/src/ServerDemo.js)
 - Go：[server_demo.go](https://github.com/CoboGlobal/cobo-waas2-go-sdk/blob/master/cobo_waas2/demo/server_demo.go)
 
+## 进阶用法
+
+### 使用钱包级别的 Webhook 分发
+
+在某些业务场景中，您可能需要为不同的钱包设置不同的 Webhook 处理逻辑。例如：
+
+- 多个业务团队共用同一个 WaaS 账户
+- 一个系统管理多个独立项目
+- 需要将事件转发到不同的微服务
+
+在这种情况下，您可以在 Webhook 处理逻辑中根据 `wallet_id` 执行分发。以下示例展示了如何基于 Cobo 提供的 Webhook/Callback 示例代码（[server_demo.py](https://github.com/CoboGlobal/cobo-waas2-python-sdk/blob/master/cobo_waas2/server_demo.py)），实现按钱包 ID 分发 Webhook 的逻辑。示例使用 Python 语言演示，其他语言的实现方式类似，您可以参考此逻辑并将其加入到您所使用语言的示例代码中。
+
+```python
+@app.post("/api/webhook")
+async def handle_webhook(
+    request: Request,
+    biz_timestamp: Optional[str] = Header(None),
+    biz_resp_signature: Optional[str] = Header(None),
+):
+    raw_body = await request.body()
+    sig_valid = verify_signature(
+        pubkey, biz_resp_signature, f"{raw_body.decode('utf8')}|{biz_timestamp}"
+    )
+    if not sig_valid:
+        raise HTTPException(status_code=401, detail="Signature verification failed")
+
+    import requests
+    event = WebhookEvent.from_dict(json.loads(raw_body.decode('utf8')))
+    data = event.data.actual_instance
+
+    # 根据不同的钱包 ID，将事件分发到不同的业务系统
+    # 请将下面的 wallet_id_xxx 和 URL 替换为您的实际钱包 ID 和 webhook endpoint
+    if data.data_type == "Transaction":
+        if data.wallet_id == "wallet_id_1":
+            requests.post("http://wallet1.example.com/webhook", json=data.model_dump())
+        elif data.wallet_id == "wallet_id_2":
+            requests.post("http://wallet2.example.com/webhook", json=data.model_dump())
+        elif data.wallet_id == "wallet_id_3":
+            requests.post("http://wallet3.example.com/webhook", json=data.model_dump())
+        else:
+            # 默认处理逻辑（可选）
+            pass
+
+    logger.info(event)
+    logger.info(event.data)
+```
+
 ## ⚠️⚠️⚠️ 注意事项
 <Warning>
 - 在接收 Webhook 事件时，您的 Endpoint 应该首先快速返回正确的状态码，然后异步处理任何后续处理，以防止超时。

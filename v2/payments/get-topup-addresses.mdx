@@ -61,7 +61,7 @@ You need to create a payer first, then get the top-up address corresponding to t
   
   
   <Tab title="Payments API" icon="code">
-1. Call [Get top-up address](/v2/api-references/payment/get-top-up-address) to create a top-up address. Key parameters in the request include:
+1. Call [Create/Get top-up address](/v2/api-references/payment/createget-top-up-address) to create a top-up address. Key parameters in the request include:
    * **Merchant ID** (`merchant_id`): The unique identifier for the merchant in the Cobo system, assigned by Cobo.
    * **Custom payer ID** (`custom_payer_id`): The unique identifier for the payer in your system.
    * **Token ID** (`token_id`): Specifies the cryptocurrency and blockchain network that the top-up address needs to support.
@@ -69,7 +69,7 @@ You need to create a payer first, then get the top-up address corresponding to t
 
 **Call example**
 
-The following is sample code for calling [Get top-up address](/v2/api-references/payment/get-top-up-address) to get a top-up address:
+The following is sample code for calling [Create/Get top-up address](/v2/api-references/payment/createget-top-up-address) to get a top-up address:
 <Accordion title="Sample code in Python">
 ```py
 import cobo_waas2
