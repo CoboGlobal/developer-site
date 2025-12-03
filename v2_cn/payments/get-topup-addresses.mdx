@@ -40,7 +40,7 @@ sequenceDiagram
 您需要先创建付款方，然后获取该付款方对应的充值地址：
 1. 登录 Cobo Portal [开发环境](https://portal.dev.cobo.com/login)或[生产环境](https://portal.cobo.com/login)。
 2. 在左侧导航栏中点击 **Apps**，然后点击 **Payments** 卡片，启动 App。
-3. 在 App 的左侧导航栏中点击**充值**。
+3. 在 App 的左侧导航栏中点击**收款** > **充值**。
 4. 点击右上角的**创建付款方**按钮。
 5. 在弹出的表单中：
    - 选择商户。该付款方支付的款项会归属于该商户。
@@ -65,77 +65,6 @@ sequenceDiagram
    * **Token ID** (`token_id`)：指定充值地址需要支持的加密货币和区块链网络。
 2. **配置充值事件监听**：通过 Webhook 接收充值相关的事件通知，详情可参考[事件与状态](/v2_cn/payments/status-and-events)。
 
-**调用示例**
-
-以下为调用 [Create/Get top-up address](/v2/api-references/payment/createget-top-up-address) 获取充值地址的示例代码：
-<Accordion title="Sample code in Python">
-```py
-import cobo_waas2
-from cobo_waas2 import PaymentApi
-
-
-# See configuration.py for a list of all supported configurations.
-configuration = cobo_waas2.Configuration(
-   # Replace `<YOUR_PRIVATE_KEY>` with your private key
-   api_private_key="<YOUR_PRIVATE_KEY>",
-   # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
-   host="https://api.dev.cobo.com/v2",
-)
-# Enter a context with an instance of the API client
-with (cobo_waas2.ApiClient(configuration) as api_client):
-   # Create an instance of the API class
-   api_instance = cobo_waas2.PaymentApi(api_client)
-   merchant_id = "<YOUR_MERCHANT_ID>"
-   token_id = "<YOUR_TOKEN_ID>"
-   custom_payer_id = "<YOUR_CUSTOM_PAYER_ID>"
-
-
-   try:
-       # Get top-up address
-       api_response = api_instance.get_top_up_address(
-           merchant_id=merchant_id, token_id=token_id, custom_payer_id=custom_payer_id
-       )
-       print("The response of PaymentApi->get_top_up_address:\n")
-       print(api_response)
-   except Exception as e:
-       print("Exception when calling PaymentApi->get_top_up_address: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-
-public class Example {
- public static void main(String[] args) {
-   ApiClient defaultClient = Configuration.getDefaultApiClient();
-   // Select the development environment. To use the production environment, replace `Env.DEV` with
-   // `Env.PROD
-   defaultClient.setEnv(Env.DEV);
-
-
-   // Replace `<YOUR_PRIVATE_KEY>` with your private key
-   defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-   PaymentApi apiInstance = new PaymentApi(defaultClient);
-   String merchant_id = "<YOUR_MERCHANT_ID>"
-   String token_id = "<YOUR_TOKEN_ID>"
-   String custom_payer_id = "<YOUR_CUSTOM_PAYER_ID>"
-   try {
-          TopUpAddress topUpAddress  = apiInstance.getTopUpAddress(merchant_id, token_id, custom_payer_id);
-          System.out.println(topUpAddress);
-   } catch (ApiException e) {
-     System.err.println("Exception when calling PaymentApi#getTopUpAddress");
-   }
- }
-} 
-```
-</Accordion>
   </Tab>
 </Tabs>
 
@@ -150,7 +79,7 @@ public class Example {
 
 您也可以通过以下方式查询每个付款方的所有充值交易：
 
-- **Payments App**：在 App 的左侧导航栏中点击**充值**，在付款方列表中找到目标付款方，点击右侧的**查看交易**按钮即可查看该付款方的所有充值记录。
+- **Payments App**：在 App 的左侧导航栏中点击**收款** > **充值**，在付款方列表中找到目标付款方，点击右侧的**查看交易**按钮即可查看该付款方的所有充值记录。
 - **Payments API**：调用 [List payers](/v2/api-references/payment/list-payers) 获取所有付款方及其充值交易的详细信息。
 
 ## 异常处理

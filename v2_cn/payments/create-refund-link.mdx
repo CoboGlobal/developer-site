@@ -88,76 +88,6 @@ sequenceDiagram
 * `url`：退款地址收集页面URL，一次性链接，只可提交一次
 * `token`：退款请求唯一性标识
 
-**调用示例**
-
-以下为调用"Create refund link"接口的示例代码：
-
-<Accordion title="Python示例代码">
-```py
-import cobo_waas2
-from cobo_waas2 import PaymentApi
-
-configuration = cobo_waas2.Configuration(
-   api_private_key="<YOUR_PRIVATE_KEY>",
-   host="https://api.dev.cobo.com/v2",
-)
-
-with cobo_waas2.ApiClient(configuration) as api_client:
-   api_instance = PaymentApi(api_client)
-   create_refund_link_request = cobo_waas2.CreateRefundLinkRequest(
-       transaction_id="<ORIGINAL_TRANSACTION_ID>",
-       amount="100",
-       refund_source="Merchant",
-       merchant_id="<YOUR_MERCHANT_ID>",
-       fee_amount="0"
-   )
-   
-   try:
-       api_response = api_instance.create_refund_link(
-           create_refund_link_request=create_refund_link_request
-       )
-       print("退款地址收集URL:", api_response.url)
-       print("退款请求标识:", api_response.token)
-   except Exception as e:
-       print("Exception when calling PaymentApi->create_refund_link: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Java示例代码">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-public class Example {
- public static void main(String[] args) {
-   ApiClient defaultClient = Configuration.getDefaultApiClient();
-   defaultClient.setEnv(Env.DEV);
-   defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-   
-   PaymentApi apiInstance = new PaymentApi(defaultClient);
-   CreateRefundLinkRequest createRefundLinkRequest = new CreateRefundLinkRequest();
-   createRefundLinkRequest.setTransactionId("<ORIGINAL_TRANSACTION_ID>");
-   createRefundLinkRequest.setAmount("100");
-   createRefundLinkRequest.setRefundSource(RefundSource.MERCHANT);
-   createRefundLinkRequest.setMerchantId("<YOUR_MERCHANT_ID>");
-   createRefundLinkRequest.setFeeAmount("0");
-
-   try {
-          RefundLink refundLink = apiInstance.createRefundLink(createRefundLinkRequest);
-          System.out.println("退款地址收集URL: " + refundLink.getUrl());
-          System.out.println("退款请求标识: " + refundLink.getToken());
-   } catch (ApiException e) {
-     System.err.println("Exception when calling PaymentApi#createRefundLink");
-   }
- }
-}
-```
-</Accordion>
-
 #### 3. 向用户发送URL（您的后端）
 
 1. 使用您自研脚本/服务，将URL通过邮件/短信发送给用户，需您自行发送，Cobo不掌握终端用户邮箱。
@@ -205,19 +135,6 @@ public class Example {
 
 **接口地址**：`GET https://api.cobo.com/v2/payments/refunds/{refund_id}`
 
-**调用示例**
-
-<Accordion title="Python示例代码">
-```py
-try:
-   refund_detail = api_instance.get_refund_detail(refund_id="<REFUND_ID>")
-   print("退款状态:", refund_detail.status)
-   print("退款金额:", refund_detail.amount)
-   print("退款地址:", refund_detail.to_address)
-except Exception as e:
-   print("Exception when calling PaymentApi->get_refund_detail: %s\n" % e)
-```
-</Accordion>
 
 ### 重新获取URL
 

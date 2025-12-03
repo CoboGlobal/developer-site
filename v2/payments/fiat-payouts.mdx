@@ -24,7 +24,7 @@ You can create off-ramp requests through Payments App or Payments API.
 <Note>In the development environment, you can experience the complete operational process of off-ramp through Payments App, but actual fiat currency exchange and transfer operations are not supported.</Note>
 1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login) or [production environment](https://portal.cobo.com/login).
 2. In the left navigation bar, click **Apps**, then click the **Payments** card to launch the App.
-3. In the App's left navigation bar, click **Settlement**.
+3. In the App's left navigation bar, click **Funds Management** > **Payouts**.
 4. You can choose to withdraw from **Merchant balance** or **Developer balance**. In this example, we choose to withdraw from the merchant balance. Click the **Settle** button on the **Merchant balance** card.
 5. In the pop-up window, select **Fiat withdrawal**. The pay-in type can be **Order** or **Top-up**, corresponding to order mode and top-up mode payment balances respectively. In this example, we select order mode.
 6. Fill in the withdrawal information:
@@ -43,7 +43,7 @@ On the off-ramp page, you can view the detailed fee breakdown and estimated arri
   </Tab>
 
 
-  <Tab title="Payments API" icon="code" icon="code">
+  <Tab title="Payments API" icon="code">
 
   1. Before creating a withdrawal request, you can call [List merchant balances](/v2/api-references/payment/list-merchant-balances) or [Get developer balance](/v2/api-references/payment/get-developer-balance) to query merchant and developer balances respectively, to determine the maximum withdrawal amount.
   2. Call [Create settlement request](/v2/api-references/payment/create-settlement-request) to create a withdrawal request.
@@ -91,7 +91,7 @@ You can also actively query withdrawal request status through Payments App or Pa
   <Tab title="Payments App" icon="pager">
 1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login) or [production environment](https://portal.cobo.com/login).
 2. In the left navigation bar, click **Apps**, then click the **Payments** card to launch the App.
-3. In the App's left navigation bar, click **Settlement**.
+3. In the App's left navigation bar, click **Funds Management** > **Payouts**.
 4. View the status and details of all withdrawal requests on the **Settlement History** tab.
   </Tab>
 

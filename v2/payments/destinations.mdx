@@ -5,30 +5,37 @@ lang: "en"
 
 <Note>**Disclaimer: This article contains AI translations and should only be used as reference.** Contact Cobo's support team through [help@cobo.com](mailto:help@cobo.com) if you have any questions.</Note>
 
-Before performing off-ramp or crypto payouts, you need to first register receiving destinations, including:
+The **Destinations** feature is used to centrally manage payout destination information, including wallet addresses for receiving cryptocurrency and bank accounts for fiat payouts.
 
-- **Crypto payout addresses**: Used to receive crypto payouts
-- **Bank accounts**: Used to receive fiat
+- For fiat payouts, you need to register a bank account with a name that matches your company's legal entity name, and it must be approved by Cobo's operations team before it can be used for payouts.
+
+- For crypto payouts, you can flexibly manage the allowed transfer addresses through the **Use Destinations as Payout Whitelist** toggle:
+  - If enabled, transfers are only allowed to registered destinations (wallet addresses);
+  - If disabled, you can freely enter destination addresses or select from registered destinations.
+  <img src="/v2/images/payments/destination-whitelist.png" className="screenshot_full_screen" alt="Destination whitelist" />
 
 
-## Register bank account
 
-Use Payments App to register a bank account. Funds will be converted to fiat currency and transferred to this account.
+## Add a destination
+
+You can add destinations in the Payments App.
+
+### Permission requirements
+
+Only **Payment Admin** and **Admin** roles have permissions to create, edit, and delete destinations. **Payment Member** has view-only access and cannot make modifications.
+
+### Steps
 
 1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login) or [production environment](https://portal.cobo.com/login).
 2. In the left navigation bar, click **Apps**, then click the **Payments** card to launch the App.
-3. In the App's left navigation bar, click **Bank Accounts**.
-2. Click the **Add Bank Account** button in the upper right corner.
-3. In the pop-up form, fill in information such as bank account alias, account number, SWIFT/BIC code, beneficiary name, and beneficiary address.
-4. After clicking **Submit**, notify the Cobo operations team for review.
-
-
-## Register crypto payout address
-
-- When performing crypto payouts using Payments App, you can directly fill in the receiving address without registering in advance.
-
-- You can also call [Create crypto address](/v2/api-references/payment/create-crypto-address) to register. After registration, you can use this address for crypto payouts.
+3. In the App's left navigation bar, click **Funds Management** > **Destinations**.
+4. Click the **Add Destination** button in the upper right corner.
+5. In the pop-up form, fill in the wallet address and/or bank account information to be registered.
+   <img src="/v2/images/payments/create-destination.png" className="screenshot_full_screen" alt="Register destination" />
+   - If registering a wallet address, you can optionally associate it with a specific merchant. Once associated, the system will automatically select this wallet address as the destination when initiating payouts for that merchant, improving operational convenience and accuracy.
+   - When adding a bank account, ensure the account name matches your company's legal entity name.
+6. Click **Submit** and complete the identity verification.
+7. If you registered a bank account, you need to wait for approval from Cobo's operations team before using it for payouts.
 
 
 <Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI) to improve our documentation!</Tip>
-

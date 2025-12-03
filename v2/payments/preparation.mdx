@@ -59,7 +59,7 @@ If you need to call Payments API, you need to follow these steps to complete API
 1. Refer to the [Developer guide](/v2/guides/get-started/get-started-with-waas) to generate an API key and API secret pair, and register the API key in Cobo Portal. Please note the following configurations:
    * **User role**: Select **Payment admin**
    * **Wallet scope**: Select **Any wallet type**
-   * No need to configure Callback Endpoint
+   * No need to configure callback endpoint in the development environment. In the production environment, you can configure a callback endpoint to approve payout requests.
    * **Key type**: Select **Temporary**
 
 2. If you choose to use an SDK instead of manually writing API requests, you need to install the SDK for the corresponding programming language:
@@ -103,11 +103,7 @@ You can create merchants using either the Payments App or Payments API.
   3. In the App's left navigation bar, click **Merchants**.
   4. Click the **Create Merchant** button.
   5. Complete the following configurations in the popup:
-     <img src="/v2/images/payments/create_merchant.png" className="screenshot_full_screen" alt="Create Merchant Modal" />
      - Enter the merchant name.
-     - Select **Wallet Setup**. Each wallet contains multiple cryptocurrency addresses that serve as the merchant's receiving addresses. Based on your business needs, you can choose from the following two wallet setups:
-       - **Shared Wallet**: Multiple merchants share the same wallet. The wallet's addresses may be used to receive payments for multiple merchants simultaneously.
-       - **Separate Wallet**: Create a dedicated wallet for the merchant to achieve complete fund isolation. All addresses in this wallet are only used to receive payments for this merchant.
      - If you choose to use top-up or subscription mode, you can also set a **Developer fee rate**. The developer fee rate determines the percentage of each payment you receive as a developer. For example, setting it to 1% means 1% of each payment will be allocated to you as a developer fee. You can adjust the developer fee rate at any time after creating the merchant. For more details about developer fee rates and fund allocation, please refer to [Funds allocation and balances](/v2/payments/amounts-and-balances).
 
 If your subsequent operations involve API calls, you can click the **View Detail** button after creation to obtain and save the merchant ID. You will need to use the merchant ID to identify this merchant in subsequent API calls.
@@ -124,74 +120,6 @@ If your subsequent operations involve API calls, you can click the **View Detail
 
 
    After the call, you will receive a merchant ID (`merchant_id`), which serves as the unique identifier for this merchant in the Cobo system and is used to identify the merchant in subsequent API calls.
-
-**Call example**
-
-The following is sample code for calling [Create merchant](/v2/api-references/payment/create-merchant) to create a merchant:
-
-<Accordion title="Sample code in Python">
-```py
-import cobo_waas2
-from cobo_waas2 import PaymentApi
-# See configuration.py for a list of all supported configurations.
-configuration = cobo_waas2.Configuration(
-   # Replace `<YOUR_PRIVATE_KEY>` with your private key
-   api_private_key="<YOUR_PRIVATE_KEY>",
-   # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
-   host="https://api.dev.cobo.com/v2",
-)
-# Enter a context with an instance of the API client
-with cobo_waas2.ApiClient(configuration) as api_client:
-   # Create an instance of the API class
-   api_instance = cobo_waas2.PaymentApi(api_client)
-   create_merchant_request = cobo_waas2.CreateMerchantRequest(name="<YOUR_MERCHANT_NAME>")
-
-
-   try:
-       # Create merchant
-       api_response = api_instance.create_merchant(
-           create_merchant_request=create_merchant_request
-       )
-       print("The response of PaymentApi->create_merchant:\n")
-       print(api_response)
-   except Exception as e:
-       print("Exception when calling PaymentApi->create_merchant: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-
-public class Example {
- public static void main(String[] args) {
-   ApiClient defaultClient = Configuration.getDefaultApiClient();
-   // Select the development environment. To use the production environment, replace `Env.DEV` with
-   // `Env.PROD
-   defaultClient.setEnv(Env.DEV);
-
-
-   // Replace `<YOUR_PRIVATE_KEY>` with your private key
-   defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-   PaymentApi apiInstance = new PaymentApi(defaultClient);
-   CreateMerchantRequest createMerchantRequest = new CreateMerchantRequest();
-   createMerchantRequest.setName("<YOUR_MERCHANT_NAME>");
-   try {
-          Merchant merchant = apiInstance.createMerchant(createMerchantRequest);
-         System.out.println(merchant);
-   } catch (ApiException e) {
-     System.err.println("Exception when calling PaymentApi#createMerchant");
-   }
- }
-}
-```
-</Accordion>
 
   </Tab>
 </Tabs>

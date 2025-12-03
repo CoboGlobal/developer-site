@@ -8,7 +8,7 @@ lang: "zh-hans"
 
 ## 前提条件
 
-参考[收款目的地管理](/v2_cn/payments/destinations)，录入您的银行账户，并通过 Cobo 运营团队对该银行账户的审核。
+参考[转出目的地](/v2_cn/payments/destinations)，录入您的银行账户，并通过 Cobo 运营团队对该银行账户的审核。
 
 
 ## 操作步骤
@@ -23,13 +23,13 @@ lang: "zh-hans"
 <Note>在开发环境中，您可以通过 Payments App 体验法币出金的完整操作流程，但不支持实际的法币兑换和转账操作。</Note>
 1. 登录 Cobo Portal [开发环境](https://portal.dev.cobo.com/login)或[生产环境](https://portal.cobo.com/login)。
 2. 在左侧导航栏中点击 **Apps**，然后点击 **Payments** 卡片，启动 App。
-3. 在 App 的左侧导航栏中点击**结算**。
+3. 在 App 的左侧导航栏中点击**资金管理** > **资金转出**。
 4. 您可以选择提取**商户余额**或**开发者余额**。在本例中，我们选择提取商户余额。点击**商户余额**卡片上的**结算**按钮。
 5. 在弹窗中，选择**法币出金**。收款模式可以选择**订单**或**充值**，分别对应订单模式和充值模式收取的款项余额。在本例中，我们选择订单模式。
   <img src="/v2_cn/images/payments/fiat-payout.png" className="screenshot_full_screen" alt="法币出金入口" />
 6. 填写出金信息：
    - 选择您想要出金的订单。系统会自动计算此次出金的加密货币总额。
-   - 选择接收法币的银行账户。如需添加新的银行账户，请参考[收款目的地管理](/v2_cn/payments/destinations)。
+   - 选择接收法币的银行账户。如需添加新的银行账户，请参考[转出目的地](/v2_cn/payments/destinations)。
 <Note>
 在法币出金页面，您可以查看本次出金涉及的各项费用明细和预计到账金额：
 
@@ -91,7 +91,7 @@ lang: "zh-hans"
   <Tab title="Payments App" icon="pager">
 1. 登录 Cobo Portal [开发环境](https://portal.dev.cobo.com/login)或[生产环境](https://portal.cobo.com/login)。
 2. 在左侧导航栏中点击 **Apps**，然后点击 **Payments** 卡片，启动 App。
-3. 在 App 的左侧导航栏中点击**结算**。
+3. 在 App 的左侧导航栏中点击**资金管理** > **资金转出**。
 4. 在**结算历史**标签页查看所有出金请求的状态和详情。
   </Tab>
 

@@ -108,7 +108,7 @@ sequenceDiagram
   <Tab title="Payments App" icon="pager">
 1. 登录 Cobo Portal [开发环境](https://portal.dev.cobo.com/login)或[生产环境](https://portal.cobo.com/login)。
 2. 在左侧导航栏中点击 **Apps**，然后点击 **Payments** 卡片，启动 App。
-3. 在 App 的左侧导航栏中点击**订单**。您可以在此页面查看所有订单的详细信息，如订单 ID、商户信息、支付金额、订单状态等。
+3. 在 App 的左侧导航栏中点击**收款** > **订单**。您可以在此页面查看所有订单的详细信息，如订单 ID、商户信息、支付金额、订单状态等。
 4. 当付款方完成支付、且交易通过合规扫描后，订单状态会流转为**已完成**。
 <img src="/v2_cn/images/payments/view-orders.png" className="screenshot_full_screen" alt="查看订单列表" />
   </Tab>
@@ -130,67 +130,6 @@ sequenceDiagram
 
 当一笔支付订单在 `Pending` 状态下，即尚未检测到入账交易时，您可以调用 [Update pay-in order](/v2/api-references/payment/update-pay-in-order) 撤销该订单。撤销后，订单状态将变更为 `Expired`。
 
-**调用示例**
-
-以下为调用 [Update pay-in order](/v2/api-references/payment/update-pay-in-order) 撤销订单的示例代码：
-
-<Accordion title="Sample code in Python">
-```py
-from cobo_waas2 import PaymentApi, UpdatePaymentOrderRequest, ApiClient, Configuration
-from cobo_waas2 import PaymentApi
-# See configuration.py for a list of all supported configurations.
-configuration = Configuration(
-  # Replace `<YOUR_PRIVATE_KEY>` with your private key
-  api_private_key="<YOUR_PRIVATE_KEY>",
-  # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
-  host="https://api.dev.cobo.com/v2",
-)
-# Enter a context with an instance of the API client
-with ApiClient(configuration) as api_client:
-  # Create an instance of the API class
-  api_instance = PaymentApi(api_client)
-  update_payment_order_request = UpdatePaymentOrderRequest(expired=True)
-  try:
-      # Cancel payment order
-      api_response = api_instance.update_payment_order(
-          order_id="<YOUR_ORDER_ID>",
-          update_payment_order_request=update_payment_order_request
-      )
-      print("The response of PaymentApi->update_payment_order:\n")
-      print(api_response)
-  except Exception as e:
-      print("Exception when calling PaymentApi->update_payment_order: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-public class Example {
- public static void main(String[] args) {
-   ApiClient defaultClient = Configuration.getDefaultApiClient();
-   // Select the development environment. To use the production environment, replace `Env.DEV` with
-   // `Env.PROD
-   defaultClient.setEnv(Env.DEV);
-
-   // Replace `<YOUR_PRIVATE_KEY>` with your private key
-   defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-   PaymentApi apiInstance = new PaymentApi(defaultClient);
-   UpdatePaymentOrderRequest updatePaymentOrderRequest = new UpdatePaymentOrderRequest();
-   updatePaymentOrderRequest.setExpired(true)
-   try {
-          Order order = apiInstance.updatePaymentOrder("<YOUR_ORDER_ID>", updatePaymentOrderRequest);
-          System.out.println(order);
-   } catch (ApiException e) {
-     System.err.println("Exception when calling PaymentApi#updatePaymentOrder");
-```
-</Accordion>
 
 
 ### 多付、少付和晚付
@@ -231,7 +170,7 @@ sequenceDiagram
   <Tab title="Payments App" icon="pager">
 1. 登录 Cobo Portal [开发环境](https://portal.dev.cobo.com/login)或[生产环境](https://portal.cobo.com/login)。
 2. 在左侧导航栏中点击 **Apps**，然后点击 **Payments** 卡片，启动 App。
-3. 在 App 的左侧导航栏中点击**订单**。
+3. 在 App 的左侧导航栏中点击**收款** > **订单**。
 4. 选择目标订单，然后点击右侧的**查看详情**按钮。
 <img src="/v2_cn/images/payments/refund-order-list.png" className="screenshot_full_screen" alt="订单列表" />
 5. 在订单详情页面，点击**退款**按钮。
@@ -254,86 +193,7 @@ sequenceDiagram
      - Cobo 会对退款金额进行校验。如果退款金额小于开发者费用，该请求将被拒绝并返回失败原因，因为此时付款方实际无法收到任何退款。
 
 <Info>关于更多开发者费用的说明，请参考[资金分配与余额管理](/v2_cn/payments/amounts-and-balances)。</Info>
-  
-**调用示例**
 
-以下为调用 [Create refund order](/v2/api-references/payment/create-refund-order) 创建退款订单的示例代码：
-
-<Accordion title="Sample code in Python">
-```py
-from cobo_waas2 import PaymentApi, CreateRefundRequest, ApiClient, Configuration, RefundType
-# See configuration.py for a list of all supported configurations.
-configuration = Configuration(
-  # Replace `<YOUR_PRIVATE_KEY>` with your private key
-  api_private_key="<YOUR_PRIVATE_KEY>",
-  # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
-  host="https://api.dev.cobo.com/v2",
-)
-# Enter a context with an instance of the API client
-with ApiClient(configuration) as api_client:
-   # Create an instance of the API class
-   api_instance = PaymentApi(api_client)
-   create_refund_request = CreateRefundRequest(
-       request_id="<YOUR_REQUEST_ID>",
-       merchant_id="<YOUR_MERCHANT_ID>",
-       payable_amount="10",
-       to_address="<YOUR_REFUND_ADDRESS>",
-       token_id="TRON_USDT",
-       refund_type=RefundType.MERCHANT,
-       charge_merchant_fee=True, # Set it to True if developer fee is required
-       merchant_fee_amount="1",
-       merchant_fee_token_id="TRON_USDT", # The token ID of developer fee. Must be the same as token_id above.
-   )
-   try:
-       # Create refund
-       api_response = api_instance.create_refund(
-           create_refund_request=create_refund_request
-       )
-       print("The response of PaymentApi->create_refund:\n")
-       print(api_response)
-   except Exception as e:
-       print("Exception when calling PaymentApi->create_refund: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-public class Example {
- public static void main(String[] args) {
-   ApiClient defaultClient = Configuration.getDefaultApiClient();
-   // Select the development environment. To use the production environment, replace `Env.DEV` with
-   // `Env.PROD
-   defaultClient.setEnv(Env.DEV);
-
-   // Replace `<YOUR_PRIVATE_KEY>` with your private key
-   defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-
-   PaymentApi apiInstance = new PaymentApi(defaultClient);
-   CreateRefundRequest createRefundRequest = new CreateRefundRequest();
-   createRefundRequest.setRequestId("<YOUR_REQUEST_ID>");
-   createRefundRequest.setMerchantId("<YOUR_MERCHANT_ID>");
-   createRefundRequest.setPayableAmount("10");
-   createRefundRequest.setToAddress("<YOUR_REFUND_ADDRESS>");
-   createRefundRequest.setTokenId("TRON_USDT");
-   createRefundRequest.setRefundType(RefundType.MERCHANT);
-
-
-   try {
-          Refund refund = apiInstance.createRefund(createRefundRequest);
-          System.out.println(refund);
-   } catch (ApiException e) {
-     System.err.println("Exception when calling PaymentApi#createRefund");
-   }
- }
-```
-</Accordion>
   </Tab>
 </Tabs>
 
@@ -346,7 +206,7 @@ public class Example {
   <Tab title="Payments App" icon="pager">
 1. 登录 Cobo Portal [开发环境](https://portal.dev.cobo.com/login)或[生产环境](https://portal.cobo.com/login)。
 2. 在左侧导航栏中点击 **Apps**，然后点击 **Payments** 卡片，启动 App。
-3. 在 App 的左侧导航栏中点击**订单**。
+3. 在 App 的左侧导航栏中点击**收款** > **订单**。
 4. 点击**退款**标签页。在退款订单列表中，找到目标订单，然后点击右侧的**查看详情**按钮。
 <img src="/v2_cn/images/payments/refund-list.png" className="screenshot_full_screen" alt="退款订单列表" />
 5. 在退款订单详情页面查看订单状态。
