@@ -19194,7 +19194,6 @@ components:
       name: address
       in: query
       required: false
-      description: The wallet address.
       schema:
         type: string
         description: The wallet address.
