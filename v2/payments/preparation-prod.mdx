@@ -88,7 +88,7 @@ When registering an API key in the production environment, you need to note:
 
    * **User role**: Select **Payment admin** or **Payment member** based on your business needs. You can refer to [Roles and permissions](/v2/payments/roles-and-permissions) to understand the permissions of different roles.
    * **Wallet scope**: It is recommended to only select the specific wallet types you actually need to access. For example, if you only use Custodial Wallets, only select **Custodial Wallets**. You can adjust the wallet scope at any time according to business development needs in the future to ensure that API access permissions follow the principle of least privilege.
-   * You do not need to configure Callback Endpoint.
+   * To further enhance security, you can configure a callback endpoint to approve payout requests. For more details, see [Configure callback endpoint](/v2/payments/preparation#optional-configure-callback-endpoint).
    * **Key type**: Select **Long-term (require static IP addresses)** and set the IP whitelist.
 
 

@@ -86,7 +86,7 @@ Cobo Portal 提供多种风控机制，旨在提高存储、管理和转移加�
 
    * **用户角色**：根据业务需求，选择**支付管理员**或**支付成员**。 可以参考[用户角色和权限](/v2_cn/payments/roles-and-permissions)了解不同角色的权限。
    * **钱包范围**：建议仅选择您实际需要访问的特定钱包类型，例如，如果您只使用全托管钱包，则仅选择**全托管钱包**。您可以在后续根据业务发展需要随时调整钱包范围，以确保 API 访问权限遵循最小权限原则。
-   * 您无需配置 Callback Endpoint。
+   * 若需进一步提升安全性，可以配置 Callback Endpoint，用于审批资金转出请求。更多详情，请参阅[配置 Callback Endpoint](/v2_cn/payments/preparation#可选-配置-callback-endpoint)。
    * **密钥类型**：选择**长期（需要静态 IP 地址）**，并设置 IP 白名单。
 
 

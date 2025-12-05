@@ -856,7 +856,7 @@
                 ]
               },
               {
-                "group": "Pay-ins",
+                "group": "Pay-In",
                 "pages": [
                   {
                     "group": "Prerequisites",
@@ -886,16 +886,17 @@
                     "pages": [
                       "v2/payments/create-refund-link"
                     ]
-                  }
+                  },
+                  "v2/payments/counterparties"
                 ]
               },
               {
-                "group": "Payouts",
+                "group": "Funds Management",
                 "pages": [
-                  "v2/payments/destinations",
+                  "v2/payments/amounts-and-balances",
                   "v2/payments/fiat-payouts",
                   "v2/payments/crypto-payouts",
-                  "v2/payments/amounts-and-balances"
+                  "v2/payments/destinations"
                 ]
               },
               {
@@ -1223,18 +1224,19 @@
                     "pages": [
                       "v2_cn/payments/create-refund-link"
                     ]
-                  }
+                  },
+                  "v2_cn/payments/counterparties"
                 ]
               },  
               {
-                "group": "资金转出",
+                "group": "资金管理",
                 "pages": [
-                "v2_cn/payments/destinations",
-                "v2_cn/payments/fiat-payouts",
-                "v2_cn/payments/crypto-payouts",
-                "v2_cn/payments/amounts-and-balances"
+                  "v2_cn/payments/amounts-and-balances",
+                  "v2_cn/payments/fiat-payouts",
+                  "v2_cn/payments/crypto-payouts",
+                  "v2_cn/payments/destinations"
                 ]
-              },              
+              },
               {
                 "group": "代收款", 
                 "pages": [

@@ -30,10 +30,9 @@ with cobo_waas2.ApiClient(configuration) as api_client:
         settlements=[
             cobo_waas2.CreateSettlement(
                     merchant_id="M1001",
-                    token_id="ETH_USDT",  
-                    currency="USD",
+                    token_id="ETH_USDT", 
                     amount="500.00",
-                    crypto_address_id="addr_ethusdt_20250506T123456_ab12cd"
+                    crypto_address="0xabc123456789def0000000000000000000000000"
                 )
             ]
     )
@@ -79,9 +78,8 @@ public class Example {
               new CreateSettlement()
               .merchantId("M1001")
               .tokenId("ETH_USDT")
-              .currency("USD")
               .amount("500.00")
-              .cryptoAddressId("addr_ethusdt_20250506T123456_ab12cd")
+              .cryptoAddress("0xabc123456789def0000000000000000000000000")
             ));
     try {
       Settlement result = apiInstance.createSettlementRequest(createSettlementRequestRequest);
@@ -157,9 +155,8 @@ const opts = {
       settlements: [{
         merchant_id: "M1001",
         token_id: "ETH_USDT",
-        currency: "USD",
         amount: "500.00",
-        crypto_address_id: "addr_ethusdt_20250506T123456_ab12cd",
+        crypto_address: "0xabc123456789def0000000000000000000000000"
       }],
     }),
 };

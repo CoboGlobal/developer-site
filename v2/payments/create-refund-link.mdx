@@ -89,76 +89,6 @@ Call [Create refund link](/v2/api-references/payment/create-refund-link):
 * `url`: Refund address collection page URL, one-time link that can only be submitted once
 * `token`: Unique identifier for the refund request
 
-**Call example**
-
-The following is sample code for calling the "Create refund link" API:
-
-<Accordion title="Sample code in Python">
-```py
-import cobo_waas2
-from cobo_waas2 import PaymentApi
-
-configuration = cobo_waas2.Configuration(
-   api_private_key="<YOUR_PRIVATE_KEY>",
-   host="https://api.dev.cobo.com/v2",
-)
-
-with cobo_waas2.ApiClient(configuration) as api_client:
-   api_instance = PaymentApi(api_client)
-   create_refund_link_request = cobo_waas2.CreateRefundLinkRequest(
-       transaction_id="<ORIGINAL_TRANSACTION_ID>",
-       amount="100",
-       refund_source="Merchant",
-       merchant_id="<YOUR_MERCHANT_ID>",
-       fee_amount="0"
-   )
-   
-   try:
-       api_response = api_instance.create_refund_link(
-           create_refund_link_request=create_refund_link_request
-       )
-       print("Refund address collection URL:", api_response.url)
-       print("Refund request identifier:", api_response.token)
-   except Exception as e:
-       print("Exception when calling PaymentApi->create_refund_link: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-public class Example {
- public static void main(String[] args) {
-   ApiClient defaultClient = Configuration.getDefaultApiClient();
-   defaultClient.setEnv(Env.DEV);
-   defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-   
-   PaymentApi apiInstance = new PaymentApi(defaultClient);
-   CreateRefundLinkRequest createRefundLinkRequest = new CreateRefundLinkRequest();
-   createRefundLinkRequest.setTransactionId("<ORIGINAL_TRANSACTION_ID>");
-   createRefundLinkRequest.setAmount("100");
-   createRefundLinkRequest.setRefundSource(RefundSource.MERCHANT);
-   createRefundLinkRequest.setMerchantId("<YOUR_MERCHANT_ID>");
-   createRefundLinkRequest.setFeeAmount("0");
-
-   try {
-          RefundLink refundLink = apiInstance.createRefundLink(createRefundLinkRequest);
-          System.out.println("Refund address collection URL: " + refundLink.getUrl());
-          System.out.println("Refund request identifier: " + refundLink.getToken());
-   } catch (ApiException e) {
-     System.err.println("Exception when calling PaymentApi#createRefundLink");
-   }
- }
-}
-```
-</Accordion>
-
 #### 3. Send URL to user (Your backend)
 
 1. Use your own scripts/services to send the URL to users via email/SMS. You need to send it yourself, as Cobo does not have end user email addresses.
@@ -206,19 +136,6 @@ You can query refund status through the following method:
 
 **API endpoint**: `GET https://api.cobo.com/v2/payments/refunds/{refund_id}`
 
-**Call example**
-
-<Accordion title="Sample code in Python">
-```py
-try:
-   refund_detail = api_instance.get_refund_detail(refund_id="<REFUND_ID>")
-   print("Refund status:", refund_detail.status)
-   print("Refund amount:", refund_detail.amount)
-   print("Refund address:", refund_detail.to_address)
-except Exception as e:
-   print("Exception when calling PaymentApi->get_refund_detail: %s\n" % e)
-```
-</Accordion>
 
 ### Regenerate URL
 

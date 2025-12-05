@@ -16,10 +16,10 @@ You can create crypto payout requests through Payments App or Payments API.
   <Tab title="Payments App" icon="pager">
 1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login) or [production environment](https://portal.cobo.com/login).
 2. In the left navigation bar, click **Apps**, then click the **Payments** card to launch the App.
-3. In the App's left navigation bar, click **Settlement**.
+3. In the App's left navigation bar, click **Funds Management** > **Payouts**.
 4. You can choose to withdraw from **Merchant balance** or **Developer balance**. In this example, we choose to withdraw from the merchant balance. Click the **Settle** button on the **Merchant balance** card.
 5. In the pop-up window, select **Crypto Payouts**. The pay-in type can be **Order** or **Top-up**, corresponding to order mode and top-up mode payment balances respectively.
-6. Fill in the transfer information, including token and network, related orders or amount, and receiving address.
+6. Fill in the transfer information, including token and network, related orders or amount, and receiving address.<Note>If you have enabled the **Use Destinations as Payout Whitelist** toggle in **Destinations**, you can only transfer to registered destinations. For more details, see [Destinations](/v2/payments/destinations)</Note>
 7. Follow the on-page prompts to confirm and submit the transfer request.
   </Tab>
 
@@ -74,7 +74,7 @@ You can also actively query transfer request status through Payments App or Paym
   <Tab title="Payments App" icon="pager">
 1. Log in to Cobo Portal [development environment](https://portal.dev.cobo.com/login) or [production environment](https://portal.cobo.com/login).
 2. In the left navigation bar, click **Apps**, then click the **Payments** card to launch the App.
-3. In the App's left navigation bar, click **Settlement**.
+3. In the App's left navigation bar, click **Funds Management** > **Payouts**.
 4. View the status and details of all transfer requests on the **Settlement History** tab.
   </Tab>
 

@@ -57,7 +57,7 @@ Payments App 提供 Web 界面，让您可以便捷地进行收款查询、资�
 1. 参考[开发者指南](/v2_cn/guides/get-started/get-started-with-waas)，生成一对 API Key 和 API Secret，并在 Cobo Portal 注册该 API Key。请注意以下配置：
    * **用户角色**：选择**支付管理员**
    * **钱包范围**：选择**任何类型钱包**
-   * 无需配置 Callback Endpoint
+   * 开发环境无需配置 Callback Endpoint。生产环境中，可以配置 Callback Endpoint，用于审批资金转出请求。
    * **密钥类型**：选择**临时**
 
 2. 如果您选择使用 SDK 而不是手动编写 API 请求，则需要安装对应编程语言的 SDK：
@@ -100,11 +100,7 @@ Payments App 提供 Web 界面，让您可以便捷地进行收款查询、资�
   3. 在 App 的左侧导航栏中点击**商户**。
   4. 点击**创建商户**按钮。
   5. 在弹窗中完成如下配置：
-     <img src="/v2_cn/images/payments/create_merchant.png" className="screenshot_full_screen" alt="Create Merchant Modal" />
      - 填写商户名称。
-     - 选择**钱包设置**。每个钱包包含多个加密货币地址，作为商户的收款地址。根据您的业务需求，可以选择以下两种钱包设置：
-       - **共用钱包**：多个商户共享同一个钱包。该钱包的地址可能同时用于接收多个商户的收款。
-       - **独立钱包**：为商户创建专属钱包，实现资金完全隔离。该钱包的所有地址仅用于接收该商户的收款。
      - 如果您选择使用充值或者订阅模式，您还可以设置**开发者费率**。开发者费率决定了您作为开发者从每笔收款中获得的分成比例。例如，设置为 1% 意味着每笔收款中的 1% 将作为开发者费用分配给您。您可以在创建商户后随时调整开发者费率。更多关于开发者费率和资金分配的详细说明，请参考[资金分配与余额管理](/v2_cn/payments/amounts-and-balances)。
 
 如果您的后续操作涉及到 API 调用，则可以在创建完成后点击**查看详情**按钮获取并保存商户 ID。您需要在后续 API 调用中使用商户 ID 来标识该商户。
@@ -121,74 +117,6 @@ Payments App 提供 Web 界面，让您可以便捷地进行收款查询、资�
 
 
    调用后，您将获取到商户 ID (`merchant_id`)，作为该商户在 Cobo 系统中的唯一标识符，用于后续 API 调用中标识该商户。
-
-**调用示例**
-
-以下为调用 [Create merchant](/v2/api-references/payment/create-merchant) 创建商户的示例代码：
-
-<Accordion title="Sample code in Python">
-```py
-import cobo_waas2
-from cobo_waas2 import PaymentApi
-# See configuration.py for a list of all supported configurations.
-configuration = cobo_waas2.Configuration(
-   # Replace `<YOUR_PRIVATE_KEY>` with your private key
-   api_private_key="<YOUR_PRIVATE_KEY>",
-   # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
-   host="https://api.dev.cobo.com/v2",
-)
-# Enter a context with an instance of the API client
-with cobo_waas2.ApiClient(configuration) as api_client:
-   # Create an instance of the API class
-   api_instance = cobo_waas2.PaymentApi(api_client)
-   create_merchant_request = cobo_waas2.CreateMerchantRequest(name="<YOUR_MERCHANT_NAME>")
-
-
-   try:
-       # Create merchant
-       api_response = api_instance.create_merchant(
-           create_merchant_request=create_merchant_request
-       )
-       print("The response of PaymentApi->create_merchant:\n")
-       print(api_response)
-   except Exception as e:
-       print("Exception when calling PaymentApi->create_merchant: %s\n" % e)
-```
-</Accordion>
-
-<Accordion title="Sample code in Java">
-```java
-import com.cobo.waas2.ApiClient;
-import com.cobo.waas2.ApiException;
-import com.cobo.waas2.Configuration;
-import com.cobo.waas2.Env;
-import com.cobo.waas2.api.PaymentApi;
-import com.cobo.waas2.model.*;
-
-
-public class Example {
- public static void main(String[] args) {
-   ApiClient defaultClient = Configuration.getDefaultApiClient();
-   // Select the development environment. To use the production environment, replace `Env.DEV` with
-   // `Env.PROD
-   defaultClient.setEnv(Env.DEV);
-
-
-   // Replace `<YOUR_PRIVATE_KEY>` with your private key
-   defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-   PaymentApi apiInstance = new PaymentApi(defaultClient);
-   CreateMerchantRequest createMerchantRequest = new CreateMerchantRequest();
-   createMerchantRequest.setName("<YOUR_MERCHANT_NAME>");
-   try {
-          Merchant merchant = apiInstance.createMerchant(createMerchantRequest);
-         System.out.println(merchant);
-   } catch (ApiException e) {
-     System.err.println("Exception when calling PaymentApi#createMerchant");
-   }
- }
-}
-```
-</Accordion>
 
   </Tab>
 </Tabs>

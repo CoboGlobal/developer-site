@@ -1708,7 +1708,7 @@ paths:
       description: |
         This operation drops a specified transaction. Dropping a transaction leverages RBF to replace the original transaction with a version that effectively cancels it. For more details about dropping a transaction, refer to [Drop a transaction](https://www.cobo.com/developers/v2/guides/transactions/manage-transactions#drop-a-transaction).
 
-        A transaction can be sped up only if its status is `Broadcasting`.
+        A transaction can be dropped only if its status is `Broadcasting`.
 
         <Note>This operation only applies to transactions from Custodial Wallets (Web3 Wallets), MPC Wallets and Smart Contract Wallets. It does not apply to transactions on the following chains: VET, TRON, TVET, SOL, and TON.</Note>
 
@@ -4301,7 +4301,9 @@ paths:
       summary: List merchant balances
       description: |
 
-        This operation retrieves the balance information for specified merchants. The balance information is grouped by token and acquiring type. If you do not specify the `merchant_ids` parameter, the balance information for all merchants will be returned.
+        This operation retrieves the balance information for specified merchants. 
+
+        The balance information is grouped by token and acquiring type. If you do not specify the `merchant_ids` parameter, the balance information for all merchants will be returned.
 
         For more information, please refer to [Funds allocation and balances](https://www.cobo.com/developers/v2/payments/amounts-and-balances).
       security:
@@ -15323,7 +15325,7 @@ components:
           type: string
           description: |
 
-            The total balance of the token available for payout or refund for the merchant.
+            The current balance of this token available to the merchant for payouts or refunds.
 
             `total_balance` = `total_received_amount` - `settled_amount` - `refunded_amount`
 
