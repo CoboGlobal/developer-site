@@ -432,11 +432,9 @@ paths:
       operationId: list_utxos
       summary: List UTXOs
       description: |
-        The operation retrieves a list of **unspent** transaction outputs (UTXOs) for a specified wallet and token.
+        The operation retrieves a list of unspent transaction outputs (UTXOs) for a specified wallet and token.
 
-        <Note>This operation returns only UTXOs that are not used by any transaction. It does not return all UTXOs.</Note>
-
-        <Info>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Info>
+        <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -464,11 +462,8 @@ paths:
       operationId: batch_check_utxo
       summary: Batch check UTXOs
       description: |
-        This operation verifies the existence and details of specified **unspent** transaction outputs (UTXOs) for a given wallet and token. A maximum of 100 UTXOs can be verified per request.
-
-        <Note>This operation returns only UTXOs that are not used by any transaction. It does not return all UTXOs.</Note>
-
-        <Info>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Info>
+        This operation verifies the existence and details of specified unspent transaction outputs (UTXOs) for a given wallet and token. A maximum of 100 UTXOs can be verified per request.
+        <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -714,7 +709,7 @@ paths:
       description: |
         This operation retrieves a list of address balances for a specified token within a wallet.
 
-        <Note>This operation is applicable to MPC Wallets and Web3 Wallets only.</Note>
+        <Note>This operation is applicable to MPC Wallets only.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
