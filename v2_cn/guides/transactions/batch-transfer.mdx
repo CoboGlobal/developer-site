@@ -26,7 +26,7 @@ description: "使用 WaaS 2.0 API 调用批量转账智能合约，在一次交�
 - 已依照[发送您的第一个 API 请求](/v2_cn/get-started/get-started-with-waas)设置账户并成功发送请求。
 - 了解并能使用 [Call smart contract](/v2/api-references/transactions/call-smart-contract) 接口。
 - 具备调用链上智能合约的基础知识，包括准备 `calldata`、查找合约方法，以及在 Token 合约中找到并调用 `approve` 方法以授权批量转账合约代扣代币。
-- 当前批量转账功能仅支持使用 MPC 钱包和 Web3 钱包发起交易。
+- 当前批量转账功能仅支持使用 MPC 钱包和全托管钱包（Web3 钱包）发起交易。
 
 ## 批量转 ETH
 以下步骤适用于在支持的链上批量转账 ETH（原生币）的场景：
@@ -76,7 +76,7 @@ description: "使用 WaaS 2.0 API 调用批量转账智能合约，在一次交�
 
 ## 补充说明
 - 链上手续费可通过 [Fee Station](https://manuals.cobo.com/cn/portal/fee-station/introduction) 的 Gas Token 或美元稳定币进行代付。  
-- 您也可以在区块链浏览器中，通过 Write Contract 功能手动调用批量转账智能合约。此方式需配合支持的浏览器插件（如 [Cobo Connect](https://manuals.cobo.com/cn/cobo-connect/introduction)）连接您的 MPC 钱包或 Web3 钱包发起交易，从而无需调用 API。
+- 您也可以在区块链浏览器中，通过 Write Contract 功能手动调用批量转账智能合约。此方式需配合支持的浏览器插件（如 [Cobo Connect](https://manuals.cobo.com/cn/cobo-connect/introduction)）连接您的 MPC 钱包或全托管钱包（Web3 钱包）发起交易，从而无需调用 API。
 
 ## 常见失败原因
 - 余额不足或授权金额不足。  

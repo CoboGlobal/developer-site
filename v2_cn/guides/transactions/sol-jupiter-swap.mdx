@@ -1,0 +1,321 @@
+---
+title: "在 Solana 链上使用 Jupiter 实现代币兑换"
+sidebarTitle: "在 Solana 链上兑换代币"
+lang: "zh-hans"
+description: "使用 Cobo WaaS SDK 集成 Jupiter，在 Solana 链上实现代币兑换的完整示例指南。"
+---
+
+本文通过一个完整的 Python 示例，演示如何在 Solana 链上结合 Cobo WaaS SDK 与 Jupiter，实现从获取路由报价到发起代币兑换交易的完整流程，帮助您快速集成链上代币兑换能力。  
+
+<Note>本文假设读者已经熟悉 Solana 智能合约调用，并了解 Jupiter 的基本概念与使用方式。文中不再介绍链上基础概念和 Jupiter 路由原理。</Note>
+
+## 前提条件
+
+在开始前，请确保：
+- 已依照[发送您的第一个 API 请求](/v2_cn/get-started/get-started-with-waas)设置账户并成功发送请求。
+- 了解并能使用 [Call smart contract](/v2/api-references/transactions/call-smart-contract) 接口。 
+- 熟悉 Solana 智能合约调用，并了解 Jupiter 的基本概念与使用方式。
+- 您的 Solana 地址上有足够余额，包括：
+  - 要兑换的代币余额；
+  - 支付 Gas 所需的 SOL 余额。
+- 由于本示例使用 Python 语言编写，请确保您的本地环境已安装：
+  - Python 3.9 或以上版本；
+  - 依赖库：`cobo_waas2`、`requests`、`solders`。
+ - 本示例以 MPC 钱包（机构钱包）为例。如果您使用的是全托管钱包（Web3 钱包），请在调用智能合约接口时，将 `source` 参数调整为全托管钱包（Web3 钱包）对应的参数结构。
+
+## Python 示例代码
+
+本示例代码展示了：
+
+1. 使用 Jupiter 获取最佳兑换路由。
+2. 使用 Jupiter 生成 Swap 所需的 Instructions。
+3. 解析 Address Lookup Table（ALT）。
+4. 创建合约调用交易。
+5. 发起一次 SOL -> USDT 的兑换。
+
+文中以代码高亮标出了用户在集成时需要修改的参数，例如 API Key，钱包 ID，地址，兑换的币对与金额等，其他代码无需修改。
+
+```python highlight={267, 269, 271, 273, 278}
+import base64
+import cobo_waas2
+import json
+import requests
+import uuid
+
+from solders.pubkey import Pubkey
+
+
+# ========= Jupiter 配置部分 =========
+JUPITER_BASE_URL = "https://lite-api.jup.ag/swap/v1/"
+SOLANA_RPC = "https://api.mainnet-beta.solana.com"
+
+# Solana 主网代币的固定 mint 地址，原生 SOL 使用系统定义的特殊 mint 地址
+SOL_MINT = "So11111111111111111111111111111111111111112"
+JLP_MINT = "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4"
+USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
+
+COIN_MINT_MAP = {
+    'SOL': SOL_MINT,
+    'SOL_JLP': JLP_MINT,
+    'SOL_USDC': USDC_MINT,
+    'SOL_USDT': USDT_MINT,
+}
+COIN_DECIMALS = {
+    SOL_MINT: 9,
+    JLP_MINT: 6,
+    USDC_MINT: 6,
+    USDT_MINT: 6,
+}
+
+
+# ========= Jupiter API 部分（调用 Jupiter 的 quote/swap 接口） =========
+def get_jupiter_quote(input_mint, output_mint, amount, slippage_bps=50):
+    """
+    从 Jupiter 获取最佳路由报价
+    Args:
+        input_mint: 要交换的代币的 mint 地址
+        output_mint: 目标代币的 mint 地址
+        amount: 交换数量
+        slippage_bps: 滑点
+    """
+    params = {
+        "inputMint": input_mint,
+        "outputMint": output_mint,
+        "amount": str(amount),
+        "slippageBps": str(slippage_bps)
+    }
+    r = requests.get(JUPITER_BASE_URL + 'quote', params=params, verify=False)
+    r.raise_for_status()
+    data = r.json()
+    return data
+
+
+def get_swap_instructions(quote, address):
+    """
+    基于 Jupiter 报价生成 Swap 所需 Instructions
+    """
+    payload = {
+        "quoteResponse": quote,
+        "userPublicKey": address,
+        "dynamicSlippage": True,
+        "useSharedAccounts": True,
+        "dynamicComputeUnitLimit": True,
+        "wrapAndUnwrapSol": True,
+        "skipUserAccountsRpcCalls": False,
+    }
+    r = requests.post(JUPITER_BASE_URL + "swap-instructions", json=payload, verify=False)
+    r.raise_for_status()
+    swap_data = r.json()
+    return swap_data
+
+
+def fetch_address_lookup_table(alt_address):
+    """
+    获取 Address Lookup Table 中的账户列表
+    Args:
+        alt_address: ALT 地址
+    Returns:
+        list: 账户地址列表
+    """
+    print(f"  正在查询 ALT: {alt_address}")
+
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "getAccountInfo",
+        "params": [
+            alt_address,
+            {
+                "encoding": "base64"
+            }
+        ]
+    }
+
+    try:
+        response = requests.post(SOLANA_RPC, json=payload, verify=False)
+        response.raise_for_status()
+        result = response.json()
+
+        if "result" not in result or not result["result"] or not result["result"]["value"]:
+            print(f"  警告: 无法获取 ALT 账户信息: {alt_address}")
+            return []
+
+        # 解析 ALT 账户数据
+        account_data = result["result"]["value"]["data"][0]
+        raw_data = base64.b64decode(account_data)
+
+        # ALT 账户格式:
+        # - 前 56 字节是头部信息
+        # - 之后每 32 字节是一个公钥
+        addresses = []
+        offset = 56  # 跳过头部
+
+        while offset + 32 <= len(raw_data):
+            pubkey_bytes = raw_data[offset:offset + 32]
+            pubkey = Pubkey(pubkey_bytes)
+            addresses.append(str(pubkey))
+            offset += 32
+
+        print(f"  成功获取 {len(addresses)} 个账户")
+        return addresses
+    except Exception as e:
+        print(f"  查询 ALT 失败: {e}")
+        return []
+
+
+# ========= Cobo API 部分 =========
+class CoboAPI:
+    def __init__(self, api_private_key, host):
+        self.api_private_key = api_private_key
+        self.host = host
+
+    def get_configuration(self):
+        return cobo_waas2.Configuration(
+            api_private_key=self.api_private_key,
+            host=self.host
+        )
+
+    def swap_coin(self, wallet_id, address, input_coin, output_coin, amount):
+        """
+        调用 Cobo WaaS 服务执行 Solana 合约调用以兑换代币
+        Args:
+            wallet_id: Cobo 钱包 ID
+            address: Solana 地址
+            input_coin: 要兑换的代币符号
+            output_coin: 目标代币符号
+            amount: 兑换数量
+        Returns:
+            transaction_id: Cobo Portal 交易的 Transaction ID
+        """
+        print(f"调用 Cobo WaaS 执行 Solana 合约调用以兑换代币... "
+              f"address={address}, {input_coin} -> {output_coin}, amount={amount}")
+
+        input_mint = COIN_MINT_MAP[input_coin]
+        output_mint = COIN_MINT_MAP[output_coin]
+        amount = self.to_jupiter_amount(amount, COIN_DECIMALS[input_mint])
+
+        with cobo_waas2.ApiClient(self.get_configuration()) as api_client:
+            # 1. 获取 Jupiter 报价
+            quote = get_jupiter_quote(input_mint, output_mint, amount)
+
+            # 2. 获取 Swap Instructions
+            instructions_json = get_swap_instructions(quote, address)
+
+            # 3. 构建交易指令和 ALT 账户
+            instructions, alt_accounts = self.build_transaction(instructions_json, address)
+
+            # 4. 调用 Cobo WaaS 服务创建合约调用交易
+            contract_call_params = cobo_waas2.ContractCallParams(
+                request_id=f"{str(uuid.uuid4())}",
+                chain_id="SOL",
+                source=cobo_waas2.ContractCallSource(
+                    cobo_waas2.MpcContractCallSource(
+                        source_type=cobo_waas2.ContractCallSourceType.ORG_CONTROLLED,
+                        wallet_id=wallet_id,
+                        address=address,
+                    )
+                ),
+                destination=cobo_waas2.ContractCallDestination(
+                    cobo_waas2.SolContractCallDestination(
+                        destination_type=cobo_waas2.ContractCallDestinationType.SOL_CONTRACT,
+                        instructions=instructions,
+                        address_lookup_table_accounts=alt_accounts
+                    )
+                ),
+            )
+            print('===============================')
+            print(f"contract call params: {contract_call_params.to_json()}")
+            print('===============================')
+
+            api_instance = cobo_waas2.TransactionsApi(api_client)
+            try:
+                api_response = api_instance.create_contract_call_transaction(
+                    contract_call_params=contract_call_params
+                )
+                print(f"contract call response: {api_response}")
+                return api_response.transaction_id
+            except Exception as e:
+                print(f"发生错误: {e}")
+                return ''
+
+    @staticmethod
+    def build_instruction(ins, address):
+        accounts = []
+        print(f"build instruction: {ins.get('programId', '')}, accounts: {len(ins.get('accounts', []))}")
+        for acc in ins['accounts']:
+            accounts.append(
+                cobo_waas2.SolContractCallAccount(
+                    pubkey=acc['pubkey'],
+                    is_signer=acc['isSigner'],
+                    is_writable=acc['isWritable'] or acc['pubkey'] == address,
+                )
+            )
+        return cobo_waas2.SolContractCallInstruction(
+            program_id=ins['programId'],
+            accounts=accounts,
+            data=ins['data'],
+        )
+
+    def build_transaction(self, instructions_json, address):
+        print(f"build transaction: {json.dumps(instructions_json)}")
+        all_instructions = []
+
+        for key in ["computeBudgetInstructions", "setupInstructions"]:
+            all_instructions += [self.build_instruction(i, address) for i in instructions_json.get(key, [])]
+
+        if "swapInstruction" in instructions_json and instructions_json["swapInstruction"]:
+            all_instructions.append(self.build_instruction(instructions_json["swapInstruction"], address))
+
+        if "cleanupInstruction" in instructions_json and instructions_json["cleanupInstruction"]:
+            all_instructions.append(self.build_instruction(instructions_json["cleanupInstruction"], address))
+
+        if "otherInstructions" in instructions_json and instructions_json["otherInstructions"]:
+            all_instructions += [self.build_instruction(i, address) for i in instructions_json["otherInstructions"]]
+
+        alt_accounts = []
+
+        if "addressLookupTableAddresses" in instructions_json:
+            alt_addresses = instructions_json["addressLookupTableAddresses"]
+            for alt_address in alt_addresses:
+                addresses = fetch_address_lookup_table(alt_address)
+                if addresses:
+                    alt_account = cobo_waas2.SolContractCallAddressLookupTableAccount(
+                        alt_account_key=alt_address,
+                        addresses=addresses,
+                    )
+                    alt_accounts.append(alt_account)
+
+        return all_instructions, alt_accounts
+
+    @staticmethod
+    def to_jupiter_amount(readable_amount: float, decimals: int) -> int:
+        """可读数量 -> Jupiter 整数数量"""
+        return int(readable_amount * (10 ** decimals))
+
+    @staticmethod
+    def to_readable_amount(raw_amount: int, decimals: int) -> float:
+        """Jupiter 整数数量 -> 可读数量"""
+        return raw_amount / (10 ** decimals)
+
+
+if __name__ == "__main__":
+    # ======== 需要您根据实际环境修改的参数（必填） ========
+    # TODO: 使用开发环境。如使用生产环境，请改为 "https://api.cobo.com/v2"
+    cobo_host = "https://api.dev.cobo.com/v2"  
+    # TODO: 请填写您的 API Key
+    api_key = ""  
+    # TODO: 请填写您的 MPC 钱包 ID
+    mpc_wallet_id = ""  
+    # TODO: 请填写您的 Solana 地址，并确保地址上有足够的 SOL 及待兑换代币余额
+    sol_address = ""  
+
+    # ======== 发起示例兑换：SOL -> USDT ========
+    myCoboApi = CoboAPI(api_key, cobo_host)
+    # "SOL" 为输入代币的 Token ID，"SOL_USDT" 为输出代币的 Token ID，0.0001 为本次示例的兑换数量
+    myCoboApi.swap_coin(mpc_wallet_id, sol_address, "SOL", "SOL_USDT", 0.0001)
+    # 如需兑换为 JLP 或 USDC，可使用下列示例：
+    # myCoboApi.swap_coin(mpc_wallet_id, sol_address, "SOL", "SOL_JLP", 0.0001)
+    # myCoboApi.swap_coin(mpc_wallet_id, sol_address, "SOL", "SOL_USDC", 0.0001)
+
+```

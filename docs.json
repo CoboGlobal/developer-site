@@ -64,7 +64,13 @@
                     ]
                   },
                   "v2/guides/transactions/manage-transactions",
-                  "v2/guides/transactions/batch-transfer"
+                  {
+                    "group": "Smart contract call samples",
+                    "pages": [
+                      "v2/guides/transactions/batch-transfer",
+                      "v2/guides/transactions/sol-jupiter-swap"
+                    ]
+                  }
                 ]
               },
               {
@@ -1004,7 +1010,13 @@
                     ]
                   },
                   "v2_cn/guides/transactions/manage-transactions",
-                  "v2_cn/guides/transactions/batch-transfer"
+                  {
+                    "group": "智能合约调用示例",
+                    "pages": [
+                      "v2_cn/guides/transactions/batch-transfer",
+                      "v2_cn/guides/transactions/sol-jupiter-swap"
+                    ]
+                  }
                 ]
               },
               {

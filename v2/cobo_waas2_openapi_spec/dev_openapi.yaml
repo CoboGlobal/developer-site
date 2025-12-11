@@ -491,7 +491,7 @@ paths:
       description: |
         This operation locks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.
 
-        <Note>This operation is applicable to MPC Wallets only.</Note>
+        <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -516,7 +516,7 @@ paths:
       description: |
         This operation unlocks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.
 
-        <Note>This operation is applicable to MPC Wallets only.</Note>
+        <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -656,7 +656,7 @@ paths:
       description: |
         The operation retrieves a list of token balances for a specified address within a wallet. 
 
-        <Note>This operation is applicable to MPC Wallets and Smart Contract Wallets only.</Note>
+        <Note>This operation is applicable to MPC Wallets, Custodial Wallets (Web3 Wallets), and Smart Contract Wallets only.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -712,7 +712,7 @@ paths:
       description: |
         This operation retrieves a list of address balances for a specified token within a wallet.
 
-        <Note>This operation is applicable to MPC Wallets and Web3 Wallets only.</Note>
+        <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1538,7 +1538,7 @@ paths:
         <Note>
         This operation only supports message signing transactions from the following wallets and chains:
         - MPC Wallets: BTC, EVM-compatible chains, and Cosmos.  
-        - Web3 Wallets: EVM-compatible chains.
+        - Custodial Wallets (Web3 Wallets): EVM-compatible chains.
         </Note>
       security:
         - CoboAuth: []
@@ -3401,7 +3401,7 @@ paths:
         - Swaps
       summary: Estimate swap fee
       description: |
-        This operation estimates the network fee of a swap activity. You can use this operation to estimate the network fee before initiating swap activities from MPC Wallets or Web3 Wallets.
+        This operation estimates the network fee of a swap activity. You can use this operation to estimate the network fee before initiating swap activities from MPC Wallets or Custodial Wallets (Web3 Wallets).
 
         It requires a valid `wallet_id` and `quote_id`, so you need to [get a swap quote](https://www.cobo.com/developers/v2/api-references/swaps/get-swap-quote) first.
       operationId: estimate_swap_fee
@@ -4941,7 +4941,7 @@ paths:
       summary: List sweep-to addresses
       description: |
         This operation retrieves a list of sweep-to addresses within your wallet.
-        <Note>Sweep-to addresses are only applicable to MPC Wallets and Web3 Wallets with the auto-sweep feature enabled.</Note>
+        <Note>Sweep-to addresses are only applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) with the auto-sweep feature enabled.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -4965,7 +4965,7 @@ paths:
 
         Use this operation to change the sweep-to address when your setup changes, you switch networks, or the current address is compromised or tainted by suspicious funds. You can withdraw any remaining balances from the old sweep-to addresses to the new address or another designated destination.
 
-        <Note>Sweep-to addresses are only applicable to MPC Wallets and Web3 Wallets with the auto-sweep feature enabled.</Note>
+        <Note>Sweep-to addresses are only applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) with the auto-sweep feature enabled.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -6446,7 +6446,7 @@ components:
           $ref: '#/components/schemas/WalletSubtype'
         enable_auto_sweep:
           type: boolean
-          description: Enable the auto-sweep feature for the wallet. This parameter only applies to MPC Wallets and Web3 Wallets.
+          description: Enable the auto-sweep feature for the wallet. This parameter only applies to MPC Wallets and Custodial Wallets (Web3 Wallets).
     CreateMpcWalletParams:
       title: MPC Wallets
       allOf:
@@ -13546,7 +13546,7 @@ components:
           $ref: '#/components/schemas/TransactionRequestFee'
         destination_address:
           type: string
-          description: The address of an MPC Wallet or Web3 Wallet that receives the swapped or bridged assets.
+          description: The address of an MPC Wallet or Custodial Wallet (Web3 Wallet) that receives the swapped or bridged assets.
           example: 19AR6YWEGbSoY8UT9Ksy9WrmrZPD5sL4Ku
     SwapActivityDetail:
       allOf:

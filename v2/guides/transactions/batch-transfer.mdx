@@ -25,7 +25,7 @@ The address of the batch transfer smart contract is [`0x3d963e23a9229D2ACd25E9FF
 - You have set up Cobo Accounts and successfully sent requests as described in [Send your first API request](/v2_cn/get-started/get-started-with-waas).  
 - You are familiar with and able to use the [Call smart contract](/v2/api-references/transactions/call-smart-contract) API.  
 - You have basic knowledge of interacting with smart contracts, including preparing `calldata`, locating contract methods, and using the `approve` method on a token contract to authorize the batch transfer contract to spend tokens.  
-- The batch transfer feature currently only supports transactions initiated from MPC Wallets and Web3 Wallets.
+- The batch transfer feature currently only supports transactions initiated from MPC Wallets and Custodial Wallets (Web3 Wallets).
 
 ## Batch transfer of ETH
 The following steps apply to batch transfers of ETH (native coin) on the supported chains:
@@ -76,7 +76,7 @@ The following steps apply to batch transfers of ERC-20 tokens on the supported c
 
 ## Additional notes
 - You can use [Fee Station](https://manuals.cobo.com/cn/portal/fee-station/introduction) to pay on-chain transaction fees with gas tokens or USD stablecoins.
-- You can also manually call the batch transfer smart contract with the “Write Contract” function on a blockchain explorer. This method requires connecting your MPC wallet or Web3 wallet using a supported browser extension (such as [Cobo Connect](https://manuals.cobo.com/cn/cobo-connect/introduction)), without using API calls.
+- You can also manually call the batch transfer smart contract with the “Write Contract” function on a blockchain explorer. This method requires connecting your MPC Wallet or Custodial Wallet (Web3 Wallet) using a supported browser extension (such as [Cobo Connect](https://manuals.cobo.com/cn/cobo-connect/introduction)), without using API calls.
 
 ## Common failure causes
 - Insufficient balance or insufficient approval amount.  
