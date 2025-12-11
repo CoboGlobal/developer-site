@@ -515,7 +515,6 @@ paths:
       summary: Unlock UTXOs
       description: |
         This operation unlocks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.
-
         <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
       security:
         - CoboAuth: []
