@@ -1,0 +1,74 @@
+---
+title: "How to use Fee Station"
+sidebarTitle: "How to use"
+lang: "en"
+description: "Learn how to deposit tokens, track transaction records, and set up gas fee payment preferences in Fee Station."
+---
+
+This article introduces how to complete the following operations in Fee Station:
+
+- Deposit USD or stablecoins
+- Deposit gas tokens
+- View deposit and expense records
+- Set up gas fee payment preferences
+
+## Deposit USD or stablecoins
+
+Fee Station supports deposits in fiat USD or USD stablecoins. After deposit, these funds can be used in Fee Station to pay for gas fees, platform service fees, and custody fees.
+
+In the **USD / USD stablecoin** tab, you can view your current balance, deposit history, and spending records, and initiate new deposits. For supported stablecoin types, refer to [Supported Token Types](/en/portal/fee-station/introduction#supported-token-types).
+
+1. Log into [Cobo Portal](https://portal.cobo.com/login).
+2. Click your name in the bottom left corner, then select **Organization** > **Fee Station**.
+3. In the **USD / USD stablecoin** tab, next to **Total Value**, click **Deposit**, choose a suitable deposit method, and follow the on-screen instructions to complete the deposit.
+
+    <img src="/en/images/fee-station/deposit-u.png" className="screenshot_full_screen"/>
+
+## Deposit gas tokens
+
+You can also deposit native gas tokens on each supported chain, which can be used to cover gas fees on those chains.
+
+In the **Gas Token** tab, you can view the balance and transaction records of gas tokens on each chain and initiate deposits. For supported gas tokens, refer to [Supported Token Types](/en/portal/fee-station/introduction#supported-token-types).
+
+1. Log into [Cobo Portal](https://portal.cobo.com/login).
+2. Click your name in the bottom left corner, then select **Organization** > **Fee Station**.
+3. Switch to the **Gas Token** tab and find the gas token for the target chain (for example, TRX, ETH, or MATIC).
+4. Click the <img src="/en/images/fee-station/icon_deposit.svg" className="icon"></img> deposit icon next to the gas token, and follow the instructions to complete the deposit.
+
+    <img src="/en/images/fee-station/deposit-gas-token.png" className="screenshot_full_screen"/>
+
+## View deposit and expense records
+
+Fee Station provides detailed transaction records to help you track all deposits and expenses.
+
+### View deposit records
+
+1. Log into [Cobo Portal](https://portal.cobo.com/login).
+2. Click your name in the bottom left corner, then select **Organization** > **Fee Station**.
+3. In the **USD / USD stablecoin** tab or **Gas Token** tab, you can view the corresponding deposit records.
+4. Click on a specific deposit record to view detailed information, including the deposit amount, time, transaction ID, and more.
+
+### View expense records
+
+Fee Station automatically records all expense transactions, including the following types:
+
+- **Transaction Fee Payment**: Transaction fees that Fee Station automatically pays to an address in your MPC Wallets or Custodial Wallets (Web3 Wallets).
+- **Cobo Bill Payment**: Payment of Cobo bills that Fee Station automatically settles. For Cobo bills, Fee Station accepts payments in the following asset types, deducted in this order: TRON_USDC, TRON_USDT, ETH_USDC, and ETH_USDT.
+- **Refund**:
+    - If a TRON transaction initiated from your MPC Wallet or Asset Wallet (Web3 Wallet) fails, the transaction fee will be refunded to your Fee Station.
+    - For failed transactions on EVM chains, the transaction fee will remain in your MPC Wallet or Asset Wallet (Web3 Wallet) and will not be refunded to the Fee Station.
+    - A refund may also be issued for Cobo bills.
+
+To view expense records:
+
+1. In the **USD / USD stablecoin** tab or **Gas Token** tab, view the list of expense records.
+2. Click on a specific expense record to view detailed information, including the expense type, amount, time, and more.
+3. You can also add custom categories and descriptions to transaction records for easier management and future reference.
+
+## Configure payment preferences
+
+In the **Gas Token > Payment Preferences** tab, you can configure on-chain transaction fee payment strategies for MPC Wallets and Web3 Wallets based on supported chains.
+
+<img src="/en/images/fee-station/preferences.png" className="screenshot_full_screen"/>
+
+<Tip>Feel free to [share your feedback](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI?referrername=manuals) to improve our documentation!</Tip>
