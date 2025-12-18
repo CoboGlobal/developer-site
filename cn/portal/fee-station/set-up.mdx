@@ -1,0 +1,74 @@
+---
+title: "Fee Station 使用指南"
+sidebarTitle: "使用指南"
+lang: "zh-hans"
+description: "快速上手如何在 Fee Station 页面中完成充值、查看流水、设置手续费代付策略等操作。"
+---
+
+本文介绍如何在 Fee Station 中完成以下操作：
+
+- 充值美元或稳定币
+- 充值 Gas Token
+- 查看充值和支出记录
+- 设置手续费代付策略
+
+## 充值美元或稳定币
+
+Fee Station 支持充值美元法币或美元稳定币。充值后，您可以在 Fee Station 中使用这些资金来支付交易手续费、平台服务费和托管费等账单。
+
+在**美元/美元稳定币**标签页，您可以查看当前账户中余额，充值记录及其支出记录，并发起充值操作。Fee Station 支持的稳定币类型请参考[支持充值的代币类型](/cn/portal/fee-station/introduction#支持充值的代币类型)。
+
+1. 登录 [Cobo Portal](https://portal.cobo.com/login)。
+2. 点击左下角的用户名，然后选择**团队** > **Fee Station**。
+3. 在**美元/美元稳定币**标签页，在总价值右侧点击**充币**按钮，选择合适的充值方式，并按照指引完成充值。
+
+    <img src="/cn/images/fee-station/deposit-u.png" className="screenshot_full_screen"/>
+
+## 充值 Gas Token
+
+您也可以直接为各条链的原生 Gas Token 充值，用于代付对应链上的交易手续费。
+
+在**Gas Token**标签页，您可以查看当前账户中各链 Gas Token 的余额及其交易流水，并发起充值操作。Fee Station 支持充值的 Gas Token 请参考[支持充值的代币类型](/cn/portal/fee-station/introduction#支持充值的代币类型)。
+
+1. 登录 [Cobo Portal](https://portal.cobo.com/login)。
+2. 点击左下角的用户名，然后选择**团队** > **Fee Station**。
+3. 切换到**Gas Token**标签页，在列表中找到目标链对应的 Gas Token（例如 TRX、ETH、MATIC 等）。
+4. 在该 Gas Token 右侧点击 <img src="/cn/images/fee-station/deposit.svg" className="icon"></img> 充值图标，并按照提示完成充值操作。
+
+    <img src="/cn/images/fee-station/deposit-gas-token.png" className="screenshot_full_screen"/>
+
+## 查看充值和支出记录
+
+Fee Station 提供详细的交易流水记录，帮助您追踪所有充值和支出情况。
+
+### 查看充值记录
+
+1. 登录 [Cobo Portal](https://portal.cobo.com/login)。
+2. 点击左下角的用户名，然后选择**团队** > **Fee Station**。
+3. 在**美元/美元稳定币**标签页或**Gas Token**标签页，您可以查看相应的充值记录。
+4. 点击具体的充值记录可查看详细信息，包括充值金额、时间、交易 ID 等。
+
+### 查看支出记录
+
+Fee Station 会自动记录所有支出交易，包括以下类型：
+
+- **交易手续费支付**：Fee Station 自动向您的 MPC 钱包或全托管钱包（Web3 钱包）地址支付的交易手续费。
+- **Cobo 账单支付**：Fee Station 自动结算的 Cobo 账单。Fee Station 支持以下资产类型来支付 Cobo 账单，支付顺序为：TRON_USDC、TRON_USDT、ETH_USDC 和 ETH_USDT。
+- **退款**：
+    - 如果您从 MPC 钱包或全托管钱包（Web3 钱包）发起的 TRON 交易失败，相应的交易手续费将退还到您的 Fee Station。
+    - 对于 EVM 链上的交易失败，交易手续费会保留在您对应的 MPC 钱包或全托管钱包（Web3 钱包）中，不会退还到 Fee Station。
+    - Cobo 账单也可能会有退款。
+
+要查看支出记录：
+
+1. 在**美元/美元稳定币**标签页或**Gas Token**标签页，查看支出记录列表。
+2. 点击具体的支出记录可查看详细信息，包括支出类型、金额、时间等。
+3. 您还可以为交易记录添加自定义分类和描述，方便后续管理和查询。
+
+## 设置手续费代付策略
+
+在 **Gas Token > 付款偏好** 标签页，您可以为 MPC 钱包和 Web3 钱包基于支持的链分别设置链上手续费代付策略。
+
+<img src="/cn/images/fee-station/preferences.png" className="screenshot_full_screen"/>
+
+<Tip>欢迎[提交您的反馈](https://forms.zohopublic.com/cobo/form/DocumentFeedbackForm/formperma/QvLOhxJv1_JMsJ-1dleZ8Itb_7rzN-LtgvsDdxosoVI?referrername=manuals)，帮助我们持续优化文档质量！</Tip>
