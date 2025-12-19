@@ -1,12 +1,16 @@
 ---
-openapi: post /payments/orders
+openapi: post /payments/destination/enable_whitelist
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_payment_order_request import CreatePaymentOrderRequest
-from cobo_waas2.models.order import Order
+from cobo_waas2.models.enable_destination_whitelist_request import (
+    EnableDestinationWhitelistRequest,
+)
+from cobo_waas2.models.query_destination_whitelist_enabled200_response import (
+    QueryDestinationWhitelistEnabled200Response,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,19 +25,21 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    create_payment_order_request = cobo_waas2.CreatePaymentOrderRequest(
-        merchant_id="1001", psp_order_code="P20240201001", fee_amount="2.00"
+    enable_destination_whitelist_request = cobo_waas2.EnableDestinationWhitelistRequest(
+        enable_destination_whitelist=False
     )
 
     try:
-        # Create pay-in order
-        api_response = api_instance.create_payment_order(
-            create_payment_order_request=create_payment_order_request
+        # Enable or disable destination whitelist
+        api_response = api_instance.enable_destination_whitelist(
+            enable_destination_whitelist_request=enable_destination_whitelist_request
         )
-        print("The response of PaymentApi->create_payment_order:\n")
+        print("The response of PaymentApi->enable_destination_whitelist:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_payment_order: %s\n" % e)
+        print(
+            "Exception when calling PaymentApi->enable_destination_whitelist: %s\n" % e
+        )
 
 ```
 ```java Java
@@ -55,16 +61,14 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    CreatePaymentOrderRequest createPaymentOrderRequest =
-        new CreatePaymentOrderRequest()
-            .merchantId("1001")
-            .pspOrderCode("P20240201001")
-            .feeAmount("2.00");
+    EnableDestinationWhitelistRequest enableDestinationWhitelistRequest =
+        new EnableDestinationWhitelistRequest().enableDestinationWhitelist(false);
     try {
-      Order result = apiInstance.createPaymentOrder(createPaymentOrderRequest);
+      QueryDestinationWhitelistEnabled200Response result =
+          apiInstance.enableDestinationWhitelist(enableDestinationWhitelistRequest);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createPaymentOrder");
+      System.err.println("Exception when calling PaymentApi#enableDestinationWhitelist");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,7 +90,7 @@ import (
 )
 
 func main() {
-	createPaymentOrderRequest := *coboWaas2.NewCreatePaymentOrderRequest("1001", "P20240201001", "2.00")
+	enableDestinationWhitelistRequest := *coboWaas2.NewEnableDestinationWhitelistRequest(false)
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -99,15 +103,19 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreatePaymentOrder(ctx).
-		CreatePaymentOrderRequest(createPaymentOrderRequest).
+	resp, r, err := apiClient.PaymentAPI.EnableDestinationWhitelist(ctx).
+		EnableDestinationWhitelistRequest(enableDestinationWhitelistRequest).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.CreatePaymentOrder``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `PaymentAPI.EnableDestinationWhitelist``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreatePaymentOrder`: Order
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreatePaymentOrder`: %v\n", resp)
+	// response from `EnableDestinationWhitelist`: QueryDestinationWhitelistEnabled200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.EnableDestinationWhitelist`: %v\n", resp)
 }
 
 ```
@@ -122,15 +130,12 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
-  CreatePaymentOrderRequest:
-    CoboWaas2.CreatePaymentOrderRequest.constructFromObject({
-      merchant_id: "1001",
-      psp_order_code: "P20240201001",
-      fee_amount: "2.00",
-      currency: "USD",
+  EnableDestinationWhitelistRequest:
+    CoboWaas2.EnableDestinationWhitelistRequest.constructFromObject({
+      enable_destination_whitelist: false,
     }),
 };
-apiInstance.createPaymentOrder(opts).then(
+apiInstance.enableDestinationWhitelist(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

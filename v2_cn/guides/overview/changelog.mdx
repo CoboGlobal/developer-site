@@ -9,6 +9,23 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.28.0
+
+本版本于 2025 年 12 月 17 日发布。
+
+### 兼容性变更
+
+- 在 `TransactionRawTxInfo` 模型中，为 `used_nonce` 字段新增了 `int64` 格式。
+
+### 新功能
+
+- 新增用于支持 Babylon BTC 质押扩展至下一阶段的操作：
+  - [扩展 Babylon BTC 质押](/v2/api-references/stakings/expand-babylon-btc-staking)
+
+### 改进
+
+- 在 [调用智能合约](/v2/api-references/transactions/call-smart-contract) 操作中新增对 Cosmos 链智能合约的支持。
+
 ## v1.27.0
 
 本版本于 2025 年 11 月 26 日发布。
@@ -31,7 +48,7 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 改进
 
-- 在 `TokenizationTokenInfo` 模式中新增 `archived` 和 `token_standard` 属性。
+- 在 `TokenizationTokenInfo` 模型中新增 `archived` 和 `token_standard` 属性。
 
 - 在 [列出代币化支持的链](/v2/api-references/tokenization/list-supported-chains-for-tokenization) 操作中新增 `token_standard` 查询参数，用于根据代币标准进行筛选。
 
@@ -80,13 +97,13 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 改进
 
-- 从 [Sign Message](/v2/api-references/transactions/sign-message) 操作中移除了 `BTC_EIP_191_Signature` 和 `Raw_Message_Signature` 模式。
+- 从 [Sign Message](/v2/api-references/transactions/sign-message) 操作中移除了 `BTC_EIP_191_Signature` 和 `Raw_Message_Signature` 模型。
 
-- 在 [Call smart contract](/v2/api-references/transactions/call-smart-contract) 操作中新增 `STELLAR_Contract`模式，用于管理 Stellar 网络上的 trustline。
+- 在 [Call smart contract](/v2/api-references/transactions/call-smart-contract) 操作中新增 `STELLAR_Contract`模型，用于管理 Stellar 网络上的 trustline。
 
-- 新增 `SolContractCallAddressLookupTableAccount` 模式，以支持使用 Solana Address Lookup Tables。
+- 新增 `SolContractCallAddressLookupTableAccount` 模型，以支持使用 Solana Address Lookup Tables。
 
-- 在 `FuelingInfo` 模式中添加了 `main_transaction_id` 属性，用于指示主交易。
+- 在 `FuelingInfo` 模型中添加了 `main_transaction_id` 属性，用于指示主交易。
 
 ## v.1.23.0
 
@@ -115,7 +132,7 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 改进
 
-- 添加了 `chain_identifier` 属性到 `chain` 模式，用于按执行逻辑对链进行分组。例如，`ETH` 用于所有 EVM 兼容的链（以太坊、BNB Smart Chain、Polygon）。
+- 添加了 `chain_identifier` 属性到 `chain` 模型，用于按执行逻辑对链进行分组。例如，`ETH` 用于所有 EVM 兼容的链（以太坊、BNB Smart Chain、Polygon）。
 - 添加了 `biz_org_id` 属性到 [获取团队信息](/v2/api-references/organizations/get-organization-information) 操作的响应模式，用于提供给 Cobo 客户支持帮助快速定位团队。
 - 新增 [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type#webhook) 以支持合规处置状态更新通知：`compliance.disposition.status.updated`。
 
@@ -174,7 +191,7 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 改进
 
-- 在 `TransactionCoboCategory` 模式中新增了合规相关的枚举值：
+- 在 `TransactionCoboCategory` 模型中新增了合规相关的枚举值：
   - `ScreenAppRefund`
   - `ScreenAppIsolate`
   - `ComplianceRefund`
@@ -187,7 +204,7 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 ### 改进
 
 - 为 [Fee Station](https://manuals.cobo.com/en/portal/fee-station/introduction) 交易的 `AutoFuelType` 枚举新增了 `UsePortalPreference` 选项。此选项允许您使用在 Cobo Portal 上设置的支付偏好，而无需在每个 API 调用中指定某种交易费用支付模式。
-- 在 `EstimateContractCallFeeParams` 模式中，将 `destination` 参数设为可选。
+- 在 `EstimateContractCallFeeParams` 模型中，将 `destination` 参数设为可选。
 - 为 [Call smart contract](/v2/api-references/transactions/call-smart-contract#body-destination-calldata) 操作（EVM 合约调用）新增了 `calldata` 字段的最大长度限制，为 65,000 字符。
 
 ## v1.19.1
@@ -398,11 +415,11 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
   - [获取 Babylon 第二阶段注册详情](/v2/api-references/stakings/get-babylon-phase-2-registration-details)
 
 ### 改进
-- 在 `TransactionRawTxInfo` 模式中添加了 `utxo_change` 属性，包含 UTXO 变更信息。
-- 在 `StakingPoolType` 模式中添加了 3 个枚举值 `BitHive`、`BERABeacon` 和 `BeraChainBGT`。
-- 在 `StakingPoolId` 模式中添加了 6 个枚举值 `bithive_signet`、`bithive`、`beacon_bera`、`beacon_bera_testnet`、`berachain_bgt` 和 `berachain_bgt_testnet`。
-- 在 `AddressesEventData` 模式中添加了 `wallet_id` 属性。
-- 在 `MpcContractCallSource`、`MpcMessageSignSource` 和 `MpcTransferSource` 模式中添加了 `mpc_used_key_share_holder_group` 属性，以表明此交易使用的私钥分片持有者组。
+- 在 `TransactionRawTxInfo` 模型中添加了 `utxo_change` 属性，包含 UTXO 变更信息。
+- 在 `StakingPoolType` 模型中添加了 3 个枚举值 `BitHive`、`BERABeacon` 和 `BeraChainBGT`。
+- 在 `StakingPoolId` 模型中添加了 6 个枚举值 `bithive_signet`、`bithive`、`beacon_bera`、`beacon_bera_testnet`、`berachain_bgt` 和 `berachain_bgt_testnet`。
+- 在 `AddressesEventData` 模型中添加了 `wallet_id` 属性。
+- 在 `MpcContractCallSource`、`MpcMessageSignSource` 和 `MpcTransferSource` 模型中添加了 `mpc_used_key_share_holder_group` 属性，以表明此交易使用的私钥分片持有者组。
 
 ## v1.9.0
 
@@ -413,14 +430,14 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 - 增强了 MPC 钱包私钥分片持有者管理，新增操作：
   - [获取私钥分片持有者信息](/v2/api-references/wallets--mpc-wallets/get-key-share-holder-information)：检索特定私钥分片持有者的详细信息。
   - [列出所有私钥分片持有者](/v2/api-references/wallets--mpc-wallets/list-all-key-share-holders)：获取所有私钥分片持有者的综合列表。
-- 添加了[签署并广播交易](/v2/api-references/wallets--mpc-wallets/sign-and-broadcast-transaction)操作，以及 `Transaction` 模式中的 `raw_tx_info` 对象中的 `Built` 交易子状态和 `unsigned_raw_tx` 属性，以手动签署和广播未自动执行的构建交易。
+- 添加了[签署并广播交易](/v2/api-references/wallets--mpc-wallets/sign-and-broadcast-transaction)操作，以及 `Transaction` 模型中的 `raw_tx_info` 对象中的 `Built` 交易子状态和 `unsigned_raw_tx` 属性，以手动签署和广播未自动执行的构建交易。
 
 ### 改进
 - 增强了[列出 UTXO](/v2/api-references/wallets/list-utxos) 操作，新增 `tx_hash` 查询参数，支持通过交易哈希查找 UTXO。
 - 增强了[签署消息](/v2/api-references/transactions/sign-message)操作，以支持原始消息和BTC EIP-191签名。
 - 增强了[在钱包中创建地址](/v2/api-references/wallets/create-addresses-in-wallet)操作，以支持生成调整后的地址。
-- 增强了[代币转账](/v2/api-references/transactions/transfer-token)操作，在 `AddressTransferDestination` 模式中添加了新的 `change_output_type` 属性。
-- 在 `TransactionDepositToAddressDestination` 模式中添加了 `tx_info` 属性，包括 `vout_n` 索引信息。
+- 增强了[代币转账](/v2/api-references/transactions/transfer-token)操作，在 `AddressTransferDestination` 模型中添加了新的 `change_output_type` 属性。
+- 在 `TransactionDepositToAddressDestination` 模型中添加了 `tx_info` 属性，包括 `vout_n` 索引信息。
 
 ## v1.8.0
 
@@ -438,18 +455,18 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 ### 改进
 - 新增 [webhook 事件类型](/v2/guides/webhooks-callbacks/webhook-event-type#webhook-event-types) `wallets.addresses.created`、`wallets.created` 和 `mpc_vaults.created`，以及新的事件数据类型 `Addresses`、`WalletInfo` 和 `MPCVault`，以优化 webhook 事件的处理。
 - 对质押操作进行了多项改进：
-  - 新增 `BabylonStakingActivityDetailExtra`、`EthStakingActivityDetailExtra` 和 `CoreStakingActivityDetailExtra` 模式，用于表示各质押协议的额外详细信息。
+  - 新增 `BabylonStakingActivityDetailExtra`、`EthStakingActivityDetailExtra` 和 `CoreStakingActivityDetailExtra` 模型，用于表示各质押协议的额外详细信息。
   - 在 [列出质押活动](/v2/api-references/stakings/list-staking-activities) 操作中新增 `request_id` 查询参数，用于根据特定请求 ID 筛选活动。
-  - 在 `CreateStakeActivity` 模式中将 `extra` 属性设为可选。
-- 在 `AddressInfo` 模式中新增 `root_pubkey` 属性，用于表示地址的根扩展公钥。
-- 新增 `TransactionSelectedUtxo` 模式，用于表示交易中已选择的 UTXO 信息。
+  - 在 `CreateStakeActivity` 模型中将 `extra` 属性设为可选。
+- 在 `AddressInfo` 模型中新增 `root_pubkey` 属性，用于表示地址的根扩展公钥。
+- 新增 `TransactionSelectedUtxo` 模型，用于表示交易中已选择的 UTXO 信息。
 
 ## v1.7.0
 
 此版本于 2024 年 12 月 19 日发布。
 
 ### 重大变更
-- 在 `MPCProject` 模式中将 `create_timestamp` 重命名为 `created_timestamp`，以提高命名一致性。
+- 在 `MPCProject` 模型中将 `create_timestamp` 重命名为 `created_timestamp`，以提高命名一致性。
 
 ### 新功能
 
@@ -464,10 +481,10 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 改进
 
-- 在 `BabylonValidator` 模式中将多个字段设为可选。
-- 通过在 `EthStakingExtra` 模式中添加 `beacon_validators` 属性来扩展 ETH 质押功能，以表示验证者信息列表。
-- 通过将 `StakingPoolId` 模式改为枚举类型来改进。
-- 扩展了 `ActivityAction` 模式，添加了更多枚举以涵盖质押活动中可能发生的更多操作。
+- 在 `BabylonValidator` 模型中将多个字段设为可选。
+- 通过在 `EthStakingExtra` 模型中添加 `beacon_validators` 属性来扩展 ETH 质押功能，以表示验证者信息列表。
+- 通过将 `StakingPoolId` 模型改为枚举类型来改进。
+- 扩展了 `ActivityAction` 模型，添加了更多枚举以涵盖质押活动中可能发生的更多操作。
 - 弃用了"估算质押费用"操作的原始版本。
 
 ## v1.6.0
@@ -477,7 +494,7 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 ### 重大变更
 
 - 移除了"获取地址信息"操作。
-- 在 `AddressTransferDestination` 模式中将 `amount` 设为必需属性。
+- 在 `AddressTransferDestination` 模型中将 `amount` 设为必需属性。
 
 ### 新功能
 
@@ -488,9 +505,9 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 改进
 
-- 通过在 `TransactionStatus` 和 `TransactionSubStatus` 模式中添加和移除某些状态和子状态来改进交易跟踪。
-- 在 `TSSRequestStatus` 模式中添加了 `MPCProcessing` 状态，以表示 TSS 请求批准正在等待启动。
-- 移除了 `MpcContractCallSource` 模式中的 `nonce` 属性。
+- 通过在 `TransactionStatus` 和 `TransactionSubStatus` 模型中添加和移除某些状态和子状态来改进交易跟踪。
+- 在 `TSSRequestStatus` 模型中添加了 `MPCProcessing` 状态，以表示 TSS 请求批准正在等待启动。
+- 移除了 `MpcContractCallSource` 模型中的 `nonce` 属性。
 
 ## v1.5.0
 
@@ -515,11 +532,11 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 ### 改进
 
 * 在 [获取代币信息](/v2/api-references/wallets/get-token-information) 操作的响应中添加了 `asset_model_type` 属性，用于指示代币是否使用帐户模型或 UTXO 模型。
-* 在 `TransactionEvmContractDestination` 模式中添加了 `calldata_info` 属性，用于提供智能合约 calldata 的更详细表示。
-* 添加了 `TransactionRawMessageSignDestination` 模式，并在 `destination_type` 枚举中添加了 `Raw_Message_Signature` 值，用于表示原始消息签名的交易目的地。
+* 在 `TransactionEvmContractDestination` 模型中添加了 `calldata_info` 属性，用于提供智能合约 calldata 的更详细表示。
+* 添加了 `TransactionRawMessageSignDestination` 模型，并在 `destination_type` 枚举中添加了 `Raw_Message_Signature` 值，用于表示原始消息签名的交易目的地。
 * 在 [列出所有交易](/v2/api-references/transactions/list-all-transactions) 操作中添加了 `Stake` 和 `Unstake` 作为 `types` 查询参数的新可能值。
 * 在 `exchange_id` 枚举中添加了 `bitmart` 和 `bitfinex` 作为新可能值。
-* 在 `TransactionSmartContractSafeWalletSource` 模式中，`delegate` 属性不再是必需属性。
+* 在 `TransactionSmartContractSafeWalletSource` 模型中，`delegate` 属性不再是必需属性。
 
 ## v1.4.0
 
@@ -527,9 +544,9 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 改进
 
-- 通过在 `TransactionStatus` 和 `TransactionSubStatus` 模式中添加和移除某些状态和子状态来改进交易跟踪。
-- 在 `TSSRequestStatus` 模式中添加了 `MPCProcessing` 状态，以表示 TSS 请求批准正在等待启动。
-- 移除了 `MpcContractCallSource` 模式中的 `nonce` 属性。
+- 通过在 `TransactionStatus` 和 `TransactionSubStatus` 模型中添加和移除某些状态和子状态来改进交易跟踪。
+- 在 `TSSRequestStatus` 模型中添加了 `MPCProcessing` 状态，以表示 TSS 请求批准正在等待启动。
+- 移除了 `MpcContractCallSource` 模型中的 `nonce` 属性。
 
 ## v1.3.0
 
@@ -553,8 +570,8 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 ### 改进
 
 - 将 [检查 Cobo Loop 转账](/v2/api-references/transactions/check-cobo-loop-transfers) 操作的路径从 `/wallets/check_loop_transfers` 更改为 `/transactions/check_loop_transfers`。
-- 在 `TokenInfo` 模式中添加了 `dust_threshold` 和 `custodial_minimum_deposit_threshold` 属性，用于指示托管钱包的最小提币和充币金额。
-- 在 `ChainInfo` 模式中添加了 `confirming_threshold` 属性，用于指示每个链上交易所需的确认数量。
+- 在 `TokenInfo` 模型中添加了 `dust_threshold` 和 `custodial_minimum_deposit_threshold` 属性，用于指示托管钱包的最小提币和充币金额。
+- 在 `ChainInfo` 模型中添加了 `confirming_threshold` 属性，用于指示每个链上交易所需的确认数量。
 
 ### Bug 修复
 
@@ -578,7 +595,7 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 
 ### 改进
 
-- 将 `sub_wallet_id` 属性重命名为 `trading_account_type`。受影响的模式包括：
+- 将 `sub_wallet_id` 属性重命名为 `trading_account_type`。受影响的模型包括：
   - `ExchangeTransferSource`
   - `ExchangeTransferDestination`
   - `TransactionTransferToWalletDestination`
@@ -586,10 +603,10 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
   - `TransactionDepositFromWalletSource`
   - `TransactionDepositToWalletDestination`
 - 在 `TransactionSubStatus` 枚举中添加了 `PendingApprovalStart` 值，用于指示需要用户特定操作才能继续交易的状态。
-- 在 `MPCWalletInfo` 模式中添加了 `project_name` 和 `vault_name` 属性，用于指示项目名称和 Vault 名称。
-- 在 `TSSRequest` 模式中添加了 `description` 和 `created_timestamp` 属性，用于指示 TSS 请求的描述和创建时间。
-- 在 `KeyShareHolder` 模式中添加了 `account_id` 属性，用于指示钥匙份额持有者的 Cobo Portal 帐户 ID。
-- 在 `TransactionMPCWalletSource` 模式中添加了 `signer_key_share_holder_group_id` 属性，用于指示交易签名者的钥匙份额持有者组 ID。
+- 在 `MPCWalletInfo` 模型中添加了 `project_name` 和 `vault_name` 属性，用于指示项目名称和 Vault 名称。
+- 在 `TSSRequest` 模型中添加了 `description` 和 `created_timestamp` 属性，用于指示 TSS 请求的描述和创建时间。
+- 在 `KeyShareHolder` 模型中添加了 `account_id` 属性，用于指示钥匙份额持有者的 Cobo Portal 帐户 ID。
+- 在 `TransactionMPCWalletSource` 模型中添加了 `signer_key_share_holder_group_id` 属性，用于指示交易签名者的钥匙份额持有者组 ID。
 - 在 [创建 TSS 请求](/v2/api-references/wallets--mpc-wallets/create-tss-request) 操作的请求包体中添加了 `description` 属性，用于指示 TSS 请求的描述。
 
 ## v1.1.0
@@ -606,17 +623,17 @@ description: "详细列出 WaaS 2.0 API 的所有新增和变更。"
 ### 改进
 
 - 在 [列出 webhook 事件日志](/v2/api-references/developers--webhooks/list-webhook-event-logs) 的响应中，`data.response_body` 的数据类型从对象更新为字符串。
-- 在以下模式中添加了 `signer` 属性，用于指示钥匙份额持有者的 TSS Node 是否是指定的交易签名者：
+- 在以下模型中添加了 `signer` 属性，用于指示钥匙份额持有者的 TSS Node 是否是指定的交易签名者：
   - `CreateKeyShareHolder`
   - `KeyShareHolder`
-- 将 `node_count` 属性重命名为 `participants`，用于以下模式：
+- 将 `node_count` 属性重命名为 `participants`，用于以下模型：
   - [创建项目](/v2/api-references/wallets--mpc-wallets/create-project) 的请求包体
   - [创建钥匙份额持有者组](/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group) 的请求包体
-  - `KeyShareHolderGroup` 模式
-  - `MPCProject` 模式
-- 将 `pubkey` 属性重命名为 `root_pubkey`，用于 `RootPubkey` 模式。
-- 在 `TSSGroups` 模式中添加了 `root_pubkey` 属性，用于指示 Vault 的根扩展公钥。
-- 将多个与时间戳相关的属性重命名为使用“_timestamp”后缀。受影响的模式包括：
+  - `KeyShareHolderGroup` 模型
+  - `MPCProject` 模型
+- 将 `pubkey` 属性重命名为 `root_pubkey`，用于 `RootPubkey` 模型。
+- 在 `TSSGroups` 模型中添加了 `root_pubkey` 属性，用于指示 Vault 的根扩展公钥。
+- 将多个与时间戳相关的属性重命名为使用“_timestamp”后缀。受影响的模型包括：
   - `Transaction`
   - `TransactionBlockInfo`
   - `TransactionTimeline`

@@ -1,12 +1,14 @@
 ---
-openapi: post /payments/orders
+openapi: put /payments/destination/bank_account/{bank_account_id}/update
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_payment_order_request import CreatePaymentOrderRequest
-from cobo_waas2.models.order import Order
+from cobo_waas2.models.destination_bank_account import DestinationBankAccount
+from cobo_waas2.models.update_destination_bank_account import (
+    UpdateDestinationBankAccount,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,19 +23,31 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    create_payment_order_request = cobo_waas2.CreatePaymentOrderRequest(
-        merchant_id="1001", psp_order_code="P20240201001", fee_amount="2.00"
+    bank_account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+    update_destination_bank_account = cobo_waas2.UpdateDestinationBankAccount(
+        account_alias="Main Payout Account",
+        account_number="4111111111111111",
+        swift_code="BOFAUS33",
+        currency="USD",
+        beneficiary_name="John Doe",
+        beneficiary_address="123 Main St, Anytown, USA",
+        bank_name="ABC Bank",
+        bank_address="456 Bank Ave, Cityville, USA",
     )
 
     try:
-        # Create pay-in order
-        api_response = api_instance.create_payment_order(
-            create_payment_order_request=create_payment_order_request
+        # Update destination bank account
+        api_response = api_instance.update_destination_bank_account_by_id(
+            bank_account_id,
+            update_destination_bank_account=update_destination_bank_account,
         )
-        print("The response of PaymentApi->create_payment_order:\n")
+        print("The response of PaymentApi->update_destination_bank_account_by_id:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_payment_order: %s\n" % e)
+        print(
+            "Exception when calling PaymentApi->update_destination_bank_account_by_id: %s\n"
+            % e
+        )
 
 ```
 ```java Java
@@ -55,16 +69,23 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    CreatePaymentOrderRequest createPaymentOrderRequest =
-        new CreatePaymentOrderRequest()
-            .merchantId("1001")
-            .pspOrderCode("P20240201001")
-            .feeAmount("2.00");
+    UUID bankAccountId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+    UpdateDestinationBankAccount updateDestinationBankAccount =
+        new UpdateDestinationBankAccount()
+            .accountAlias("Main Payout Account")
+            .accountNumber("4111111111111111")
+            .swiftCode("BOFAUS33")
+            .currency("USD")
+            .beneficiaryName("John Doe")
+            .beneficiaryAddress("123 Main St, Anytown, USA")
+            .bankName("ABC Bank")
+            .bankAddress("456 Bank Ave, Cityville, USA");
     try {
-      Order result = apiInstance.createPaymentOrder(createPaymentOrderRequest);
+      DestinationBankAccount result =
+          apiInstance.updateDestinationBankAccountById(bankAccountId, updateDestinationBankAccount);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createPaymentOrder");
+      System.err.println("Exception when calling PaymentApi#updateDestinationBankAccountById");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,7 +107,8 @@ import (
 )
 
 func main() {
-	createPaymentOrderRequest := *coboWaas2.NewCreatePaymentOrderRequest("1001", "P20240201001", "2.00")
+	bankAccountId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+	updateDestinationBankAccount := *coboWaas2.NewUpdateDestinationBankAccount("Main Payout Account", "4111111111111111", "BOFAUS33", "USD", "John Doe", "123 Main St, Anytown, USA", "ABC Bank", "456 Bank Ave, Cityville, USA")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -99,15 +121,23 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreatePaymentOrder(ctx).
-		CreatePaymentOrderRequest(createPaymentOrderRequest).
+	resp, r, err := apiClient.PaymentAPI.UpdateDestinationBankAccountById(ctx, bankAccountId).
+		UpdateDestinationBankAccount(updateDestinationBankAccount).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.CreatePaymentOrder``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `PaymentAPI.UpdateDestinationBankAccountById``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreatePaymentOrder`: Order
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreatePaymentOrder`: %v\n", resp)
+	// response from `UpdateDestinationBankAccountById`: DestinationBankAccount
+	fmt.Fprintf(
+		os.Stdout,
+		"Response from `PaymentAPI.UpdateDestinationBankAccountById`: %v\n",
+		resp,
+	)
 }
 
 ```
@@ -121,16 +151,21 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
+const bank_account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
 const opts = {
-  CreatePaymentOrderRequest:
-    CoboWaas2.CreatePaymentOrderRequest.constructFromObject({
-      merchant_id: "1001",
-      psp_order_code: "P20240201001",
-      fee_amount: "2.00",
+  UpdateDestinationBankAccount:
+    CoboWaas2.UpdateDestinationBankAccount.constructFromObject({
+      account_alias: "Main Payout Account",
+      account_number: "4111111111111111",
+      swift_code: "BOFAUS33",
       currency: "USD",
+      beneficiary_name: "John Doe",
+      beneficiary_address: "123 Main St, Anytown, USA",
+      bank_name: "ABC Bank",
+      bank_address: "456 Bank Ave, Cityville, USA",
     }),
 };
-apiInstance.createPaymentOrder(opts).then(
+apiInstance.updateDestinationBankAccountById(bank_account_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

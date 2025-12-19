@@ -1,12 +1,13 @@
 ---
-openapi: post /payments/orders
+openapi: put /payments/destination/bank_account/{bank_account_id}/delete
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_payment_order_request import CreatePaymentOrderRequest
-from cobo_waas2.models.order import Order
+from cobo_waas2.models.delete_destination_bank_account200_response import (
+    DeleteDestinationBankAccount200Response,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,19 +22,18 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    create_payment_order_request = cobo_waas2.CreatePaymentOrderRequest(
-        merchant_id="1001", psp_order_code="P20240201001", fee_amount="2.00"
-    )
+    bank_account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
     try:
-        # Create pay-in order
-        api_response = api_instance.create_payment_order(
-            create_payment_order_request=create_payment_order_request
-        )
-        print("The response of PaymentApi->create_payment_order:\n")
+        # Delete destination bank account
+        api_response = api_instance.delete_destination_bank_account(bank_account_id)
+        print("The response of PaymentApi->delete_destination_bank_account:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_payment_order: %s\n" % e)
+        print(
+            "Exception when calling PaymentApi->delete_destination_bank_account: %s\n"
+            % e
+        )
 
 ```
 ```java Java
@@ -55,16 +55,13 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    CreatePaymentOrderRequest createPaymentOrderRequest =
-        new CreatePaymentOrderRequest()
-            .merchantId("1001")
-            .pspOrderCode("P20240201001")
-            .feeAmount("2.00");
+    UUID bankAccountId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
     try {
-      Order result = apiInstance.createPaymentOrder(createPaymentOrderRequest);
+      DeleteDestinationBankAccount200Response result =
+          apiInstance.deleteDestinationBankAccount(bankAccountId);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createPaymentOrder");
+      System.err.println("Exception when calling PaymentApi#deleteDestinationBankAccount");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,7 +83,7 @@ import (
 )
 
 func main() {
-	createPaymentOrderRequest := *coboWaas2.NewCreatePaymentOrderRequest("1001", "P20240201001", "2.00")
+	bankAccountId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -99,15 +96,17 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreatePaymentOrder(ctx).
-		CreatePaymentOrderRequest(createPaymentOrderRequest).
-		Execute()
+	resp, r, err := apiClient.PaymentAPI.DeleteDestinationBankAccount(ctx, bankAccountId).Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.CreatePaymentOrder``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `PaymentAPI.DeleteDestinationBankAccount``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreatePaymentOrder`: Order
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreatePaymentOrder`: %v\n", resp)
+	// response from `DeleteDestinationBankAccount`: DeleteDestinationBankAccount200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.DeleteDestinationBankAccount`: %v\n", resp)
 }
 
 ```
@@ -121,16 +120,8 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
-const opts = {
-  CreatePaymentOrderRequest:
-    CoboWaas2.CreatePaymentOrderRequest.constructFromObject({
-      merchant_id: "1001",
-      psp_order_code: "P20240201001",
-      fee_amount: "2.00",
-      currency: "USD",
-    }),
-};
-apiInstance.createPaymentOrder(opts).then(
+const bank_account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
+apiInstance.deleteDestinationBankAccount(bank_account_id).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

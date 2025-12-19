@@ -506,7 +506,8 @@
                       "v2/api-references/stakings/list-staking-positions-eligible-for-babylon-phase-2",
                       "v2/api-references/stakings/register-for-babylon-phase-2",
                       "v2/api-references/stakings/list-babylon-phase-2-registrations",
-                      "v2/api-references/stakings/get-babylon-phase-2-registration-details"
+                      "v2/api-references/stakings/get-babylon-phase-2-registration-details",
+                      "v2/api-references/stakings/expand-babylon-btc-staking"
                     ]
                   }
                 ]

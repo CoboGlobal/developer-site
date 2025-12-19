@@ -1,12 +1,14 @@
 ---
-openapi: post /payments/orders
+openapi: get /payments/destination/bank_account
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_payment_order_request import CreatePaymentOrderRequest
-from cobo_waas2.models.order import Order
+from cobo_waas2.models.bank_account_status import BankAccountStatus
+from cobo_waas2.models.list_destination_bank_accounts200_response import (
+    ListDestinationBankAccounts200Response,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,19 +23,30 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    create_payment_order_request = cobo_waas2.CreatePaymentOrderRequest(
-        merchant_id="1001", psp_order_code="P20240201001", fee_amount="2.00"
-    )
+    limit = 10
+    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    keyword = "keyword"
+    destination_id = "46beeab4-6a8e-476e-bc69-99b89aacbc6f"
+    bank_account_status = cobo_waas2.BankAccountStatus()
 
     try:
-        # Create pay-in order
-        api_response = api_instance.create_payment_order(
-            create_payment_order_request=create_payment_order_request
+        # List destination bank accounts
+        api_response = api_instance.list_destination_bank_accounts(
+            limit=limit,
+            before=before,
+            after=after,
+            keyword=keyword,
+            destination_id=destination_id,
+            bank_account_status=bank_account_status,
         )
-        print("The response of PaymentApi->create_payment_order:\n")
+        print("The response of PaymentApi->list_destination_bank_accounts:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_payment_order: %s\n" % e)
+        print(
+            "Exception when calling PaymentApi->list_destination_bank_accounts: %s\n"
+            % e
+        )
 
 ```
 ```java Java
@@ -55,16 +68,19 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    CreatePaymentOrderRequest createPaymentOrderRequest =
-        new CreatePaymentOrderRequest()
-            .merchantId("1001")
-            .pspOrderCode("P20240201001")
-            .feeAmount("2.00");
+    Integer limit = 10;
+    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
+    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    String keyword = "keyword";
+    String destinationId = "46beeab4-6a8e-476e-bc69-99b89aacbc6f";
+    BankAccountStatus bankAccountStatus = BankAccountStatus.fromValue("Pending");
     try {
-      Order result = apiInstance.createPaymentOrder(createPaymentOrderRequest);
+      ListDestinationBankAccounts200Response result =
+          apiInstance.listDestinationBankAccounts(
+              limit, before, after, keyword, destinationId, bankAccountStatus);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createPaymentOrder");
+      System.err.println("Exception when calling PaymentApi#listDestinationBankAccounts");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,7 +102,12 @@ import (
 )
 
 func main() {
-	createPaymentOrderRequest := *coboWaas2.NewCreatePaymentOrderRequest("1001", "P20240201001", "2.00")
+	limit := int32(10)
+	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	keyword := "keyword"
+	destinationId := "46beeab4-6a8e-476e-bc69-99b89aacbc6f"
+	bankAccountStatus := coboWaas2.BankAccountStatus("Pending")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -99,15 +120,24 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreatePaymentOrder(ctx).
-		CreatePaymentOrderRequest(createPaymentOrderRequest).
+	resp, r, err := apiClient.PaymentAPI.ListDestinationBankAccounts(ctx).
+		Limit(limit).
+		Before(before).
+		After(after).
+		Keyword(keyword).
+		DestinationId(destinationId).
+		BankAccountStatus(bankAccountStatus).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.CreatePaymentOrder``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `PaymentAPI.ListDestinationBankAccounts``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreatePaymentOrder`: Order
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreatePaymentOrder`: %v\n", resp)
+	// response from `ListDestinationBankAccounts`: ListDestinationBankAccounts200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListDestinationBankAccounts`: %v\n", resp)
 }
 
 ```
@@ -122,15 +152,14 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
-  CreatePaymentOrderRequest:
-    CoboWaas2.CreatePaymentOrderRequest.constructFromObject({
-      merchant_id: "1001",
-      psp_order_code: "P20240201001",
-      fee_amount: "2.00",
-      currency: "USD",
-    }),
+  limit: 10,
+  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
+  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+  keyword: "keyword",
+  destination_id: "46beeab4-6a8e-476e-bc69-99b89aacbc6f",
+  bank_account_status: new CoboWaas2.BankAccountStatus(),
 };
-apiInstance.createPaymentOrder(opts).then(
+apiInstance.listDestinationBankAccounts(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },
