@@ -515,6 +515,7 @@ paths:
       summary: Unlock UTXOs
       description: |
         This operation unlocks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.   
+        This operation unlocks the UTXOs with specified transaction hashes. Locked UTXOs cannot be transferred until unlocked.   
         <Note>This operation is applicable to MPC Wallets and Custodial Wallets (Web3 Wallets) only.</Note>
       security:
         - CoboAuth: []
@@ -14815,7 +14816,9 @@ components:
         exchange_rate:
           type: string
           description: |
-            The exchange rate between `payable_currency` and `pricing_currency`, calculated as (`pricing_amount` + `fee_amount`) / `payable_amount`.
+            The exchange rate between `payable_currency` and `pricing_currency`, calculated as (`pricing_amount` + `fee_amount`) / `payable_amount`. 
+
+            <Note>This field is only returned when `payable_amount` was not provided in the order creation request. </Note>
           example: '0.99'
         amount_tolerance:
           type: string
@@ -15844,7 +15847,7 @@ components:
         pricing_currency:
           type: string
           description: |
-            The pricing currency that denominates `pricing_amount` and `fee_amount`. Currently, only `USD`/`USDT`/`USDC` are supported. If left empty, both values will be denominated in `payable_currencies`.
+            The pricing currency that denominates `pricing_amount` and `fee_amount`. Currently, only `USD`/`USDT`/`USDC` are supported. This field is required.
           example: USD
         pricing_amount:
           type: string
@@ -15871,7 +15874,7 @@ components:
         payable_amounts:
           type: array
           description: |
-            The total amounts the payer needs to pay for each currency in `payable_currencies`. If this field is left blank, the system will automatically calculate the amounts at order creation using the following formula: (`pricing_amount` + `fee_amount`) × current exchange rate.
+            The total amounts the payer needs to pay for each currency in `payable_currencies`. If this field is left blank, the system will automatically calculate the amounts at order creation using the following formula: (`pricing_amount` + `fee_amount`) / current exchange rate.
 
             Values must be greater than 0 and contain two decimal places.
           items:
@@ -22192,7 +22195,7 @@ components:
               payable_amount:
                 type: string
                 description: |
-                  The total amount the payer needs to pay, denominated in the specified `payable_currency`. If this field is left blank, the system will automatically calculate the amount at order creation using the following formula: (`pricing_amount` + `fee_amount`) × current exchange rate.
+                  The total amount the payer needs to pay, denominated in the specified `payable_currency`. If this field is left blank, the system will automatically calculate the amount at order creation using the following formula: (`pricing_amount` + `fee_amount`) / current exchange rate.
 
                   Values must be greater than 0 and contain two decimal places.
                 example: '103.03'

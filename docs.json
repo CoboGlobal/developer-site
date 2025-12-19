@@ -1583,6 +1583,14 @@
     {
       "source": "/v2_cn/payments/:slug*",
       "destination": "https://www.cobo.com/payments/cn/guides/:slug*"
+    },
+    {
+      "source": "/v2/payments-redirect/redirect",
+      "destination": "https://www.cobo.com/payments/en/guides/overview"
+    },
+    {
+      "source": "/v2_cn/payments-redirect/redirect",
+      "destination": "https://www.cobo.com/payments/cn/guides/overview"
     }
   ]
 }
