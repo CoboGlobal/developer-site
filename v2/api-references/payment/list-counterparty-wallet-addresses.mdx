@@ -1,12 +1,13 @@
 ---
-openapi: post /payments/orders
+openapi: get /payments/counterparty/wallet_address
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.create_payment_order_request import CreatePaymentOrderRequest
-from cobo_waas2.models.order import Order
+from cobo_waas2.models.list_counterparty_wallet_address200_response import (
+    ListCounterpartyWalletAddress200Response,
+)
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,19 +22,30 @@ configuration = cobo_waas2.Configuration(
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
-    create_payment_order_request = cobo_waas2.CreatePaymentOrderRequest(
-        merchant_id="1001", psp_order_code="P20240201001", fee_amount="2.00"
-    )
+    limit = 10
+    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    counterparty_id = "5b0ed293-f728-40b4-b1f6-86b88cd51384"
+    chain_ids = "ETH"
+    wallet_address = "0x1234567890abcdef..."
 
     try:
-        # Create pay-in order
-        api_response = api_instance.create_payment_order(
-            create_payment_order_request=create_payment_order_request
+        # List counterparty wallet addresses
+        api_response = api_instance.list_counterparty_wallet_address(
+            limit=limit,
+            before=before,
+            after=after,
+            counterparty_id=counterparty_id,
+            chain_ids=chain_ids,
+            wallet_address=wallet_address,
         )
-        print("The response of PaymentApi->create_payment_order:\n")
+        print("The response of PaymentApi->list_counterparty_wallet_address:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->create_payment_order: %s\n" % e)
+        print(
+            "Exception when calling PaymentApi->list_counterparty_wallet_address: %s\n"
+            % e
+        )
 
 ```
 ```java Java
@@ -55,16 +67,19 @@ public class Example {
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
-    CreatePaymentOrderRequest createPaymentOrderRequest =
-        new CreatePaymentOrderRequest()
-            .merchantId("1001")
-            .pspOrderCode("P20240201001")
-            .feeAmount("2.00");
+    Integer limit = 10;
+    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
+    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    String counterpartyId = "5b0ed293-f728-40b4-b1f6-86b88cd51384";
+    String chainIds = "ETH";
+    String walletAddress = "0x1234567890abcdef...";
     try {
-      Order result = apiInstance.createPaymentOrder(createPaymentOrderRequest);
+      ListCounterpartyWalletAddress200Response result =
+          apiInstance.listCounterpartyWalletAddress(
+              limit, before, after, counterpartyId, chainIds, walletAddress);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#createPaymentOrder");
+      System.err.println("Exception when calling PaymentApi#listCounterpartyWalletAddress");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,7 +101,12 @@ import (
 )
 
 func main() {
-	createPaymentOrderRequest := *coboWaas2.NewCreatePaymentOrderRequest("1001", "P20240201001", "2.00")
+	limit := int32(10)
+	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	counterpartyId := "5b0ed293-f728-40b4-b1f6-86b88cd51384"
+	chainIds := "ETH"
+	walletAddress := "0x1234567890abcdef..."
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -99,15 +119,24 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.CreatePaymentOrder(ctx).
-		CreatePaymentOrderRequest(createPaymentOrderRequest).
+	resp, r, err := apiClient.PaymentAPI.ListCounterpartyWalletAddress(ctx).
+		Limit(limit).
+		Before(before).
+		After(after).
+		CounterpartyId(counterpartyId).
+		ChainIds(chainIds).
+		WalletAddress(walletAddress).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.CreatePaymentOrder``: %v\n", err)
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `PaymentAPI.ListCounterpartyWalletAddress``: %v\n",
+			err,
+		)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreatePaymentOrder`: Order
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.CreatePaymentOrder`: %v\n", resp)
+	// response from `ListCounterpartyWalletAddress`: ListCounterpartyWalletAddress200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListCounterpartyWalletAddress`: %v\n", resp)
 }
 
 ```
@@ -122,15 +151,14 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
-  CreatePaymentOrderRequest:
-    CoboWaas2.CreatePaymentOrderRequest.constructFromObject({
-      merchant_id: "1001",
-      psp_order_code: "P20240201001",
-      fee_amount: "2.00",
-      currency: "USD",
-    }),
+  limit: 10,
+  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
+  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+  counterparty_id: "5b0ed293-f728-40b4-b1f6-86b88cd51384",
+  chain_ids: "ETH",
+  wallet_address: "0x1234567890abcdef...",
 };
-apiInstance.createPaymentOrder(opts).then(
+apiInstance.listCounterpartyWalletAddress(opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

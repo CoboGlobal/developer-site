@@ -1,0 +1,320 @@
+---
+title: "Swap tokens on Solana using Jupiter"
+sidebarTitle: "Swap tokens on Solana"
+lang: "en"
+description: "A complete example guide for integrating Cobo WaaS SDK with Jupiter to perform token swaps on Solana."
+---
+
+This guide uses a complete Python example to demonstrate how to combine Cobo WaaS SDK with Jupiter on Solana, from getting swap routes to submitting an on-chain token swap transaction, so that you can quickly integrate token swap capabilities.  
+
+<Note>This document is intended for developers who already understand Solana programming and Jupiter routing. Basic blockchain concepts and Jupiter mechanics will not be introduced here.</Note>
+
+## Prerequisites
+
+Before you begin, ensure the following:
+
+- You have followed the steps in [Send your first API request](/v2/guides/get-started/get-started-with-waas) and successfully sent an API request.
+- You understand and can use the [Call smart contract](/v2/api-references/transactions/call-smart-contract) API.
+- You are familiar with Solana smart contract calls and understand the basic concepts and usage of Jupiter.
+- Your Solana address has sufficient balance, including:
+  - Enough balance of the token you plan to swap;
+  - Enough SOL to pay for transaction fees.
+- Since this guide provides a Python-based example, please ensure your local environment has:
+  - Python 3.9 or above
+  - Required packages: `cobo_waas2`, `requests`, and `solders`
+ - This example uses an MPC Wallet (Organization-Controlled Wallet). If you are using a Custodial Wallet (Web3 wallet), make sure to update the `source` parameter in the Call Smart Contract API request to use the Custodial Wallets (Web3 wallets) structure instead.
+
+## Python example
+
+This example walks through:
+
+1. Getting the best swap route from Jupiter
+2. Generating swap instructions with Jupiter
+3. Parsing Address Lookup Tables (ALT)
+4. Call smart contract
+5. Executing a swap from SOL to USDT
+
+The following code highlights the parameters you must customize (such as API key, wallet ID, address, token pair, and amount). All other code can be used without modification.
+
+```python highlight={265, 267, 269, 271, 276}
+import base64
+import cobo_waas2
+import json
+import requests
+import uuid
+
+from solders.pubkey import Pubkey
+
+
+# ========= Jupiter configuration =========
+JUPITER_BASE_URL = "https://lite-api.jup.ag/swap/v1/"
+SOLANA_RPC = "https://api.mainnet-beta.solana.com"
+
+# Fixed mint addresses for Solana mainnet tokens. Native SOL uses a special system-defined mint address.
+SOL_MINT = "So11111111111111111111111111111111111111112"
+JLP_MINT = "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4"
+USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
+
+COIN_MINT_MAP = {
+    'SOL': SOL_MINT,
+    'SOL_JLP': JLP_MINT,
+    'SOL_USDC': USDC_MINT,
+    'SOL_USDT': USDT_MINT,
+}
+COIN_DECIMALS = {
+    SOL_MINT: 9,
+    JLP_MINT: 6,
+    USDC_MINT: 6,
+    USDT_MINT: 6,
+}
+
+
+# ========= Jupiter API section (calling Jupiter quote/swap APIs) =========
+def get_jupiter_quote(input_mint, output_mint, amount, slippage_bps=50):
+    """
+    Request a swap quote from Jupiter.
+    Args:
+        input_mint: Mint address of the input token
+        output_mint: Mint address of the output token
+        amount: Swap amount
+        slippage_bps: Slippage tolerance
+    """
+    params = {
+        "inputMint": input_mint,
+        "outputMint": output_mint,
+        "amount": str(amount),
+        "slippageBps": str(slippage_bps)
+    }
+    r = requests.get(JUPITER_BASE_URL + "quote", params=params, verify=False)
+    r.raise_for_status()
+    return r.json()
+
+
+def get_swap_instructions(quote, address):
+    """
+    Generate swap instructions based on a Jupiter quote.
+    """
+    payload = {
+        "quoteResponse": quote,
+        "userPublicKey": address,
+        "dynamicSlippage": True,
+        "useSharedAccounts": True,
+        "dynamicComputeUnitLimit": True,
+        "wrapAndUnwrapSol": True,
+        "skipUserAccountsRpcCalls": False,
+    }
+    r = requests.post(JUPITER_BASE_URL + "swap-instructions", json=payload, verify=False)
+    r.raise_for_status()
+    return r.json()
+
+
+def fetch_address_lookup_table(alt_address):
+    """
+    Fetch accounts inside the Address Lookup Table (ALT).
+    Args:
+        alt_address: ALT address
+    Returns:
+        list: List of addresses inside the ALT
+    """
+    print(f"  Fetching ALT: {alt_address}")
+
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "getAccountInfo",
+        "params": [
+            alt_address,
+            {"encoding": "base64"}
+        ]
+    }
+
+    try:
+        response = requests.post(SOLANA_RPC, json=payload, verify=False)
+        response.raise_for_status()
+        result = response.json()
+
+        if "result" not in result or not result["result"] or not result["result"]["value"]:
+            print(f"  Warning: Unable to fetch ALT account info: {alt_address}")
+            return []
+
+        # Parsing ALT account information
+        account_data = result["result"]["value"]["data"][0]
+        raw_data = base64.b64decode(account_data)
+
+        # ALT account layout:   
+        # - The first 56 bytes are header metadata
+        # - Every subsequent 32-byte chunk is a public key inside the lookup table
+        addresses = []
+        offset = 56  # Skip the header
+
+        while offset + 32 <= len(raw_data):
+            pubkey_bytes = raw_data[offset:offset + 32]
+            pubkey = Pubkey(pubkey_bytes)
+            addresses.append(str(pubkey))
+            offset += 32
+
+        print(f"  Found {len(addresses)} accounts in ALT")
+        return addresses
+    except Exception as e:
+        print(f"  ALT fetch failed: {e}")
+        return []
+
+
+# ========= Cobo API section =========
+class CoboAPI:
+    def __init__(self, api_private_key, host):
+        self.api_private_key = api_private_key
+        self.host = host
+
+    def get_configuration(self):
+        return cobo_waas2.Configuration(
+            api_private_key=self.api_private_key,
+            host=self.host
+        )
+
+    def swap_coin(self, wallet_id, address, input_coin, output_coin, amount):
+        """
+        Call Cobo WaaS service to execute a Solana contract call for a token swap.
+        Args:
+            wallet_id: Cobo wallet ID
+            address: Solana address
+            input_coin: Input token symbol
+            output_coin: Output token symbol
+            amount: Swap amount
+        Returns:
+            transaction_id: Transaction ID in Cobo Portal
+        """
+        print(f"Executing token swap via Cobo WaaS... address={address}, {input_coin} -> {output_coin}, amount={amount}")
+
+        input_mint = COIN_MINT_MAP[input_coin]
+        output_mint = COIN_MINT_MAP[output_coin]
+        amount = self.to_jupiter_amount(amount, COIN_DECIMALS[input_mint])
+
+        with cobo_waas2.ApiClient(self.get_configuration()) as api_client:
+            # 1. Get a quote from Jupiter
+            quote = get_jupiter_quote(input_mint, output_mint, amount)
+
+            # 2. Get swap instructions from Jupiter
+            instructions_json = get_swap_instructions(quote, address)
+
+            # 3. Build transaction instructions and ALT accounts
+            instructions, alt_accounts = self.build_transaction(instructions_json, address)
+
+            # 4. Call Cobo WaaS service to create a contract call transaction
+            contract_call_params = cobo_waas2.ContractCallParams(
+                request_id=str(uuid.uuid4()),
+                chain_id="SOL",
+                source=cobo_waas2.ContractCallSource(
+                    cobo_waas2.MpcContractCallSource(
+                        source_type=cobo_waas2.ContractCallSourceType.ORG_CONTROLLED,
+                        wallet_id=wallet_id,
+                        address=address,
+                    )
+                ),
+                destination=cobo_waas2.ContractCallDestination(
+                    cobo_waas2.SolContractCallDestination(
+                        destination_type=cobo_waas2.ContractCallDestinationType.SOL_CONTRACT,
+                        instructions=instructions,
+                        address_lookup_table_accounts=alt_accounts
+                    )
+                ),
+            )
+
+            print("=================================")
+            print("contract call params:", contract_call_params.to_json())
+            print("=================================")
+
+            api_instance = cobo_waas2.TransactionsApi(api_client)
+
+            try:
+                api_response = api_instance.create_contract_call_transaction(
+                    contract_call_params=contract_call_params
+                )
+                print("contract call response:", api_response)
+                return api_response.transaction_id
+            except Exception as e:
+                print("Error:", e)
+                return ""
+
+    @staticmethod
+    def build_instruction(ins, address):
+        accounts = []
+        print("build instruction:", ins.get("programId"), "accounts:", len(ins.get("accounts", [])))
+        for acc in ins["accounts"]:
+            accounts.append(
+                cobo_waas2.SolContractCallAccount(
+                    pubkey=acc["pubkey"],
+                    is_signer=acc["isSigner"],
+                    is_writable=acc["isWritable"] or acc["pubkey"] == address,
+                )
+            )
+        return cobo_waas2.SolContractCallInstruction(
+            program_id=ins["programId"],
+            accounts=accounts,
+            data=ins["data"],
+        )
+
+    def build_transaction(self, instructions_json, address):
+        print("build transaction:", json.dumps(instructions_json))
+        all_instructions = []
+
+        for key in ["computeBudgetInstructions", "setupInstructions"]:
+            all_instructions += [self.build_instruction(i, address) for i in instructions_json.get(key, [])]
+
+        if "swapInstruction" in instructions_json and instructions_json["swapInstruction"]:
+            all_instructions.append(self.build_instruction(instructions_json["swapInstruction"], address))
+
+        if "cleanupInstruction" in instructions_json and instructions_json["cleanupInstruction"]:
+            all_instructions.append(self.build_instruction(instructions_json["cleanupInstruction"], address))
+
+        if "otherInstructions" in instructions_json and instructions_json["otherInstructions"]:
+            all_instructions += [self.build_instruction(i, address) for i in instructions_json["otherInstructions"]]
+
+        alt_accounts = []
+
+        if "addressLookupTableAddresses" in instructions_json:
+            alt_addresses = instructions_json["addressLookupTableAddresses"]
+            for alt_address in alt_addresses:
+                addresses = fetch_address_lookup_table(alt_address)
+                if addresses:
+                    alt_accounts.append(
+                        cobo_waas2.SolContractCallAddressLookupTableAccount(
+                            alt_account_key=alt_address,
+                            addresses=addresses,
+                        )
+                    )
+
+        return all_instructions, alt_accounts
+
+    @staticmethod
+    def to_jupiter_amount(readable_amount, decimals):
+        """Convert human-readable amount to Jupiter integer amount."""
+        return int(readable_amount * (10 ** decimals))
+
+    @staticmethod
+    def to_readable_amount(raw_amount, decimals):
+        """Convert Jupiter integer amount to human-readable format."""
+        return raw_amount / (10 ** decimals)
+
+
+if __name__ == "__main__":
+    # ======== Parameters you must modify for your own environment (required) ========
+    # TODO: Use the development environment. For production environment, change to "https://api.cobo.com/v2".
+    cobo_host = "https://api.dev.cobo.com/v2"
+    # TODO: Enter your API key
+    api_key = ""
+    # TODO: Enter your Wallet ID
+    mpc_wallet_id = ""
+    # TODO: Enter your Solana address, and make sure it has enough SOL and the token to be swapped
+    sol_address = ""
+
+    # ======== Example: SOL -> USDT ========
+    myCoboApi = CoboAPI(api_key, cobo_host)
+    # "SOL" is the token ID of input token, "SOL_USDT" is the token ID of output token (USDT), 0.0001 is the swap amount
+    myCoboApi.swap_coin(mpc_wallet_id, sol_address, "SOL", "SOL_USDT", 0.0001)
+    # If you want to swap to JLP or USDC, use the following examples:
+    # myCoboApi.swap_coin(mpc_wallet_id, sol_address, "SOL", "SOL_JLP", 0.0001)
+    # myCoboApi.swap_coin(mpc_wallet_id, sol_address, "SOL", "SOL_USDC", 0.0001)
+
+```

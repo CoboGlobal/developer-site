@@ -23,12 +23,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     api_instance = cobo_waas2.PaymentApi(api_client)
     create_order_link_request = cobo_waas2.CreateOrderLinkRequest(
         business_info=cobo_waas2.OrderLinkBusinessInfo(
-            token_ids=["ETH_USDT", "SOL_USDC", "TRON_USDT"],
-            currency="USD",
-            fee_amount="2.00",
-            merchant_id="1001",
-            order_amount="100.00",
-            psp_order_code="P20240201001",
+            merchant_id="1001", psp_order_code="P20240201001", fee_amount="2.00"
         )
     )
 
@@ -51,7 +46,6 @@ import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
 import com.cobo.waas2.api.PaymentApi;
 import com.cobo.waas2.model.*;
-import java.util.Arrays;
 
 public class Example {
   public static void main(String[] args) {
@@ -67,12 +61,9 @@ public class Example {
         new CreateOrderLinkRequest()
             .businessInfo(
                 new OrderLinkBusinessInfo()
-                    .tokenIds(Arrays.asList("ETH_USDT", "SOL_USDC", "TRON_USDT"))
-                    .currency("USD")
-                    .feeAmount("2.00")
                     .merchantId("1001")
-                    .orderAmount("100.00")
-                    .pspOrderCode("P20240201001"));
+                    .pspOrderCode("P20240201001")
+                    .feeAmount("2.00"));
     try {
       Link result = apiInstance.createOrderLink(createOrderLinkRequest);
       System.out.println(result);
@@ -99,7 +90,7 @@ import (
 )
 
 func main() {
-	createOrderLinkRequest := *coboWaas2.NewCreateOrderLinkRequest(*coboWaas2.NewOrderLinkBusinessInfo([]string{"ETH_USDT"}, "USD", "2.00", "1001", "100.00", "P20240201001"))
+	createOrderLinkRequest := *coboWaas2.NewCreateOrderLinkRequest(*coboWaas2.NewOrderLinkBusinessInfo("1001", "P20240201001", "2.00"))
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -137,12 +128,9 @@ const apiInstance = new CoboWaas2.PaymentApi();
 const opts = {
   CreateOrderLinkRequest: CoboWaas2.CreateOrderLinkRequest.constructFromObject({
     business_info: {
-      token_ids: ["ETH_USDT", "SOL_USDC", "TRON_USDT"],
-      currency: "USD",
-      fee_amount: "2.00",
       merchant_id: "1001",
-      order_amount: "100.00",
       psp_order_code: "P20240201001",
+      fee_amount: "2.00",
       expired_in: 1800,
     },
   }),

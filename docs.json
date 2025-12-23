@@ -64,7 +64,13 @@
                     ]
                   },
                   "v2/guides/transactions/manage-transactions",
-                  "v2/guides/transactions/batch-transfer"
+                  {
+                    "group": "Smart contract call samples",
+                    "pages": [
+                      "v2/guides/transactions/batch-transfer",
+                      "v2/guides/transactions/sol-jupiter-swap"
+                    ]
+                  }
                 ]
               },
               {
@@ -500,7 +506,8 @@
                       "v2/api-references/stakings/list-staking-positions-eligible-for-babylon-phase-2",
                       "v2/api-references/stakings/register-for-babylon-phase-2",
                       "v2/api-references/stakings/list-babylon-phase-2-registrations",
-                      "v2/api-references/stakings/get-babylon-phase-2-registration-details"
+                      "v2/api-references/stakings/get-babylon-phase-2-registration-details",
+                      "v2/api-references/stakings/expand-babylon-btc-staking"
                     ]
                   }
                 ]
@@ -559,87 +566,6 @@
                       "v2/api-references/travelrule/submit-travel-rule-information-for-withdrawals",
                       "v2/api-references/travelrule/retrieve-transaction-limitations",
                       "v2/api-references/travelrule/list-supported-countries"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Payment operations",
-                "pages": [
-                  {
-                    "group": "Merchants",
-                    "pages": [
-                      "v2/api-references/payment/create-merchant",
-                      "v2/api-references/payment/update-merchant",
-                      "v2/api-references/payment/list-all-merchants"
-                    ]
-                  },
-                  {
-                    "group": "Pay-ins (top-up mode)",
-                    "pages": [
-                      "v2/api-references/payment/createget-top-up-address",
-                      "v2/api-references/payment/update-top-up-address",
-                      "v2/api-references/payment/list-payers"
-                    ]
-                  },
-                  {
-                    "group": "Pay-ins (order mode)",
-                    "pages": [
-                      "v2/api-references/payment/create-pay-in-order",
-                      "v2/api-references/payment/update-pay-in-order",
-                      "v2/api-references/payment/get-pay-in-order-information",
-                      "v2/api-references/payment/list-all-pay-in-orders",
-                      "v2/api-references/payment/create-order-link"
-                    ]
-                  },
-                  {
-                    "group": "Refunds",
-                    "pages": [
-                      "v2/api-references/payment/create-refund-order",
-                      "v2/api-references/payment/create-refund-link",
-                      "v2/api-references/payment/update-refund-order",
-                      "v2/api-references/payment/cancel-refund-order",
-                      "v2/api-references/payment/get-refund-order-information",
-                      "v2/api-references/payment/list-all-refund-orders"
-                    ]
-                  },
-                  {
-                    "group": "Balances",
-                    "pages": [
-                      "v2/api-references/payment/list-merchant-balances",
-                      "v2/api-references/payment/get-developer-balance",
-                      "v2/api-references/payment/get-withdrawable-balances",
-                      "v2/api-references/payment/list-payment-wallet-balances"
-                    ]
-                  },
-                  {
-                    "group": "Settlements",
-                    "pages": [
-                      "v2/api-references/payment/create-settlement-request",
-                      "v2/api-references/payment/list-all-settlement-requests",
-                      "v2/api-references/payment/get-settlement-request-information",
-                      "v2/api-references/payment/list-all-settlement-details",
-                      "v2/api-references/payment/list-all-bank-accounts",
-                      "v2/api-references/payment/create-crypto-address",
-                      "v2/api-references/payment/delete-crypto-address",
-                      "v2/api-references/payment/list-crypto-addresses",
-                      "v2/api-references/payment/create-forced-sweep",
-                      "v2/api-references/payment/list-forced-sweeps"
-                    ]
-                  },
-                  {
-                    "group": "Fees and exchange rates",
-                    "pages": [
-                      "v2/api-references/payment/get-exchange-rate",
-                      "v2/api-references/payment/batch-get-exchange-rates",
-                      "v2/api-references/payment/estimate-fees"
-                    ]
-                  },
-                  {
-                    "group": "OAuth",
-                    "pages": [
-                      "v2/api-references/oauth/get-access-token",
-                      "v2/api-references/oauth/refresh-access-token"
                     ]
                   }
                 ]
@@ -845,73 +771,12 @@
             ]
           },
           {
-            "tab": "Payment Solution",
+            "tab": "Payments Solution",
             "groups": [
               {
                 "group": "Overview",
                 "pages": [
-                  "v2/payments/overview",
-                  "v2/payments/features",
-                  "v2/payments/changelog"
-                ]
-              },
-              {
-                "group": "Pay-In",
-                "pages": [
-                  {
-                    "group": "Prerequisites",
-                    "pages": [
-                      "v2/payments/preparation",
-                      "v2/payments/preparation-prod"
-                    ]
-                  },
-                  {
-                    "group": "Collect payments",
-                    "pages": [
-                      "v2/payments/get-topup-addresses",
-                      "v2/payments/create-orders",
-                      "v2/payments/create-subscriptions"
-                    ]
-                  },
-                  {
-                    "group": "Build checkout page",
-                    "pages": [
-                      "v2/payments/payment-link",
-                      "v2/payments/third-party-wallet-support",
-                      "v2/payments/wallet-fee-deduction"
-                    ]
-                  },
-                  {
-                    "group": "Refund",
-                    "pages": [
-                      "v2/payments/create-refund-link"
-                    ]
-                  },
-                  "v2/payments/counterparties"
-                ]
-              },
-              {
-                "group": "Funds Management",
-                "pages": [
-                  "v2/payments/amounts-and-balances",
-                  "v2/payments/fiat-payouts",
-                  "v2/payments/crypto-payouts",
-                  "v2/payments/destinations"
-                ]
-              },
-              {
-                "group": "Collection-on-behalf-of",
-                "pages": [
-                  "v2/payments/merchants"
-                ]
-              },
-              {
-                "group": "Reference",
-                "pages": [
-                  "v2/payments/supported-chains-and-tokens",
-                  "v2/payments/status-and-events",
-                  "v2/payments/roles-and-permissions",
-                  "v2/payments/api-reference"
+                  "v2/payments-redirect/redirect"
                 ]
               }
             ]
@@ -1004,7 +869,13 @@
                     ]
                   },
                   "v2_cn/guides/transactions/manage-transactions",
-                  "v2_cn/guides/transactions/batch-transfer"
+                  {
+                    "group": "智能合约调用示例",
+                    "pages": [
+                      "v2_cn/guides/transactions/batch-transfer",
+                      "v2_cn/guides/transactions/sol-jupiter-swap"
+                    ]
+                  }
                 ]
               },
               {
@@ -1188,68 +1059,7 @@
               {
                 "group": "概览",
                 "pages": [
-                  "v2_cn/payments/overview",
-                  "v2_cn/payments/features", 
-                  "v2_cn/payments/changelog"
-                ]
-              },
-              {
-                "group": "收款",
-                "pages": [
-                  {
-                    "group": "前置准备",
-                    "pages": [
-                      "v2_cn/payments/preparation",
-                      "v2_cn/payments/preparation-prod"
-                    ]
-                  },
-                  {
-                    "group": "发起收款",
-                    "pages": [
-                      "v2_cn/payments/get-topup-addresses",
-                      "v2_cn/payments/create-orders",
-                      "v2_cn/payments/create-subscriptions"
-                    ]
-                  },
-                  {
-                    "group": "搭建收款页面",
-                    "pages": [
-                      "v2_cn/payments/payment-link",
-                      "v2_cn/payments/third-party-wallet-support",
-                      "v2_cn/payments/wallet-fee-deduction"
-                    ]
-                  },
-                  {
-                    "group": "退款",
-                    "pages": [
-                      "v2_cn/payments/create-refund-link"
-                    ]
-                  },
-                  "v2_cn/payments/counterparties"
-                ]
-              },  
-              {
-                "group": "资金管理",
-                "pages": [
-                  "v2_cn/payments/amounts-and-balances",
-                  "v2_cn/payments/fiat-payouts",
-                  "v2_cn/payments/crypto-payouts",
-                  "v2_cn/payments/destinations"
-                ]
-              },
-              {
-                "group": "代收款", 
-                "pages": [
-                  "v2_cn/payments/merchants"
-                ]
-              },
-              {
-                "group": "索引信息",
-                "pages": [
-                  "v2_cn/payments/supported-chains-and-tokens",
-                  "v2_cn/payments/status-and-events",
-                  "v2_cn/payments/roles-and-permissions",
-                  "v2_cn/payments/api-reference"
+                  "v2_cn/payments-redirect/redirect"
                 ]
               }
             ]
@@ -1761,6 +1571,26 @@
     {
       "source": "/v2/guides/overview/pagination",
       "destination": "/v2/api-references/pagination"
+    },
+    {
+      "source": "/v2/api-references/payment/:slug*",
+      "destination": "https://www.cobo.com/payments/en/api-references/payment/:slug*"
+    },
+    {
+      "source": "/v2/payments/:slug*",
+      "destination": "https://www.cobo.com/payments/en/guides/:slug*"
+    },
+    {
+      "source": "/v2_cn/payments/:slug*",
+      "destination": "https://www.cobo.com/payments/cn/guides/:slug*"
+    },
+    {
+      "source": "/v2/payments-redirect/redirect",
+      "destination": "https://www.cobo.com/payments/en/guides/overview"
+    },
+    {
+      "source": "/v2_cn/payments-redirect/redirect",
+      "destination": "https://www.cobo.com/payments/cn/guides/overview"
     }
   ]
 }
