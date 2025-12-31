@@ -1,14 +1,12 @@
 ---
-openapi: put /payments/counterparty/{counterparty_id}/update
+openapi: put /payments/counterparty/{counterparty_id}
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
 from cobo_waas2.models.counterparty import Counterparty
-from cobo_waas2.models.update_counterparty_by_id_request import (
-    UpdateCounterpartyByIdRequest,
-)
+from cobo_waas2.models.update_counterparty_request import UpdateCounterpartyRequest
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -24,20 +22,20 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
     counterparty_id = "5b0ed293-f728-40b4-b1f6-86b88cd51384"
-    update_counterparty_by_id_request = cobo_waas2.UpdateCounterpartyByIdRequest(
-        counterparty_name="Counterparty A", counterparty_type="Individual"
+    update_counterparty_request = cobo_waas2.UpdateCounterpartyRequest(
+        updated_counterparty_name="Counterparty A",
+        updated_counterparty_type="Individual",
     )
 
     try:
         # Update counterparty
-        api_response = api_instance.update_counterparty_by_id(
-            counterparty_id,
-            update_counterparty_by_id_request=update_counterparty_by_id_request,
+        api_response = api_instance.update_counterparty(
+            counterparty_id, update_counterparty_request=update_counterparty_request
         )
-        print("The response of PaymentApi->update_counterparty_by_id:\n")
+        print("The response of PaymentApi->update_counterparty:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->update_counterparty_by_id: %s\n" % e)
+        print("Exception when calling PaymentApi->update_counterparty: %s\n" % e)
 
 ```
 ```java Java
@@ -60,16 +58,16 @@ public class Example {
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
     String counterpartyId = "5b0ed293-f728-40b4-b1f6-86b88cd51384";
-    UpdateCounterpartyByIdRequest updateCounterpartyByIdRequest =
-        new UpdateCounterpartyByIdRequest()
-            .counterpartyName("Counterparty A")
-            .counterpartyType(CounterpartyType.INDIVIDUAL);
+    UpdateCounterpartyRequest updateCounterpartyRequest =
+        new UpdateCounterpartyRequest()
+            .updatedCounterpartyName("Counterparty A")
+            .updatedCounterpartyType(CounterpartyType.INDIVIDUAL);
     try {
       Counterparty result =
-          apiInstance.updateCounterpartyById(counterpartyId, updateCounterpartyByIdRequest);
+          apiInstance.updateCounterparty(counterpartyId, updateCounterpartyRequest);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#updateCounterpartyById");
+      System.err.println("Exception when calling PaymentApi#updateCounterparty");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -92,7 +90,7 @@ import (
 
 func main() {
 	counterpartyId := "5b0ed293-f728-40b4-b1f6-86b88cd51384"
-	updateCounterpartyByIdRequest := *coboWaas2.NewUpdateCounterpartyByIdRequest("Counterparty A", coboWaas2.CounterpartyType("Individual"))
+	updateCounterpartyRequest := *coboWaas2.NewUpdateCounterpartyRequest("Counterparty A", coboWaas2.CounterpartyType("Individual"))
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -105,15 +103,15 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.UpdateCounterpartyById(ctx, counterpartyId).
-		UpdateCounterpartyByIdRequest(updateCounterpartyByIdRequest).
+	resp, r, err := apiClient.PaymentAPI.UpdateCounterparty(ctx, counterpartyId).
+		UpdateCounterpartyRequest(updateCounterpartyRequest).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.UpdateCounterpartyById``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.UpdateCounterparty``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `UpdateCounterpartyById`: Counterparty
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.UpdateCounterpartyById`: %v\n", resp)
+	// response from `UpdateCounterparty`: Counterparty
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.UpdateCounterparty`: %v\n", resp)
 }
 
 ```
@@ -129,13 +127,13 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 const apiInstance = new CoboWaas2.PaymentApi();
 const counterparty_id = "5b0ed293-f728-40b4-b1f6-86b88cd51384";
 const opts = {
-  UpdateCounterpartyByIdRequest:
-    CoboWaas2.UpdateCounterpartyByIdRequest.constructFromObject({
-      counterparty_name: "Counterparty A",
-      counterparty_type: "Individual",
+  UpdateCounterpartyRequest:
+    CoboWaas2.UpdateCounterpartyRequest.constructFromObject({
+      updated_counterparty_name: "Counterparty A",
+      updated_counterparty_type: "Individual",
     }),
 };
-apiInstance.updateCounterpartyById(counterparty_id, opts).then(
+apiInstance.updateCounterparty(counterparty_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

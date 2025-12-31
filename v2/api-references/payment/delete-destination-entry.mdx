@@ -1,13 +1,14 @@
 ---
-openapi: get /swaps/enabled_pairs
+openapi: delete /payments/destination_entry/{destination_entry_id}
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_enable_token_pairs200_response import (
-    ListEnableTokenPairs200Response,
+from cobo_waas2.models.delete_destination_entry200_response import (
+    DeleteDestinationEntry200Response,
 )
+from cobo_waas2.models.entry_type import EntryType
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -21,20 +22,20 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.SwapsApi(api_client)
-    limit = 10
-    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    api_instance = cobo_waas2.PaymentApi(api_client)
+    destination_entry_id = "123e4567-e89b-12d3-a456-426614174003"
+    destination_id = "46beeab4-6a8e-476e-bc69-99b89aacbc6f"
+    entry_type = "Address"
 
     try:
-        # List Supported Token Pairs
-        api_response = api_instance.list_enable_token_pairs(
-            limit=limit, before=before, after=after
+        # Delete destination entry
+        api_response = api_instance.delete_destination_entry(
+            destination_entry_id, destination_id, entry_type
         )
-        print("The response of SwapsApi->list_enable_token_pairs:\n")
+        print("The response of PaymentApi->delete_destination_entry:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling SwapsApi->list_enable_token_pairs: %s\n" % e)
+        print("Exception when calling PaymentApi->delete_destination_entry: %s\n" % e)
 
 ```
 ```java Java
@@ -43,7 +44,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.SwapsApi;
+import com.cobo.waas2.api.PaymentApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -55,16 +56,16 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    SwapsApi apiInstance = new SwapsApi();
-    Integer limit = 10;
-    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
-    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    PaymentApi apiInstance = new PaymentApi();
+    String destinationEntryId = "123e4567-e89b-12d3-a456-426614174003";
+    String destinationId = "46beeab4-6a8e-476e-bc69-99b89aacbc6f";
+    EntryType entryType = EntryType.fromValue("Address");
     try {
-      ListEnableTokenPairs200Response result =
-          apiInstance.listEnableTokenPairs(limit, before, after);
+      DeleteDestinationEntry200Response result =
+          apiInstance.deleteDestinationEntry(destinationEntryId, destinationId, entryType);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling SwapsApi#listEnableTokenPairs");
+      System.err.println("Exception when calling PaymentApi#deleteDestinationEntry");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,9 +87,9 @@ import (
 )
 
 func main() {
-	limit := int32(10)
-	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	destinationEntryId := "123e4567-e89b-12d3-a456-426614174003"
+	destinationId := "46beeab4-6a8e-476e-bc69-99b89aacbc6f"
+	entryType := coboWaas2.EntryType("Address")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -101,13 +102,16 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.SwapsAPI.ListEnableTokenPairs(ctx).Limit(limit).Before(before).After(after).Execute()
+	resp, r, err := apiClient.PaymentAPI.DeleteDestinationEntry(ctx, destinationEntryId).
+		DestinationId(destinationId).
+		EntryType(entryType).
+		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `SwapsAPI.ListEnableTokenPairs``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.DeleteDestinationEntry``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListEnableTokenPairs`: ListEnableTokenPairs200Response
-	fmt.Fprintf(os.Stdout, "Response from `SwapsAPI.ListEnableTokenPairs`: %v\n", resp)
+	// response from `DeleteDestinationEntry`: DeleteDestinationEntry200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.DeleteDestinationEntry`: %v\n", resp)
 }
 
 ```
@@ -120,20 +124,20 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.SwapsApi();
-const opts = {
-  limit: 10,
-  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
-  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
-};
-apiInstance.listEnableTokenPairs(opts).then(
-  (data) => {
-    console.log("API called successfully. Returned data: " + data);
-  },
-  (error) => {
-    console.error(error);
-  },
-);
+const apiInstance = new CoboWaas2.PaymentApi();
+const destination_entry_id = "123e4567-e89b-12d3-a456-426614174003";
+const destination_id = "46beeab4-6a8e-476e-bc69-99b89aacbc6f";
+const entry_type = new CoboWaas2.EntryType();
+apiInstance
+  .deleteDestinationEntry(destination_entry_id, destination_id, entry_type)
+  .then(
+    (data) => {
+      console.log("API called successfully. Returned data: " + data);
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
 
 ```
 </RequestExample>

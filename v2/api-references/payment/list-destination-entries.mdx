@@ -1,12 +1,14 @@
 ---
-openapi: get /swaps/enabled_pairs
+openapi: get /payments/destination_entry
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_enable_token_pairs200_response import (
-    ListEnableTokenPairs200Response,
+from cobo_waas2.models.bank_account_status import BankAccountStatus
+from cobo_waas2.models.entry_type import EntryType
+from cobo_waas2.models.list_destination_entries200_response import (
+    ListDestinationEntries200Response,
 )
 from cobo_waas2.rest import ApiException
 from pprint import pprint
@@ -21,20 +23,34 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.SwapsApi(api_client)
+    api_instance = cobo_waas2.PaymentApi(api_client)
+    entry_type = cobo_waas2.EntryType()
     limit = 10
     before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
     after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    destination_id = "46beeab4-6a8e-476e-bc69-99b89aacbc6f"
+    chain_ids = "ETH"
+    wallet_address = "0x1234567890abcdef..."
+    keyword = "keyword"
+    bank_account_status = "Pending"
 
     try:
-        # List Supported Token Pairs
-        api_response = api_instance.list_enable_token_pairs(
-            limit=limit, before=before, after=after
+        # List destination entries
+        api_response = api_instance.list_destination_entries(
+            entry_type,
+            limit=limit,
+            before=before,
+            after=after,
+            destination_id=destination_id,
+            chain_ids=chain_ids,
+            wallet_address=wallet_address,
+            keyword=keyword,
+            bank_account_status=bank_account_status,
         )
-        print("The response of SwapsApi->list_enable_token_pairs:\n")
+        print("The response of PaymentApi->list_destination_entries:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling SwapsApi->list_enable_token_pairs: %s\n" % e)
+        print("Exception when calling PaymentApi->list_destination_entries: %s\n" % e)
 
 ```
 ```java Java
@@ -43,7 +59,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.SwapsApi;
+import com.cobo.waas2.api.PaymentApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -55,16 +71,31 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    SwapsApi apiInstance = new SwapsApi();
+    PaymentApi apiInstance = new PaymentApi();
+    EntryType entryType = EntryType.fromValue("Address");
     Integer limit = 10;
     String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
     String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    String destinationId = "46beeab4-6a8e-476e-bc69-99b89aacbc6f";
+    String chainIds = "ETH";
+    String walletAddress = "0x1234567890abcdef...";
+    String keyword = "keyword";
+    BankAccountStatus bankAccountStatus = BankAccountStatus.fromValue("Pending");
     try {
-      ListEnableTokenPairs200Response result =
-          apiInstance.listEnableTokenPairs(limit, before, after);
+      ListDestinationEntries200Response result =
+          apiInstance.listDestinationEntries(
+              entryType,
+              limit,
+              before,
+              after,
+              destinationId,
+              chainIds,
+              walletAddress,
+              keyword,
+              bankAccountStatus);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling SwapsApi#listEnableTokenPairs");
+      System.err.println("Exception when calling PaymentApi#listDestinationEntries");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,9 +117,15 @@ import (
 )
 
 func main() {
+	entryType := coboWaas2.EntryType("Address")
 	limit := int32(10)
 	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
 	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	destinationId := "46beeab4-6a8e-476e-bc69-99b89aacbc6f"
+	chainIds := "ETH"
+	walletAddress := "0x1234567890abcdef..."
+	keyword := "keyword"
+	bankAccountStatus := coboWaas2.BankAccountStatus("Pending")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -101,13 +138,23 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.SwapsAPI.ListEnableTokenPairs(ctx).Limit(limit).Before(before).After(after).Execute()
+	resp, r, err := apiClient.PaymentAPI.ListDestinationEntries(ctx).
+		EntryType(entryType).
+		Limit(limit).
+		Before(before).
+		After(after).
+		DestinationId(destinationId).
+		ChainIds(chainIds).
+		WalletAddress(walletAddress).
+		Keyword(keyword).
+		BankAccountStatus(bankAccountStatus).
+		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `SwapsAPI.ListEnableTokenPairs``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.ListDestinationEntries``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListEnableTokenPairs`: ListEnableTokenPairs200Response
-	fmt.Fprintf(os.Stdout, "Response from `SwapsAPI.ListEnableTokenPairs`: %v\n", resp)
+	// response from `ListDestinationEntries`: ListDestinationEntries200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.ListDestinationEntries`: %v\n", resp)
 }
 
 ```
@@ -120,13 +167,19 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.SwapsApi();
+const apiInstance = new CoboWaas2.PaymentApi();
+const entry_type = new CoboWaas2.EntryType();
 const opts = {
   limit: 10,
   before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
   after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+  destination_id: "46beeab4-6a8e-476e-bc69-99b89aacbc6f",
+  chain_ids: "ETH",
+  wallet_address: "0x1234567890abcdef...",
+  keyword: "keyword",
+  bank_account_status: "Pending",
 };
-apiInstance.listEnableTokenPairs(opts).then(
+apiInstance.listDestinationEntries(entry_type, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

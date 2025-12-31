@@ -1,12 +1,15 @@
 ---
-openapi: get /swaps/enabled_pairs
+openapi: put /payments/destination_entry/{destination_entry_id}
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.list_enable_token_pairs200_response import (
-    ListEnableTokenPairs200Response,
+from cobo_waas2.models.update_destination_entry200_response import (
+    UpdateDestinationEntry200Response,
+)
+from cobo_waas2.models.update_destination_entry_request import (
+    UpdateDestinationEntryRequest,
 )
 from cobo_waas2.rest import ApiException
 from pprint import pprint
@@ -21,20 +24,22 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.SwapsApi(api_client)
-    limit = 10
-    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    api_instance = cobo_waas2.PaymentApi(api_client)
+    destination_entry_id = "123e4567-e89b-12d3-a456-426614174003"
+    update_destination_entry_request = cobo_waas2.UpdateDestinationEntryRequest(
+        destination_id="46beeab4-6a8e-476e-bc69-99b89aacbc6f"
+    )
 
     try:
-        # List Supported Token Pairs
-        api_response = api_instance.list_enable_token_pairs(
-            limit=limit, before=before, after=after
+        # Update destination entry
+        api_response = api_instance.update_destination_entry(
+            destination_entry_id,
+            update_destination_entry_request=update_destination_entry_request,
         )
-        print("The response of SwapsApi->list_enable_token_pairs:\n")
+        print("The response of PaymentApi->update_destination_entry:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling SwapsApi->list_enable_token_pairs: %s\n" % e)
+        print("Exception when calling PaymentApi->update_destination_entry: %s\n" % e)
 
 ```
 ```java Java
@@ -43,8 +48,9 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.SwapsApi;
+import com.cobo.waas2.api.PaymentApi;
 import com.cobo.waas2.model.*;
+import java.util.UUID;
 
 public class Example {
   public static void main(String[] args) {
@@ -55,16 +61,17 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    SwapsApi apiInstance = new SwapsApi();
-    Integer limit = 10;
-    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
-    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    PaymentApi apiInstance = new PaymentApi();
+    String destinationEntryId = "123e4567-e89b-12d3-a456-426614174003";
+    UpdateDestinationEntryRequest updateDestinationEntryRequest =
+        new UpdateDestinationEntryRequest()
+            .destinationId(UUID.fromString("46beeab4-6a8e-476e-bc69-99b89aacbc6f"));
     try {
-      ListEnableTokenPairs200Response result =
-          apiInstance.listEnableTokenPairs(limit, before, after);
+      UpdateDestinationEntry200Response result =
+          apiInstance.updateDestinationEntry(destinationEntryId, updateDestinationEntryRequest);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling SwapsApi#listEnableTokenPairs");
+      System.err.println("Exception when calling PaymentApi#updateDestinationEntry");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,9 +93,8 @@ import (
 )
 
 func main() {
-	limit := int32(10)
-	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
-	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	destinationEntryId := "123e4567-e89b-12d3-a456-426614174003"
+	updateDestinationEntryRequest := *coboWaas2.NewUpdateDestinationEntryRequest("46beeab4-6a8e-476e-bc69-99b89aacbc6f")
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -101,13 +107,15 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.SwapsAPI.ListEnableTokenPairs(ctx).Limit(limit).Before(before).After(after).Execute()
+	resp, r, err := apiClient.PaymentAPI.UpdateDestinationEntry(ctx, destinationEntryId).
+		UpdateDestinationEntryRequest(updateDestinationEntryRequest).
+		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `SwapsAPI.ListEnableTokenPairs``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.UpdateDestinationEntry``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListEnableTokenPairs`: ListEnableTokenPairs200Response
-	fmt.Fprintf(os.Stdout, "Response from `SwapsAPI.ListEnableTokenPairs`: %v\n", resp)
+	// response from `UpdateDestinationEntry`: UpdateDestinationEntry200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.UpdateDestinationEntry`: %v\n", resp)
 }
 
 ```
@@ -120,13 +128,15 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.SwapsApi();
+const apiInstance = new CoboWaas2.PaymentApi();
+const destination_entry_id = "123e4567-e89b-12d3-a456-426614174003";
 const opts = {
-  limit: 10,
-  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
-  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+  UpdateDestinationEntryRequest:
+    CoboWaas2.UpdateDestinationEntryRequest.constructFromObject({
+      destination_id: "46beeab4-6a8e-476e-bc69-99b89aacbc6f",
+    }),
 };
-apiInstance.listEnableTokenPairs(opts).then(
+apiInstance.updateDestinationEntry(destination_entry_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

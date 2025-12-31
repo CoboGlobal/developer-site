@@ -364,7 +364,10 @@
                       "/v2/api-references/compliance/get-disposition-status",
                       "/v2/api-references/compliance/get-kyt-screening-status",
                       "/v2/api-references/compliance/submit-kyt-screening-decision",
-                      "/v2/api-references/compliance/submit-kyt-manual-review-result"
+                      "/v2/api-references/compliance/submit-kyt-manual-review-result",
+                      "/v2/api-references/compliance/create-kya-address-screening-requests",
+                      "/v2/api-references/compliance/get-kya-address-screening-result",
+                      "/v2/api-references/compliance/list-kya-address-screening-results"
                     ]
                   }
                 ]

@@ -1,5 +1,5 @@
 ---
-openapi: get /payments/counterparty/{counterparty_id}/detail
+openapi: get /payments/counterparty/{counterparty_id}
 ---
 
 <RequestExample>
@@ -24,13 +24,11 @@ with cobo_waas2.ApiClient(configuration) as api_client:
 
     try:
         # Get counterparty information
-        api_response = api_instance.get_counterparty_detail_by_id(counterparty_id)
-        print("The response of PaymentApi->get_counterparty_detail_by_id:\n")
+        api_response = api_instance.get_counterparty(counterparty_id)
+        print("The response of PaymentApi->get_counterparty:\n")
         pprint(api_response)
     except Exception as e:
-        print(
-            "Exception when calling PaymentApi->get_counterparty_detail_by_id: %s\n" % e
-        )
+        print("Exception when calling PaymentApi->get_counterparty: %s\n" % e)
 
 ```
 ```java Java
@@ -54,10 +52,10 @@ public class Example {
     PaymentApi apiInstance = new PaymentApi();
     String counterpartyId = "5b0ed293-f728-40b4-b1f6-86b88cd51384";
     try {
-      CounterpartyDetail result = apiInstance.getCounterpartyDetailById(counterpartyId);
+      CounterpartyDetail result = apiInstance.getCounterparty(counterpartyId);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#getCounterpartyDetailById");
+      System.err.println("Exception when calling PaymentApi#getCounterparty");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -92,17 +90,13 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.GetCounterpartyDetailById(ctx, counterpartyId).Execute()
+	resp, r, err := apiClient.PaymentAPI.GetCounterparty(ctx, counterpartyId).Execute()
 	if err != nil {
-		fmt.Fprintf(
-			os.Stderr,
-			"Error when calling `PaymentAPI.GetCounterpartyDetailById``: %v\n",
-			err,
-		)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.GetCounterparty``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `GetCounterpartyDetailById`: CounterpartyDetail
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.GetCounterpartyDetailById`: %v\n", resp)
+	// response from `GetCounterparty`: CounterpartyDetail
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.GetCounterparty`: %v\n", resp)
 }
 
 ```
@@ -117,7 +111,7 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
 const counterparty_id = "5b0ed293-f728-40b4-b1f6-86b88cd51384";
-apiInstance.getCounterpartyDetailById(counterparty_id).then(
+apiInstance.getCounterparty(counterparty_id).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

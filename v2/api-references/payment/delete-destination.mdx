@@ -1,12 +1,12 @@
 ---
-openapi: put /payments/destination/{destination_id}/delete
+openapi: delete /payments/destination/{destination_id}
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.delete_destination200_response import (
-    DeleteDestination200Response,
+from cobo_waas2.models.delete_destination_by_id200_response import (
+    DeleteDestinationById200Response,
 )
 from cobo_waas2.rest import ApiException
 from pprint import pprint
@@ -26,11 +26,11 @@ with cobo_waas2.ApiClient(configuration) as api_client:
 
     try:
         # Delete destination
-        api_response = api_instance.delete_destination(destination_id)
-        print("The response of PaymentApi->delete_destination:\n")
+        api_response = api_instance.delete_destination_by_id(destination_id)
+        print("The response of PaymentApi->delete_destination_by_id:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->delete_destination: %s\n" % e)
+        print("Exception when calling PaymentApi->delete_destination_by_id: %s\n" % e)
 
 ```
 ```java Java
@@ -54,10 +54,10 @@ public class Example {
     PaymentApi apiInstance = new PaymentApi();
     String destinationId = "46beeab4-6a8e-476e-bc69-99b89aacbc6f";
     try {
-      DeleteDestination200Response result = apiInstance.deleteDestination(destinationId);
+      DeleteDestinationById200Response result = apiInstance.deleteDestinationById(destinationId);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#deleteDestination");
+      System.err.println("Exception when calling PaymentApi#deleteDestinationById");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -92,13 +92,13 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.DeleteDestination(ctx, destinationId).Execute()
+	resp, r, err := apiClient.PaymentAPI.DeleteDestinationById(ctx, destinationId).Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.DeleteDestination``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.DeleteDestinationById``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `DeleteDestination`: DeleteDestination200Response
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.DeleteDestination`: %v\n", resp)
+	// response from `DeleteDestinationById`: DeleteDestinationById200Response
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.DeleteDestinationById`: %v\n", resp)
 }
 
 ```
@@ -113,7 +113,7 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
 const apiInstance = new CoboWaas2.PaymentApi();
 const destination_id = "46beeab4-6a8e-476e-bc69-99b89aacbc6f";
-apiInstance.deleteDestination(destination_id).then(
+apiInstance.deleteDestinationById(destination_id).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },

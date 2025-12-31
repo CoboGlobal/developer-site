@@ -1,14 +1,12 @@
 ---
-openapi: put /payments/destination/{destination_id}/update
+openapi: put /payments/destination/{destination_id}
 ---
 
 <RequestExample>
 ```python Python
 import cobo_waas2
 from cobo_waas2.models.destination import Destination
-from cobo_waas2.models.update_destination_by_id_request import (
-    UpdateDestinationByIdRequest,
-)
+from cobo_waas2.models.update_destination_request import UpdateDestinationRequest
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -24,20 +22,19 @@ with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = cobo_waas2.PaymentApi(api_client)
     destination_id = "46beeab4-6a8e-476e-bc69-99b89aacbc6f"
-    update_destination_by_id_request = cobo_waas2.UpdateDestinationByIdRequest(
-        destination_name="Destination A", destination_type="Individual"
+    update_destination_request = cobo_waas2.UpdateDestinationRequest(
+        updated_destination_name="Destination A", updated_destination_type="Individual"
     )
 
     try:
         # Update destination
-        api_response = api_instance.update_destination_by_id(
-            destination_id,
-            update_destination_by_id_request=update_destination_by_id_request,
+        api_response = api_instance.update_destination(
+            destination_id, update_destination_request=update_destination_request
         )
-        print("The response of PaymentApi->update_destination_by_id:\n")
+        print("The response of PaymentApi->update_destination:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling PaymentApi->update_destination_by_id: %s\n" % e)
+        print("Exception when calling PaymentApi->update_destination: %s\n" % e)
 
 ```
 ```java Java
@@ -60,16 +57,15 @@ public class Example {
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
     PaymentApi apiInstance = new PaymentApi();
     String destinationId = "46beeab4-6a8e-476e-bc69-99b89aacbc6f";
-    UpdateDestinationByIdRequest updateDestinationByIdRequest =
-        new UpdateDestinationByIdRequest()
-            .destinationName("Destination A")
-            .destinationType(DestinationType.INDIVIDUAL);
+    UpdateDestinationRequest updateDestinationRequest =
+        new UpdateDestinationRequest()
+            .updatedDestinationName("Destination A")
+            .updatedDestinationType(DestinationType.INDIVIDUAL);
     try {
-      Destination result =
-          apiInstance.updateDestinationById(destinationId, updateDestinationByIdRequest);
+      Destination result = apiInstance.updateDestination(destinationId, updateDestinationRequest);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling PaymentApi#updateDestinationById");
+      System.err.println("Exception when calling PaymentApi#updateDestination");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -92,7 +88,7 @@ import (
 
 func main() {
 	destinationId := "46beeab4-6a8e-476e-bc69-99b89aacbc6f"
-	updateDestinationByIdRequest := *coboWaas2.NewUpdateDestinationByIdRequest("Destination A", coboWaas2.DestinationType("Individual"))
+	updateDestinationRequest := *coboWaas2.NewUpdateDestinationRequest("Destination A", coboWaas2.DestinationType("Individual"))
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -105,15 +101,15 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.PaymentAPI.UpdateDestinationById(ctx, destinationId).
-		UpdateDestinationByIdRequest(updateDestinationByIdRequest).
+	resp, r, err := apiClient.PaymentAPI.UpdateDestination(ctx, destinationId).
+		UpdateDestinationRequest(updateDestinationRequest).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.UpdateDestinationById``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `PaymentAPI.UpdateDestination``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `UpdateDestinationById`: Destination
-	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.UpdateDestinationById`: %v\n", resp)
+	// response from `UpdateDestination`: Destination
+	fmt.Fprintf(os.Stdout, "Response from `PaymentAPI.UpdateDestination`: %v\n", resp)
 }
 
 ```
@@ -129,13 +125,13 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 const apiInstance = new CoboWaas2.PaymentApi();
 const destination_id = "46beeab4-6a8e-476e-bc69-99b89aacbc6f";
 const opts = {
-  UpdateDestinationByIdRequest:
-    CoboWaas2.UpdateDestinationByIdRequest.constructFromObject({
-      destination_name: "Destination A",
-      destination_type: "Individual",
+  UpdateDestinationRequest:
+    CoboWaas2.UpdateDestinationRequest.constructFromObject({
+      updated_destination_name: "Destination A",
+      updated_destination_type: "Individual",
     }),
 };
-apiInstance.updateDestinationById(destination_id, opts).then(
+apiInstance.updateDestination(destination_id, opts).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },
