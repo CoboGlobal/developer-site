@@ -11651,7 +11651,7 @@ components:
           $ref: '#/components/schemas/ContractCallDestination'
         description:
           type: string
-          description: The description of the contract call transaction.
+          description: 'The description of the contract call transaction. Maximum length is 2048 characters for MPC Wallets and Custodial Wallets (Web3 Wallets), and 1000 characters for Custodial Wallets (Asset Wallets).'
           example: Transaction to call a smart contract initiated from a wallet
         category_names:
           type: array
