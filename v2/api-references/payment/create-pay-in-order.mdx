@@ -27,9 +27,8 @@ with cobo_waas2.ApiClient(configuration) as api_client:
         psp_order_code="P20240201001", 
         pricing_currency="USD",
         pricing_amount="100.00",
-        payable_currency="ETH_USDT",
-        payable_amount="103.03",
-        fee_amount="2.00"
+        fee_amount="2.00",
+        payable_currency="ETH_USDT"
     )
 
     try:
@@ -70,7 +69,6 @@ public class Example {
            .pricingCurrency("USD")
            .pricingAmount("100.00")
            .payableCurrency("ETH_USDT")
-           .payableAmount("103.03")
            .feeAmount("2.00");
     try {
       Order result = apiInstance.createPaymentOrder(createPaymentOrderRequest);
@@ -103,7 +101,6 @@ func main() {
 	createPaymentOrderRequest.SetPricingCurrency("USD")
 	createPaymentOrderRequest.SetPricingAmount("100.00")
 	createPaymentOrderRequest.SetPayableCurrency("ETH_USDT")
-	createPaymentOrderRequest.SetPayableAmount("103.03")
 	createPaymentOrderRequest.SetFeeAmount("2.00")
   
 	configuration := coboWaas2.NewConfiguration()
@@ -148,7 +145,6 @@ const opts = {
       pricing_currency: "USD",
       pricing_amount: "100.00",
       payable_currency: "ETH_USDT",
-      payable_amount: "103.03",
       fee_amount: "2.00"
     }),
 };
