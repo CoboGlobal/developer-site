@@ -5,6 +5,9 @@ description: "了解在 Cobo Portal Apps 中使用 User Info Tokens 进行用户
 ---
 
 import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
 User Info Tokens 是由 Cobo Portal 签名的 JSON Web  Tokens  (JWT)。这些 Tokens 允许 Cobo Portal Apps 检索有关用户的信息，包括他们的用户 ID、电子邮件地址和权限。Cobo Portal Apps 可以使用这些信息来验证用户的身份并根据权限控制他们对团队资源的访问。
 
 ## 工作原理
@@ -45,7 +48,6 @@ sequenceDiagram
     ```javascript
     import { getAuthInfo } from 'cobo-ui-toolkit';
 
-<WaasSkillReminder />
 
     const authInfo = await getAuthInfo();
 
