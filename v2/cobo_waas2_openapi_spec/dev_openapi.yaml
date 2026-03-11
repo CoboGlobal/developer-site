@@ -457,6 +457,39 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  '/wallets/{wallet_id}/transaction_utxos':
+    parameters:
+      - $ref: '#/components/parameters/walletIdParam'
+    get:
+      tags:
+        - Wallets
+      operationId: list_transaction_utxos
+      summary: List transaction UTXOs
+      description: |
+        The operation retrieves a list of UTXOs for a specified transaction of a wallet. You must specify the wallet, chain, and transaction hash.
+
+        <Note>This operation is applicable to MPC and Custodial Web3 Wallets.</Note>
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - wallet.read
+      parameters:
+        - $ref: '#/components/parameters/requiredChainIdParam'
+        - $ref: '#/components/parameters/requiredUtxoTxHashParam'
+        - $ref: '#/components/parameters/optionalUtxoIsChangeParam'
+        - $ref: '#/components/parameters/optionalUtxoVoutNParam'
+        - $ref: '#/components/parameters/optionalTokenIdParam'
+        - $ref: '#/components/parameters/optionalAddressParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listUtxoResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   '/wallets/{wallet_id}/utxos/batch_check':
     parameters:
       - $ref: '#/components/parameters/walletIdParam'
@@ -4401,20 +4434,21 @@ paths:
       operationId: list_merchant_balances
       summary: List merchant balances
       description: |
+        This operation retrieves merchant balance information.
 
-        This operation retrieves the balance information for specified merchants. 
+        You need to specify at least one of `merchant_ids` or `token_id` to filter the results.
 
-        The balance information is grouped by token and acquiring type. If you do not specify the `merchant_ids` parameter, the balance information for all merchants will be returned.
+        <Note>Do not pass `acquiring_type` for this operation.</Note>
 
-        For more information, please refer to [Accounts and fund allocation](https://www.cobo.com/payments/en/guides/amounts-and-balances).
+        For more information, refer to [Cobo Payments Guide](https://www.cobo.com/payments/en/guides/overview).
       security:
         - CoboAuth: []
         - OAuth2:
             - payment_balance.read
       parameters:
-        - $ref: '#/components/parameters/MerchantIdsParam'
-        - $ref: '#/components/parameters/TokenIdQueryRequiredParam'
-        - $ref: '#/components/parameters/AcquiringTypeOptionalParam'
+        - $ref: '#/components/parameters/MerchantIdsMerchantBalancesParam'
+        - $ref: '#/components/parameters/TokenIdMerchantBalancesParam'
+        - $ref: '#/components/parameters/AcquiringTypeMerchantBalancesParam'
       responses:
         '200':
           $ref: '#/components/responses/listMerchantBalancesResponse'
@@ -4619,18 +4653,7 @@ paths:
         - $ref: '#/components/parameters/CounterpartyIdPathParam'
       responses:
         '200':
-          description: The request was successful.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - deleted_counterparty_id
-                properties:
-                  deleted_counterparty_id:
-                    type: string
-                    description: The deleted counterparty ID.
-                    example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+          $ref: '#/components/responses/deleteCounterpartyByIdResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -4727,18 +4750,7 @@ paths:
         - $ref: '#/components/parameters/EntryTypeOptionalParam'
       responses:
         '200':
-          description: The request was successful.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - deleted_counterparty_entry_id
-                properties:
-                  deleted_counterparty_entry_id:
-                    type: string
-                    description: The deleted counterparty entry ID.
-                    example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+          $ref: '#/components/responses/deleteCounterpartyEntryResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -4853,18 +4865,7 @@ paths:
         - $ref: '#/components/parameters/DestinationIdPathParam'
       responses:
         '200':
-          description: The request was successful.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - deleted_destination_id
-                properties:
-                  deleted_destination_id:
-                    type: string
-                    description: The deleted destination ID.
-                    example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+          $ref: '#/components/responses/deleteDestinationByIdResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -4983,18 +4984,7 @@ paths:
         - $ref: '#/components/parameters/EntryTypeRequiredParam'
       responses:
         '200':
-          description: The request was successful.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - deleted_destination_entry_id
-                properties:
-                  deleted_destination_entry_id:
-                    type: string
-                    description: The deleted destination entry ID.
-                    example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+          $ref: '#/components/responses/deleteDestinationEntryResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -5290,6 +5280,27 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listPaymentBulkSendItemsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /payments/webhooks/trigger:
+    post:
+      tags:
+        - Payment
+      summary: Trigger test webhook event
+      description: |
+        This operation tests the functionality of your Payments webhook endpoint by triggering a test webhook event. The test event is sent to all endpoints you have registered on Cobo Portal.
+
+        You need to specify the event type. By default, the payload contains dummy data with no impact on your real business transactions or activities. You can optionally provide the `override_data` property to customize the payload.
+
+        For more information about Payments webhooks, see [Cobo Payments Guide](https://www.cobo.com/payments/en/guides/overview). For webhook event types and payload structure, refer to [List all webhook events](https://www.cobo.com/developers/v2/api-references/developers--webhooks/list-all-webhook-events).
+      operationId: trigger_test_payments_webhook_event
+      requestBody:
+        $ref: '#/components/requestBodies/triggerTestPaymentsWebhookEventBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/triggerTestPaymentsWebhookEventResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -6771,6 +6782,22 @@ components:
           type: boolean
           description: Whether the UTXO is frozen.
           example: false
+        is_change:
+          type: boolean
+          description: Whether the UTXO is a change output of a transaction.
+          example: false
+        chain_id:
+          type: string
+          description: 'The chain ID, which is the unique identifier of a blockchain.'
+          example: BTC
+        object_id:
+          type: string
+          description: 'The ID of the blockchain object to spend (e.g., SUI Coin object).'
+          example: '0x11af4b844ff94b3fbef6e36b518da3ad4c5856fa686464524a876b463d129760'
+        version:
+          type: string
+          description: Object version number.
+          example: '1'
     BatchUTXOParam:
       type: object
       description: The UTXO information.
@@ -9008,6 +9035,14 @@ components:
               type: integer
               description: The output index of the UTXO.
               example: 0
+            object_id:
+              type: string
+              description: 'The ID of the blockchain object to spend (e.g., SUI Coin object).'
+              example: '0x11af4b844ff94b3fbef6e36b518da3ad4c5856fa686464524a876b463d129760'
+            version:
+              type: string
+              description: Object version number.
+              example: '1'
     TransactionDepositToWalletDestination:
       type: object
       description: |
@@ -9599,7 +9634,15 @@ components:
           description: The unsigned raw transaction data.
           example: 0xa22cb4650000000000000000000000001e0049783f008a0085193e00003d00cd54003c71000000000000000000000000000000000000000000000000000000000000DEMO
         utxo_change:
-          $ref: '#/components/schemas/TransactionUtxoChange'
+          deprecated: true
+          description: Deprecated. Use `utxo_changes` instead.
+          allOf:
+            - $ref: '#/components/schemas/TransactionUtxoChange'
+        utxo_changes:
+          type: array
+          description: The UTXO change outputs in the transaction.
+          items:
+            $ref: '#/components/schemas/TransactionUtxoChange'
     TransactionUtxoChange:
       type: object
       description: The UTXO change output information.
@@ -9612,6 +9655,10 @@ components:
           type: string
           description: The amount of the UTXO change output.
           example: '0.5'
+        token_id:
+          type: string
+          description: The token ID of the UTXO change output.
+          example: BTC
     TransactionSelectedUtxo:
       type: object
       description: The selected UTXO information.
@@ -9624,6 +9671,10 @@ components:
           type: integer
           description: The output index of the UTXO.
           example: 0
+        token_id:
+          type: string
+          description: The token ID of the UTXO.
+          example: BTC
         address:
           type: string
           description: The address of the UTXO.
@@ -9640,6 +9691,14 @@ components:
           type: string
           description: The revealed script used for Taproot script-path spend transaction.
           example: '0x1cc56cbbac4622082221a8768d1d0901'
+        object_id:
+          type: string
+          description: 'The ID of the blockchain object to spend (e.g., SUI Coin object).'
+          example: '0x11af4b844ff94b3fbef6e36b518da3ad4c5856fa686464524a876b463d129760'
+        version:
+          type: string
+          description: Object version number.
+          example: '1'
     TransactionUtxo:
       type: object
       description: The UTXO information.
@@ -12085,6 +12144,8 @@ components:
         - payment.bulk_send.status.updated
         - payment.transaction.external.created
         - payment.transaction.external.completed
+        - payment.transaction.settlement_network.created
+        - payment.transaction.settlement_network.completed
         - compliance.disposition.status.updated
         - compliance.kyt.screenings.status.updated
         - compliance.kya.screenings.status.updated
@@ -14930,6 +14991,7 @@ components:
         - PayoutCommissionFee
         - BalanceChange
         - Summary
+        - BulkSend
       example: OrderIn
       description: |
         The type of the report.
@@ -14947,6 +15009,7 @@ components:
         - `PayoutCommissionFee`: Summary of all commission fees for payouts.
         - `BalanceChange`: Summary of balance changes for all accounts.
         - `Summary`: Summary of all pay-ins, payouts, and commission fees.
+        - `BulkSend`: Transaction summary of bulk send.
     ReportStatus:
       type: string
       enum:
@@ -15950,7 +16013,6 @@ components:
       required:
         - merchant_id
         - token_id
-        - acquiring_type
       properties:
         merchant_id:
           type: string
@@ -16416,6 +16478,14 @@ components:
           type: integer
           description: 'The updated time of the bank account, represented as a UNIX timestamp in seconds.'
           example: 1744689600
+        country:
+          type: string
+          description: 'Beneficiary''s country, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        city:
+          type: string
+          description: Beneficiary's city.
+          example: New York
     WalletAddress:
       type: object
       required:
@@ -16603,6 +16673,14 @@ components:
           example: further credit sample
         intermediary_bank_info:
           $ref: '#/components/schemas/IntermediaryBankInfo'
+        country:
+          type: string
+          description: 'Beneficiary''s country, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        city:
+          type: string
+          description: Beneficiary's city.
+          example: New York
     CreateWalletAddress:
       type: object
       required:
@@ -16627,7 +16705,6 @@ components:
       type: object
       required:
         - bank_name
-        - bank_address
         - bank_swift_code
       properties:
         bank_name:
@@ -16696,6 +16773,14 @@ components:
           example: further credit sample
         intermediary_bank_info:
           $ref: '#/components/schemas/IntermediaryBankInfo'
+        country:
+          type: string
+          description: 'Beneficiary''s country, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        city:
+          type: string
+          description: Beneficiary's city.
+          example: New York
     CounterpartyDetail:
       type: object
       required:
@@ -16982,6 +17067,14 @@ components:
           $ref: '#/components/schemas/IntermediaryBankInfo'
         bank_account_status:
           $ref: '#/components/schemas/BankAccountStatus'
+        country:
+          type: string
+          description: 'Beneficiary''s country, in ISO 3166-1 alpha-3 format.'
+          example: USA
+        city:
+          type: string
+          description: Beneficiary's city.
+          example: New York
         created_timestamp:
           type: integer
           description: 'The created time of the bank account, represented as a UNIX timestamp in seconds.'
@@ -17486,6 +17579,16 @@ components:
         - Completed
         - Failed
       example: Completed
+    TriggerTestPaymentWebhookEventResponse:
+      type: object
+      properties:
+        triggered:
+          type: boolean
+          description: |
+            Whether a test webhook event was successfully triggered.
+            - `true`: The test webhook event was successfully triggered.
+            - `false`: The test webhook event could not be triggered.
+          example: true
     DispositionStatus:
       type: string
       description: The status of a disposition operation.
@@ -20640,6 +20743,31 @@ components:
         type: string
         description: The transaction hash of the UTXO.
       example: dd7e1cecf6bbde1844ee1815b780711a1e306a718bcd23cd64401b48ef88eb83
+    requiredUtxoTxHashParam:
+      name: tx_hash
+      in: query
+      required: true
+      description: The transaction hash to filter UTXOs by.
+      schema:
+        type: string
+      example: dd7e1cecf6bbde1844ee1815b780711a1e306a718bcd23cd64401b48ef88eb83
+    optionalUtxoIsChangeParam:
+      name: is_change
+      in: query
+      required: false
+      description: Filter UTXOs by whether they are change outputs.
+      schema:
+        type: boolean
+      example: false
+    optionalUtxoVoutNParam:
+      name: vout_n
+      in: query
+      required: false
+      description: The output index of the UTXO to filter by.
+      schema:
+        type: integer
+        format: int32
+      example: 0
     requiredSourceWalletIdParam:
       name: source_wallet_id
       in: query
@@ -20905,6 +21033,8 @@ components:
       description: |
         The time when the transaction was created, in Unix timestamp format, measured in milliseconds. You can use this parameter to filter transactions created on or after the specified time.
 
+        If you specify `min_created_timestamp` without specifying `max_created_timestamp`, `max_created_timestamp` is automatically set to `min_created_timestamp` + 90 days. If you specify both, the time range cannot exceed 90 days.
+
         If not provided, the default value is 90 days before the current time. This default value is subject to change.
       schema:
         type: integer
@@ -20916,6 +21046,8 @@ components:
       required: false
       description: |
         The time when the transaction was created, in Unix timestamp format, measured in milliseconds. You can use this parameter to filter transactions created on or before the specified time.
+
+        If you specify `max_created_timestamp` without specifying `min_created_timestamp`, `min_created_timestamp` is automatically set to `max_created_timestamp` - 90 days. If you specify both, the time range cannot exceed 90 days.
 
         If not provided, the default value is the current time. This default value is subject to change.
       schema:
@@ -21692,6 +21824,39 @@ components:
       schema:
         type: string
       example: 'M1001,M1002,M1003'
+    MerchantIdsMerchantBalancesParam:
+      name: merchant_ids
+      in: query
+      required: false
+      description: |
+        The comma-separated list of merchant IDs to filter by.
+
+        At least one of `merchant_ids` or `token_id` must be provided.
+
+        For more information about merchants, refer to [Cobo Payments Guide](https://www.cobo.com/payments/en/guides/overview).
+      schema:
+        type: string
+      example: 'M1001,M1002,M1003'
+    TokenIdMerchantBalancesParam:
+      name: token_id
+      in: query
+      required: false
+      description: |
+        The token ID that identifies the cryptocurrency.
+
+        At least one of `merchant_ids` or `token_id` must be provided.
+
+        For a complete list of supported tokens, refer to [Cobo Payments Guide](https://www.cobo.com/payments/en/guides/overview).
+      schema:
+        type: string
+      example: ETH_USDT
+    AcquiringTypeMerchantBalancesParam:
+      name: acquiring_type
+      in: query
+      required: false
+      description: This parameter has been deprecated
+      schema:
+        $ref: '#/components/schemas/AcquiringType'
     OrderIdRequiredParam:
       name: order_id
       in: path
@@ -23747,6 +23912,31 @@ components:
                       type: string
                       description: A note or comment about the bulk send item.
                       example: 'Invoice #INV-2024-001'
+    triggerTestPaymentsWebhookEventBody:
+      description: |
+        The request body used to trigger a test Payments webhook event.
+
+        You need to specify the event type. You can optionally include the `override_data` property to customize the payload. The provided fields must match the webhook event data structure for the specified event type.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - event_type
+            properties:
+              event_type:
+                $ref: '#/components/schemas/WebhookEventType'
+              override_data:
+                type: object
+                description: |
+                  An optional object to customize the webhook event payload. Include only the fields you want to override.
+
+                  The provided fields must match the webhook event data structure for the specified event type. For the full event data structure, refer to the `data.data` property in the response of [List all webhook events](https://www.cobo.com/developers/v2/api-references/developers--webhooks/list-all-webhook-events).
+
+                  If this property is omitted, a default payload is returned.
+                example:
+                  chain_id: ETH
+                  transaction_id: Test-transaction-id
     estimateFeeStationFeeBody:
       description: The information about a Fee Station top-up transaction.
       content:
@@ -26091,6 +26281,64 @@ components:
                   $ref: '#/components/schemas/PaymentBulkSendItem'
               pagination:
                 $ref: '#/components/schemas/Pagination'
+    deleteCounterpartyEntryResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - deleted_counterparty_entry_id
+            properties:
+              deleted_counterparty_entry_id:
+                type: string
+                description: The deleted counterparty entry ID.
+                example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+    deleteDestinationEntryResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - deleted_destination_entry_id
+            properties:
+              deleted_destination_entry_id:
+                type: string
+                description: The deleted destination entry ID.
+                example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+    deleteDestinationByIdResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - deleted_destination_id
+            properties:
+              deleted_destination_id:
+                type: string
+                description: The deleted destination ID.
+                example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+    deleteCounterpartyByIdResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - deleted_counterparty_id
+            properties:
+              deleted_counterparty_id:
+                type: string
+                description: The deleted counterparty ID.
+                example: 46beeab4-6a8e-476e-bc69-99b89aacbc6f
+    triggerTestPaymentsWebhookEventResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TriggerTestPaymentWebhookEventResponse'
     createDispositionResponse:
       description: Successfully created a disposition request.
       content:
