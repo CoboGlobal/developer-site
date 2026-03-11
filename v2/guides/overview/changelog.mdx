@@ -12,6 +12,29 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.32.0
+This version was released on March 11, 2026.
+
+### Compatibility changes
+
+- Added `object_id` and `version` fields to the responses of the following UTXO-related operations:
+  - [List UTXOs](/v2/api-references/wallets/list-utxos)
+  - [Batch check UTXOs](/v2/api-references/wallets/batch-check-utxos)
+
+- Updated the response schema of the following transaction-related operations:
+  - [Get transaction information](/v2/api-references/transactions/get-transaction-information)
+  - [List all transactions](/v2/api-references/transactions/list-all-transactions)
+
+  Updates include:
+  - Added `object_id` and `version` fields to `destination.tx_info`
+  - Added `object_id` and `version` fields to `raw_tx_info.selected_utxos`
+  - Added a new `utxo_changes` array field to `raw_tx_info`
+
+### New features
+
+- Added a new operation: [List transaction UTXOs](/v2/api-references/wallets/list-transaction-utxos), which allows you to query output UTXO information for a transaction.
+
+
 ## v1.31.0
 This version was released on February 4, 2026.
 

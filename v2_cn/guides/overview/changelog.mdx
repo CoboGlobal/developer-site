@@ -12,6 +12,29 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.32.0
+该版本发布于 2026 年 3 月 11 日。
+
+### 兼容性变更
+
+- 以下 UTXO 相关接口的响应中新增 `object_id` 和 `version` 字段：
+  - [查询 UTXOs](/v2/api-references/wallets/list-utxos)
+  - [批量检查 UTXOs](/v2/api-references/wallets/batch-check-utxos)
+
+- 以下交易相关接口的响应结构已更新：
+  - [查询交易详情](/v2/api-references/transactions/get-transaction-information)
+  - [查询交易列表](/v2/api-references/transactions/list-all-transactions)
+
+  更新内容包括：
+  - `destination.tx_info` 新增 `object_id` 和 `version` 字段
+  - `raw_tx_info.selected_utxos` 新增 `object_id` 和 `version` 字段
+  - `raw_tx_info` 新增 `utxo_changes` 数组字段
+
+### 新功能
+
+- 新增接口：[查询交易 UTXOs](/v2/api-references/wallets/list-transaction-utxos)，用于查询某笔交易的 output UTXO 信息。
+
+
 ## v1.31.0
 此版本于 2026 年 2 月 4 日发布。
 

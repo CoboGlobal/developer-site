@@ -204,7 +204,8 @@
                       "v2/api-references/wallets/list-utxos",
                       "v2/api-references/wallets/batch-check-utxos",
                       "v2/api-references/wallets/lock-utxos",
-                      "v2/api-references/wallets/unlock-utxos"
+                      "v2/api-references/wallets/unlock-utxos",
+                      "v2/api-references/wallets/list-transaction-utxos"
                     ]
                   }
                 ]
