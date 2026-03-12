@@ -1,5 +1,5 @@
 ---
-openapi: get /transactions/{transaction_id}/approval_detail
+openapi: post /compliance/kya/screenings
 ---
 
 import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
@@ -9,7 +9,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.transaction_approval_detail import TransactionApprovalDetail
+from cobo_waas2.models.create_kya_screenings_body import CreateKyaScreeningsBody
+from cobo_waas2.models.kya_screening_result import KyaScreeningResult
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -23,19 +24,26 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.TransactionsApi(api_client)
-    transaction_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+    api_instance = cobo_waas2.ComplianceApi(api_client)
+    create_kya_screenings_body = cobo_waas2.CreateKyaScreeningsBody(
+        screenings=[
+            cobo_waas2.KyaScreeningRequest(
+                request_id="scan_eth_addr1_20240721",
+                address="0x1234567890abcdef1234567890abcdef12345678",
+                chain_id="ETH",
+            )
+        ]
+    )
 
     try:
-        # Get transaction approval information
-        api_response = api_instance.get_transaction_approval_detail(transaction_id)
-        print("The response of TransactionsApi->get_transaction_approval_detail:\n")
+        # Create KYA address screening requests
+        api_response = api_instance.create_kya_screenings(
+            create_kya_screenings_body=create_kya_screenings_body
+        )
+        print("The response of ComplianceApi->create_kya_screenings:\n")
         pprint(api_response)
     except Exception as e:
-        print(
-            "Exception when calling TransactionsApi->get_transaction_approval_detail: %s\n"
-            % e
-        )
+        print("Exception when calling ComplianceApi->create_kya_screenings: %s\n" % e)
 
 ```
 ```java Java
@@ -44,8 +52,9 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.TransactionsApi;
+import com.cobo.waas2.api.ComplianceApi;
 import com.cobo.waas2.model.*;
+import java.util.Arrays;
 
 public class Example {
   public static void main(String[] args) {
@@ -56,13 +65,20 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    TransactionsApi apiInstance = new TransactionsApi();
-    UUID transactionId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+    ComplianceApi apiInstance = new ComplianceApi();
+    CreateKyaScreeningsBody createKyaScreeningsBody =
+        new CreateKyaScreeningsBody()
+            .screenings(
+                Arrays.asList(
+                    new KyaScreeningRequest()
+                        .requestId("scan_eth_addr1_20240721")
+                        .address("0x1234567890abcdef1234567890abcdef12345678")
+                        .chainId("ETH")));
     try {
-      TransactionApprovalDetail result = apiInstance.getTransactionApprovalDetail(transactionId);
+      List<KyaScreeningResult> result = apiInstance.createKyaScreenings(createKyaScreeningsBody);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling TransactionsApi#getTransactionApprovalDetail");
+      System.err.println("Exception when calling ComplianceApi#createKyaScreenings");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -84,7 +100,7 @@ import (
 )
 
 func main() {
-	transactionId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+	createKyaScreeningsBody := *coboWaas2.NewCreateKyaScreeningsBody([]coboWaas2.KyaScreeningRequest{*coboWaas2.NewKyaScreeningRequest("scan_eth_addr1_20240721", "0x1234567890abcdef1234567890abcdef12345678", "ETH")})
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -97,40 +113,48 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.TransactionsAPI.GetTransactionApprovalDetail(ctx, transactionId).
+	resp, r, err := apiClient.ComplianceAPI.CreateKyaScreenings(ctx).
+		CreateKyaScreeningsBody(createKyaScreeningsBody).
 		Execute()
 	if err != nil {
-		fmt.Fprintf(
-			os.Stderr,
-			"Error when calling `TransactionsAPI.GetTransactionApprovalDetail``: %v\n",
-			err,
-		)
+		fmt.Fprintf(os.Stderr, "Error when calling `ComplianceAPI.CreateKyaScreenings``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `GetTransactionApprovalDetail`: TransactionApprovalDetail
-	fmt.Fprintf(
-		os.Stdout,
-		"Response from `TransactionsAPI.GetTransactionApprovalDetail`: %v\n",
-		resp,
-	)
+	// response from `CreateKyaScreenings`: []KyaScreeningResult
+	fmt.Fprintf(os.Stdout, "Response from `ComplianceAPI.CreateKyaScreenings`: %v\n", resp)
 }
 
 ```
 ```javascript JavaScript
-const CoboWaas2 = require('@cobo/cobo-waas2');
+const CoboWaas2 = require("@cobo/cobo-waas2");
 // Initialize the API client
-const apiClient = CoboWaas2.ApiClient.instance
+const apiClient = CoboWaas2.ApiClient.instance;
 // Select the development environment. To use the production environment, replace `Env.DEV` with `Env.PROD`
 apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.TransactionsApi();
-const transaction_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
-apiInstance.getTransactionApprovalDetail(transaction_id).then((data) => {
-  console.log('API called successfully. Returned data: ' + data);
-}, (error) => {
-  console.error(error);
-});
+const apiInstance = new CoboWaas2.ComplianceApi();
+const opts = {
+  CreateKyaScreeningsBody:
+    CoboWaas2.CreateKyaScreeningsBody.constructFromObject({
+      screenings: [
+        {
+          request_id: "scan_eth_addr1_20240721",
+          address: "0x1234567890abcdef1234567890abcdef12345678",
+          chain_id: "ETH",
+        },
+      ],
+    }),
+};
+apiInstance.createKyaScreenings(opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+
 ```
 </RequestExample>

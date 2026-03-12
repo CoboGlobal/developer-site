@@ -1,5 +1,5 @@
 ---
-openapi: post /fee_station/transactions/estimate_fee
+openapi: get /compliance/kya/screenings/{screening_id}
 ---
 
 import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
@@ -9,8 +9,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
 <RequestExample>
 ```python Python
 import cobo_waas2
-from cobo_waas2.models.estimated_fixed_fee import EstimatedFixedFee
-from cobo_waas2.models.fee_station_transfer import FeeStationTransfer
+from cobo_waas2.models.kya_screening_result import KyaScreeningResult
 from cobo_waas2.rest import ApiException
 from pprint import pprint
 
@@ -24,20 +23,16 @@ configuration = cobo_waas2.Configuration(
 # Enter a context with an instance of the API client
 with cobo_waas2.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = cobo_waas2.FeeStationApi(api_client)
-    fee_station_transfer = cobo_waas2.FeeStationTransfer(token_id="ETH_USDT")
+    api_instance = cobo_waas2.ComplianceApi(api_client)
+    screening_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
     try:
-        # Estimate fee for Fee Station transaction
-        api_response = api_instance.estimate_fee_station_fee(
-            fee_station_transfer=fee_station_transfer
-        )
-        print("The response of FeeStationApi->estimate_fee_station_fee:\n")
+        # Get KYA address screening result
+        api_response = api_instance.get_kya_screening(screening_id)
+        print("The response of ComplianceApi->get_kya_screening:\n")
         pprint(api_response)
     except Exception as e:
-        print(
-            "Exception when calling FeeStationApi->estimate_fee_station_fee: %s\n" % e
-        )
+        print("Exception when calling ComplianceApi->get_kya_screening: %s\n" % e)
 
 ```
 ```java Java
@@ -46,7 +41,7 @@ import com.cobo.waas2.ApiClient;
 import com.cobo.waas2.ApiException;
 import com.cobo.waas2.Configuration;
 import com.cobo.waas2.Env;
-import com.cobo.waas2.api.FeeStationApi;
+import com.cobo.waas2.api.ComplianceApi;
 import com.cobo.waas2.model.*;
 
 public class Example {
@@ -58,13 +53,13 @@ public class Example {
 
     // Replace `<YOUR_PRIVATE_KEY>` with your private key
     defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
-    FeeStationApi apiInstance = new FeeStationApi();
-    FeeStationTransfer feeStationTransfer = new FeeStationTransfer().tokenId("ETH_USDT");
+    ComplianceApi apiInstance = new ComplianceApi();
+    UUID screeningId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
     try {
-      EstimatedFixedFee result = apiInstance.estimateFeeStationFee(feeStationTransfer);
+      KyaScreeningResult result = apiInstance.getKyaScreening(screeningId);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling FeeStationApi#estimateFeeStationFee");
+      System.err.println("Exception when calling ComplianceApi#getKyaScreening");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -86,7 +81,7 @@ import (
 )
 
 func main() {
-	feeStationTransfer := *coboWaas2.NewFeeStationTransfer("ETH_USDT")
+	screeningId := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
 	configuration := coboWaas2.NewConfiguration()
 	// Initialize the API client
@@ -99,19 +94,13 @@ func main() {
 	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
 		Secret: "<YOUR_PRIVATE_KEY>",
 	})
-	resp, r, err := apiClient.FeeStationAPI.EstimateFeeStationFee(ctx).
-		FeeStationTransfer(feeStationTransfer).
-		Execute()
+	resp, r, err := apiClient.ComplianceAPI.GetKyaScreening(ctx, screeningId).Execute()
 	if err != nil {
-		fmt.Fprintf(
-			os.Stderr,
-			"Error when calling `FeeStationAPI.EstimateFeeStationFee``: %v\n",
-			err,
-		)
+		fmt.Fprintf(os.Stderr, "Error when calling `ComplianceAPI.GetKyaScreening``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `EstimateFeeStationFee`: EstimatedFixedFee
-	fmt.Fprintf(os.Stdout, "Response from `FeeStationAPI.EstimateFeeStationFee`: %v\n", resp)
+	// response from `GetKyaScreening`: KyaScreeningResult
+	fmt.Fprintf(os.Stdout, "Response from `ComplianceAPI.GetKyaScreening`: %v\n", resp)
 }
 
 ```
@@ -124,13 +113,9 @@ apiClient.setEnv(CoboWaas2.Env.DEV);
 // Replace `<YOUR_PRIVATE_KEY>` with your private key
 apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 // Call the API
-const apiInstance = new CoboWaas2.FeeStationApi();
-const opts = {
-  FeeStationTransfer: CoboWaas2.FeeStationTransfer.constructFromObject({
-    token_id: "ETH_USDT",
-  }),
-};
-apiInstance.estimateFeeStationFee(opts).then(
+const apiInstance = new CoboWaas2.ComplianceApi();
+const screening_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
+apiInstance.getKyaScreening(screening_id).then(
   (data) => {
     console.log("API called successfully. Returned data: " + data);
   },
