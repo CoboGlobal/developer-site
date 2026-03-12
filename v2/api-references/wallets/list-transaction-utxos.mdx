@@ -87,7 +87,16 @@ public class Example {
     try {
       ListUtxos200Response result =
           apiInstance.listTransactionUtxos(
-              walletId, chainId, txHash, isChange, voutN, tokenId, address, limit, before, after);
+              walletId,
+              chainId,
+              txHash,
+              isChange,
+              voutN,
+              tokenId,
+              address,
+              limit,
+              before,
+              after);
       System.out.println(result);
     } catch (ApiException e) {
       System.err.println("Exception when calling WalletsApi#listTransactionUtxos");
@@ -166,8 +175,7 @@ apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
 const apiInstance = new CoboWaas2.WalletsApi();
 const wallet_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
 const chain_id = "ETH";
-const tx_hash =
-  "dd7e1cecf6bbde1844ee1815b780711a1e306a718bcd23cd64401b48ef88eb83";
+const tx_hash = "dd7e1cecf6bbde1844ee1815b780711a1e306a718bcd23cd64401b48ef88eb83";
 const opts = {
   is_change: false,
   vout_n: 0,
