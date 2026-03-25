@@ -1524,12 +1524,16 @@
       {
         "label": "Product Manuals",
         "href": "https://manuals.cobo.com/en/portal/introduction"
+      },
+      {
+        "label": "Portal Login",
+        "href": "https://portal.cobo.com/login?utm_term=developer_login.nav"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Cobo Portal",
-      "href": "https://portal.cobo.com/login"
+      "label": "Free Trial",
+      "href": "https://www.cobo.com/lp/14-day-free-trial-cobo?utm_term=developer_freetrial.nav"
     }
   },
   "footer": {
