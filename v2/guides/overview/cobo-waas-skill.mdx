@@ -81,16 +81,24 @@ Or:
 
 **What the AI assistant does:**
 ```bash
-# Set environment to dev
+# === Dev environment ===
 cobo env dev
+cobo login -u                        # OAuth login, opens browser automatically
+
+# Generate and auto-register API Key
+cobo keys generate --key-type API
+cobo keys register                   # Auto-registration supported in dev environment
+
+# Test API connectivity
+cobo get /wallets --limit 10
+
+
+# === Prod environment ===
+cobo env prod
 
 # Generate API key pair
 cobo keys generate --key-type API
-# Output: API Key (Public): abc123...
-#         API Secret (Private): def456...
-
-# You need to register the public key in the Cobo Portal developer console
-# See details at https://manuals.cobo.com/cn/portal/developer-console/create-api-key
+cobo open developer                  # Open developer console to register public key manually
 
 # Configure authentication
 cobo auth apikey
@@ -110,7 +118,7 @@ Here are examples of natural language requests you can make:
 
 
 **For Vibe Coding (SDK Generation):**
- 
+
 - **"Generate Python code to create a wallet and poll for transaction completion"**
 - **"Write Node.js code for a webhook handler that processes transaction events"**
 - **"Generate Python code for an Exchange app that creates deposit addresses for each user"**
