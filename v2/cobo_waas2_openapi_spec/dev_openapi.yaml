@@ -3347,6 +3347,35 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /fee_station/fiat_transactions:
+    get:
+      tags:
+        - FeeStation
+      operationId: list_fee_station_fiat_transactions
+      summary: List Fee Station fiat transactions
+      description: |
+        This operation retrieves all Fee Station fiat transactions under your organization.
+
+        You can filter the results by request IDs, transaction IDs, transaction type, and created timestamp. You can also paginate your query results.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - transaction.read
+      parameters:
+        - $ref: '#/components/parameters/optionalTransactionIdParam'
+        - $ref: '#/components/parameters/optionalFeeStationFiatTransactionTypeParam'
+        - $ref: '#/components/parameters/optionalMinCreatedTimestampParam'
+        - $ref: '#/components/parameters/optionalMaxCreatedTimestampParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/getFeeStationFiatTransactionsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /fee_station/check_fee_station_usage:
     post:
       tags:
@@ -4539,6 +4568,26 @@ paths:
         For details, see [Create refund link](https://www.cobo.com/payments/en/guides/create-refund-link).
       requestBody:
         $ref: '#/components/requestBodies/createPaymentRefundLinkRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/createPaymentLinkResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /payments/links/sdk:
+    post:
+      tags:
+        - Payment
+      operationId: create_sdk_link
+      summary: Create SDK link
+      description: |
+        This operation creates a payment link for use with the front-end SDK integration.
+
+        The returned URL and token can be used to initialize the Cobo payment SDK
+        in your front-end application.
+
+        For more information, see [Cobo Payment Guide](https://www.cobo.com/payments/en/guides/overview).
       responses:
         '201':
           $ref: '#/components/responses/createPaymentLinkResponse'
@@ -5901,6 +5950,30 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/getAutoSweepTaskResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/auto_sweep/tasks/{task_id}/cancel':
+    parameters:
+      - $ref: '#/components/parameters/taskIdParam'
+    post:
+      tags:
+        - AutoSweep
+      operationId: cancel_auto_sweep_task_by_id
+      summary: Cancel auto sweep task
+      description: |
+        This operation cancels an in-progress auto sweep task by its ID.
+
+        Only tasks with the `Submitted` status can be cancelled. Tasks that have already
+        been processed (status `TransactionCreated`) cannot be cancelled.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - wallet.create
+      responses:
+        '200':
+          $ref: '#/components/responses/cancelAutoSweepTaskResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -10363,12 +10436,14 @@ components:
         - $ref: '#/components/schemas/TransactionBabylonBusinessInfo'
         - $ref: '#/components/schemas/TransactionBabylonTxParameters'
         - $ref: '#/components/schemas/TransactionCoreStakeInfo'
+        - $ref: '#/components/schemas/TransactionWalletConnectInfo'
       discriminator:
         propertyName: extra_type
         mapping:
           BabylonBusinessInfo: '#/components/schemas/TransactionBabylonBusinessInfo'
           BabylonTxParameters: '#/components/schemas/TransactionBabylonTxParameters'
           CoreStakeInfo: '#/components/schemas/TransactionCoreStakeInfo'
+          WalletConnectInfo: '#/components/schemas/TransactionWalletConnectInfo'
     TransactionExtraType:
       type: string
       enum:
@@ -14974,6 +15049,74 @@ components:
           description: |
             The commission fee charged for sponsoring the gas fee.
           example: '0.5'
+    FeeStationFiatTransactionType:
+      type: string
+      enum:
+        - deposit
+        - transfer
+      example: deposit
+      description: |
+        The type of the fiat transaction. Possible values include:
+          - `deposit`: A deposit transaction.
+          - `transfer`: A transfer transaction.
+    FeeStationFiatTransaction:
+      type: object
+      description: The information about a fiat transaction.
+      required:
+        - transaction_id
+        - transaction_type
+        - fiat_currency
+        - amount
+        - status
+      properties:
+        transaction_id:
+          type: string
+          description: The transaction ID.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        main_transaction_id:
+          type: string
+          description: The UUID of the parent (main) transaction that this record is associated with. Set only when the current record is a gas/fee transaction initiated by FeeStation; omit for main transactions.
+          format: uuid
+          example: b0530b27-104f-4338-87de-de01500326ea
+        transaction_type:
+          $ref: '#/components/schemas/FeeStationFiatTransactionType'
+        amount:
+          type: string
+          description: The transaction amount.
+          example: '100.00'
+        fiat_currency:
+          type: string
+          description: |
+            The fiat currency of the transaction. Possible values include:
+              - `USD`: US Dollar.
+          example: USD
+        status:
+          type: string
+          description: |
+            The status of the fiat transaction. Possible values include:
+              - `Created`: The transaction has been created.
+              - `Succeeded`: The transaction has been completed successfully.
+          enum:
+            - Created
+            - Succeeded
+          example: Succeeded
+        cobo_category:
+          type: array
+          description: The Cobo category of the transaction.
+          items:
+            type: string
+          example:
+            - GasFeeSponsor
+        created_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the transaction was created, in Unix timestamp format, measured in milliseconds.'
+          example: 1635744000000
+        modified_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the transaction was last modified, in Unix timestamp format, measured in milliseconds.'
+          example: 1635744000000
     ReportType:
       type: string
       enum:
@@ -16380,14 +16523,20 @@ components:
     RefundLinkBusinessInfo:
       type: object
       required:
-        - transaction_id
         - amount
         - refund_source
       properties:
+        order_id:
+          type: string
+          description: |
+            The id of the order to refund. Specify either `order_id` or `transaction_id`, but not both.
+          example: O20250304-M1001-1001
         transaction_id:
           type: string
           description: |
-            The transaction ID of the original order payment or top-up.  On the refund page, the from address of this transaction will be pre-filled as the default refund address.  The refund will be processed in the same token and on the same blockchain as this transaction.
+            The transaction ID of the original order payment or top-up. Specify either `order_id` or `transaction_id`, but not both.
+            On the refund page, the from address of this transaction will be pre-filled as the default refund address.
+            The refund will be processed in the same token and on the same blockchain as this transaction.
           example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
         amount:
           type: string
@@ -17366,6 +17515,13 @@ components:
           format: uuid
           description: 'The ID of the bank account to which the payout will be sent. You can retrieve the bank account ID by calling [List destination entries](https://www.cobo.com/payments/en/api-references/payment/list-destination-entries).'
           example: 123e4567-e89b-12d3-a456-426614174003
+        transfer_via_va:
+          type: boolean
+          description: |
+            For OffRamp payout, whether the payout is transferred to a registered bank account via a virtual account (VA) or directly.
+            - `true`: The payout is transferred to a registered bank account via a VA (virtual account).
+            - `false`: The payout is transferred directly to a registered bank account.
+          example: false
     PaymentPayoutParam:
       type: object
       required:
@@ -20368,6 +20524,11 @@ components:
           type: string
           description: 'ID of the token to be swept. You can retrieve the IDs of all the tokens you can use by calling [List enabled tokens](https://www.cobo.com/developers/v2/api-references/wallets/list-enabled-tokens).'
           example: ETH_USDT
+        min_balance_threshold:
+          type: string
+          description: |
+            The minimum token balance threshold for auto sweep. If the token balance of an address is less than this threshold, the address will not be swept.
+          example: '0.01'
   parameters:
     sortByParam:
       name: sort_by
@@ -21712,6 +21873,17 @@ components:
       schema:
         type: string
       example: 'Deposit,Withdrawal'
+    optionalFeeStationFiatTransactionTypeParam:
+      name: transaction_type
+      in: query
+      required: false
+      description: |
+        The type of the fiat transaction. Possible values include:
+          - `deposit`: A deposit transaction.
+          - `transfer`: A transfer transaction.
+      schema:
+        $ref: '#/components/schemas/FeeStationFiatTransactionType'
+      example: deposit
     ReportTypeOptionalParam:
       name: report_type
       in: query
@@ -23395,6 +23567,13 @@ components:
               recipient_token_id:
                 type: string
                 description: The token ID that the recipient will receive. Required only when `fee_type` is `CryptoPayoutBridge`.
+              transfer_via_va:
+                type: boolean
+                description: |
+                  For OffRamp payout, whether the payout is transferred to a registered bank account via a virtual account (VA) or directly.
+                  - `true`: The payout is transferred to a registered bank account via a VA (virtual account).
+                  - `false`: The payout is transferred directly to a registered bank account.
+                example: false
     createPaymentOrderLinkRequest:
       description: The request body to create a payment link for a pay-in order.
       content:
@@ -26525,6 +26704,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/EstimatedFixedFee'
+    getFeeStationFiatTransactionsResponse:
+      description: The information about the fiat transactions.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeeStationFiatTransaction'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     getApprovalRequestByIdResponse:
       description: The information about an approval request.
       content:
@@ -26721,6 +26913,12 @@ components:
                 $ref: '#/components/schemas/Pagination'
     getAutoSweepTaskResponse:
       description: Information about a auto-sweep task.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AutoSweepTask'
+    cancelAutoSweepTaskResponse:
+      description: Successfully cancelled the auto sweep task.
       content:
         application/json:
           schema:

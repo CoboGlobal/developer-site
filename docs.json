@@ -328,7 +328,8 @@
                       "v2/api-references/feestation/list-all-fee-station-transactions",
                       "v2/api-references/feestation/list-fee-station-addresses",
                       "v2/api-references/feestation/list-fee-station-token-balances",
-                      "v2/api-references/feestation/check-fee-station-usage"
+                      "v2/api-references/feestation/check-fee-station-usage",
+                      "v2/api-references/feestation/list-fee-station-fiat-transactions"
                     ]
                   }
                 ]
@@ -341,7 +342,8 @@
                     "pages": [
                       "v2/api-references/autosweep/create-auto-sweep-task",
                       "v2/api-references/autosweep/list-auto-sweep-tasks",
-                      "v2/api-references/autosweep/get-auto-sweep-task-details"
+                      "v2/api-references/autosweep/get-auto-sweep-task-details",
+                      "v2/api-references/autosweep/cancel-auto-sweep-task-by-id"
                     ]
                   },
                   {

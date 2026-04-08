@@ -1,0 +1,199 @@
+---
+openapi: get /fee_station/fiat_transactions
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+<RequestExample>
+```python Python
+import cobo_waas2
+from cobo_waas2.models.fee_station_fiat_transaction_type import (
+    FeeStationFiatTransactionType,
+)
+from cobo_waas2.models.list_fee_station_fiat_transactions200_response import (
+    ListFeeStationFiatTransactions200Response,
+)
+from cobo_waas2.rest import ApiException
+from pprint import pprint
+
+# See configuration.py for a list of all supported configurations.
+configuration = cobo_waas2.Configuration(
+    # Replace `<YOUR_PRIVATE_KEY>` with your private key
+    api_private_key="<YOUR_PRIVATE_KEY>",
+    # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
+    host="https://api.dev.cobo.com/v2",
+)
+# Enter a context with an instance of the API client
+with cobo_waas2.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = cobo_waas2.FeeStationApi(api_client)
+    transaction_ids = (
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3"
+    )
+    transaction_type = cobo_waas2.FeeStationFiatTransactionType()
+    min_created_timestamp = 1635744000000
+    max_created_timestamp = 1635744000000
+    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+    limit = 10
+
+    try:
+        # List Fee Station fiat transactions
+        api_response = api_instance.list_fee_station_fiat_transactions(
+            transaction_ids=transaction_ids,
+            transaction_type=transaction_type,
+            min_created_timestamp=min_created_timestamp,
+            max_created_timestamp=max_created_timestamp,
+            before=before,
+            after=after,
+            limit=limit,
+        )
+        print("The response of FeeStationApi->list_fee_station_fiat_transactions:\n")
+        pprint(api_response)
+    except Exception as e:
+        print(
+            "Exception when calling FeeStationApi->list_fee_station_fiat_transactions: %s\n"
+            % e
+        )
+
+```
+```java Java
+// Import classes:
+import com.cobo.waas2.ApiClient;
+import com.cobo.waas2.ApiException;
+import com.cobo.waas2.Configuration;
+import com.cobo.waas2.Env;
+import com.cobo.waas2.api.FeeStationApi;
+import com.cobo.waas2.model.*;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    // Select the development environment. To use the production environment, replace `Env.DEV` with
+    // `Env.PROD
+    defaultClient.setEnv(Env.DEV);
+
+    // Replace `<YOUR_PRIVATE_KEY>` with your private key
+    defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
+    FeeStationApi apiInstance = new FeeStationApi();
+    String transactionIds =
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3";
+    FeeStationFiatTransactionType transactionType =
+        FeeStationFiatTransactionType.fromValue("deposit");
+    Long minCreatedTimestamp = 1635744000000L;
+    Long maxCreatedTimestamp = 1635744000000L;
+    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
+    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    Integer limit = 10;
+    try {
+      ListFeeStationFiatTransactions200Response result =
+          apiInstance.listFeeStationFiatTransactions(
+              transactionIds,
+              transactionType,
+              minCreatedTimestamp,
+              maxCreatedTimestamp,
+              before,
+              after,
+              limit);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling FeeStationApi#listFeeStationFiatTransactions");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+
+```
+```go Go
+package main
+
+import (
+	"context"
+	"fmt"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
+	"os"
+)
+
+func main() {
+	transactionIds := "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3"
+	transactionType := coboWaas2.FeeStationFiatTransactionType("deposit")
+	minCreatedTimestamp := int64(1635744000000)
+	maxCreatedTimestamp := int64(1635744000000)
+	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+	limit := int32(10)
+
+	configuration := coboWaas2.NewConfiguration()
+	// Initialize the API client
+	apiClient := coboWaas2.NewAPIClient(configuration)
+	ctx := context.Background()
+
+	// Select the development environment. To use the production environment, replace coboWaas2.DevEnv with coboWaas2.ProdEnv
+	ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.DevEnv)
+	// Replace `<YOUR_PRIVATE_KEY>` with your private key
+	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
+		Secret: "<YOUR_PRIVATE_KEY>",
+	})
+	resp, r, err := apiClient.FeeStationAPI.ListFeeStationFiatTransactions(ctx).
+		TransactionIds(transactionIds).
+		TransactionType(transactionType).
+		MinCreatedTimestamp(minCreatedTimestamp).
+		MaxCreatedTimestamp(maxCreatedTimestamp).
+		Before(before).
+		After(after).
+		Limit(limit).
+		Execute()
+	if err != nil {
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `FeeStationAPI.ListFeeStationFiatTransactions``: %v\n",
+			err,
+		)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListFeeStationFiatTransactions`: ListFeeStationFiatTransactions200Response
+	fmt.Fprintf(
+		os.Stdout,
+		"Response from `FeeStationAPI.ListFeeStationFiatTransactions`: %v\n",
+		resp,
+	)
+}
+
+```
+```javascript JavaScript
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// Initialize the API client
+const apiClient = CoboWaas2.ApiClient.instance;
+// Select the development environment. To use the production environment, replace `Env.DEV` with `Env.PROD`
+apiClient.setEnv(CoboWaas2.Env.DEV);
+// Replace `<YOUR_PRIVATE_KEY>` with your private key
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// Call the API
+const apiInstance = new CoboWaas2.FeeStationApi();
+const opts = {
+  transaction_ids:
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479,557918d2-632a-4fe1-932f-315711f05fe3",
+  transaction_type: new CoboWaas2.FeeStationFiatTransactionType(),
+  min_created_timestamp: 1635744000000,
+  max_created_timestamp: 1635744000000,
+  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
+  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+  limit: 10,
+};
+apiInstance.listFeeStationFiatTransactions(opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+
+```
+</RequestExample>
