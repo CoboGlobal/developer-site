@@ -70,7 +70,7 @@ cobo skill status
 
 安装完成后，您可以在 AI 助手中使用自然语言来执行 WaaS 操作。以下是设置和进行首次 API 调用的示例：
 
-<Tip>为了获得最佳效果，建议在提示词前加上 `/cobo-waas` 前缀，或在请求中包“使用 Cobo WaaS Skill” 字样来明确指定使用该 Skill。</Tip>
+<Tip>为了获得最佳效果，建议在提示词前加上 `/cobo-waas` 前缀，或在请求中包含"使用 Cobo WaaS Skill" 字样来明确指定使用该 Skill。</Tip>
 
 **您向 AI 助手提问：**
 ```
@@ -84,16 +84,24 @@ cobo skill status
 
 **AI 助手将执行：**
 ```bash
-# 设置环境为 dev
+# === Dev 环境 ===
 cobo env dev
+cobo login -u                        # OAuth 登录，自动打开浏览器
+
+# 生成并自动注册 API Key
+cobo keys generate --key-type API
+cobo keys register                   # Dev 环境支持自动注册
+
+# 测试 API 连接
+cobo get /wallets --limit 10
+
+
+# === Prod 环境 ===
+cobo env prod
 
 # 生成 API 密钥对
 cobo keys generate --key-type API
-# 输出：API Key (Public): abc123...
-#       API Secret (Private): def456...
-
-# 您需要在 Cobo Portal 开发者控制台中注册公钥
-# 详情见 https://manuals.cobo.com/cn/portal/developer-console/create-api-key
+cobo open developer                  # 打开开发者控制台手动注册公钥
 
 # 配置身份验证
 cobo auth apikey
@@ -113,7 +121,7 @@ cobo get /wallets --limit 10
 
 
 **Vibe Coding（SDK 生成）：**
- 
+
 - **"生成 Python 代码来创建钱包并轮询交易完成状态"**
 - **"编写 Node.js 代码用于处理交易事件的 webhook 处理程序"**
 - **"为交易所应用生成 Python 代码，为每个用户创建充值地址"**
