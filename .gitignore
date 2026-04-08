@@ -1,5 +1,6 @@
 .idea/
 .DS_Store
 .venv/*
-build_script/*
+build_scripts/*
+scripts/*
 

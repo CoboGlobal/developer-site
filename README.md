@@ -85,6 +85,8 @@ Developer Hub is built on Mintlify that uses a syntax very similar to markdown. 
 
 When you complete the modifications locally and make sure no error or issue occur when you preview, proceed with the standard [Fork & Pull Request](https://gist.github.com/Chaser324/ce0505fbed06b947d962) process for submission.
 
+If you regenerate WaaS 2.0 API reference MDX from OpenAPI (for example via `build_scripts/build_mdx_and_code.sh`), Mintlify’s generator does not include the Cobo WaaS skill reminder. The pipeline runs [`scripts/ensure_waas_skill_reminder_mdx.py`](scripts/ensure_waas_skill_reminder_mdx.py) afterward; if you generate MDX another way, run `python scripts/ensure_waas_skill_reminder_mdx.py` from the repository root before committing.
+
 ## Contact us
 
 [Join the discord 👉](https://discord.gg/FaZwQ9WYpj)
