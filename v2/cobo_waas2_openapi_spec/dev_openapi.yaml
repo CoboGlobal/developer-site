@@ -3849,50 +3849,6 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
-  /payments/bank_accounts:
-    get:
-      tags:
-        - Payment
-      operationId: list_bank_accounts
-      summary: List all bank accounts
-      description: |
-        <Note>This operation has been deprecated. Please use [List counterparty entries](https://www.cobo.com/payments/en/api-references/payment/list-counterparty-entries) instead.</Note>
-        This operation retrieves the information of all bank accounts registered.
-      security:
-        - CoboAuth: []
-        - OAuth2:
-            - payment_merchant.read
-      responses:
-        '200':
-          $ref: '#/components/responses/listBankAccountsResponse'
-        4XX:
-          $ref: '#/components/responses/badRequestError'
-        5XX:
-          $ref: '#/components/responses/internalServerError'
-  '/payments/bank_accounts/{bank_account_id}':
-    put:
-      tags:
-        - Payment
-      operationId: update_bank_account_by_id
-      summary: Update bank account
-      description: |
-        <Note>This operation has been deprecated.</Note>
-        This operation updates the information of an existing bank account.
-      security:
-        - CoboAuth: []
-        - OAuth2:
-            - payment_merchant.update
-      parameters:
-        - $ref: '#/components/parameters/BankIdPathParam'
-      requestBody:
-        $ref: '#/components/requestBodies/updateBankAccountBody'
-      responses:
-        '200':
-          $ref: '#/components/responses/createBankAccountResponse'
-        4XX:
-          $ref: '#/components/responses/badRequestError'
-        5XX:
-          $ref: '#/components/responses/internalServerError'
   /payments/orders:
     post:
       tags:
@@ -4342,9 +4298,9 @@ paths:
       operationId: list_top_up_payers
       summary: List payers
       description: |
-        This operation retrieves the information of all payers under a merchant. 
+        This operation retrieves the information of all payers. You can filter the result by merchant ID and payer_id.
 
-        You can filter the result by the payer ID.
+        <Note>The `transactions` field in the response returns up to the latest 200 transactions only. This field will be removed in a future version. To paginate through payer transactions, use [List payer transactions](https://www.cobo.com/payments/en/guides/overview).</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -4383,6 +4339,40 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listPayerAccountsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /payments/topup/payers/transactions:
+    get:
+      tags:
+        - Payment
+      operationId: list_payer_transactions
+      summary: List payer transactions
+      description: |
+        This operation retrieves on-chain transactions related to a specific top-up payer.
+
+        You need to specify `custom_payer_id`, which is the merchant-defined customer identifier used when creating top-up addresses.
+
+        <Note>This operation is applicable to the top-up scenario only.</Note>
+
+        For more information, see [Cobo Payments Guide](https://www.cobo.com/payments/en/guides/overview).
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_transaction.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/MerchantIdOptionalParam'
+        - $ref: '#/components/parameters/CustomPayerIdRequiredParam'
+        - $ref: '#/components/parameters/TokenIdOptionalParam'
+        - $ref: '#/components/parameters/optionalTransactionHashParam'
+        - $ref: '#/components/parameters/optionalTransactionIdParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listPayerTransactionsResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -6466,6 +6456,10 @@ components:
           format: int32
           description: 'The number of confirmations required before a coinbase transaction is considered mature and can be spent, for example, 100 confirmations for BTC.'
           example: 15
+        caip2_chain_id:
+          type: string
+          description: 'A standardized, unique identifier for blockchain networks (like eip155:1 for Ethereum) that combines a namespace and a reference to ensure cross-chain compatibility.'
+          example: 'eip155:1'
     WalletType:
       type: string
       enum:
@@ -7619,6 +7613,19 @@ components:
       description: |
         The available actions of key share holder group update. Possible values include:
         - `UpgradeToMainGroup`: This upgrades an active [Signing Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) to the [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups). The original Main Group will be permanently deleted.
+    OriginalMainGroupHandling:
+      type: string
+      enum:
+        - Invalidate
+        - ConvertToSigningGroup
+      example: Invalidate
+      default: Invalidate
+      description: |
+        The action to take on the original [Main Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups) when upgrading a Signing Group to the Main Group. Defaults to `Invalidate` if not provided. Possible values include:
+
+        - `Invalidate`: The original Main Group will be permanently invalidated.
+
+        - `ConvertToSigningGroup`: The original Main Group will be converted to a Signing Group.
     SourceGroup:
       type: object
       description: |
@@ -10242,6 +10249,10 @@ components:
         - GasFeeSponsor
         - GasFeeSponsorRefund
         - WalletConnect
+        - JustLendReceiverPrecharge
+        - JustLendEnergyRental
+        - JustLendEnergyReturn
+        - TrxRecharge
       example: AutoSweep
       description: |
         The transaction category defined by Cobo. Possible values include: 
@@ -10281,6 +10292,10 @@ components:
           - `GasFeeSponsor`: A transaction where Fee Station pays the on-chain gas fee in USD stablecoin.
           - `GasFeeSponsorRefund`: A transaction that refunds gas fees previously sponsored and paid by Fee Station.
           - `WalletConnect`: A transaction initiated by walletconnect.
+          - `JustLendReceiverPrecharge`: A TRX transfer to the receiver address to activate it and compensate for bandwidth fees before the main transaction executes.
+          - `JustLendEnergyRental`: A contract call to JustLend's rentResource() to rent TRON energy for the main transaction execution.
+          - `JustLendEnergyReturn`: A contract call to JustLend's returnResource() to return rented energy and recover the unused deposit after the main transaction completes.
+          - `TrxRecharge`: TRX balance top-up to cover energy and bandwidth fees for the main transaction.
     SafeTxExtraData:
       type: object
       description: 'The information used to construct and sign Safe{Wallet} transactions using the EIP-712 standard.'
@@ -12195,6 +12210,7 @@ components:
         - fee_station.transaction.updated
         - fee_station.transaction.failed
         - fee_station.transaction.succeeded
+        - fee_station.fiat_transaction.created
         - wallet.token.enabled
         - wallet.chain.enabled
         - wallet.mpc.balance.updated
@@ -16418,7 +16434,8 @@ components:
         pricing_currency:
           type: string
           description: |
-            The pricing currency that denominates `pricing_amount` and `fee_amount`. Currently, only `USD`/`USDT`/`USDC` are supported. This field is required.
+            The pricing currency that denominates `pricing_amount` and `fee_amount`. If left empty, both values will be denominated in `payable_currency`. 
+            Currently, For a complete list of supported currencies, see [Supported chains and tokens](https://www.cobo.com//payments/en/guides/supported-chains-and-tokens#pricing-currency).
           example: USD
         pricing_amount:
           type: string
@@ -21927,16 +21944,6 @@ components:
       schema:
         type: string
       example: 'ETH_USDT,SOL_USDC,TRON_USDT'
-    BankIdPathParam:
-      name: bank_account_id
-      in: path
-      required: true
-      description: The bank account ID.
-      schema:
-        type: string
-        format: uuid
-        description: The bank account ID.
-      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     CurrencyRequiredParam:
       name: currency
       in: path
@@ -22141,7 +22148,8 @@ components:
       name: custom_payer_id
       in: query
       required: true
-      description: A unique identifier to track and identify individual payers in your system.
+      description: |
+        Unique customer identifier on the merchant side, used to allocate a dedicated top-up address
       schema:
         type: string
       example: payer_0001
@@ -22835,6 +22843,8 @@ components:
             properties:
               update_key_share_holder_group_action:
                 $ref: '#/components/schemas/UpdateGroupAction'
+              original_main_group_handling:
+                $ref: '#/components/schemas/OriginalMainGroupHandling'
     createTransferBody:
       description: The request body to create a transfer transaction
       content:
@@ -23229,65 +23239,6 @@ components:
                 type: string
                 description: 'The developer fee rate applied to this merchant. Must be a valid float between 0 and 1 (inclusive), with up to 4 decimal places. For more information on developer fee rate, please refer to [Accounts and fund allocation](https://www.cobo.com/payments/en/guides/amounts-and-balances).'
                 example: '0.1'
-    createBankAccountBody:
-      description: The request body to register a bank account.
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - info
-              - otc_bank_account_id
-            properties:
-              otc_bank_account_id:
-                type: string
-              info:
-                type: object
-                additionalProperties: true
-                description: |
-                  JSON-formatted bank account details. The object should include the following fields:
-                  - beneficiary_name: Name of the account holder
-                  - beneficiary_address: Address of the account holder
-                  - account_number: Bank account number
-                  - bank_name: Name of the bank
-                  - bank_address: Address of the bank
-                  - iban: (Optional) International Bank Account Number
-                  - swift_or_bic: SWIFT or BIC code of the bank
-                example:
-                  beneficiary_name: John Doe
-                  beneficiary_address: '123 Main St, Anytown, USA'
-                  account_number: '4111111111111111'
-                  bank_name: ABC Bank
-                  bank_address: '456 Bank Ave, Cityville, USA'
-                  swift_or_bic: ABCDEFGH
-    updateBankAccountBody:
-      description: The request body for updating an existing bank account.
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - info
-            properties:
-              info:
-                type: object
-                additionalProperties: true
-                description: |
-                  JSON-formatted bank account details. The object should include the following fields:
-                  - beneficiary_name: Name of the account holder
-                  - beneficiary_address: Address of the account holder
-                  - account_number: Bank account number
-                  - bank_name: Name of the bank
-                  - bank_address: Address of the bank
-                  - iban: (Optional) International Bank Account Number
-                  - swift_or_bic: SWIFT or BIC code of the bank
-                example:
-                  beneficiary_name: John Doe
-                  beneficiary_address: '123 Main St, Anytown, USA'
-                  account_number: '4111111111111111'
-                  bank_name: ABC Bank
-                  bank_address: '456 Bank Ave, Cityville, USA'
-                  swift_or_bic: ABCDEFGH
     createPaymentOrderBody:
       description: The request body to create a pay-in order.
       content:
@@ -25757,20 +25708,6 @@ components:
                   $ref: '#/components/schemas/Merchant'
               pagination:
                 $ref: '#/components/schemas/Pagination'
-    createBankAccountResponse:
-      description: The request was successful.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BankAccount'
-    listBankAccountsResponse:
-      description: The request was successful.
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/BankAccount'
     createPaymentOrderResponse:
       $ref: '#/components/responses/getPaymentOrderResponse'
     listPaymentOrdersResponse:
@@ -25810,6 +25747,11 @@ components:
                       type: string
                       description: A unique identifier assigned by Cobo to track and identify individual payers.
                       example: P20250619T0310056d7aa
+                    custom_payer_id:
+                      type: string
+                      description: |
+                        Unique user identifier on the merchant side, used to assign a dedicated deposit address.
+                      example: user_abc_10001
                     developer_fee_rate:
                       type: string
                       description: The developer fee rate applied to top-up transactions made by this payer. Expressed as a decimal string where "0.1" represents 10%.
@@ -25824,7 +25766,10 @@ components:
                       example: 1744693200
                     transactions:
                       type: array
-                      description: An array of top-up transactions associated with this payer.
+                      description: |
+                        An array of transactions associated with this payer.
+
+                        <Note>This field returns up to the latest 200 transactions only and will be removed in a future version. Use the dedicated payer transactions API to paginate through transactions.</Note>
                       items:
                         $ref: '#/components/schemas/PaymentTransaction'
               pagination:
@@ -26000,6 +25945,19 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/PayerAccount'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    listPayerTransactionsResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentTransaction'
               pagination:
                 $ref: '#/components/schemas/Pagination'
     createForcedSweepResponse:
