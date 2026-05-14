@@ -13,6 +13,18 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
 
+## v1.35.0
+
+该版本发布于 2026 年 5 月 13 日。
+
+### 新功能
+
+- 在 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 接口的 `cobo_category` 中新增支持的枚举值 `TrxRecharge`。
+- 在以下接口的 `chain` 对象中新增 `caip2_chain_id` 字段：
+  - [List supported chains](/v2/api-references/wallets/list-supported-chains)
+  - [List enabled chains](/v2/api-references/wallets/list-enabled-chains)
+  - [Get chain information](/v2/api-references/wallets/get-chain-information)
+
 ## v1.34.0
 本版本发布于 2026 年 4 月 8 日。
 
