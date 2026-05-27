@@ -568,7 +568,13 @@
                       "v2/api-references/travelrule/submit-travel-rule-information-for-deposits",
                       "v2/api-references/travelrule/submit-travel-rule-information-for-withdrawals",
                       "v2/api-references/travelrule/retrieve-transaction-limitations",
-                      "v2/api-references/travelrule/list-supported-countries"
+                      "v2/api-references/travelrule/list-supported-countries",
+                      "v2/api-references/travelrule/get-self-custody-signature-challenge",
+                      "v2/api-references/travelrule/create-satoshi-test-challenge",
+                      "v2/api-references/travelrule/get-satoshi-test-challenge",
+                      "v2/api-references/travelrule/cancel-satoshi-test-challenge",
+                      "v2/api-references/travelrule/list-address-verifications",
+                      "v2/api-references/travelrule/get-address-verification"
                     ]
                   }
                 ]

@@ -13,6 +13,23 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
 
+## v1.36.0
+
+此版本于 2026 年 5 月 27 日发布。
+
+### 新功能
+
+- 新增以下 Travel Rule 相关接口：
+  - [获取签名挑战](/v2/api-references/travel-rule/get-signature-challenge)
+  - [创建 Satoshi Test 挑战](/v2/api-references/travel-rule/create-satoshi-test-challenge)
+  - [获取 Satoshi Test 挑战状态](/v2/api-references/travel-rule/get-satoshi-test-challenge-status)
+  - [取消 Satoshi Test 挑战](/v2/api-references/travel-rule/cancel-satoshi-test-challenge)
+  - [获取地址验证列表](/v2/api-references/travel-rule/list-address-verifications)
+
+### 兼容性变更
+
+- 在 [获取交易审批详情](/v2/api-references/transactions/get-transaction-approval-details) 接口响应的 `user_details` 中新增 `expired_time` 字段。
+
 ## v1.35.0
 
 该版本发布于 2026 年 5 月 13 日。
