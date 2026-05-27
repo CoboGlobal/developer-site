@@ -12,6 +12,23 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.36.0
+
+此版本于 2026 年 5 月 27 日发布。
+
+### 新功能
+
+- 新增以下 Travel Rule 相关接口：
+  - [获取自托管签名挑战](/v2/api-references/travelrule/get-self-custody-signature-challenge)
+  - [创建 Satoshi Test 挑战](/v2/api-references/travelrule/create-satoshi-test-challenge)
+  - [获取 Satoshi Test 挑战](/v2/api-references/travelrule/get-satoshi-test-challenge)
+  - [取消 Satoshi Test 挑战](/v2/api-references/travelrule/cancel-satoshi-test-challenge)
+  - [查询地址验证列表](/v2/api-references/travelrule/list-address-verifications)
+
+### 兼容性变更
+
+- 在 [获取交易审批详情](/v2/api-references/transactions/get-transaction-approval-details) 接口响应的 `user_details` 中新增 `expired_time` 字段。
+
 
 ## v1.35.0
 
@@ -19,11 +36,11 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### 新功能
 
-- 在 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 接口的 `cobo_category` 中新增支持的枚举值 `TrxRecharge`。
+- 在 [查询交易详情](/v2/api-references/transactions/get-transaction-information) 接口的 `cobo_category` 中新增支持的枚举值 `TrxRecharge`。
 - 在以下接口的 `chain` 对象中新增 `caip2_chain_id` 字段：
-  - [List supported chains](/v2/api-references/wallets/list-supported-chains)
-  - [List enabled chains](/v2/api-references/wallets/list-enabled-chains)
-  - [Get chain information](/v2/api-references/wallets/get-chain-information)
+  - [查询支持的链](/v2/api-references/wallets/list-supported-chains)
+  - [查询已启用的链](/v2/api-references/wallets/list-enabled-chains)
+  - [查询链信息](/v2/api-references/wallets/get-chain-information)
 
 ## v1.34.0
 本版本发布于 2026 年 4 月 8 日。

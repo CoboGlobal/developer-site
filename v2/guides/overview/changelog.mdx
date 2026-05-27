@@ -12,6 +12,24 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.36.0
+
+This version was released on May 27, 2026.
+
+### New features
+
+- Added the following Travel Rule operations:
+  - [Get self-custody signature challenge](/v2/api-references/travelrule/get-self-custody-signature-challenge)
+  - [Create Satoshi Test challenge](/v2/api-references/travelrule/create-satoshi-test-challenge)
+  - [Get Satoshi Test challenge](/v2/api-references/travelrule/get-satoshi-test-challenge)
+  - [Cancel Satoshi Test challenge](/v2/api-references/travelrule/cancel-satoshi-test-challenge)
+  - [List address verifications](/v2/api-references/travelrule/list-address-verifications)
+
+### Compatibility changes
+
+- Added the `expired_time` field to `user_details` in the response of the [Get transaction approval details](/v2/api-references/transactions/get-transaction-approval-details) operation.
+
+
 ## v1.35.0
 
 This version was released on May 13, 2026.

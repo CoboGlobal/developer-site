@@ -3126,6 +3126,8 @@ paths:
       operationId: get_transaction_limitation
       summary: Retrieve transaction limitations
       description: |
+        <Note>The `self_custody_wallet_challenge` field in the response is deprecated. To obtain a signature challenge, call [Get self-custody signature challenge](#operation/get_signature_challenge) instead. This operation itself is not deprecated and continues to return the VASP list, threshold info, connect wallet list, and Satoshi Test support.</Note>
+
         This operation retrieves Travel Rule requirements and available options for a transaction based on its transaction type and ID.
 
         Use this endpoint before submitting Travel Rule information to understand the requirements and available options for your transaction.
@@ -3187,6 +3189,169 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/submitTravelRuleInfoResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /travel_rule/signature_challenge:
+    get:
+      tags:
+        - TravelRule
+      operationId: get_signature_challenge
+      summary: Get self-custody signature challenge
+      description: |
+        This operation issues a one-time, time-bounded message for a self-custody wallet address to sign, in order to prove wallet ownership. The signature is then submitted via [Submit Travel Rule information for deposits](#operation/submit_deposit_travel_rule_info) or [withdrawals](#operation/submit_withdraw_travel_rule_info).
+
+        Use this endpoint when you want to verify the counterparty's self-custody address via off-chain signature. For address verification via on-chain micro-deposit, use the Satoshi Test endpoints (`/travel_rule/satoshi_test/...`) instead.
+
+        The challenge is valid for a short window (returned as `expires_in`, currently 30 seconds). Calling this endpoint again for the same transaction rotates the challenge — only the latest issued value will verify.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - travel_rule.read
+      parameters:
+        - $ref: '#/components/parameters/requiredTransactionTypeParam'
+        - $ref: '#/components/parameters/requiredTransactionIdParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/getSignatureChallengeResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /travel_rule/satoshi_test/challenge:
+    post:
+      tags:
+        - TravelRule
+      operationId: create_satoshi_test_challenge
+      summary: Create Satoshi Test challenge
+      description: |
+        This operation creates a Satoshi Test challenge for self-custody address verification. Satoshi Test verifies address ownership by having the counterparty transfer a small, uniquely-generated amount from their wallet to a Cobo-controlled verification address.
+
+        A single endpoint covers both flows via the `action` parameter:
+        - **Two-step flow** (`action=PREPARE` then `action=SUBMIT`): Preview the verification details first, then activate. The 180-minute countdown only starts on `SUBMIT`. The server uses `(chain_id, from_address)` as the idempotency key, so the second call automatically targets the prepared challenge. For extra safety, pass the `challenge_id` returned by `PREPARE` in the subsequent `SUBMIT` call — it pins the activation to that specific challenge.
+        - **One-shot flow** (`action=SUBMIT` directly, without `challenge_id`): Prepare and submit in a single call. The challenge is created directly in `PENDING` state with the countdown started.
+
+        If the counterparty address has already been verified, the operation returns HTTP 400 `ADDRESS_ALREADY_VERIFIED`. Call [List address verifications](#operation/list_address_verifications) with `chain_id`, `address`, and `status=VERIFIED` first to pre-check.
+
+        Supported chains: `BTC`, `ETH`, `BASE_ETH`, `BSC_BNB`, `TRON`.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - travel_rule.edit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSatoshiTestChallengeRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/createSatoshiTestChallengeResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /travel_rule/satoshi_test/challenge/status:
+    get:
+      tags:
+        - TravelRule
+      operationId: get_satoshi_test_challenge
+      summary: Get Satoshi Test challenge
+      description: |
+        This operation returns the current state of a Satoshi Test challenge — useful for polling after submission. The response contains the challenge `status` and `remaining_seconds`.
+
+        Recommended polling interval: 10–30 seconds. The challenge will transition through `PENDING` → `MATCHED` → `VERIFIED` once the counterparty's transfer is observed and confirmed on chain. If the challenge is not matched within 180 minutes, the status becomes `EXPIRED`.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - travel_rule.read
+      parameters:
+        - $ref: '#/components/parameters/requiredSatoshiTestChallengeIdParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/getSatoshiTestChallengeResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /travel_rule/satoshi_test/challenge/cancel:
+    post:
+      tags:
+        - TravelRule
+      operationId: cancel_satoshi_test_challenge
+      summary: Cancel Satoshi Test challenge
+      description: |
+        This operation cancels a Satoshi Test challenge that is currently in `PREPARE` or `PENDING` status. Typical use case: the counterparty decides to switch verification methods before transferring.
+
+        Once cancelled, the challenge status becomes `DELETED` and the on-chain match will no longer be observed. Challenges already in `MATCHED`, `VERIFIED`, `EXPIRED`, or `DELETED` state cannot be cancelled.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - travel_rule.edit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelSatoshiTestChallengeRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/cancelSatoshiTestChallengeResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /travel_rule/address_verifications:
+    get:
+      tags:
+        - TravelRule
+      operationId: list_address_verifications
+      summary: List address verifications
+      description: |
+        List self-custody address verification records under the current organization with optional filters and cursor-based pagination.
+
+        Records are sorted by creation time descending (most recent first). Use `limit` plus `before` / `after` cursors from the previous page's `pagination` block to traverse pages.
+
+        Each record's `status` is one of `PENDING`, `VERIFIED`, or `FAILED`.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - travel_rule.read
+      parameters:
+        - $ref: '#/components/parameters/optionalAddressVerificationStatusParam'
+        - $ref: '#/components/parameters/optionalAddressVerificationChainIdParam'
+        - $ref: '#/components/parameters/optionalAddressVerificationAddressParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listAddressVerificationsResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/travel_rule/address_verifications/{verification_id}':
+    parameters:
+      - $ref: '#/components/parameters/pathAddressVerificationIdParam'
+    get:
+      tags:
+        - TravelRule
+      operationId: get_address_verification
+      summary: Get address verification
+      description: |
+        Retrieve a single self-custody address verification record by its `verification_id`, including method-specific provenance:
+
+        - `verification_method=SIGNATURE` → `signature_detail` is populated.
+        - `verification_method=SATOSHI_TEST` → `satoshi_test_detail` carries the latest challenge state (`status`, `remaining_seconds`, `matched_txid`).
+
+        Use [List address verifications](#operation/list_address_verifications) to discover `verification_id` values.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - travel_rule.read
+      responses:
+        '200':
+          $ref: '#/components/responses/getAddressVerificationResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -5273,6 +5438,29 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/createPaymentBulkSendResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: list_bulk_sends
+      summary: List bulk sends
+      description: |
+        This operation retrieves the list of bulk sends.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_settlement.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/RequestIdOptionalParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listPaymentBulkSendsResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -10695,6 +10883,10 @@ components:
           type: integer
           description: Timestamp when the approval was created.
           example: 1610444045
+        expired_time:
+          type: integer
+          description: The timestamp when the approval was expired.
+          example: 1610444165
         template_version:
           type: string
           description: Version of the template used for the transaction approval.
@@ -13971,6 +14163,359 @@ components:
             mapping:
               EXCHANGES_OR_VASP: '#/components/schemas/TravelRuleWithdrawExchangesOrVASP'
               SELF_CUSTODY_WALLET: '#/components/schemas/SelfCustodyWallet'
+    SignatureChallenge:
+      type: object
+      title: Signature challenge
+      description: |
+        A signature challenge for self-custody wallet verification. The wallet owner must sign the `challenge` string with the wallet associated with `address` and submit the signature via [Submit Travel Rule information for deposits](#operation/submit_deposit_travel_rule_info) or [withdrawals](#operation/submit_withdraw_travel_rule_info). The challenge is time-bounded — each call rotates the challenge and only the most recently-issued value will verify.
+      required:
+        - address
+        - challenge
+        - expires_in
+      properties:
+        address:
+          type: string
+          description: |
+            The self-custody wallet address that must sign this challenge. This is the counterparty address for the transaction: for deposits it is the sender's wallet, and for withdrawals it is the recipient's wallet.
+          example: '0x1234567890abcdef1234567890abcdef12345678'
+        challenge:
+          type: string
+          description: |
+            The human-readable, time-sensitive message to sign. Contains the wallet address, a unique nonce, and a timestamp.
+          example: |
+            Hi, please sign this message to confirm that you are the owner of this wallet address.
+            The transfer can only proceed after signing.
+            - Address: 0x1234567890abcdef1234567890abcdef12345678
+            - Nonce: b2860f5c9f201a81bc76f33e991c1f24
+            - Timestamp: 1732523887
+        expires_in:
+          type: integer
+          format: int32
+          description: Number of seconds before the challenge expires. The signature must be submitted within this window.
+          example: 30
+    CreateSatoshiTestChallengeRequest:
+      type: object
+      title: Create Satoshi Test challenge request
+      description: |
+        Request body for creating a Satoshi Test challenge. A single endpoint covers both the two-step flow (`PREPARE` then `SUBMIT`) and the one-shot flow (`SUBMIT` directly). Idempotent on `(chain_id, from_address)` per organization.
+      required:
+        - action
+        - chain_id
+        - from_address
+        - transaction_id
+        - transaction_type
+      properties:
+        action:
+          $ref: '#/components/schemas/SatoshiTestChallengeAction'
+        chain_id:
+          type: string
+          description: The chain ID of the counterparty address. See the operation description for supported chains.
+          example: ETH
+        from_address:
+          type: string
+          description: The counterparty (self-custody) wallet address that will transfer the micro-deposit.
+          example: '0x1234567890abcdef1234567890abcdef12345678'
+        transaction_id:
+          type: string
+          format: uuid
+          description: The Cobo transaction ID that this Satoshi Test is verifying for.
+          example: 123e4567-e89b-12d3-a456-426614174000
+        transaction_type:
+          $ref: '#/components/schemas/TravelRuleTransactionType'
+        challenge_id:
+          type: string
+          format: uuid
+          description: |
+            The `challenge_id` returned by a previous `PREPARE` call.
+            - When `action=SUBMIT`: if provided, activates that specific challenge by id (recommended when you cached the id client-side after `PREPARE`). If omitted, the server activates the latest matching challenge identified by `(chain_id, from_address)`.
+            - When `action=PREPARE`: **must be omitted**. A new challenge is always generated; passing a `challenge_id` here will cause the request to be rejected.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    CancelSatoshiTestChallengeRequest:
+      type: object
+      title: Cancel Satoshi Test challenge request
+      description: Request body for cancelling a Satoshi Test challenge that is in `PREPARE` or `PENDING` status.
+      required:
+        - challenge_id
+      properties:
+        challenge_id:
+          type: string
+          format: uuid
+          description: The challenge ID to cancel.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    SatoshiTestChallenge:
+      type: object
+      title: Satoshi Test challenge
+      description: 'Full information about a Satoshi Test challenge, returned by the create and get operations.'
+      required:
+        - challenge_id
+        - from_address
+        - to_address
+        - amount
+        - token_id
+        - chain_id
+        - status
+        - remaining_seconds
+      properties:
+        challenge_id:
+          type: string
+          format: uuid
+          description: The unique identifier of the Satoshi Test challenge.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        from_address:
+          type: string
+          description: The counterparty (self-custody) wallet address that must transfer the micro-deposit.
+          example: '0x1234567890abcdef1234567890abcdef12345678'
+        to_address:
+          type: string
+          description: The Cobo-generated verification address that will receive the micro-deposit.
+          example: '0xabcdef1234567890abcdef1234567890abcdef12'
+        amount:
+          type: string
+          description: |
+            The exact amount (in the token's smallest unit) that must be transferred. The amount is unique per challenge and is used together with `to_address` to identify a matching on-chain transfer.
+          example: '1100001000000000'
+        token_id:
+          type: string
+          description: The ID of the token used for the micro-deposit (typically the chain's native asset).
+          example: ETH
+        chain_id:
+          type: string
+          description: The chain on which the micro-deposit is expected.
+          example: ETH
+        status:
+          $ref: '#/components/schemas/SatoshiTestChallengeStatus'
+        remaining_seconds:
+          type: integer
+          description: |
+            Remaining time (in seconds) before the challenge expires. `0` when the challenge is not yet submitted or has already completed/expired.
+          example: 10550
+        matched_txid:
+          type: string
+          nullable: true
+          description: 'The on-chain transaction hash of the matching transfer, once matched.'
+          example: 0xabc123...
+        started_at:
+          type: integer
+          format: int64
+          nullable: true
+          description: Timestamp (milliseconds) when the challenge was submitted and the countdown started.
+          example: 1732523887000
+        expires_at:
+          type: integer
+          format: int64
+          nullable: true
+          description: Timestamp (milliseconds) when the challenge will expire if not matched.
+          example: 1732534687000
+    SatoshiTestChallengeStatus:
+      type: string
+      enum:
+        - PREPARE
+        - PENDING
+        - MATCHED
+        - VERIFIED
+        - EXPIRED
+        - DELETED
+      example: PENDING
+      description: |
+        The lifecycle status of a Satoshi Test challenge.
+        - `PREPARE`: Challenge created (address and amount returned); the 180-minute countdown is not started yet.
+        - `PENDING`: Challenge submitted; countdown active, waiting for the counterparty's on-chain transfer.
+        - `MATCHED`: An on-chain transfer matching the expected amount has been observed; waiting for block confirmations.
+        - `VERIFIED`: The matched transfer reached confirmation — the address is verified.
+        - `EXPIRED`: Challenge was not matched within 180 minutes.
+        - `DELETED`: Challenge was cancelled by the client.
+    SatoshiTestChallengeAction:
+      type: string
+      enum:
+        - PREPARE
+        - SUBMIT
+      example: PREPARE
+      description: |
+        The action to perform when creating a Satoshi Test challenge.
+        - `PREPARE`: Preview the verification address and amount. The 180-minute countdown is NOT started yet. Repeated `PREPARE` calls for the same `(chain_id, from_address)` refresh the amount.
+        - `SUBMIT`: Activate the challenge and start the 180-minute countdown. If a `PREPARE` challenge already exists for this `(chain_id, from_address)` it is activated; otherwise a new challenge is created directly in `PENDING` state (one-shot flow).
+    SatoshiTestCancelResult:
+      type: object
+      title: Satoshi Test cancel result
+      description: 'Returned by [Cancel Satoshi Test challenge](#operation/cancel_satoshi_test_challenge).'
+      required:
+        - challenge_id
+        - status
+      properties:
+        challenge_id:
+          type: string
+          format: uuid
+          description: The challenge that was cancelled.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        status:
+          type: string
+          enum:
+            - DELETED
+          description: Final status after cancellation.
+          example: DELETED
+    AddressVerification:
+      type: object
+      title: Address verification
+      description: |
+        Summary of a self-custody address verification record. Returned as items in [List address verifications](#operation/list_address_verifications). Call [Get address verification](#operation/get_address_verification) with `verification_id` to retrieve method-specific provenance (`satoshi_test_detail` / `signature_detail`).
+      required:
+        - verification_id
+        - address
+        - chain_id
+        - status
+        - verification_method
+      properties:
+        verification_id:
+          type: string
+          format: uuid
+          description: The unique identifier of this verification record.
+          example: fb377ea5-a97a-49b4-955d-23f8fdd5177a
+        address:
+          type: string
+          description: The counterparty (self-custody) wallet address being verified.
+          example: '0x1234567890abcdef1234567890abcdef12345678'
+        chain_id:
+          type: string
+          description: The chain on which this address is verified.
+          example: ETH
+        status:
+          $ref: '#/components/schemas/AddressVerificationStatus'
+        verification_method:
+          $ref: '#/components/schemas/AddressVerificationMethod'
+        verified_at:
+          type: integer
+          format: int64
+          nullable: true
+          description: Timestamp (milliseconds) when verification completed. `null` while `status=PENDING` or `FAILED`.
+          example: 1732523887000
+    AddressVerificationDetail:
+      type: object
+      title: Address verification detail
+      description: |
+        Full detail of a single address verification record, including method-specific provenance.
+
+        - `verification_method=SIGNATURE` → `signature_detail` is populated, `satoshi_test_detail` is `null`.
+        - `verification_method=SATOSHI_TEST` → `satoshi_test_detail` carries the latest challenge state (`status`, `remaining_seconds`, `matched_txid`); `signature_detail` is `null`.
+      required:
+        - verification_id
+        - address
+        - chain_id
+        - status
+        - verification_method
+      properties:
+        verification_id:
+          type: string
+          format: uuid
+          description: The unique identifier of this verification record.
+          example: fb377ea5-a97a-49b4-955d-23f8fdd5177a
+        address:
+          type: string
+          description: The counterparty (self-custody) wallet address being verified.
+          example: '0x1234567890abcdef1234567890abcdef12345678'
+        chain_id:
+          type: string
+          description: The chain on which this address is verified.
+          example: ETH
+        status:
+          $ref: '#/components/schemas/AddressVerificationStatus'
+        verification_method:
+          $ref: '#/components/schemas/AddressVerificationMethod'
+        verified_at:
+          type: integer
+          format: int64
+          nullable: true
+          description: Timestamp (milliseconds) when verification completed. `null` while `status=PENDING` or `FAILED`.
+          example: 1732523887000
+        satoshi_test_detail:
+          nullable: true
+          description: |
+            The latest Satoshi Test challenge associated with this verification. Present only when `verification_method=SATOSHI_TEST`.
+          allOf:
+            - $ref: '#/components/schemas/SatoshiTestChallenge'
+        signature_detail:
+          nullable: true
+          description: |
+            Off-chain signature provenance. Present only when `verification_method=SIGNATURE`.
+          allOf:
+            - $ref: '#/components/schemas/SignatureDetail'
+    AddressVerificationStatus:
+      type: string
+      enum:
+        - PENDING
+        - VERIFIED
+        - FAILED
+      example: VERIFIED
+      description: |
+        The lifecycle status of an address verification record.
+        - `PENDING`: A Satoshi Test challenge is in progress (countdown active or awaiting confirmation).
+        - `VERIFIED`: The address ownership has been confirmed (by signature or by a matched Satoshi Test transfer).
+        - `FAILED`: The verification attempt did not succeed (Satoshi Test expired without match, or signature verification rejected).
+    SignatureDetail:
+      type: object
+      title: Signature verification detail
+      description: |
+        Details of an off-chain signature that verified a self-custody address. Returned only when `verification_method=SIGNATURE`.
+      required:
+        - address
+      properties:
+        address:
+          type: string
+          description: The self-custody wallet address that signed the challenge.
+          example: '0x1234567890abcdef1234567890abcdef12345678'
+        challenge:
+          type: string
+          nullable: true
+          description: The challenge string that was signed.
+          example: |
+            Hi, please sign this message to confirm that you are the owner of this wallet address.
+            - Nonce: b2860f5c9f201a81bc76f33e991c1f24
+            - Timestamp: 1732523887
+        signature:
+          type: string
+          nullable: true
+          description: The wallet signature submitted by the client.
+          example: '0x4355c6b7e1f3d2a09c8b7e6f5d4c3b2a1908f7e6d5c4b3a2918f7e6d5c4b3a2918f7e6d5c4b3a2918f7e6d5c4b3a2918f7e6d5c4b3a2918f7e6d5c4b3a291b'
+        verified_at:
+          type: integer
+          format: int64
+          nullable: true
+          description: Timestamp (milliseconds) when the signature was verified.
+          example: 1732523887000
+    ListAddressVerifications200Response:
+      type: object
+      title: List address verifications response
+      description: Paginated list of address verification records.
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          description: The page of address verification records.
+          items:
+            $ref: '#/components/schemas/AddressVerification'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AddressVerificationMethod:
+      type: string
+      enum:
+        - SIGNATURE
+        - SATOSHI_TEST
+      example: SATOSHI_TEST
+      description: |
+        How a self-custody address was verified.
+        - `SIGNATURE`: Verified by off-chain wallet signature (via `Get a self-custody signature challenge` + signed message).
+        - `SATOSHI_TEST`: Verified by an on-chain micro-deposit (via Satoshi Test challenge).
+    TravelRuleTransactionType:
+      type: string
+      enum:
+        - DEPOSIT
+        - WITHDRAW
+      example: DEPOSIT
+      description: |
+        The direction of the underlying transaction in a Travel Rule operation.
+        - `DEPOSIT`: A deposit transaction (verifying the source address).
+        - `WITHDRAW`: A withdrawal transaction (verifying the destination address).
     ApiLogSummary:
       type: object
       description: The information about an API log.
@@ -17629,6 +18174,10 @@ components:
           type: string
           description: The bulk send ID.
           example: 123e4567-e89b-12d3-a456-426614174003
+        request_id:
+          type: string
+          description: The request ID.
+          example: 123e457-e89b-12d3-a456-426614174004
         source_account:
           type: string
           description: |
@@ -21550,6 +22099,54 @@ components:
         type: string
         format: uuid
         example: 123e4567-e89b-12d3-a456-426614174000
+    requiredSatoshiTestChallengeIdParam:
+      name: challenge_id
+      in: query
+      required: true
+      description: The Satoshi Test challenge ID returned by the `prepare` or `submit` operation.
+      schema:
+        type: string
+        format: uuid
+        example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    pathAddressVerificationIdParam:
+      name: verification_id
+      in: path
+      required: true
+      description: The unique identifier of the address verification record.
+      schema:
+        type: string
+        format: uuid
+      example: fb377ea5-a97a-49b4-955d-23f8fdd5177a
+    optionalAddressVerificationChainIdParam:
+      name: chain_id
+      in: query
+      required: false
+      description: 'Filter by chain ID (e.g. `BTC`, `ETH`, `BASE_ETH`, `BSC_BNB`, `TRON`).'
+      schema:
+        type: string
+        example: ETH
+    optionalAddressVerificationAddressParam:
+      name: address
+      in: query
+      required: false
+      description: Filter by counterparty (self-custody) wallet address.
+      schema:
+        type: string
+        example: '0x1234567890abcdef1234567890abcdef12345678'
+    optionalAddressVerificationStatusParam:
+      name: status
+      in: query
+      required: false
+      description: |
+        Filter by verification status. Allowed values:
+        - `PENDING`: A Satoshi Test challenge is in progress (countdown active or awaiting confirmation).
+        - `VERIFIED`: The address ownership has been confirmed (by signature or by a matched Satoshi Test transfer).
+        - `FAILED`: The verification attempt did not succeed (Satoshi Test expired without match, or signature verification rejected).
+
+        Omit this parameter to return records of all three statuses.
+      example: VERIFIED
+      schema:
+        $ref: '#/components/schemas/AddressVerificationStatus'
     TransactionIdParam:
       name: transaction_id
       in: query
@@ -24003,6 +24600,10 @@ components:
               - execution_mode
               - payout_params
             properties:
+              request_id:
+                type: string
+                description: The request ID that is used to track a bulk send request. The request ID is provided by you and must be unique within your system.
+                example: 123e457-e89b-12d3-a456-426614174004
               source_account:
                 type: string
                 description: |
@@ -25478,7 +26079,10 @@ components:
                 example: true
               self_custody_wallet_challenge:
                 type: string
+                deprecated: true
                 description: |
+                  **Deprecated.** Use [Get self-custody signature challenge](#operation/get_signature_challenge) instead. This field will be removed in a future release.
+
                   A human-readable, time-sensitive message to be signed by the wallet owner. The message contains key information including the wallet address, a unique nonce, and a timestamp. Signing this message confirms ownership of the wallet and allows the operation to proceed.
                 example: |
                   Hi, please sign this message to confirm that you are the owner of this wallet address.
@@ -25493,6 +26097,13 @@ components:
                   type: string
                   description: A supported wallet type or integration.
                   example: metamask
+              satoshi_test_supported:
+                type: boolean
+                description: |
+                  Indicates whether Satoshi Test (on-chain micro-deposit verification) is supported for the transaction's chain.
+                  - `true`: You can initiate a Satoshi Test challenge to verify the counterparty address.
+                  - `false`: The chain does not support Satoshi Test; use signature verification instead.
+                example: true
     submitTravelRuleInfoResponse:
       description: Successfully submitted the Travel Rule information.
       content:
@@ -25507,6 +26118,48 @@ components:
                   Whether the Travel Rule information has been successfully submitted.
                   - `true`: The information has been successfully submitted.
                   - `false`: The information has not been submitted.
+    getSignatureChallengeResponse:
+      description: The signature challenge was issued successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignatureChallenge'
+    createSatoshiTestChallengeResponse:
+      description: |
+        The Satoshi Test challenge was created.
+
+        - `action=PREPARE`: returned challenge has `status=PREPARE`; the 180-minute countdown is not started yet.
+        - `action=SUBMIT`: returned challenge has `status=PENDING`; `started_at` and `expires_at` are set.
+
+        If the counterparty address has already been verified (by signature or a prior Satoshi Test), this operation returns HTTP 400 `ADDRESS_ALREADY_VERIFIED` instead — call [List address verifications](#operation/list_address_verifications) with `chain_id`, `address`, and `status=VERIFIED` first to pre-check.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SatoshiTestChallenge'
+    getSatoshiTestChallengeResponse:
+      description: The Satoshi Test challenge information (after submit or for status polling).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SatoshiTestChallenge'
+    cancelSatoshiTestChallengeResponse:
+      description: The challenge has been cancelled.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SatoshiTestCancelResult'
+    getAddressVerificationResponse:
+      description: The address verification record.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AddressVerificationDetail'
+    listAddressVerificationsResponse:
+      description: Paginated list of address verification records.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ListAddressVerifications200Response'
     listApiLogsResponse:
       description: The information about API logs.
       content:
@@ -26405,6 +27058,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PaymentBulkSend'
+    listPaymentBulkSendsResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentBulkSend'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
     listPaymentBulkSendItemsResponse:
       description: The request was successful.
       content:
