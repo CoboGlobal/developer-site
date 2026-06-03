@@ -96,6 +96,22 @@ Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以
 
 如果 Callback Endpoint 没有响应，响应状态码不是 `200` 或 `201`，或响应包体不包含 `ok` 或 `deny`，WaaS 服务将继续重试发送消息。如果重试次数达到 30 次，WaaS 服务将停止发送消息，Callback 消息状态将变为**发送失败**。您可以使用 [Retry callback message](/v2/api-references/developers/retry-callback-message) 来重新发送消息。
 
+### 常见投递失败原因
+
+下表列出了 Callback 消息和 Webhook 事件最常见的投递失败原因及修复方法。
+
+| 现象 | 根因 | 修复方法 |
+|------|------|---------|
+| Callback 消息状态为`重试中`或`发送失败`，Portal 日志中响应包体显示 `{"result":"ok"}` 等 JSON 格式 | 响应包体是 JSON 而非纯文本 | 将响应包体改为纯文本字面量 `ok` 或 `deny`，不要包 JSON、不要加引号。 |
+| 新注册的 Callback URL 没有任何投递记录 | Endpoint 不可公开访问（如 ngrok 隧道未运行或已重启） | 启动或重启 ngrok 隧道，确认 URL 在本地网络外可正常访问后再注册。 |
+| Webhook 事件投递日志中 `status_code` 为 `301` 或 `302` | 服务器返回了重定向 | 直接在注册的 URL 上返回响应，Cobo 不跟随重定向。 |
+| 投递日志显示 TLS 或 SSL 错误 | Endpoint 的 TLS 证书无效或已过期 | 在您的服务器上更新证书，Endpoint 必须使用有效的 HTTPS 证书。 |
+| 事件或消息在一段时间后停止投递 | 重试次数已耗尽 | Webhook 事件最多重试 10 次，Callback 消息最多重试 30 次。超限后状态变为**发送失败**，请在 Cobo Portal 或通过 API 手动重试。 |
+
+<Note>
+您可以在 Cobo Portal 的**开发者** > **Webhook 事件** / **Callback 消息** > 点击某条记录 > **投递日志**中查看每次投递的响应包体和状态码。
+</Note>
+
 ### 代码示例
 
 要查看如何实现处理逻辑的示例，请参阅 WaaS SDK GitHub 库中的如下文件：

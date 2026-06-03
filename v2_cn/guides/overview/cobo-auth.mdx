@@ -133,6 +133,10 @@ Public Key (Hex):
 
 生成 API Key 后，您需要在 Cobo Portal 上注册密钥并配置相关权限。要了解如何注册 API Key，请参阅[注册 API Key](https://manuals.cobo.com/cn/portal/developer-console/create-api-key)。
 
+<Warning>
+开发环境和生产环境使用**各自独立的 Cobo Portal 和 API Key**。在开发环境（`portal.dev.cobo.com`）注册的 API Key 无法用于生产环境的 API Host（`api.cobo.com`），反之亦然。使用错误环境的 API Key 将返回 HTTP 401 / 错误码 2024，错误信息为 `Your API key is not registered in this environment. Development and Production environments use separate API keys.`。各环境的 Host 和 Portal 地址请参阅[开发环境和生产环境](/v2_cn/guides/overview/environments)。
+</Warning>
+
 ## 随机数
 
 随机数为 Unix 时间戳格式的当前时间，以毫秒为单位。
@@ -144,14 +148,14 @@ Public Key (Hex):
 
 1. 首先，基于您的请求拼接出一个字符串，如下所示：
 
-    str_to_sign = `{METHOD}|{PATH}|{TIMESTAMP}|{PARAMS}|{BODY}`
+    str_to_sign = `{METHOD}|{PATH}|{NONCE}|{PARAMS}|{BODY}`
 
     | **字段** | **描述**                                              | **示例**                                                  |
     | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
     | METHOD    | HTTP 方法。                                             | `GET`                                                          |
     | PATH      | API 端点。                                            | `/v2/transactions/transfer`                                    |
-    | TIMESTAMP | 以毫秒为单位的当前 Unix 时间戳。该值必须与请求头中的随机数相同。 | `1718587017026`                                                |
-    | PARAMS    | （如有）查询参数。                        | `chain_id=ETH&limit=10  `                                      |
+    | NONCE     | 随机数值。以毫秒为单位的当前 Unix 时间戳，该值必须与 `Biz-Api-Nonce` 请求头的值相同。 | `1718587017026`                                                |
+    | PARAMS    | （如有）查询参数。                        | `chain_id=ETH&limit=10`                                        |
     | BODY      | （如有）原始请求包体的字符串格式。       | `{"name":"Default","wallet_subtype":"Asset","wallet_type":"Custodial"}` |
 
 

@@ -39,6 +39,10 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 ### 通过 API Key的普通开发者
 对于普通开发者，权限和钱包范围与 API Key相关联。当您注册 API Key时，您需要选择用户角色并定义钱包范围，这将授予共享权限给所有使用该密钥的开发者。更多详细信息，请参阅[API Key](/v2_cn/guides/overview/cobo-auth#api-key) 和 [注册 API Key](https://manuals.cobo.com/cn/portal/developer-console/create-api-key)。
 
+<Note>
+在 Cobo Portal 中修改 API Key 的角色或钱包范围后，需要 **Admin 在 Cobo Guard 中完成审批**才能生效。在审批完成之前，原有（更窄的）权限仍然有效。如果您已修改权限但仍收到 HTTP 403 / 错误码 2025 或 4001，请确认 Cobo Guard 审批是否已完成。
+</Note>
+
 ### 通过 Org Access Tokens 的 Cobo Portal Apps 开发者
 Cobo Portal Apps 访问用户团队资源的权限是通过 Org Access Tokens 授予的。当用户安装 App 时，必要的权限和钱包范围将被设置，一旦团队管理员批准，这些权限将与 App 的 Org Access Tokens 相关联。因此，在发布 App 之前，开发者应该在 [ App Manifest 文件](/v2_cn/apps/build-app#configure-the-manifest-file) 中指定所需和可选的权限，以确保授予适当的访问权限。有关权限的完整列表，请参阅[权限列表](/v2_cn/guides/overview/permission-list)。
 
