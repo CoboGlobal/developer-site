@@ -96,6 +96,22 @@ When your callback endpoint receives a callback message, it should respond with 
 
 If the callback endpoint does not respond, responds with a status code other than `200` or `201`,  or the response body does not contain `ok` or `deny`, the WaaS service will continue to retry sending the message.  If the number of retry attempts reaches 30, the WaaS service will stop sending the message and the callback message status will become `Failed`. You can resend the message by using the [Retry callback message](/v2/api-references/developers/retry-callback-message) operation.
 
+### Common delivery failures
+
+The following table lists the most frequent reasons why callback messages or webhook events fail to deliver, and how to fix them.
+
+| Symptom | Root cause | Fix |
+|---------|------------|-----|
+| Callback message status is `Retrying` or `Failed`; response body in the Portal log shows `{"result":"ok"}` or similar JSON | Response body is JSON instead of plain text | Change your response body to the exact string `ok` or `deny` — no JSON wrapping, no quotes. |
+| Callback message shows no delivery attempts for a new URL | Endpoint not publicly reachable (e.g. ngrok tunnel is not running or has restarted) | Start or restart your ngrok tunnel and verify the URL is reachable from outside your local network before registering. |
+| Webhook events show `status_code: 301` or `302` in delivery logs | Server returned a redirect | Serve the response directly from the registered URL. Cobo does not follow redirects. |
+| Delivery attempts fail with TLS or SSL error | Endpoint TLS certificate is invalid or expired | Renew the certificate on your server. The endpoint must use HTTPS with a valid certificate. |
+| Events or messages stop arriving after a period | Retry limit exhausted | Webhook events retry up to 10 times; callback messages retry up to 30 times. After the limit is reached, status becomes `Failed`. Manually retry from Cobo Portal or via the API. |
+
+<Note>
+You can inspect the detailed response body and status code for each delivery attempt in Cobo Portal under **Developer** > **Webhook Events** / **Callback Messages** > click an event or message > **Delivery logs**.
+</Note>
+
 ### Code samples
 
 To see examples of how to implement the handling logic, refer to the following files in the WaaS SDK GitHub repository:

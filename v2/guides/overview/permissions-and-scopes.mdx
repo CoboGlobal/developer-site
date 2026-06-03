@@ -39,6 +39,10 @@ A user role is a collection of permissions that defines what resources and actio
 ### General developers via API key
 For general developers, permissions and wallet scope are associated with the API key. When you register an API key, you select user roles and define the wallet scope, which grants shared permissions to all developers using that key. For more details, refer to [API key](/v2/guides/overview/cobo-auth#api-key) and [Register an API key](https://manuals.cobo.com/en/portal/developer-console/create-api-key).
 
+<Note>
+Editing an API key's roles or wallet scope in Cobo Portal requires **Admin approval in Cobo Guard** before the change takes effect. Until an Admin approves the pending request, the previous (narrower) permissions remain active. If you have updated permissions but still receive HTTP 403 / error code 2025 or 4001, check whether the Cobo Guard approval has been completed.
+</Note>
+
 ### Cobo Portal Apps developers via Org Access Tokens
 Permissions for Cobo Portal Apps to access users' organization resources are granted through an Org Access Token. When a user installs an app, the necessary permissions and wallet scope are set, and once approved by the organization's admin, these are linked to the app's Org Access Token. Therefore, before publishing an app, developers should specify both required and optional permissions in the [app's manifest file](/v2/apps/build-app#configure-the-manifest-file) to ensure proper access is granted. For a comprehensive list of permissions, refer to [Permissions list](/v2/guides/overview/permission-list).
 

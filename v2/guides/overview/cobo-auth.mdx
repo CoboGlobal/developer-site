@@ -129,7 +129,11 @@ Use the `Private Key (Hex)` as your API secret and the `Public Key (Hex)` as you
 
 ### Register the API key
 
-After generating an API key, you need to register the key and configure related permissions on Cobo Portal. To learn how to register an API key, see [Register an API key](https://manuals.cobo.com/en/portal/developer-console/create-api-key). 
+After generating an API key, you need to register the key and configure related permissions on Cobo Portal. To learn how to register an API key, see [Register an API key](https://manuals.cobo.com/en/portal/developer-console/create-api-key).
+
+<Warning>
+The Development and Production environments use **separate Cobo Portals with separate API keys**. An API key registered in the Development environment (`portal.dev.cobo.com`) cannot authenticate requests to the Production host (`api.cobo.com`), and vice versa. Using a key from the wrong environment returns HTTP 401 / error code 2024 with the message `Your API key is not registered in this environment. Development and Production environments use separate API keys.` See [Development and production environments](/v2/guides/overview/environments) for host URLs and portal addresses.
+</Warning>
 
 ## Nonce
 
@@ -141,14 +145,14 @@ The following steps introduce how to calculate an API signature.
 
 1. First, concatenate a string based on your request as follows:
 
-    str_to_sign = `{METHOD}|{PATH}|{TIMESTAMP}|{PARAMS}|{BODY}`
+    str_to_sign = `{METHOD}|{PATH}|{NONCE}|{PARAMS}|{BODY}`
 
     | **Field** | **Description**                                              | **Example**                                                  |
     | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
     | METHOD    | The HTTP method.                                             | `GET`                                                          |
     | PATH      | The API endpoint.                                            | `/v2/transactions/transfer`                                    |
-    | TIMESTAMP | The current time in Unix timestamp format, measured in milliseconds. This value must be the same as the nonce in the request header. | `1718587017026`                                                |
-    | PARAMS    | (If applicable) The query parameters.                        | `chain_id=ETH&limit=10  `                                      |
+    | NONCE     | The nonce value. The current time in Unix timestamp format, measured in milliseconds. This value must be the same as the value in the `Biz-Api-Nonce` request header. | `1718587017026`                                                |
+    | PARAMS    | (If applicable) The query parameters.                        | `chain_id=ETH&limit=10`                                        |
     | BODY      | (If applicable) The raw request body in string format.       | `{"name":"Default","wallet_subtype":"Asset","wallet_type":"Custodial"}` |
 
 
