@@ -19,3 +19,7 @@ Direct registration for a free trial grants you immediate access to the Producti
 | Cobo Portal URL | https://portal.dev.cobo.com/                                 | https://portal.cobo.com/                                     |
 | Testnets        | Supported                                                    | Supported                                                    |
 | Pricing         | Free to use                                                  | Paid. For details, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
+
+<Warning>
+API keys are **environment-specific**. Keys registered in the Development environment (`portal.dev.cobo.com`) are only valid for the Development API host (`api.dev.cobo.com`), and keys registered in the Production environment (`portal.cobo.com`) are only valid for the Production API host (`api.cobo.com`). Using a key from the wrong environment returns HTTP 401 / error code 2024 with the message `Your API key is not registered in this environment. Development and Production environments use separate API keys.` Register your API key in the matching Cobo Portal for the environment you are calling.
+</Warning>
