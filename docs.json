@@ -781,14 +781,7 @@
           },
           {
             "tab": "Payments Solution",
-            "groups": [
-              {
-                "group": "Overview",
-                "pages": [
-                  "v2/payments-redirect/redirect"
-                ]
-              }
-            ]
+            "href": "https://www.cobo.com/payments/en/guides/overview"
           },
           {
             "tab": "Cobo Portal Apps",
@@ -1064,14 +1057,7 @@
           },
           {
             "tab": "支付解决方案",
-            "groups": [
-              {
-                "group": "概览",
-                "pages": [
-                  "v2_cn/payments-redirect/redirect"
-                ]
-              }
-            ]
+            "href": "https://www.cobo.com/payments/cn/guides/overview"
           },
           {
             "tab": "Cobo Portal Apps",
