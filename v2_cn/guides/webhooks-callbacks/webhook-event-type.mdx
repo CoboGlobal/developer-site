@@ -34,12 +34,13 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
     <tr>
       <td><code>wallets.transaction.created</code></td>
       <td><code>Transaction</code></td>
-      <td>在区块链上检测到交易并生成记录。此事件不代表交易已成功。</td>
+      <td>已创建新的交易记录。对于充币，此事件在区块链上检测到交易时触发。对于通过 API 发起的提币和合约调用，此事件在提交交易请求时触发。此事件不代表交易已成功。</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.updated</code></td>
       <td><code>Transaction</code></td>
-      <td>交易的状态或确认数发生变化。<Note>`wallets.transaction.updated` 涵盖交易的整个生命周期，包括创建、完成和失败。如果您想跟踪每个状态变化，订阅此事件即可。</Note></td>
+      {/* SUB_STATUS_TRIGGER: Inferred from dedupe-key analysis. Verify with backend team. */}
+      <td>交易的顶级状态（例如，从 Submitted 变为 PendingScreening）或确认数发生变化。在同一顶级状态下的子状态变更可能不会触发单独的事件。<Note>`wallets.transaction.updated` 涵盖交易的整个生命周期，包括创建、完成和失败。如果您想跟踪每个状态变化，订阅此事件即可。</Note></td>
     </tr>
     <tr>
       <td><code>wallets.transaction.succeeded</code></td>
@@ -64,6 +65,24 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+{/* STATUS_MATRIX: Inferred from OpenAPI enum and set-up-endpoint.mdx. Verify with backend team before publishing. */}
+#### 提币状态与 Webhook 事件对应关系
+
+下表展示了每个提币状态通常会触发哪些 Webhook 事件。有关交易状态和子状态的完整列表，请参阅 [Transaction statuses and sub-statuses](/v2/guides/transactions/status)。
+
+<Warning>具体的事件映射可能因钱包类型和配置而异。订阅 `wallets.transaction.updated` 以跟踪完整的提币生命周期。</Warning>
+
+| Status | `wallets.transaction.created` | `wallets.transaction.updated` | `wallets.transaction.succeeded` | `wallets.transaction.failed` |
+|---|---|---|---|---|
+| Submitted | Yes | Yes | | |
+| PendingScreening | | Yes | | |
+| PendingAuthorization | | Yes | | |
+| PendingSignature | | Yes | | |
+| Broadcasting | | Yes | | |
+| Confirming | | Yes | | |
+| Completed | | Yes | Yes | |
+| Failed | | Yes | | Yes |
+| Rejected | | Yes | | Yes |
 
 ### Fee Station 相关事件
 
@@ -258,6 +277,78 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 有关 webhook 事件数据和其数据结构的完整介绍，请参阅 Retrieve event information 操作的响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性或 List all webhook events 操作的响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。
 
 <img src="/v2/images/guides/webhook_data_structure.png" className="screenshot_full_screen" alt="Webhook 数据结构截图" />
+
+<Accordion title="示例：提币的 wallets.transaction.created 事件">
+
+以下是提币交易的 `wallets.transaction.created` Webhook 事件 payload 简化示例。有关完整数据结构，请参阅 [Transaction schema](/v2/api-references/developers--webhooks/retrieve-event-information#response-data)。
+
+```json
+{
+  "event_id": "evt_a1b2c3d4e5f6",
+  "event_type": "wallets.transaction.created",
+  "data": {
+    "data_type": "Transaction",
+    "transaction_id": "aff0e1cb-15b2-4e1f-9b9d-a9133715986f",
+    "cobo_id": "20231213122855000000000000000000",
+    "request_id": "760a1955-e212-4dfb-a8d0-e66312a1a051",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "type": "Withdraw",
+    "status": "Submitted",
+    "sub_status": null,
+    "chain_id": "ETH",
+    "token_id": "ETH_USDT",
+    "source": {
+      "source_type": "Org-Controlled",
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "address": "0x1234...abcd"
+    },
+    "destination": {
+      "destination_type": "Address",
+      "address": "0x5678...efgh"
+    },
+    "created_timestamp": 1702468135000,
+    "updated_timestamp": 1702468135000
+  }
+}
+```
+
+</Accordion>
+
+<Accordion title="示例：Confirming 状态的 wallets.transaction.updated 事件">
+
+以下是提币到达 `Confirming` 状态时 `wallets.transaction.updated` Webhook 事件 payload 的简化示例。
+
+```json
+{
+  "event_id": "evt_f6e5d4c3b2a1",
+  "event_type": "wallets.transaction.updated",
+  "data": {
+    "data_type": "Transaction",
+    "transaction_id": "aff0e1cb-15b2-4e1f-9b9d-a9133715986f",
+    "cobo_id": "20231213122855000000000000000000",
+    "request_id": "760a1955-e212-4dfb-a8d0-e66312a1a051",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "type": "Withdraw",
+    "status": "Confirming",
+    "sub_status": "PendingBlockConfirmations",
+    "chain_id": "ETH",
+    "token_id": "ETH_USDT",
+    "source": {
+      "source_type": "Org-Controlled",
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "address": "0x1234...abcd"
+    },
+    "destination": {
+      "destination_type": "Address",
+      "address": "0x5678...efgh"
+    },
+    "created_timestamp": 1702468135000,
+    "updated_timestamp": 1702468200000
+  }
+}
+```
+
+</Accordion>
 
 您可以在事件数据类型之间切换来查看每个事件数据类型的数据结构。
 

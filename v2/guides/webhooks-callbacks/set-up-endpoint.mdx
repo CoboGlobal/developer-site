@@ -81,6 +81,9 @@ Properly responding to webhook events and callback messages is crucial for ensur
 When your webhook endpoint receives a webhook event, it should respond with a status code of `200` or `201` to indicate that the event has been successfully received and processed. Once this response is sent, the WaaS service will stop retrying to send the event and the event status will become `Delivered` on Cobo Portal.
 
 The default timeout for each webhook event is 2 seconds. If the webhook endpoint does not respond or responds with a status code other than `200` or `201`, the WaaS service will continue to retry sending the event. If the number of retry attempts reaches 10 , the WaaS service will stop sending the event and the event status will become `Failed`· You can resend the event by clicking **Retry** on **Cobo Portal** > **Developer** > **WaaS 2.0** > **Webhook Events**.
+{/* TODO: Add retry interval schedule (exponential backoff details) once confirmed by backend team. */}
+
+<Info>If you do not receive an expected webhook event, check the event status on **Cobo Portal** > **Developer** > **Webhook Events** to determine whether the event was generated and its delivery status.</Info>
 
 Cobo does not guarantee that events will be delivered in the order they are generated. For example, creating a transfer will generate the following events:
 
@@ -95,6 +98,7 @@ Your endpoint should not assume that events will arrive in this sequence and mus
 When your callback endpoint receives a callback message, it should respond with a status code of `200` or `201` and a response body of `ok` or `deny` to indicate transaction approval or rejection. Once this response is sent, the WaaS service will stop retrying to send the message and the callback message status will become `Delivered`on Cobo Portal.
 
 If the callback endpoint does not respond, responds with a status code other than `200` or `201`,  or the response body does not contain `ok` or `deny`, the WaaS service will continue to retry sending the message.  If the number of retry attempts reaches 30, the WaaS service will stop sending the message and the callback message status will become `Failed`. You can resend the message by using the [Retry callback message](/v2/api-references/developers/retry-callback-message) operation.
+{/* TODO: Add retry interval schedule (exponential backoff details) once confirmed by backend team. */}
 
 ### Common delivery failures
 

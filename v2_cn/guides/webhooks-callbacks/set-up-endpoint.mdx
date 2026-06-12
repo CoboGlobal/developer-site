@@ -81,6 +81,9 @@ Webhook 事件和 Callback 消息对于确保 WaaS 服务与您的 App 之间的
 当您的 Webhook Endpoint 收到 Webhook 事件时，它应该响应状态码 `200` 或 `201` 以指示事件已成功接收和处理。一旦发送此响应，WaaS 服务将停止重试发送事件，事件状态将变为**已送达**。
 
 默认情况下，每个 Webhook 事件的超时时间为 2 秒。如果 Webhook Endpoint 没有响应或响应状态码不是 `200` 或 `201`，WaaS 服务将继续重试发送事件。如果重试次数达到 10 次，WaaS 服务将停止发送事件，事件状态将变为**发送失败**。您可以通过单击 Cobo Portal > 开发者 > WaaS 2.0 > Webhook 事件上的**重新发送**来重新发送事件。
+{/* TODO: Add retry interval schedule (exponential backoff details) once confirmed by backend team. */}
+
+<Info>如果未收到预期的 Webhook 事件，请在 **Cobo Portal** > **Developer** > **Webhook Events** 中检查事件状态，确认事件是否已生成及其投递状态。</Info>
 
 Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以下事件：
 
@@ -95,6 +98,7 @@ Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以
 当您的 Callback Endpoint 收到 Callback 消息时，它应该响应状态码 `200` 或 `201` 和响应包体 `ok` 或 `deny` 以指示交易批准或拒绝。一旦发送此响应，WaaS 服务将停止重试发送消息，Callback 消息状态将变为**已送达**。
 
 如果 Callback Endpoint 没有响应，响应状态码不是 `200` 或 `201`，或响应包体不包含 `ok` 或 `deny`，WaaS 服务将继续重试发送消息。如果重试次数达到 30 次，WaaS 服务将停止发送消息，Callback 消息状态将变为**发送失败**。您可以使用 [Retry callback message](/v2/api-references/developers/retry-callback-message) 来重新发送消息。
+{/* TODO: Add retry interval schedule (exponential backoff details) once confirmed by backend team. */}
 
 ### 常见投递失败原因
 
