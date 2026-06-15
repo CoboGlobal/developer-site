@@ -4663,6 +4663,42 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /payments/balance_changes:
+    get:
+      tags:
+        - Payment
+      operationId: list_balance_changes
+      summary: List balance changes
+      description: |
+        This operation retrieves balance changes for the specified source account. Each balance change includes the source information, token ID, changed amount, account balances before and after the change, flow direction, and creation time.
+
+        You need to specify `source_account`. Currently, use `developer` as the source account. You can use pagination parameters to control the response size, and filter balance changes by `token_id`, `flow_direction`, `min_created_timestamp`, `max_created_timestamp`, `source_type`, or `source_id`.
+
+        <Note>When specifying `source_id`, you must also specify `source_type`.</Note>
+
+        For more information, see [Cobo Payments Guide](https://www.cobo.com/payments/en/guides/overview).
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_balance.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/PaymentBalanceChangesSourceAccountRequiredParam'
+        - $ref: '#/components/parameters/PaymentBalanceChangesTokenIdOptionalParam'
+        - $ref: '#/components/parameters/PaymentBalanceChangesFlowDirectionOptionalParam'
+        - $ref: '#/components/parameters/PaymentBalanceChangesMinCreatedTimestampOptionalParam'
+        - $ref: '#/components/parameters/PaymentBalanceChangesMaxCreatedTimestampOptionalParam'
+        - $ref: '#/components/parameters/PaymentBalanceChangesSourceTypeOptionalParam'
+        - $ref: '#/components/parameters/PaymentBalanceChangesSourceIdOptionalParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listBalanceChangesResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /payments/settlement_details:
     get:
       tags:
@@ -12049,6 +12085,8 @@ components:
             - ComplianceDisposition
             - ComplianceKytScreenings
             - ComplianceKyaScreenings
+            - Organization
+            - FiatTransaction
           description: |-
 
             The data type of the event.
@@ -12073,6 +12111,8 @@ components:
             - `ComplianceDisposition`: The compliance disposition event data.
             - `ComplianceKytScreenings`: The compliance KYT screenings event data.
             - `ComplianceKyaScreenings`: The compliance KYA screenings event data.
+            - `Organization`: The organization event data.
+            - `FiatTransaction`: The fiat transaction event data.
           example: Transaction
     WebhookEventData:
       oneOf:
@@ -12096,6 +12136,8 @@ components:
         - $ref: '#/components/schemas/ComplianceDispositionUpdateEventData'
         - $ref: '#/components/schemas/ComplianceKytScreeningsUpdateEventData'
         - $ref: '#/components/schemas/ComplianceKyaScreeningsUpdateEventData'
+        - $ref: '#/components/schemas/OrganizationEventData'
+        - $ref: '#/components/schemas/FiatTransactionEventData'
       discriminator:
         propertyName: data_type
         mapping:
@@ -12119,6 +12161,8 @@ components:
           ComplianceDisposition: '#/components/schemas/ComplianceDispositionUpdateEventData'
           ComplianceKytScreenings: '#/components/schemas/ComplianceKytScreeningsUpdateEventData'
           ComplianceKyaScreenings: '#/components/schemas/ComplianceKyaScreeningsUpdateEventData'
+          Organization: '#/components/schemas/OrganizationEventData'
+          FiatTransaction: '#/components/schemas/FiatTransactionEventData'
     TransactionWebhookEventData:
       title: Transaction
       allOf:
@@ -12382,6 +12426,26 @@ components:
       allOf:
         - $ref: '#/components/schemas/WebhookEventDataType'
         - $ref: '#/components/schemas/KyaScreeningsEventData'
+    OrganizationEventData:
+      title: Organization
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - type: object
+          properties:
+            org_id:
+              type: string
+              format: uuid
+              description: The organization ID.
+              example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+            name:
+              type: string
+              description: The organization name.
+              example: My Organization
+    FiatTransactionEventData:
+      title: FiatTransaction
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - $ref: '#/components/schemas/FeeStationFiatTransaction'
     WebhookEventType:
       type: string
       enum:
@@ -12395,9 +12459,13 @@ components:
         - wallets.mpc.tss_request.succeeded
         - wallets.addresses.created
         - wallets.created
+        - wallets.updated
         - wallets.token_listing.failed
         - wallets.token_listing.succeeded
         - mpc_vaults.created
+        - mpc_vaults.updated
+        - mpc_vaults.deleted
+        - organizations.updated
         - fee_station.transaction.created
         - fee_station.transaction.updated
         - fee_station.transaction.failed
@@ -16109,7 +16177,9 @@ components:
           description: The ID of the cryptocurrency used for the developer fee. This is only applicable if `charge_merchant_fee` is set to true.
           example: ETH_USDT
         commission_fee:
-          $ref: '#/components/schemas/CommissionFee'
+          description: 'The commission fee. Not returned when no fee has been incurred, the actual charged amount once incurred, or `0` if refunded.'
+          allOf:
+            - $ref: '#/components/schemas/CommissionFee'
     RefundStatus:
       type: string
       enum:
@@ -18010,7 +18080,7 @@ components:
           example: '500.00'
         commission_fees:
           type: array
-          description: The commission fees of the payout.
+          description: 'The commission fees. Not returned when no fee has been incurred, the actual charged amounts once incurred, or `0` if refunded.'
           items:
             $ref: '#/components/schemas/CommissionFee'
         remark:
@@ -18201,6 +18271,10 @@ components:
           type: integer
           description: 'The updated time of the bulk send, represented as a UNIX timestamp in seconds.'
           example: 1744689600
+        commission_fee:
+          description: 'The commission fee. Not returned when no fee has been incurred, the actual charged amount once incurred, or `0` if refunded.'
+          allOf:
+            - $ref: '#/components/schemas/CommissionFee'
     PaymentBulkSendItem:
       type: object
       required:
@@ -18231,6 +18305,10 @@ components:
           type: string
           description: A note or comment about the bulk send item.
           example: 'Invoice #INV-2024-001'
+        tx_hash:
+          type: string
+          description: The transaction hash of the bulk send item.
+          example: '0xabc123456789def0000000000000000000000000'
         status:
           $ref: '#/components/schemas/PaymentBulkSendItemStatus'
         validation_status:
@@ -18301,6 +18379,111 @@ components:
         - Completed
         - Failed
       example: Completed
+    PaymentBalanceFlowDirection:
+      type: string
+      enum:
+        - in
+        - out
+      example: in
+      description: |
+        The direction of the balance change relative to the source account. Possible values include:
+        - `in`: Funds flow into the source account.
+        - `out`: Funds flow out of the source account.
+    PaymentBalanceChangeSourceType:
+      type: string
+      enum:
+        - Init
+        - OrderIn
+        - LatePayment
+        - TopUp
+        - UnexceptedIn
+        - RefundOut
+        - Payout
+        - UnexceptedOut
+        - Allocation
+        - SettlementNetwork
+        - BulkSend
+      example: OrderIn
+      description: |
+        The source type of the balance change. Possible values include:
+        - `Init`: Balance change caused by initialization.
+        - `OrderIn`: Balance change from an order-in payment.
+        - `LatePayment`: Balance change from a late payment.
+        - `TopUp`: Balance change from a top-up.
+        - `UnexceptedIn`: Balance change from an unexpected incoming payment.
+        - `RefundOut`: Balance change from a refund payout.
+        - `Payout`: Balance change from a payout.
+        - `UnexceptedOut`: Balance change from an unexpected outgoing payment.
+        - `Allocation`: Balance change from an allocation.
+        - `SettlementNetwork`: Balance change from the settlement network.
+        - `BulkSend`: Balance change from a bulk send.
+    PaymentBalanceChange:
+      type: object
+      required:
+        - source_id
+        - source_type
+        - token_id
+        - amount
+        - amount_raw
+        - balance_before
+        - balance_before_raw
+        - balance_after
+        - balance_after_raw
+        - flow_direction
+        - created_timestamp
+      properties:
+        source_id:
+          type: string
+          description: The source ID of the balance change.
+          example: po_1234567890
+        source_type:
+          $ref: '#/components/schemas/PaymentBalanceChangeSourceType'
+        token_id:
+          type: string
+          description: The token ID of the balance change.
+          example: ETH_USDT
+        amount:
+          type: string
+          description: 'The balance change amount, truncated to two decimal places and represented as a numeric string.'
+          example: '100.00'
+        amount_raw:
+          type: string
+          description: 'The balance change amount in the token''s decimal precision, represented as a numeric string.'
+          example: '100.123456'
+        balance_before:
+          type: string
+          description: 'The account balance before the balance change, truncated to two decimal places and represented as a numeric string.'
+          example: '900.00'
+        balance_before_raw:
+          type: string
+          description: 'The account balance before the balance change in the token''s decimal precision, represented as a numeric string.'
+          example: '900.123456'
+        balance_after:
+          type: string
+          description: 'The account balance after the balance change, truncated to two decimal places and represented as a numeric string.'
+          example: '1000.00'
+        balance_after_raw:
+          type: string
+          description: 'The account balance after the balance change in the token''s decimal precision, represented as a numeric string.'
+          example: '1000.123456'
+        flow_direction:
+          $ref: '#/components/schemas/PaymentBalanceFlowDirection'
+        created_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the balance change was created, represented as a UNIX timestamp in seconds.'
+          example: 1744689600
+    PaymentBalanceChangeResponse:
+      type: object
+      description: The response containing balance changes and pagination information.
+      properties:
+        data:
+          type: array
+          description: The list of balance changes.
+          items:
+            $ref: '#/components/schemas/PaymentBalanceChange'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
     TriggerTestPaymentWebhookEventResponse:
       type: object
       properties:
@@ -22978,6 +23161,85 @@ components:
         - If the destination account is the developer account, use the string `"developer"`.
       schema:
         type: string
+    PaymentBalanceChangesSourceAccountRequiredParam:
+      name: source_account
+      in: query
+      required: true
+      description: 'The source account for which to retrieve balance changes. Currently, use `developer`.'
+      schema:
+        type: string
+      example: developer
+    PaymentBalanceChangesTokenIdOptionalParam:
+      name: token_id
+      in: query
+      required: false
+      description: |
+        The token ID used to filter balance changes. For a complete list of supported tokens, see [Cobo Payments Guide](https://www.cobo.com/payments/en/guides/overview).
+      schema:
+        type: string
+      example: ETH_USDT
+    PaymentBalanceChangesFlowDirectionOptionalParam:
+      name: flow_direction
+      in: query
+      required: false
+      description: |
+        The direction of the balance change relative to the source account. Possible values include:
+        - `in`: Funds flow into the source account.
+        - `out`: Funds flow out of the source account.
+      schema:
+        $ref: '#/components/schemas/PaymentBalanceFlowDirection'
+      example: in
+    PaymentBalanceChangesMinCreatedTimestampOptionalParam:
+      name: min_created_timestamp
+      in: query
+      required: false
+      description: 'The minimum creation time of balance changes, represented as a UNIX timestamp in seconds. Balance changes created on or after this time are returned.'
+      schema:
+        type: integer
+        format: int64
+      example: 1744689600
+    PaymentBalanceChangesMaxCreatedTimestampOptionalParam:
+      name: max_created_timestamp
+      in: query
+      required: false
+      description: 'The maximum creation time of balance changes, represented as a UNIX timestamp in seconds. Balance changes created on or before this time are returned.'
+      schema:
+        type: integer
+        format: int64
+      example: 1744776000
+    PaymentBalanceChangesSourceTypeOptionalParam:
+      name: source_type
+      in: query
+      required: false
+      description: |
+        The source type used to filter balance changes. Possible values include:
+        - `Init`: Balance change caused by initialization.
+        - `OrderIn`: Balance change from an order-in payment.
+        - `LatePayment`: Balance change from a late payment.
+        - `TopUp`: Balance change from a top-up.
+        - `UnexceptedIn`: Balance change from an unexpected incoming payment.
+        - `RefundOut`: Balance change from a refund payout.
+        - `Payout`: Balance change from a payout.
+        - `UnexceptedOut`: Balance change from an unexpected outgoing payment.
+        - `Allocation`: Balance change from an allocation.
+        - `SettlementNetwork`: Balance change from the settlement network.
+        - `BulkSend`: Balance change from a bulk send.
+
+        <Note>When specifying `source_id`, you must also specify `source_type`.</Note>
+      schema:
+        $ref: '#/components/schemas/PaymentBalanceChangeSourceType'
+      example: OrderIn
+    PaymentBalanceChangesSourceIdOptionalParam:
+      name: source_id
+      in: query
+      required: false
+      description: |
+        The source ID used to filter balance changes.
+
+        <Note>When specifying `source_id`, you must also specify `source_type`.</Note>
+      schema:
+        type: string
+      example: po_1234567890
     CounterpartyEntryIdPathParam:
       name: counterparty_entry_id
       in: path
@@ -26660,6 +26922,12 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/MerchantBalance'
+    listBalanceChangesResponse:
+      description: The request was successful. The response contains balance changes and pagination information.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaymentBalanceChangeResponse'
     listSettlementDetailResponse:
       description: The request was successful.
       content:

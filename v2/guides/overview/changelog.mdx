@@ -12,6 +12,21 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.37.0
+
+This version was released on June 10, 2026.
+
+### Compatibility changes
+
+- Added the following new webhook event types:
+  - `wallets.updated`
+  - `mpc_vaults.updated`
+  - `mpc_vaults.deleted`
+  - `organizations.updated`
+- Added two new webhook event data types, `Organization` and `FiatTransaction`, to the webhook event payload. Affected operations:
+  - [Retrieve event information](/v2/api-references/developers--webhooks/retrieve-event-information)
+  - [List all webhook events](/v2/api-references/developers--webhooks/list-all-webhook-events)
+
 ## v1.36.0
 
 This version was released on May 27, 2026.
