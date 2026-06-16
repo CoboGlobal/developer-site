@@ -12,6 +12,21 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.37.0
+
+此版本于 2026 年 6 月 10 日发布。
+
+### 兼容性变更
+
+- 新增以下 Webhook 事件类型：
+  - `wallets.updated`
+  - `mpc_vaults.updated`
+  - `mpc_vaults.deleted`
+  - `organizations.updated`
+- 在 Webhook 事件负载中新增 `Organization` 和 `FiatTransaction` 两种事件数据类型。受影响的接口：
+  - [获取事件信息](/v2/api-references/developers--webhooks/retrieve-event-information)
+  - [查询所有 Webhook 事件](/v2/api-references/developers--webhooks/list-all-webhook-events)
+
 ## v1.36.0
 
 此版本于 2026 年 5 月 27 日发布。
