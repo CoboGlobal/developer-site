@@ -7580,10 +7580,10 @@ components:
 
         - `RecoveryGroup`: A [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
 
-        **Note:** For `MainGroup` and `SigningGroup`, a Cobo key share holder will be added automatically.
+        **Note:** For `MainGroup` and `SigningGroup`, a key share holder backed by Cobo's multi-cloud infrastructure will be added automatically.
     CreateKeyShareHolder:
       type: object
-      description: 'When creating MainKeyGroup and SigningKeyGroup, the Cobo key share holder will be added automatically.'
+      description: 'When creating MainKeyGroup and SigningKeyGroup, a key share holder backed by Cobo''s multi-cloud infrastructure will be added automatically.'
       properties:
         name:
           type: string
@@ -7599,7 +7599,7 @@ components:
           type: boolean
           example: true
           description: |
-            Whether the key share holder has been selected as the designated transaction signer. For example, in a 2-3 [Threshold Signature Scheme (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss), Cobo will serve as one signer, and you can choose one of the other two key share holders to act as the second transaction signer.
+            Whether the key share holder has been selected as the designated transaction signer. For example, in a 2-3 [Threshold Signature Scheme (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss), the key share stored within Cobo's multi-cloud infrastructure can act as one signer, and you can choose one of the other two key share holders to act as the second transaction signer.
             - `true`: The key share holder is a designated transaction signer.
 
             - `false`: The key share holder is not a designated transaction signer.
@@ -7628,7 +7628,7 @@ components:
           type: boolean
           example: true
           description: |
-            Whether the key share holder has been selected as the designated transaction signer. For example, in a 2-3 [Threshold Signature Scheme (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss), Cobo will serve as one signer, and you can choose one of the other two key share holders to act as the second transaction signer.
+            Whether the key share holder has been selected as the designated transaction signer. For example, in a 2-3 [Threshold Signature Scheme (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss), the key share stored within Cobo's multi-cloud infrastructure can act as one signer, and you can choose one of the other two key share holders to act as the second transaction signer.
             - `true`: The key share holder is a designated transaction signer.
 
             - `false`: The key share holder is not a designated transaction signer.
@@ -7665,7 +7665,7 @@ components:
       description: |
         The key share holder's TSS Node type. Possible values include:
 
-        - `Cobo`: The TSS Node is generated and held by Cobo.
+        - `Cobo`: The TSS Node is generated within and stored in Cobo's multi-cloud infrastructure.
 
         - `Mobile`: The TSS Node is generated and held by a [mobile co-signer](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups#create-a-main-group) using [Cobo Guard](https://manuals.cobo.com/en/guard/introduction).
 
@@ -7871,7 +7871,7 @@ components:
           description: |
             The TSS Node IDs participating in creating a new key share holder group when `type` is set to either `KeyGenFromKeyGroup` or `Recovery`. 
 
-            **Note:** In any [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) such as the 2-2, 2-3, and 3-3 schemes (in the "threshold - participants" format), for `tss_node_ids`, you only need to fill in 1 Cobo TSS Node ID and enough non-Cobo TSS Node IDs to satisfy the number of approvers specified in `threshold`. To obtain the Cobo TSS Node ID, run [List all Cobo key share holders](https://www.cobo.com/developers/v2/api-references/wallets--mpc-wallets/list-all-cobo-key-share-holders).
+            **Note:** In any [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) such as the 2-2, 2-3, and 3-3 schemes (in the "threshold - participants" format), for `tss_node_ids`, you only need to fill in 1 Cobo TSS Node ID and enough non-Cobo TSS Node IDs to satisfy the number of approvers specified in `threshold`. To obtain the Cobo TSS Node ID, run [List all Cobo key share holders](https://www.cobo.com/developers/v2/api-references/wallets--mpc-wallets/list-all-cobo-key-share-holders). The Cobo TSS Node ID refers to the key share stored within Cobo's multi-cloud infrastructure.
     FeeType:
       type: string
       enum:
