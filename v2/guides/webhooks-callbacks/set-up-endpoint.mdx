@@ -80,15 +80,19 @@ Properly responding to webhook events and callback messages is crucial for ensur
 
 When your webhook endpoint receives a webhook event, it should respond with a status code of `200` or `201` to indicate that the event has been successfully received and processed. Once this response is sent, the WaaS service will stop retrying to send the event and the event status will become `Delivered` on Cobo Portal.
 
-The default timeout for each webhook event is 2 seconds. If the webhook endpoint does not respond or responds with a status code other than `200` or `201`, the WaaS service will continue to retry sending the event. If the number of retry attempts reaches 10 , the WaaS service will stop sending the event and the event status will become `Failed`· You can resend the event by clicking **Retry** on **Cobo Portal** > **Developer** > **WaaS 2.0** > **Webhook Events**.
+##### Retry behavior
 
-Cobo does not guarantee that events will be delivered in the order they are generated. For example, creating a transfer will generate the following events:
+The default timeout for each webhook event is 2 seconds. The WaaS service evaluates your endpoint's response as follows:
 
-- `wallets.transaction.created`
-- `wallets.transaction.updated`
-- `wallets.transaction.succeeded`
+- A status code of `200` or `201` is treated as success. The event status becomes `Delivered` and no further delivery attempts are made.
+- Any other status code, an invalid response, or no response within the timeout is treated as a retryable failure, and the WaaS service retries delivery.
 
-Your endpoint should not assume that events will arrive in this sequence and must handle delivery appropriately.
+The WaaS service attempts delivery up to 10 times. After the 10th failed attempt, the WaaS service stops sending the event and the event status becomes `Failed`. You can resend a failed event by clicking **Retry** on **Cobo Portal** > **Developer** > **WaaS 2.0** > **Webhook Events**.
+
+##### Delivery guarantees
+
+- **Ordering is not guaranteed.** The WaaS service does not guarantee that events are delivered in the order they are generated. For example, creating a transfer generates `wallets.transaction.created`, `wallets.transaction.updated`, and `wallets.transaction.succeeded`; your endpoint must not assume the events arrive in that sequence.
+- **Duplicate delivery is possible.** Because events are retried, your endpoint may receive the same event more than once. Deduplicate using a unique identifier such as the event ID, transaction hash, or transaction ID, and ignore events you have already processed.
 
 #### Callback messages
 
