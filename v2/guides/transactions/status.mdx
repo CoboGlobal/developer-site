@@ -281,7 +281,7 @@ The `PendingAuthorization` status aggregates both manual approval steps and inte
 </Note>
 
 <Warning>
-After a transaction is approved, it enters the `PendingSignature` status and must be signed by the MPC signer group within a limited signing window. If signing does not complete within this window, the transaction automatically fails and moves to the `Failed` status with the sub-status `FailedSignerTimeout`. To find out why a transaction failed, check the `sub_status` field returned by [List all transactions](/v2/api-references/transactions/list-all-transactions) or [Get transaction information](/v2/api-references/transactions/get-transaction-information). If you encounter `FailedSignerTimeout`, the transaction is in a terminal `Failed` state and cannot be resumed. Submit a new transaction of the same type to try again: use [Transfer token](/v2/api-references/transactions/transfer-token) for token transfers, [Call smart contract](/v2/api-references/transactions/call-smart-contract) for contract calls, or [Sign message](/v2/api-references/transactions/sign-message) for message signing.
+After a transaction is approved, it enters the `PendingSignature` status and must be signed by the MPC signer group within a limited signing window. If signing does not complete within this window, the transaction automatically fails and moves to the `Failed` status with the sub-status `FailedSignerTimeout`. To find out why a transaction failed, check the `sub_status` field returned by [List all transactions](/v2/api-references/transactions/list-all-transactions) or [Get transaction information](/v2/api-references/transactions/get-transaction-information). If you encounter `FailedSignerTimeout`, resend the transaction to try again.
 </Warning>
 
 <Note>

@@ -109,15 +109,12 @@ On Solana, you can use either the native model or the Legacy model. In the nativ
 | Base fee | A fixed fee charged per signature (default 5,000 lamports per signature). |
 | CU price | The price paid per CU (compute unit) to increase transaction priority, in lamports. |
 | CU limit | The maximum number of compute units your transaction is allowed to consume. A higher limit may increase priority but also increases the fee. |
-| Rent | A one-time fee required to activate a Solana token sub-address (Associated Token Account, or ATA) before that token can be used. It is not included in the base fee or compute unit fee and is paid by the source address. |
 
 You can customize the following values:
 - CU price
 - CU limit
 
 Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details.
-
-<Note>Activating a Solana token sub-address (Associated Token Account) incurs a one-time rent paid by the source address, separate from the network transaction fee. For details, see [Solana token account rent](/v2/guides/transactions/solana-token-account-rent).</Note>
 
 <Note>Solana and Filecoin both support two fee models: their native model and the Legacy model. When calling transaction API operations, you can choose which model to use. However, for Replace-By-Fee (RBF) transactions, you must use the same fee model as the original transaction.</Note>
 
@@ -179,10 +176,7 @@ The logic for estimating RBF transaction fees is similar to that for normal tran
 
 ## Fees on Layer 2 chains
 
-On Layer 2 (L2) chains such as Arbitrum, network fees can change rapidly. If fees rise sharply after you submit a transaction, the transaction can remain in the `PendingSignature` or `Broadcasting` status longer than expected. How you unblock it depends on the status:
-
-- `Broadcasting`: The transaction is already broadcast. Use the Replace-By-Fee (RBF) speed-up operation to rebroadcast it with a higher fee. To raise the fee, use the [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) operation. For how RBF works end to end, see [RBF (Replace-By-Fee) transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle).
-- `PendingSignature`: The transaction is not yet broadcast, so RBF does not apply. The transaction must be signed within a limited signing window; if signing does not complete in time, it fails with the sub-status `FailedSignerTimeout`. In that case, submit a new transaction to try again. For details, see [Transaction statuses and sub-statuses](/v2/guides/transactions/status).
+On Layer 2 (L2) chains such as Arbitrum, network fees can change rapidly. If fees rise sharply after you submit a transaction, the transaction can remain in the `PendingSignature` or `Broadcasting` status longer than expected. To unblock such a transaction, use the Replace-By-Fee (RBF) speed-up operation to rebroadcast it with a higher fee. For how RBF works end to end, see [RBF (Replace-By-Fee) transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle). To raise the fee, use the [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) operation.
 
 ## How Cobo estimate the fees
 

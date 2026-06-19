@@ -17,7 +17,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 <img src="/v2_cn/images/guides/mpc-deposit-cn.svg" className="diagram" alt="充币流程" />
 
 - 如果充币交易违反合规规定，Cobo 保留拒绝该交易的权利。
-- 如果交易金额低于最低充币门槛，交易将不会被处理，也不会创建任何记录。您可以调用 [Get token information](/v2/api-references/wallets/get-token-information) 操作来检索每种代币类型的最低充币金额。
+- 如果交易金额低于最低充币门槛，交易将不会被处理，也不会创建任何记录。您可以调用 [获取代币信息](/v2/api-references/wallets/get-token-information) 操作来检索每种代币类型的最低充币金额。
 
 ## 提币流程
 
@@ -34,8 +34,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 <img src="/v2_cn/images/guides/mpc-withdrawal-cn.png" className="diagram" alt="提币流程" />
 
 - 如果提币被拒绝或不成功，代币将返回到您的钱包，您的余额将保持不变。
-- 如果您的提币金额小于最低提币门槛，提币请求将收到错误。您可以调用 [Get token information](/v2/api-references/wallets/get-token-information) 操作来检索每种代币类型的最低提币金额。
+- 如果您的提币金额小于最低提币门槛，提币请求将收到错误。您可以调用 [获取代币信息](/v2/api-references/wallets/get-token-information) 操作来检索每种代币类型的最低提币金额。
 
 <Warning>
-提币交易经审批通过后会进入 `PendingSignature` 状态，并且必须在有限的签名时间窗口内由 MPC 签名人组完成签名。如果未能在时间窗口内完成签名，交易将自动失败并转入 `Failed` 状态，子状态为 `FailedSignerTimeout`。您可以通过 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 返回的 `sub_status` 字段确认失败原因。由于 `FailedSignerTimeout` 为终态 `Failed`，请重新发起一笔新交易以重试，例如通过 [Transfer token](/v2/api-references/transactions/transfer-token) 操作发起一笔新转账。
+提币交易经审批通过后会进入 `PendingSignature` 状态，并且必须在有限的签名时间窗口内由 MPC 签名人组完成签名。如果未能在时间窗口内完成签名，交易将自动失败并转入 `Failed` 状态，子状态为 `FailedSignerTimeout`。您可以通过 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 返回的 `sub_status` 字段确认失败原因，然后重新发起该交易。
 </Warning>
