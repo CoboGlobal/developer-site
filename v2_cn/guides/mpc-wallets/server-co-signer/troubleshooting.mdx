@@ -1,0 +1,31 @@
+---
+title: "服务端签名人设置问题排查"
+lang: "zh-hans"
+sidebarTitle: "服务端签名人设置问题排查"
+description: "解决设置服务端签名人和生成私钥分片时的常见错误。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本页列出了您在部署服务端签名人和生成私钥分片时可能遇到的常见错误，以及它们的可能原因和解决步骤。
+
+## 密钥生成（TypeKeyGen）因节点 ID 不匹配而失败
+
+`TypeKeyGen` 是 TSS Node 发送到您的回调服务器以创建新私钥分片的回调请求类型。该请求 Payload 包含一个 `node_ids` 字段，列出该任务的私钥分片持有者组的 TSS Node ID。详情请参阅[回调请求和响应格式](/v2_cn/guides/mpc-wallets/server-co-signer/callback-server-data-structure)中 `TypeKeyGen request` 的 `request_detail` `node_ids` 字段。
+
+**可能原因：** 为您的节点配置的 TSS Node ID 与密钥生成任务的私钥分片持有者组的 TSS Node ID 不匹配。
+
+**解决方法：**
+
+1. 检查您的 TSS Node 配置中的节点 ID。
+2. 将其与 `TypeKeyGen` `request_detail` 中列出的 `node_ids` 进行比较。
+3. 更正任何不匹配项，使每个节点 ID 都与私钥分片持有者组匹配。
+4. 重启 TSS Node 并重试密钥生成。
+
+## 相关指南
+
+- [TSS Node Callback 机制](/v2_cn/guides/mpc-wallets/server-co-signer/callback-server-overview)
+- [回调请求和响应格式](/v2_cn/guides/mpc-wallets/server-co-signer/callback-server-data-structure)
+- [验证私钥分片](/v2_cn/guides/mpc-wallets/server-co-signer/key-share-verify)

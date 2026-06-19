@@ -78,8 +78,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 
 
-### 注意
-私钥分片验证在 TSS Node 中默认启用。如果您想使用嵌入式风险控制模块禁用私钥分片验证，可以修改 `configs/cobo-tss-node-config.yaml` 文件如下：
+### 手动私钥分片验证与 Callback 风险控制
+私钥分片验证（也称为手动私钥分片验证或手动验证，manual key share verification 或 manual verification）在 TSS Node 中默认启用。如果您想使用嵌入式风险控制模块禁用私钥分片验证，可以修改 `configs/cobo-tss-node-config.yaml` 文件如下：
 
 ```yaml
 embedded_risk_control_rules:
@@ -88,7 +88,7 @@ embedded_risk_control_rules:
     reject_all: true
 ```
 
-默认情况下，TSS Node Callback 不包括私钥分片验证的风险控制。如果您想在 TSS Node Callback 中实现私钥分片验证的风险控制，请联系我们的支持团队 <a href="mailto:help@cobo.com">help@cobo.com</a> 获取帮助。
+默认情况下，TSS Node Callback 不对私钥分片验证执行风险控制，并且没有可自助配置的 Callback `check_policy` 选项来启用它。唯一的内置控制是上文所示的嵌入式风险控制模块，通过 `configs/cobo-tss-node-config.yaml` 中的 `embedded_risk_control_rules.enable` 与 `key_share_sign.reject_all` 进行配置。如需为您的组织启用基于 Callback 的私钥分片验证风险控制，请联系 Cobo：<a href="mailto:help@cobo.com">help@cobo.com</a>。
 
 
 

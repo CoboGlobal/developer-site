@@ -23,6 +23,10 @@ After you create the endpoint, you need to implement the logic on the server to 
 
 To prevent unauthorized access, when you receive a webhook event or a callback message, you need to validate the authenticity of the API request by verifying the signature.
 
+<Warning>
+The Ed25519 signature is computed over the exact raw bytes of the HTTP request body. You must verify the signature against the raw body exactly as you received it. Do not parse the JSON and then re-serialize it before verifying — re-encoding can strip `null` or empty fields and reorder keys, which changes the bytes and causes signature verification to fail. Always build the message as `raw_body|timestamp` using the unmodified raw body.
+</Warning>
+
 The verification steps are as follows:
 
 1. Retrieve raw body and timestamp. 

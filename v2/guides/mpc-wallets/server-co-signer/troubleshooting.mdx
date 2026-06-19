@@ -1,0 +1,31 @@
+---
+title: "Troubleshoot server co-signer setup"
+lang: "en"
+sidebarTitle: "Troubleshoot server co-signer setup"
+description: "Resolve common errors when setting up a server co-signer and generating key shares."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page lists common errors that you may encounter when you deploy a server co-signer and generate key shares, together with their likely causes and remediation steps.
+
+## Key generation (TypeKeyGen) fails because node IDs do not match
+
+`TypeKeyGen` is the callback request type that the TSS Node sends to your callback server to create new key shares. The request payload includes a `node_ids` field that lists the TSS Node IDs of the key share holder group for the task. For details, see the `TypeKeyGen request` `request_detail` `node_ids` field in [Callback request and response formats](/v2/guides/mpc-wallets/server-co-signer/callback-server-data-structure).
+
+**Likely cause:** The TSS Node IDs configured for your node do not match the TSS Node IDs of the key share holder group for the key generation task.
+
+**Remediation:**
+
+1. Verify the node IDs in your TSS Node configuration.
+2. Compare them against the `node_ids` listed in the `TypeKeyGen` `request_detail`.
+3. Correct any mismatch so that every node ID matches the key share holder group.
+4. Restart the TSS Node and retry key generation.
+
+## Related guides
+
+- [TSS Node callback mechanism](/v2/guides/mpc-wallets/server-co-signer/callback-server-overview)
+- [Callback request and response formats](/v2/guides/mpc-wallets/server-co-signer/callback-server-data-structure)
+- [Verify key shares](/v2/guides/mpc-wallets/server-co-signer/key-share-verify)
