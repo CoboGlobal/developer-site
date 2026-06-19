@@ -53,6 +53,7 @@
                 "group": "Transactions",
                 "pages": [
                   "v2/guides/transactions/sources-and-destinations",
+                  "v2/guides/transactions/transfer-routing",
                   "v2/guides/transactions/estimate-fees",
                   {
                     "group": "Transaction statuses",
@@ -63,6 +64,7 @@
                     ]
                   },
                   "v2/guides/transactions/manage-transactions",
+                  "v2/guides/transactions/rbf-transaction-lifecycle",
                   {
                     "group": "Smart contract call samples",
                     "pages": [

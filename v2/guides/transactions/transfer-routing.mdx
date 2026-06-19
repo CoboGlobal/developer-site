@@ -1,0 +1,38 @@
+---
+title: "Transfer routing"
+lang: "en"
+description: "Understand how token transfers are routed internally through Cobo Loop or externally on-chain, and how to control routing with request parameters."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+Every token transfer is routed either internally or externally:
+
+- **Internal routing** settles off-chain between accounts on Cobo Portal through the Cobo Loop transfer network, when the destination supports it.
+- **External routing** broadcasts the transaction on the blockchain.
+
+## Control routing with request parameters
+
+The [Transfer token](/v2/api-references/transactions/transfer-token) operation provides two boolean parameters to control routing: `force_internal` and `force_external`.
+
+| Setting | Routing behavior |
+|---------|------------------|
+| `force_internal` = `true` | Forces internal routing through Cobo Loop (off-chain). |
+| `force_external` = `true` | Forces external on-chain routing. |
+| Both `false` (default) | Routes through Cobo Loop if the destination supports it; otherwise routes on-chain. |
+| Both `true` | The request is rejected. |
+
+Some destinations do not support these parameters.
+
+## Effect on the resulting transaction
+
+Internal routing produces an off-chain Cobo Loop transfer. External routing produces an on-chain transaction.
+
+## Related guides
+
+- [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations)
+- [Cobo Loop](https://manuals.cobo.com/en/portal/custodial-wallets/cobo-loop)

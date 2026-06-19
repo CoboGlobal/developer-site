@@ -1,0 +1,38 @@
+---
+title: "转账路由"
+lang: "zh-hans"
+description: "了解代币转账如何通过 Cobo Loop 内部路由或链上外部路由，以及如何使用请求参数控制路由。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+每笔代币转账都会通过内部或外部路由：
+
+- **内部路由**：当目的地支持时，通过 Cobo Loop 转账网络在 Cobo Portal 账户之间以链下方式结算。
+- **外部路由**：将交易广播到区块链上。
+
+## 使用请求参数控制路由
+
+[Transfer token](/v2/api-references/transactions/transfer-token) 操作提供两个布尔参数来控制路由：`force_internal` 和 `force_external`。
+
+| 设置 | 路由行为 |
+|---------|------------------|
+| `force_internal` = `true` | 强制通过 Cobo Loop 进行内部路由（链下）。 |
+| `force_external` = `true` | 强制进行链上外部路由。 |
+| 两者均为 `false`（默认） | 如果目的地支持，则通过 Cobo Loop 路由；否则进行链上路由。 |
+| 两者均为 `true` | 请求将被拒绝。 |
+
+部分目的地不支持这些参数。
+
+## 对生成交易的影响
+
+内部路由生成链下的 Cobo Loop 转账。外部路由生成链上交易。
+
+## 相关指南
+
+- [Transaction sources and destinations](/v2_cn/guides/transactions/sources-and-destinations)
+- [Cobo Loop](https://manuals.cobo.com/en/portal/custodial-wallets/cobo-loop)

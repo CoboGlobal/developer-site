@@ -70,6 +70,10 @@ The following table lists the API operations needed for common wallet operations
 | Sign a message             | Not supported                                                | [Sign message](/v2/api-references/transactions/sign-message) |
 | Query a transaction        | <ul><li>**[Custodial Wallets]** [Transaction history](/v1/api-references/custody-wallet/transaction_history)</li><li>**[MPC Wallets]** [Get Transactions List](/v1/api-references/mpc-wallet/mpc_list_transactions)</li></ul> | <ul><li>[List all transactions](/v2/api-references/transactions/list-all-transactions)</li><li>[Get transaction information](/v2/api-references/transactions/get-transaction-information)</li></ul>|
 
+<Warning>
+WaaS 2.0 list endpoints, such as [List all transactions](/v2/api-references/transactions/list-all-transactions), return results in pages. By default each page returns 10 records, and the maximum page size is 50, set with the `limit` parameter. This differs from WaaS 1.0, where a single response could return all results. A single WaaS 2.0 page therefore omits later results. To retrieve every record, iterate through all pages using the cursor parameters `before` and `after`.
+</Warning>
+
 ## Upgrade to 2.0
 
 This section introduces the detailed steps to upgrade from WaaS 1.0 to 2.0.
