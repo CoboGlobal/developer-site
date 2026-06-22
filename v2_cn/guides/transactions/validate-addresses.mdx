@@ -1,0 +1,38 @@
+---
+title: "验证地址"
+lang: "zh-hans"
+description: "使用 Cobo API 在服务端验证交易目的地址，而非依赖手动编写的、按链区分的格式规则。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+在将地址用作交易目的地址之前对其进行验证，有助于避免交易失败以及资金被发送到格式错误的地址。验证地址的规范方式是调用 Cobo API，由其针对指定的链在服务端执行检查。请勿在您自己的集成中依赖手动编写的、按链区分的地址格式规则，因为地址格式因链而异，并且会随时间变化。
+
+## 验证单个地址（WaaS 2.0）
+
+使用 [Check address validity](/v2/api-references/wallets/check-address-validity) 操作（`GET /wallets/check_address_validity`）。传入两个查询参数：`chain_id`（用于验证的链）和 `address`（待检查的地址）。响应包含一个布尔字段 `validity`：`true` 表示该地址对该链有效，`false` 表示无效。响应仅为布尔值，不包含原因字段。
+
+示例——验证 XRP 地址：将 `chain_id` 设置为 `XRP`，并将 `address` 设置为您要检查的地址。由于验证是按 `chain_id` 在服务端执行的，同一个地址会根据您指定的链的规则进行判断。
+
+## 验证多个地址（WaaS 2.0）
+
+提供两个批量操作：
+
+- [Check addresses validity](/v2/api-references/wallets/check-addresses-validity)（`GET /wallets/check_addresses_validity`）：在一次请求中验证单个链上的多个地址。
+- [Check address validity across chains](/v2/api-references/wallets/check-address-validity-across-chains)（`GET /wallets/check_address_chains_validity`）：在一次请求中验证一个地址在多个链上的有效性。
+
+## 验证地址（WaaS 1.0）
+
+如果您仍在使用 WaaS 1.0，请使用对应的旧版操作：
+
+- [GET /v1/custody/is_valid_address/](/v1/api-references/custody-wallet/is_valid_address) 适用于全托管钱包。
+- [GET /v1/custody/mpc/is_valid_address/](/v1/api-references/mpc-wallet/mpc_is_valid_address) 适用于 MPC 钱包。
+
+建议迁移到 WaaS 2.0 并使用 Check address validity。
+
+## 相关指南
+
+- [List all transactions](/v2/api-references/transactions/list-all-transactions)
+- [Check address validity](/v2/api-references/wallets/check-address-validity)
