@@ -332,6 +332,38 @@ public class ListTransactionsExample {
 ```
 </Accordion>
 
+## 充币前提条件
+
+在充币之前，请确认相关链已为您的团队启用，且代币已上线并开放充币。仅当代币的 `can_deposit` 属性为 `true` 时，该代币才支持充币。请在转入资金前确认此属性，因为向尚未启用的链或代币充币可能无法被自动检测或入账。
+
+如需检查充币资格，请在充币前查询代币配置。如果您已向当时未启用的代币充币，请勿继续向同一地址转入资金；请改用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 确认该笔转账的当前状态。
+
+## Memo 和 Tag 要求
+
+部分链除了充币地址外还需要提供 Memo 或 Tag，以便将充币正确路由到对应账户。当代币需要 Memo 或 Tag 时，其 `require_memo` 属性为 `true`。请在充币前务必检查此属性，并在每次向该代币充币时附上准确的 Memo 或 Tag。
+
+如果充币时未附带所需的 Memo 或 Tag，或填写了错误的 Memo 或 Tag，该笔充币可能无法自动入账，需要人工处理后资金才会到账。如需确认此类充币是否已被接收，请使用 [List all transactions](/v2/api-references/transactions/list-all-transactions)。
+
+## 内部交易和合约触发的交易
+
+充币检测机制会跟踪向您的充币地址发起的标准顶层转账。非顶层的转账——例如由合约调用产生的内部（trace）转账，或由智能合约发出而非直接转入您地址的代币转移——可能无法被自动检测或入账。此情况适用于多条链。
+
+如果您预期会收到此类转账的充币但未到账，请先确认链上交易，然后使用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 检查该交易是否已被记录，再采取后续操作。
+
+## 特定链的注意事项
+
+部分链仅支持特定的交易格式或版本进行充币。以不受支持的交易格式提交的充币可能无法被检测或入账。在接入新链时，请先确认您的充币使用受支持的交易格式，再大规模转入资金。
+
+## 充币问题排查
+
+### 如果错过了充币的 Webhook 通知，如何重新确认？
+
+如果您的 Endpoint 暂时不可用，可能会错过 Webhook 通知。您无需等待新的通知即可确认充币。请直接使用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 查询当前状态，或使用 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 获取单笔转账。请确保您的 Webhook Endpoint 返回成功状态码，以便后续事件能够可靠送达；请参阅 [Webhook 和 Callback 简介](/v2_cn/guides/webhooks-callbacks/introduction)。
+
+### 代币上线前充币会如何处理？
+
+在代币上线并开放充币之前发起的充币，可能在转账时无法被检测或入账。充币前请按 [充币前提条件](#充币前提条件) 所述确认代币已启用。如需检查此类充币之后是否已被记录，请使用 [List all transactions](/v2/api-references/transactions/list-all-transactions)。
+
 ## 4. 提取代币
 
 现在您的钱包中已经有了代币，让我们来学习如何提取它们。

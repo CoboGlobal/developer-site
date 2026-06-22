@@ -331,6 +331,38 @@ public class ListTransactionsExample {
 ```
 </Accordion>
 
+## Deposit prerequisites
+
+Before you deposit tokens, make sure the chain is activated for your organization and the token is listed and enabled for deposits. A token accepts deposits only when its `can_deposit` property is `true`. Confirm this property before you send funds, because deposits made to a chain or token that is not yet enabled may not be detected or credited automatically.
+
+To check deposit eligibility, query the token configuration before depositing. If you have already sent a deposit to a token that was not enabled at the time, do not send further funds to the same address; instead, confirm the current status of the transfer with the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation.
+
+## Memo and tag requirements
+
+Some chains require a memo or tag in addition to the deposit address so that the deposit can be routed to the correct account. When a token requires a memo or tag, its `require_memo` property is `true`. Always check this property before you deposit, and include the exact memo or tag with every deposit to that token.
+
+A deposit sent without the required memo or tag, or with an incorrect memo or tag, may not be credited automatically and can require manual processing before the funds appear in your wallet. To confirm whether such a deposit has been received, use the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation.
+
+## Internal and contract-triggered transactions
+
+The deposit detection mechanism tracks standard top-level transfers to your deposit addresses. Transfers that are not top-level — such as internal (trace) transfers produced by a contract call, or token movements emitted by a smart contract rather than sent directly to your address — may not be detected or credited automatically. This applies to several chains.
+
+If you expect a deposit from this type of transfer and it does not appear, confirm the on-chain transaction first, then check whether it has been recorded with the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation before taking further action.
+
+## Chain-specific notes
+
+Some chains support only specific transaction formats or versions for deposits. A deposit submitted in an unsupported transaction format may not be detected or credited. When you integrate a new chain, verify that your deposits use a supported transaction format before sending funds at scale.
+
+## Deposit troubleshooting
+
+### How do I re-check a deposit if I missed its webhook notification?
+
+Webhook notifications can be missed if your endpoint was temporarily unavailable. You do not need to wait for a new notification to confirm a deposit. Query the current state directly with the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation, or retrieve a single transfer with the [Get transaction information](/v2/api-references/transactions/get-transaction-information) operation. Make sure your webhook endpoint returns a success status code so that future events are delivered reliably; see [Introduction to webhooks and callbacks](/v2/guides/webhooks-callbacks/introduction).
+
+### What happens to deposits made before a token is listed?
+
+Deposits sent before a token is listed and enabled for deposits may not be detected or credited at the time of the transfer. Before depositing, confirm that the token is enabled as described in [Deposit prerequisites](#deposit-prerequisites). To check whether such a deposit has since been recorded, use the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation.
+
 ## 4. Withdraw tokens
 
 Now that you have tokens in your wallet, it's time to try withdrawing them. 
