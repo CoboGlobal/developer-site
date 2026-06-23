@@ -1,23 +1,28 @@
 ---
 title: "Solana token account rent"
 lang: "en"
-description: "How Solana token sub-address (Associated Token Account) activation rent works, who pays it, and why it is not visible through webhooks."
+description: "How Solana Associated Token Account (ATA) rent works, who pays it, and what to expect in transaction records."
 ---
 
 import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
 
 <WaasSkillReminder />
 
-On Solana, each token is held in an independent token sub-address called an Associated Token Account (ATA). Before an address can receive or use a specific token, that token's ATA must be created and activated.
+On Solana, each token is held in its own sub-address called an Associated Token Account (ATA). When sending tokens to an address that has never received SOL or that specific token before, the sending address must pay a one-time activation fee — called rent — to create and activate the ATA before the transfer can complete.
 
-## Activation rent
+The following points are important when working with Solana token transfers:
 
-Activating an ATA requires a one-time fee called rent, returned in the `rent_amount` field. The rent is paid by the main (source) address that initiates the transaction. `rent_amount` is populated only when an ATA must be activated; it is null when no activation is needed.
+**Rent is paid by the sending address**
 
-## How rent affects transaction cost
+If the recipient has not previously received SOL or a specific token, the source (sending) address pays extra rent to create and activate the token's ATA (sub-address). This is separate from the normal Solana network transaction fee.
 
-The network transaction fee is returned in `fee_used` and does not include `rent_amount`. The actual total cost of a Solana token transaction is `fee_used` + `rent_amount`, both paid by the same source address. For more details, see [Estimate transaction fees](/v2/guides/transactions/estimate-fees).
+**`fee_used` does not include rent**
 
-## Webhook and balance behavior
+The `fee_used` field in a Solana transaction record covers only the on-chain network transaction fee. Rent is reported separately in the `rent_amount` field. The total amount deducted from the source address is `fee_used` + `rent_amount`. For details, see [Estimate transaction fees](/v2/guides/transactions/estimate-fees).
 
-Activating an ATA does not emit a `wallets.addresses.created` event. The rent transfer that funds the activation does not emit any `wallets.transaction.*` event and does not produce a deposit or transaction record. The rent amount sits in the ATA (token sub-address) balance and does not increase the main address SOL balance. For more details, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+**Rent is not parsed from completed transactions**
+
+When Cobo processes a completed on-chain transaction, `rent_amount` is not extracted from the transaction data. As a result:
+- The `rent_amount` field in completed transaction records will not reflect the actual rent charged.
+- No deposit record is created for the rent transfer to the sub-address.
+- No `wallets.addresses.created` or `wallets.transaction.*` webhook event is emitted for the rent payment.
