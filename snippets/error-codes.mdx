@@ -7,36 +7,36 @@ This article explains the common error codes and HTTP status codes you may encou
 | Error code | Description | Solution |
 |---|---|---|
 | 1000 | Internal Server Error. This error can be caused by several issues including expired [Org Access Tokens](/v2/apps/org-access-tokens). | Check your server configuration settings, including whether your Org Access Token has expired, and try again later. |
-| 1003, 2003 | One or more required parameters are missing in the request. | Provide all required parameters. |
-| 1006, 2006 | One or more parameters are in an invalid format or contain unsupported values. | Provide valid parameters in the expected format. |
-| 2000 | Internal error occurred during processing. | Try again later. |
-| 2021 | The requested API endpoint is not implemented or is currently unavailable. | Verify the request path and HTTP method are correct. If the endpoint is valid, retry after a short delay. |
+| 1003, 2003 | One or more required parameters are missing in the request. | The `error_message` field names the specific missing parameter. Identify that parameter, confirm which parameters are required in the API reference for the operation you are calling, add it, and retry. |
+| 1006, 2006 | One or more parameters are in an invalid format or contain unsupported values. | The `error_message` field names the parameter that failed validation. Check the API reference for the operation you are calling to confirm the expected type, format, and allowed values for that parameter, then correct the value and retry. |
+| 2000 | Internal error occurred during processing. | This is a temporary error on Cobo's side. Retry after a short delay. If the error persists, contact Cobo support and provide the `error_id` from the response so the failure can be traced. |
+| 2021 | The requested API endpoint is not implemented or is currently unavailable. | Confirm the request path and HTTP method exactly match the operation in the API reference (a trailing slash or wrong method also returns this error). If they are correct, the endpoint may be temporarily unavailable — retry after a short delay using exponential backoff. |
 | 2024 | API key authentication failed. | <ul><li>If `error_message` is `Your API key is not registered in this environment...`: you are using a key registered in the wrong environment. Switch to the correct API host and use the matching API key. See [Environments](/v2/guides/overview/environments).</li><li>If `error_message` is `Your API key is not yet activated...` or `Api key is not activated`: complete Admin approval in Cobo Guard for the key to become Active.</li><li>If `error_message` mentions the IP whitelist: add your server's egress IP to the key's allowlist in Cobo Portal.</li><li>For signature failures, ensure the canonical string follows the format `METHOD\|PATH\|NONCE\|PARAMS\|BODY` with the nonce identical to the `Biz-Api-Nonce` header. See [Authentication](/v2/guides/overview/cobo-auth).</li></ul>For details, see <a href="https://manuals.cobo.com/en/portal/developer-console/create-api-key">Register an API Key</a>. |
 | 2025, 4001 | Forbidden access to the requested resource. | <ul><li>Check the permissions, wallet scopes, and resource scopes associated with your API key. You can refer to [Permissions and wallet scopes](/v2/guides/overview/permissions-and-scopes) for details.</li><li>If the error is related to user roles (for example, creating withdrawals or initiating transactions), make sure the operator has the required role (for example, withdrawals typically require Spender or Admin).</li><li>If the error message contains "Resource out of organization (4001)", it usually means the resource you are accessing (for example, `wallet_id`) belongs to a different organization than the API key.</li><li>If you have granted permissions but still get forbidden, check whether you are mixing Dev/Prod API keys or calling the wrong environment domain.</li><li>For Custodial Wallet operations, verify that the permission is granted at the correct (upper) scope level (some permissions must be enabled in the parent Custodial Wallet settings).</li><li>If this operation requires an enabled capability (feature flag / allowlist), ensure it is enabled in the target environment.</li><li>If this is chain/asset related (for example, adding a chain but still seeing forbidden), confirm the chain/capability is enabled in your pricing plan/configuration.</li></ul> |
-| 2026 | Too many requests. | Reduce your request frequency and retry after a short delay. If you are using a polling pattern, implement exponential backoff. |
-| 2028 | The requested resource was not found. | Verify the resource ID in the request parameters and confirm the resource exists in your organization. |
-| 2029 | The value provided for the `status` parameter is not one of the allowed values. | Check the API reference for the operation you are calling to find the allowed `status` values, and provide one of them. |
-| 10000 | This organization has read-only permissions in Cobo Portal. | Review your organization's permission settings in Cobo Portal. Only your organization administrator can update permission levels. |
+| 2026 | Too many requests. | Reduce your request frequency and retry after a short delay. For polling or batch patterns, implement exponential backoff — for example, start with a 1-second delay and double it on each retry (1s, 2s, 4s, ...) up to a maximum. |
+| 2028 | The requested resource was not found. | The resource ID does not exist in your organization or was created in a different environment. List the relevant resources to confirm the correct ID (for example, call [List transactions](/v2/api-references/transactions/list-transactions) for a `transaction_id`), then retry with a valid ID. Confirm you are calling the same environment (Development or Production) in which the resource was created. |
+| 2029 | The value provided for the `status` parameter is not one of the allowed values. | The allowed values for `status` depend on the operation (for example, transaction status differs from screening status). In the API reference, open the operation you are calling and provide one of the `status` enum values listed for its request parameters. |
+| 10000 | This organization has read-only permissions in Cobo Portal. | Your organization currently has read-only access, so write operations are rejected. A team admin must log in to Cobo Portal and review the organization's access status in the organization settings; only a team admin can change the access level. Members without the admin role cannot change this setting. |
 
 #### Pricing plan errors
 
 | Error code | Description | Solution |
 |---|---|---|
-| 2050 | No available pricing plan for this organization. | Purchase a pricing plan in Cobo Portal. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
-| 2051 | The current pricing plan has expired. | Renew your pricing plan to continue using the service. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
-| 2052 | The usage limit for the current pricing plan has been exceeded. | Upgrade your pricing plan or wait for the next billing cycle. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
-| 2053 | The current pricing plan does not support this feature. | Upgrade to a plan that includes this feature. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
-| 2054 | The current pricing plan payment is overdue. | Complete the outstanding payment for your pricing plan. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
+| 2050 | No pricing plan is active for this organization, so billable API operations are blocked. | Activate a pricing plan: log in to Cobo Portal, open **Bills & Payments**, and select a plan. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
+| 2051 | The organization's pricing plan has expired, so billable operations are blocked until it is renewed. | Renew your pricing plan: in Cobo Portal, open **Bills & Payments** and renew or select a plan. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
+| 2052 | The organization has exceeded the usage quota included in its current pricing plan. | Wait for the next billing cycle to reset the quota, or upgrade to a higher plan in Cobo Portal under **Bills & Payments**. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
+| 2053 | The current pricing plan does not include the entitlement required for this operation. | Upgrade to a plan that includes this feature in Cobo Portal under **Bills & Payments**. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
+| 2054 | Payment for the current pricing plan is overdue (the organization is in arrears), so the plan is suspended. | Settle the outstanding balance in Cobo Portal under **Bills & Payments** to restore service. For more information, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
 
 #### Wallet configuration errors
 
 | Error code | Description | Solution |
 |---|---|---|
-| 2101 | The wallet name exceeds the maximum allowed character length. | Shorten the wallet name to within the allowed character limit and try again. |
-| 2102 | The wallet name contains invalid characters. | Use only Chinese characters, English letters, numbers, and underscores in the wallet name. |
-| 2103 | A wallet with this name already exists in the organization. | Use a unique wallet name. Wallet names must be unique within an organization. |
-| 2104 | The specified chain is not enabled for this organization's pricing plan. | Enable the chain in your pricing plan, or choose an enabled chain. Call the [List enabled chains](/v2/api-references/wallets/list-enabled-chains) operation to see all chains enabled for your organization. |
-| 2105 | For UTXO-based tokens (such as BTC), all available UTXOs are currently locked by a pending transaction or a transaction pending KYT screening. A new transfer cannot proceed until those UTXOs are released. | Call the [List transactions](/v2/api-references/transactions/list-transactions) operation to find the pending transactions for this wallet, and wait for them to complete before retrying. |
+| 2101 | The wallet name exceeds the maximum allowed character length. | The `error_message` states the maximum number of characters allowed for a wallet name. Shorten the wallet name to that limit or fewer, then retry. |
+| 2102 | The wallet name contains invalid characters. | Wallet names may contain only letters, numbers, underscores, and Chinese characters. Remove any other characters, such as spaces or punctuation, and retry. |
+| 2103 | A wallet with this name already exists in the organization. | Wallet names must be unique within an organization. Choose a name that is not already used by another wallet and retry. To see names in use, list your existing wallets. |
+| 2104 | The specified chain is not enabled for this organization's pricing plan. | To check which chains are already enabled, call the [List enabled chains](/v2/api-references/wallets/list-enabled-chains) operation. To enable an additional chain, log in to Cobo Portal and enable it in your wallet settings; the chain must be included in your pricing plan. Alternatively, choose a chain that is already enabled. |
+| 2105 | For UTXO-based tokens (such as BTC), all available UTXOs are currently locked by a pending transaction or a transaction pending KYT screening. A new transfer cannot proceed until those UTXOs are released. | Call the [List transactions](/v2/api-references/transactions/list-transactions) operation, filtered to this wallet, to find the pending transactions that are holding the UTXOs. The UTXOs are released only when those transactions reach a terminal state (for example, completed or failed). Retry the transfer after the locking transactions reach a terminal state. |
 
 #### Transfer errors
 
@@ -116,6 +116,8 @@ The following error codes are returned by transfer and withdrawal operations.
 
 The following error codes are returned by smart contract wallet and EVM contract call operations.
 
+**Note:** Error codes 40001–40003 are also returned by transaction category operations with different meanings. Use the operation you called and the `error_message` to determine which meaning applies.
+
 | Error code | Description | Solution |
 |---|---|---|
 | 5001 | The contract ABI is invalid or cannot be parsed. | Verify that the ABI JSON is correctly formatted and complete. |
@@ -140,6 +142,8 @@ The following error codes are returned when Cobo Guard multi-factor authenticati
 #### Transaction category errors
 
 The following error codes are returned by transaction category management operations.
+
+**Note:** Error codes 40001–40003 are also returned by EVM operations with different meanings. Use the operation you called and the `error_message` to determine which meaning applies.
 
 | Error code | Description | Solution |
 |---|---|---|
@@ -191,7 +195,7 @@ The following error codes are returned by Travel Rule compliance operations.
 | 70001 | A general Travel Rule error occurred. | Check the error message for details and review your Travel Rule request parameters. |
 | 70002 | The originator KYC information is invalid or incomplete. | Provide complete and valid KYC information for the originator. |
 | 70003 | The Travel Rule vendor code is invalid. | Provide a valid vendor code. |
-| 70004 | The originator's nature entity information is missing or incomplete. | Complete all required nature entity fields for the originator. |
+| 70004 | The originator's natural person entity information is missing or incomplete. | Complete all required natural person entity fields for the originator. |
 | 70005 | The originator's legal entity information is missing or incomplete. | Complete all required legal entity fields for the originator. |
 | 70006 | The originator information is missing or incomplete. | Provide all required originator information. |
 | 70007 | An error occurred while entering the sender information. | Check the error message for details and verify the sender information fields. |
@@ -199,7 +203,7 @@ The following error codes are returned by Travel Rule compliance operations.
 | 70009 | Originator information has already been submitted for this record. | Originator information can only be submitted once per record. Review the existing record if updates are needed. |
 | 70010 | The self-custody wallet signature verification failed. | Ensure the signature is generated correctly for the self-custody wallet address. |
 | 70011 | The legal entity information is incomplete — required fields are missing. | Provide all required fields for the legal entity. |
-| 70012 | The nature entity information is incomplete — required fields are missing. | Provide all required fields for the nature entity. |
+| 70012 | The natural person entity information is incomplete — required fields are missing. | Provide all required fields for the natural person entity. |
 | 70013 | This address has already been verified. | No further action is needed. Address verification is a one-time operation. |
 
 

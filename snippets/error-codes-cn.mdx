@@ -9,36 +9,36 @@
 | 错误码 | 描述 | 解决方案 |
 |---|---|---|
 | 1000 | 内部服务器错误。此错误可能由多个问题引起，包括 [Org Access Tokens](/v2/apps/org-access-tokens) 过期。 | 检查您的服务器配置设置，包括 Org Access Tokens 是否已过期，然后稍后重试。 |
-| 1003, 2003 | 请求中缺少一个或多个必填参数。 | 提供所有必填参数。 |
-| 1006, 2006 | 一个或多个参数格式无效或包含不支持的值。 | 以预期格式提供有效参数。 |
-| 2000 | 处理过程中发生内部错误。 | 稍后重试。 |
-| 2021 | 请求的 API 接口未实现或当前不可用。 | 请确认请求路径和 HTTP 方法是否正确，然后稍后重试。 |
-| 2024 | API Key 认证失败。 | <ul><li>若 `error_message` 为 `Your API key is not registered in this environment...`：您使用的 API Key 注册在错误的环境中，请切换到正确的 API Host 并使用对应环境的 API Key。参见[环境](/v2_cn/guides/overview/environments)。</li><li>若 `error_message` 为 `Your API key is not yet activated...` 或 `Api key is not activated`：请在 Cobo Guard 中完成 Admin 审批以激活该 API Key。</li><li>若 `error_message` 提示 IP 白名单问题：请将服务器的出口 IP 加入 Cobo Portal 中该 API Key 的 IP 白名单。</li><li>签名失败时，请确认签名串格式为 `METHOD\|PATH\|NONCE\|PARAMS\|BODY`，其中 NONCE 必须与 `Biz-Api-Nonce` 请求头一致。参见[身份验证](/v2_cn/guides/overview/cobo-auth)。</li></ul>详情请参见[注册 API 密钥](https://manuals.cobo.com/cn/portal/developer-console/create-api-key)。 |
-| 2025, 4001 | 禁止访问请求的资源。 | <ul><li>检查与您的 API Key 关联的权限（API 权限、钱包范围、可操作资源范围）。您可以参考[权限和钱包范围](/v2/guides/overview/permissions-and-scopes)获取详细信息。</li><li>如果报错与"角色"相关（例如创建提币、发起交易等），请确认操作用户具备对应角色（例如提币通常需要 Spender 或 Admin）。</li><li>如果错误信息包含 "Resource out of organization (4001)"，通常表示您请求的资源（例如 `wallet_id`）属于另一个团队，不属于当前 API Key 所在团队。</li><li>如果权限已授予仍报错，请检查是否混用不同环境（Dev/Prod）的 API Key 或调用了错误环境的 API 域名。</li><li>对于全托管钱包相关接口，请确认已在"全托管钱包设置"的上一级范围正确授予权限（部分接口需要在上级范围勾选权限）。</li><li>如果是新开通/特定能力接口，请确认对应能力已启用或已完成必要的白名单/开关配置。</li><li>如果涉及链/资产权限，请确认已在套餐/配置中启用对应公链或能力。</li></ul> |
-| 2026 | 请求过多。 | 降低请求频率并在短暂延迟后重试。如果您正在使用轮询模式，请实现指数退避策略。 |
-| 2028 | 未找到请求的资源。 | 请验证请求参数中的资源 ID 是否正确，并确认该资源存在于您的团队中。 |
-| 2029 | 请求中 `status` 参数的值不在允许范围内。 | 请查阅您正在调用的接口文档，了解 `status` 参数支持的枚举值，并提供其中一个有效值。 |
-| 10000 | 该团队在 Cobo Portal 中仅有只读权限。 | 请在 Cobo Portal 中查看您的团队权限设置。只有团队管理员才能更新权限级别。 |
+| 1003, 2003 | 请求中缺少一个或多个必填参数。 | `error_message` 字段会指出具体缺失的参数。请找到该参数，在所调用接口的 API 参考中确认哪些参数为必填，补充后重试。 |
+| 1006, 2006 | 一个或多个参数格式无效或包含不支持的值。 | `error_message` 字段会指出未通过校验的参数。请在所调用接口的 API 参考中确认该参数的预期类型、格式和允许值，修正后重试。 |
+| 2000 | 处理过程中发生内部错误。 | 此为 Cobo 侧的临时错误。请稍后重试。如果错误持续出现，请联系 Cobo 支持团队，并提供响应中的 `error_id` 以便排查问题。 |
+| 2021 | 请求的 API 接口未实现或当前不可用。 | 请对照 API 参考确认请求路径和 HTTP 方法与目标接口完全一致（多余的斜杠或错误的方法也会返回此错误）。如果均正确，则该接口可能暂时不可用，请采用指数退避策略在短暂延迟后重试。 |
+| 2024 | API key 认证失败。 | <ul><li>若 `error_message` 为 `Your API key is not registered in this environment...`：您使用的 API key 注册在错误的环境中，请切换到正确的 API Host 并使用对应环境的 API key。参见[环境](/v2_cn/guides/overview/environments)。</li><li>若 `error_message` 为 `Your API key is not yet activated...` 或 `Api key is not activated`：请在 Cobo Guard 中完成 Admin 审批以激活该 API key。</li><li>若 `error_message` 提示 IP 白名单问题：请将服务器的出口 IP 加入 Cobo Portal 中该 API key 的 IP 白名单。</li><li>签名失败时，请确认签名串格式为 `METHOD\|PATH\|NONCE\|PARAMS\|BODY`，其中 NONCE 必须与 `Biz-Api-Nonce` 请求头一致。参见[身份验证](/v2_cn/guides/overview/cobo-auth)。</li></ul>详情请参见[注册 API 密钥](https://manuals.cobo.com/cn/portal/developer-console/create-api-key)。 |
+| 2025, 4001 | 禁止访问请求的资源。 | <ul><li>检查与您的 API key 关联的权限（API 权限、钱包范围、可操作资源范围）。您可以参考[权限和钱包范围](/v2/guides/overview/permissions-and-scopes)获取详细信息。</li><li>如果报错与 **角色** 相关（例如创建提币、发起交易等），请确认操作用户具备对应角色（例如提币通常需要 Spender 或 Admin）。</li><li>如果错误信息包含 "Resource out of organization (4001)"，通常表示您请求的资源（例如 `wallet_id`）属于另一个团队，不属于当前 API key 所在团队。</li><li>如果权限已授予仍报错，请检查是否混用不同环境（Dev/Prod）的 API key 或调用了错误环境的 API 域名。</li><li>对于全托管钱包相关接口，请确认已在 **全托管钱包设置** 的上一级范围正确授予权限（部分接口需要在上级范围勾选权限）。</li><li>如果是新开通/特定能力接口，请确认对应能力已启用或已完成必要的白名单/开关配置。</li><li>如果涉及链/资产权限，请确认已在套餐/配置中启用对应公链或能力。</li></ul> |
+| 2026 | 请求过多。 | 请降低请求频率并在短暂延迟后重试。对于轮询或批量场景，请实现指数退避策略，例如从 1 秒延迟开始，每次重试翻倍（1 秒、2 秒、4 秒……），直至达到上限。 |
+| 2028 | 未找到请求的资源。 | 请求中的资源 ID 在您的团队中不存在，或在其他环境中创建。请先列出相关资源以确认正确的 ID（例如，针对 `transaction_id` 调用 [List transactions](/v2/api-references/transactions/list-transactions)），然后使用有效的 ID 重试。同时请确认您调用的环境（开发环境或正式环境）与创建该资源的环境一致。 |
+| 2029 | 请求中 `status` 参数的值不在允许范围内。 | `status` 参数的允许值取决于具体接口（例如交易状态与筛查状态不同）。请在 API 参考中打开您所调用的接口，提供其请求参数中列出的 `status` 枚举值之一。 |
+| 10000 | 该团队在 Cobo Portal 中仅有只读权限。 | 您的团队当前为只读访问权限，因此写操作会被拒绝。需由团队管理员登录 Cobo Portal，在团队设置中查看团队的访问状态；只有团队管理员才能更改访问级别。非管理员成员无法更改此设置。 |
 
 #### 套餐与计费错误
 
 | 错误码 | 描述 | 解决方案 |
 |---|---|---|
-| 2050 | 该团队没有可用的套餐。 | 请在 Cobo Portal 中购买套餐。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
-| 2051 | 当前套餐已过期。 | 请续订套餐以继续使用服务。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
-| 2052 | 当前套餐的使用量已超出限制。 | 请升级套餐或等待下一个计费周期。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
-| 2053 | 当前套餐不支持此功能。 | 请升级至包含此功能的套餐。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
-| 2054 | 当前套餐的付款已逾期。 | 请完成套餐的逾期付款。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
+| 2050 | 该团队没有生效的套餐，计费类 API 操作因此被阻止。 | 请激活套餐：登录 Cobo Portal，打开 **Bills & Payments**，然后选择一个套餐。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
+| 2051 | 该团队的套餐已过期，在续订前计费类操作将被阻止。 | 请续订套餐：在 Cobo Portal 中打开 **Bills & Payments**，续订或选择套餐。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
+| 2052 | 该团队已超出当前套餐包含的用量配额。 | 请等待下一个计费周期重置配额，或在 Cobo Portal 的 **Bills & Payments** 中升级到更高级别的套餐。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
+| 2053 | 当前套餐不包含此操作所需的权益。 | 请在 Cobo Portal 的 **Bills & Payments** 中升级到包含此功能的套餐。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
+| 2054 | 当前套餐的付款已逾期（团队处于欠费状态），套餐因此被暂停。 | 请在 Cobo Portal 的 **Bills & Payments** 中结清欠款以恢复服务。更多信息，请参见[账单和付款介绍](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。 |
 
 #### 钱包配置错误
 
 | 错误码 | 描述 | 解决方案 |
 |---|---|---|
-| 2101 | 钱包名称超过了允许的最大字符长度。 | 请将钱包名称缩短至允许的字符长度以内，然后重试。 |
-| 2102 | 钱包名称包含无效字符。 | 钱包名称只能使用中文、英文字母、数字和下划线。 |
-| 2103 | 该团队中已存在同名钱包。 | 请使用唯一的钱包名称。钱包名称在同一团队内必须唯一。 |
-| 2104 | 指定链未在此团队的套餐中启用。 | 请在套餐中启用该链，或选择已启用的链。调用 [List enabled chains](/v2/api-references/wallets/list-enabled-chains) 接口查看团队已启用的所有链。 |
-| 2105 | 对于基于 UTXO 的代币（例如 BTC），当前所有可用的 UTXO 已被一笔待处理交易或待 KYT 筛查的交易锁定，新的转账无法进行，直至这些 UTXO 被释放。 | 调用 [List transactions](/v2/api-references/transactions/list-transactions) 接口查询该钱包的待处理交易，等待其完成后再重试。 |
+| 2101 | 钱包名称超过了允许的最大字符长度。 | `error_message` 会指出钱包名称允许的最大字符数。请将钱包名称缩短至该上限或以内，然后重试。 |
+| 2102 | 钱包名称包含无效字符。 | 钱包名称只能包含字母、数字、下划线和中文字符。请移除空格、标点等其他字符后重试。 |
+| 2103 | 该团队中已存在同名钱包。 | 钱包名称在同一团队内必须唯一。请选择一个未被其他钱包使用的名称后重试。可先列出现有钱包以查看已使用的名称。 |
+| 2104 | 指定链未在此团队的套餐中启用。 | 如需查看已启用的链，请调用 [List enabled chains](/v2/api-references/wallets/list-enabled-chains) 接口。如需启用新的链，请登录 Cobo Portal，在钱包设置中启用该链；该链必须包含在您的套餐内。或者，您也可以选择一个已启用的链。 |
+| 2105 | 对于基于 UTXO 的代币（例如 BTC），当前所有可用的 UTXO 已被一笔待处理交易或待 KYT 筛查的交易锁定，新的转账无法进行，直至这些 UTXO 被释放。 | 请调用 [List transactions](/v2/api-references/transactions/list-transactions) 接口（按该钱包筛选）查找正在占用这些 UTXO 的待处理交易。只有当这些交易进入终态（例如已完成或失败）后，UTXO 才会被释放。请在占用交易进入终态后再重试转账。 |
 
 #### 转账错误
 
@@ -58,7 +58,7 @@
 | 30009 | 金额不能小于零。 | 请提供非负金额。 |
 | 30010 | 提币金额低于该代币的最低提币阈值，无法处理。 | 请增加提币金额。调用 [Get token information](/v2/api-references/wallets/get-token-information) 接口获取该代币的 `dust_threshold` 值。 |
 | 30011 | 充币金额低于该代币的最低充币阈值。 | 请增加充币金额。调用 [Get token information](/v2/api-references/wallets/get-token-information) 接口获取该代币的 `minimum_deposit_threshold` 值。 |
-| 30012, 12007 | 转账金额超过钱包的可用余额。 | 请检查钱包的可用余额（总余额减去待处理和锁定金额）。调用 [Get wallet balance](/v2/api-references/wallets/get-wallet-balance) 接口查询当前余额。 |
+| 30012, 12007 | 转账金额超过钱包的可用余额。 | 请检查钱包的可用余额（总余额减去待处理和预留金额）。调用 [Get wallet balance](/v2/api-references/wallets/get-wallet-balance) 接口查询当前余额。 |
 | 30013 | 手续费代币余额不足，无法支付交易费用。 | 请确保钱包或 Fee Station 中有足够的手续费代币余额（例如 EVM 链上的 ETH）来支付交易费用。 |
 | 30014 | 目标地址无效或与该代币不兼容。 | 请提供与该代币类型兼容的有效目标地址。 |
 | 30015 | 目标钱包 ID 无效或钱包不存在。 | 请验证 `to_wallet_id` 值是否正确，以及该钱包是否属于您的团队。 |
@@ -118,6 +118,8 @@
 
 以下错误码由智能合约钱包和 EVM 合约调用操作返回。
 
+**注意：** 错误码 40001–40003 也会由交易类别操作返回，但含义不同。请根据您调用的接口和 `error_message` 判断适用的含义。
+
 | 错误码 | 描述 | 解决方案 |
 |---|---|---|
 | 5001 | 合约 ABI 无效或无法解析。 | 请确认 ABI JSON 格式正确且完整。 |
@@ -142,6 +144,8 @@
 #### 交易类别错误
 
 以下错误码由交易类别管理操作返回。
+
+**注意：** 错误码 40001–40003 也会由 EVM 操作返回，但含义不同。请根据您调用的接口和 `error_message` 判断适用的含义。
 
 | 错误码 | 描述 | 解决方案 |
 |---|---|---|
