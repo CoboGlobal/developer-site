@@ -54,6 +54,7 @@
                 "pages": [
                   "v2/guides/transactions/sources-and-destinations",
                   "v2/guides/transactions/estimate-fees",
+                  "v2/guides/transactions/solana-token-account-rent",
                   {
                     "group": "Transaction statuses",
                     "pages": [
@@ -861,6 +862,7 @@
                 "pages": [
                   "v2_cn/guides/transactions/sources-and-destinations",
                   "v2_cn/guides/transactions/estimate-fees",
+                  "v2_cn/guides/transactions/solana-token-account-rent",
                   {
                     "group": "交易状态",
                     "pages": [

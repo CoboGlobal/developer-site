@@ -111,12 +111,15 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 | Base Fee  | 每个签名固定收取的费用（默认每个签名 5,000 Lamports）。                            |
 | CU Price  | 每个 CU（Compute Unit，计算单元）的费用，用于提升交易优先级。单位为 Lamports。                             |
 | CU Limit  | 交易允许消耗的最大CU数量。值越高优先级越高，但费用也越高。                  |
+| Rent | 激活 Solana 代币子地址（Associated Token Account，简称 ATA）所需的一次性费用，代币在使用前必须先激活该地址。该费用通过 `rent_amount` 字段单独返回，不包含在 Base Fee 或计算单元费用中，由交易来源地址支付。 |
 
 你可以自定义以下参数的值：
 - CU Price
 - CU Limit
 
 请参考[估算交易费用](/v2/api-references/transactions/estimate-transaction-fee) 操作的响应结果获取详细字段信息。
+
+<Note>激活 Solana 代币子地址（Associated Token Account）会产生一次性租金，由交易来源地址支付，并通过 `rent_amount` 字段单独返回，不包含在网络交易费用中。详情请参阅 [Solana 代币账户租金](/v2_cn/guides/transactions/solana-token-account-rent)。</Note>
 
 <Note>Solana 和 Filecoin 均支持两种费用模型：其原生模型和 Legacy 模型。调用交易相关 API 时，你可以自行选择使用哪种模型。但对于 Replace-By-Fee（RBF）交易，必须使用与原始交易相同的费用模型。</Note>
 

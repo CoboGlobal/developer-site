@@ -109,12 +109,15 @@ On Solana, you can use either the native model or the Legacy model. In the nativ
 | Base fee | A fixed fee charged per signature (default 5,000 lamports per signature). |
 | CU price | The price paid per CU (compute unit) to increase transaction priority, in lamports. |
 | CU limit | The maximum number of compute units your transaction is allowed to consume. A higher limit may increase priority but also increases the fee. |
+| Rent | A one-time fee required to activate a Solana token sub-address (Associated Token Account, or ATA) before that token can be used. It is returned separately in the `rent_amount` field, is not included in the base fee or compute unit fee, and is paid by the source address. |
 
 You can customize the following values:
 - CU price
 - CU limit
 
 Refer to the response of the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) operation for details.
+
+<Note>Activating a Solana token sub-address (Associated Token Account) incurs a one-time rent that is paid by the source address and is returned separately in the `rent_amount` field, not included in the network transaction fee. For details, see [Solana token account rent](/v2/guides/transactions/solana-token-account-rent).</Note>
 
 <Note>Solana and Filecoin both support two fee models: their native model and the Legacy model. When calling transaction API operations, you can choose which model to use. However, for Replace-By-Fee (RBF) transactions, you must use the same fee model as the original transaction.</Note>
 

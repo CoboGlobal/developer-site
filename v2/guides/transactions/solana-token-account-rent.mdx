@@ -1,0 +1,23 @@
+---
+title: "Solana token account rent"
+lang: "en"
+description: "How Solana token sub-address (Associated Token Account) activation rent works, who pays it, and why it is not visible through webhooks."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+On Solana, each token is held in an independent token sub-address called an Associated Token Account (ATA). Before an address can receive or use a specific token, that token's ATA must be created and activated.
+
+## Activation rent
+
+Activating an ATA requires a one-time fee called rent, returned in the `rent_amount` field. The rent is paid by the main (source) address that initiates the transaction. `rent_amount` is populated only when an ATA must be activated; it is null when no activation is needed.
+
+## How rent affects transaction cost
+
+The network transaction fee is returned in `fee_used` and does not include `rent_amount`. The actual total cost of a Solana token transaction is `fee_used` + `rent_amount`, both paid by the same source address. For more details, see [Estimate transaction fees](/v2/guides/transactions/estimate-fees).
+
+## Webhook and balance behavior
+
+Activating an ATA does not emit a `wallets.addresses.created` event. The rent transfer that funds the activation does not emit any `wallets.transaction.*` event and does not produce a deposit or transaction record. The rent amount sits in the ATA (token sub-address) balance and does not increase the main address SOL balance. For more details, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).

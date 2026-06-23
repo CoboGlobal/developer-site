@@ -1,0 +1,23 @@
+---
+title: "Solana 代币账户租金"
+lang: "zh-hans"
+description: "介绍 Solana 代币子地址（Associated Token Account）激活租金的工作方式、支付方，以及为何无法通过 webhook 感知。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+在 Solana 链上，每种代币都存放在一个独立的代币子地址中，该地址称为 Associated Token Account（ATA）。在某个地址能够接收或使用特定代币之前，必须先创建并激活该代币对应的 ATA。
+
+## 激活租金
+
+激活 ATA 需要支付一次性费用，即租金，通过 `rent_amount` 字段返回。该租金由发起交易的主地址（来源地址）支付。仅当必须激活 ATA 时，`rent_amount` 才会有值；无需激活时，该字段为 null。
+
+## 租金如何影响交易费用
+
+网络交易费用通过 `fee_used` 字段返回，且不包含 `rent_amount`。Solana 代币交易的实际总成本为 `fee_used` + `rent_amount`，二者均由同一来源地址支付。详情请参阅[估算交易费用](/v2_cn/guides/transactions/estimate-fees)。
+
+## Webhook 与余额行为
+
+激活 ATA 不会触发 `wallets.addresses.created` 事件。为激活该地址而发生的租金转账也不会触发任何 `wallets.transaction.*` 事件，且不会生成充币或交易记录。租金金额存放在 ATA（代币子地址）余额中，不会增加主地址的 SOL 余额。详情请参阅 [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。
