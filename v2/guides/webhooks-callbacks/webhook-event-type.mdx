@@ -160,6 +160,8 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+<Note>Activating a Solana token sub-address (Associated Token Account) does not emit a `wallets.addresses.created` event. The rent transfer that funds the activation does not emit any `wallets.transaction.*` event and does not produce a deposit or transaction record. As a result, Solana token account activation and its rent are not visible through webhooks. For details, see [Solana token account rent](/v2/guides/transactions/solana-token-account-rent).</Note>
+
 ### Token and chain management events
 
 <table class="table-three-cols">

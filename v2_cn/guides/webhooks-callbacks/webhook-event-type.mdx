@@ -162,6 +162,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+<Note>激活 Solana 代币子地址（Associated Token Account）不会触发 `wallets.addresses.created` 事件。为激活该地址而发生的租金转账也不会触发任何 `wallets.transaction.*` 事件，且不会生成充币或交易记录。因此，Solana 代币账户的激活及其租金无法通过 webhook 感知。详情请参阅 [Solana 代币账户租金](/v2_cn/guides/transactions/solana-token-account-rent)。</Note>
+
 ### 代币与链管理事件
 
 <table class="table-three-cols">
