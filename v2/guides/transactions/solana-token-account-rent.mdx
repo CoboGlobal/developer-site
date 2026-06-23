@@ -18,7 +18,7 @@ If the recipient has not previously received SOL or a specific token, the source
 
 **`fee_used` does not include rent**
 
-The `fee_used` field in a Solana transaction record covers only the on-chain network transaction fee. Rent is reported separately in the `rent_amount` field. The total amount deducted from the source address is `fee_used` + `rent_amount`. For details, see [Estimate transaction fees](/v2/guides/transactions/estimate-fees).
+The `fee_used` field in a Solana transaction record covers only the on-chain network transaction fee and does not include rent. For details, see [Estimate transaction fees](/v2/guides/transactions/estimate-fees).
 
 **Rent is not parsed from completed transactions**
 
