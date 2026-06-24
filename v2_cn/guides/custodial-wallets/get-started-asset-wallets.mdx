@@ -348,7 +348,7 @@ public class ListTransactionsExample {
 
 充币检测机制会跟踪向您的充币地址发起的标准顶层转账。非顶层的转账——例如由合约调用产生的内部（trace）转账，或由智能合约发出而非直接转入您地址的代币转移——可能无法被自动检测或入账。此情况适用于多条链。
 
-如果您预期会收到此类转账的充币但未到账，请先确认链上交易，然后使用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 检查该交易是否已被记录，再采取后续操作。
+如果您预期会收到此类转账的充币但未到账，请先通过对应链的区块链浏览器确认该交易已在链上完成，然后使用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 查询该交易是否已被 Cobo 记录。如果未查询到记录，请联系 Cobo 支持团队进一步处理。
 
 ## 特定链的注意事项
 
