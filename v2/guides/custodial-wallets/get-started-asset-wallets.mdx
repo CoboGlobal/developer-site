@@ -355,7 +355,7 @@ Read the `status` field of each returned transaction to determine whether the de
 
 ## Memo and tag requirements
 
-Some chains require a memo or tag in addition to the deposit address so that the deposit can be routed to the correct account, such as XRP, XLM, and EOS. A deposit sent to one of these chains without the required memo or tag, or with an incorrect memo or tag, may not be credited automatically.
+Some chains require a memo or tag in addition to the deposit address so that the deposit can be routed to the correct account, such as XRP, XLM, EOS, ATOM, TON, IOST, BNB Chain, and Hedera. A deposit sent to one of these chains without the required memo or tag, or with an incorrect memo or tag, will fail to match the deposit address and will not be credited automatically. If a deposit on a memo-required chain does not appear in your transaction list, contact [help@cobo.com](mailto:help@cobo.com) for assistance.
 
 **Check whether a chain requires a memo or tag**
 
@@ -387,7 +387,7 @@ Webhook notifications can be missed if your endpoint was temporarily unavailable
 
 ### What happens to deposits made before a token is listed?
 
-Deposits sent before a token is listed and enabled for deposits may not be detected or credited at the time of the transfer. Before depositing, confirm that the token is enabled as described in [Deposit prerequisites](#deposit-prerequisites). To check whether such a deposit has since been recorded, use the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation.
+Deposits sent before a token is listed and enabled for deposits may not be detected or credited at the time of the transfer. Before depositing, confirm that the token is enabled as described in [Deposit prerequisites](#deposit-prerequisites). To check whether such a deposit has since been recorded, use the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation. If the transaction does not appear, there is no automatic recovery for pre-listing deposits. Contact [help@cobo.com](mailto:help@cobo.com) for assistance.
 
 ## 4. Withdraw tokens
 
