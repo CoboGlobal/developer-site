@@ -334,25 +334,51 @@ public class ListTransactionsExample {
 
 ## 充币前提条件
 
-在充币之前，请确认相关链已为您的团队启用，且代币已上线并开放充币。仅当代币的 `can_deposit` 属性为 `true` 时，该代币才支持充币。请在转入资金前确认此属性，因为向尚未启用的链或代币充币可能无法被自动检测或入账。
+在充币之前，请确认相关链已为您的团队启用，且代币已上线并开放充币。仅当代币的 `can_deposit` 属性为 `true` 时，该代币才支持充币。向未启用的代币（`can_deposit` 为 `false`，即当前已暂停充币）充币可能无法被自动检测或入账，因此请在转入资金前确认此属性。
 
-如需检查充币资格，请在充币前查询代币配置。如果您已向当时未启用的代币充币，请勿继续向同一地址转入资金；请改用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 确认该笔转账的当前状态。
+**检查代币是否支持充币**
+
+调用 [List supported tokens](/v2/api-references/wallets/list-supported-tokens)，将查询参数 `token_ids` 设置为您要检查的代币（例如 `ETH_USDT`）。在响应中读取该代币的 `can_deposit` 字段：
+- `true`：已开放充币，您可以向该代币充币。
+- `false`：当前已暂停充币，请勿转入资金。
+
+如需检查单个代币，也可以调用 [Get token information](/v2/api-references/wallets/get-token-information) 并设置路径参数 `token_id`。这两个操作都支持可选查询参数 `wallet_type`、`wallet_subtype` 和 `chain_ids`，用于缩小查询范围。
+
+**检查已发起充币的状态**
+
+如果您已向当时未启用的代币充币，请勿继续向同一地址转入资金。请改为调用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 并设置以下查询参数，确认该笔转账的当前状态：
+- `types`：`Deposit`。
+- `token_ids`：您充值的代币，例如 `ETH_USDT`。
+- `wallet_ids`：您的钱包 ID。
+- `transaction_hash`（可选）：链上交易哈希，用于定位特定转账。
+
+读取每笔返回交易的 `status` 字段，判断该笔充币是否已被记录。调用该操作的示例代码，请参阅上文「选项 2：通过 API 调用获取交易状态」。
 
 ## Memo 和 Tag 要求
 
-部分链除了充币地址外还需要提供 Memo 或 Tag，以便将充币正确路由到对应账户。当代币需要 Memo 或 Tag 时，其 `require_memo` 属性为 `true`。请在充币前务必检查此属性，并在每次向该代币充币时附上准确的 Memo 或 Tag。
+部分链除了充币地址外还需要提供 Memo 或 Tag，以便将充币正确路由到对应账户，例如 XRP、XLM 和 EOS。向这些链充币时如果未附带所需的 Memo 或 Tag，或填写了错误的 Memo 或 Tag，该笔充币可能无法自动入账。
 
-如果充币时未附带所需的 Memo 或 Tag，或填写了错误的 Memo 或 Tag，该笔充币可能无法自动入账，需要人工处理后资金才会到账。如需确认此类充币是否已被接收，请使用 [List all transactions](/v2/api-references/transactions/list-all-transactions)。
+**检查链是否需要 Memo 或 Tag**
+
+调用 [List supported chains](/v2/api-references/wallets/list-supported-chains)（或调用 [List enabled chains](/v2/api-references/wallets/list-enabled-chains) 查询已为您的团队启用的链），并读取该链的 `require_memo` 字段：
+- `true`：该链的每笔充币都需要 Memo 或 Tag。
+- `false`：无需 Memo 或 Tag。
+
+如需检查单条链，请调用 [Get chain information](/v2/api-references/wallets/get-chain-information) 并设置路径参数 `chain_id`。
+
+**获取充币地址的 Memo 或 Tag**
+
+Memo 或 Tag 与充币地址绑定。当您在需要 Memo 的链上生成地址时，地址响应中会包含 `memo` 字段。请从 [Create addresses in wallet](/v2/api-references/wallets/create-addresses-in-wallet) 的响应中获取该字段，或之后通过 [List wallet addresses](/v2/api-references/wallets/list-wallet-addresses) 查询。充币时，请同时使用该响应中的地址及其 `memo` 值，并在每笔转账中附上准确的 Memo 或 Tag。
+
+**确认需要 Memo 的链上的充币**
+
+如需确认向需要 Memo 的链发起的充币是否已入账，请调用 [List all transactions](/v2/api-references/transactions/list-all-transactions)，将 `types` 设置为 `Deposit`，将 `wallet_ids` 设置为您的钱包 ID，然后读取每笔返回交易的 `status` 字段。
 
 ## 内部交易和合约触发的交易
 
 充币检测机制会跟踪向您的充币地址发起的标准顶层转账。非顶层的转账——例如由合约调用产生的内部（trace）转账，或由智能合约发出而非直接转入您地址的代币转移——可能无法被自动检测或入账。此情况适用于多条链。
 
 如果您预期会收到此类转账的充币但未到账，请先确认链上交易，然后使用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 检查该交易是否已被记录，再采取后续操作。
-
-## 特定链的注意事项
-
-部分链仅支持特定的交易格式或版本进行充币。以不受支持的交易格式提交的充币可能无法被检测或入账。在接入新链时，请先确认您的充币使用受支持的交易格式，再大规模转入资金。
 
 ## 充币问题排查
 
