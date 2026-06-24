@@ -37,5 +37,5 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - 如果您的提币金额小于最低提币门槛，提币请求将收到错误。您可以调用 [获取代币信息](/v2/api-references/wallets/get-token-information) 操作来检索每种代币类型的最低提币金额。
 
 <Warning>
-提币交易经审批通过后会进入 `PendingSignature` 状态，并且必须在有限的签名时间窗口内由 MPC 签名人组完成签名。如果未能在时间窗口内完成签名，交易将自动失败并转入 `Failed` 状态，子状态为 `FailedSignerTimeout`。您可以通过 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 返回的 `sub_status` 字段确认失败原因，然后重新发起该交易。
+提币交易经审批通过后会进入 `PendingSignature` 状态，并且必须在有限的签名时间窗口内由 MPC 签名人组完成签名。如果未能在时间窗口内完成签名，交易将自动失败并转入 `Failed` 状态，子状态为 `FailedSignerTimeout`。您可以通过 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 返回的 `sub_status` 字段确认失败原因。由于 `FailedSignerTimeout` 为终态 `Failed`，请重新发起一笔新交易以重试，例如通过 [Transfer token](/v2/api-references/transactions/transfer-token) 操作发起一笔新转账。
 </Warning>
