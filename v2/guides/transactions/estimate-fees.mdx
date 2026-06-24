@@ -176,7 +176,10 @@ The logic for estimating RBF transaction fees is similar to that for normal tran
 
 ## Fees on Layer 2 chains
 
-On Layer 2 (L2) chains such as Arbitrum, network fees can change rapidly. If fees rise sharply after you submit a transaction, the transaction can remain in the `PendingSignature` or `Broadcasting` status longer than expected. To unblock such a transaction, use the Replace-By-Fee (RBF) speed-up operation to rebroadcast it with a higher fee. For how RBF works end to end, see [RBF (Replace-By-Fee) transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle). To raise the fee, use the [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) operation.
+On Layer 2 (L2) chains such as Arbitrum, network fees can change rapidly. If fees rise sharply after you submit a transaction, the transaction can remain in the `PendingSignature` or `Broadcasting` status longer than expected. How you unblock it depends on the status:
+
+- `Broadcasting`: The transaction is already broadcast. Use the Replace-By-Fee (RBF) speed-up operation to rebroadcast it with a higher fee. To raise the fee, use the [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) operation. For how RBF works end to end, see [RBF (Replace-By-Fee) transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle).
+- `PendingSignature`: The transaction is not yet broadcast, so RBF does not apply. The transaction must be signed within a limited signing window; if signing does not complete in time, it fails with the sub-status `FailedSignerTimeout`. In that case, submit a new transaction to try again. For details, see [Transaction statuses and sub-statuses](/v2/guides/transactions/status).
 
 ## How Cobo estimate the fees
 

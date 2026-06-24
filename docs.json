@@ -862,6 +862,7 @@
                 "group": "交易",
                 "pages": [
                   "v2_cn/guides/transactions/sources-and-destinations",
+                  "v2_cn/guides/transactions/transfer-routing",
                   "v2_cn/guides/transactions/estimate-fees",
                   {
                     "group": "交易状态",
@@ -872,6 +873,7 @@
                     ]
                   },
                   "v2_cn/guides/transactions/manage-transactions",
+                  "v2_cn/guides/transactions/rbf-transaction-lifecycle",
                   {
                     "group": "智能合约调用示例",
                     "pages": [

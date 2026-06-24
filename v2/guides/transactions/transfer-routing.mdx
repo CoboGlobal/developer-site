@@ -24,13 +24,9 @@ The [Transfer token](/v2/api-references/transactions/transfer-token) operation p
 | `force_internal` = `true` | Forces internal routing through Cobo Loop (off-chain). |
 | `force_external` = `true` | Forces external on-chain routing. |
 | Both `false` (default) | Routes through Cobo Loop if the destination supports it; otherwise routes on-chain. |
-| Both `true` | The request is rejected. |
+| Both `true` | The request is rejected with an HTTP 400 error (error code `2006`, invalid parameter). |
 
-Some destinations do not support these parameters.
-
-## Effect on the resulting transaction
-
-Internal routing produces an off-chain Cobo Loop transfer. External routing produces an on-chain transaction.
+These parameters are available only for transfers to an address destination. For the supported destination types, see the [Transfer token](/v2/api-references/transactions/transfer-token) operation.
 
 ## Related guides
 
