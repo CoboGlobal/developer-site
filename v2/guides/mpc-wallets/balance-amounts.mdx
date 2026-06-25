@@ -24,6 +24,22 @@ This diagram illustrates the relationship between these values:
 
 <img src="/v2/images/guides/balances_amount.svg" className="diagram" alt="Definitions of several types of balances and amounts"></img>
 
+## Balance availability model
+
+The values in [Definitions](#definitions) are the public fields returned by the [List token balances by address](/v2/api-references/wallets/list-token-balances-by-address) operation. When a withdrawal is rejected for insufficient balance, the error response may report internal field names. The following table maps those internal field names to the public balance fields.
+
+| Error response field | Public balance field     | Meaning                                                                                                  |
+| -------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `using_amount`       | `data.balance.pending`   | Amount reserved by in-flight transactions (withdrawal amount plus transaction fee).                      |
+| `locked_amount`      | `data.balance.locked`    | Value of funds locked for in-flight transactions; for UTXO chains, the combined value of selected UTXOs. |
+| `spendable`          | `data.balance.available` | Amount ready to be spent.                                                                                |
+
+The available balance is derived as follows:
+
+`spendable = on-chain balance - using_amount - amount pending compliance screening - net frozen amount`
+
+The available balance can be lower than the current balance even when there is no obvious pending withdrawal, for example when funds are held for compliance screening or are frozen.
+
 ## Update time
 
 These values are updated at different times during a deposit and withdrawal transaction.
@@ -61,6 +77,15 @@ These values are updated at different times during a deposit and withdrawal tran
    - Locked amount: Equal to 0
    - Available balance: Equal to the current balance
 
+## Fund locking
+
+Funds are locked when you create and sign a withdrawal or other outgoing transaction. Locking happens in two stages:
+
+1. When the transaction is created and signed, the required amount moves from available to locked. This is why the available balance drops as soon as a withdrawal is submitted, before on-chain confirmation. For the corresponding balance changes, see the `PendingSignature` step in [Update time](#withdrawals).
+2. Locked funds are released only when the transaction succeeds, or when a failure is confirmed on-chain. A confirmed failure means the network has finalized that the transaction will not be included (for example, the transaction is reverted or dropped), at which point the funds return to available.
+
+For UTXO chains such as Bitcoin, a single withdrawal can lock UTXOs across multiple addresses at once when coin selection spans more than one address. All selected UTXOs are locked together, scoped to that transaction, and released together when the transaction settles or fails.
+
 ## Replace-By-Fee (RBF) transactions
 
 If you speed up a transaction with an RBF transaction, the RBF transaction will be used in calculating the pending amount and locked amount.
@@ -74,3 +99,38 @@ The maximum amount you can withdraw is affected by the transaction fee, availabl
 - (Withdrawal amount + transaction fee) > Available balance: The withdrawal request cannot be submitted.
 - (Withdrawal amount + transaction fee) ≤ (Current balance - locked amount): Your withdrawal request will be handled immediately.
 - (Current balance - locked amount) < (Withdrawal amount + transaction fee) ≤ Available balance: You can successfully submit your withdrawal request, but your transaction will be queued.
+
+## Bitcoin and UTXO considerations
+
+### Available balance after a deposit
+
+For Bitcoin and other UTXO-based chains, the current balance and the available balance may update at different times after a deposit. The current balance can reflect the deposit first, while the available balance may still read 0 because the newly received UTXOs have not yet been processed into the spendable set. In other words, the funds may already appear in the address balance but are not yet ready to spend. Wait for the new UTXOs to finish processing before withdrawing the deposited funds.
+
+### Minimum transfer amount (dust threshold)
+
+Each token has a predefined minimum withdrawal amount (dust threshold) maintained by Cobo. A withdrawal whose amount is below that token's dust threshold is rejected with error `30010` (amount below the dust threshold), not error `12007` (insufficient balance). To proceed, call [Get token information](/v2/api-references/wallets/get-token-information) to check the minimum withdrawal amount for the token, then increase the amount above that threshold.
+
+### Consolidating UTXOs
+
+A withdrawal that spends many small UTXOs produces a larger transaction and higher network fees. Consolidate small UTXOs ahead of large withdrawals to reduce transaction size and fees.
+
+## Payment balances
+
+Payment balances follow a different model from MPC Wallet balances. The following concepts apply to payment accounts:
+
+- **Total balance**: The available balance plus the frozen amount.
+- **Available balance**: The balance that can be withdrawn.
+- **Frozen amount**: The portion held for in-flight payouts.
+
+For full details on payments, see the [Payments documentation](https://www.cobo.com/payments/en/guides/overview).
+
+## Troubleshooting insufficient balance
+
+When a withdrawal is rejected with error `12007` (insufficient balance), work through the following checks:
+
+1. **Check the public balance fields first**: Call [List token balances by address](/v2/api-references/wallets/list-token-balances-by-address) for the source address and note `data.balance.total`, `data.balance.pending`, `data.balance.locked`, and `data.balance.available`.
+2. **Genuine shortfall**: Compare the withdrawal amount plus the transaction fee against `data.balance.available`. If it exceeds the available balance, the address lacks spendable funds. Deposit more funds or reduce the amount.
+3. **Portal cross-check**: In Cobo Portal, open the source address and compare the available balance with the current balance. If the available balance is lower, continue with the checks below to determine why.
+4. **Locked, pending, screening, or frozen funds**: If `data.balance.available` is lower than `data.balance.total`, funds are reserved in `data.balance.pending`, held in `data.balance.locked` by in-flight transactions, or held for compliance screening or frozen. Wait for them to settle or be released. For details, see [Balance availability model](#balance-availability-model) and [Fund locking](#fund-locking).
+5. **Un-indexed UTXOs**: On Bitcoin and other UTXO chains, if the available balance reads 0 shortly after a deposit, the new UTXOs may still be indexing. Wait and recheck. For details, see [Bitcoin and UTXO considerations](#bitcoin-and-utxo-considerations).
+6. **Dust**: If the amount is very small, it may instead be rejected with error `30010` (below the dust threshold) rather than `12007`. Retry with a larger amount.

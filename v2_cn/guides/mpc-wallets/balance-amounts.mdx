@@ -23,6 +23,22 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 <img src="/v2_cn/images/guides/balances_amount.svg" className="diagram" alt="多种类型余额和金额的定义"></img>
 
+## 余额可用性模型
+
+[定义](#定义)中的值是 [List token balances by address](/v2/api-references/wallets/list-token-balances-by-address) 操作返回的公开字段。当提币因余额不足被拒绝时，错误响应可能会报告内部字段名。下表将这些内部字段名映射到公开余额字段。
+
+| 错误响应字段 | 公开余额字段             | 含义                                                                 |
+| ------------ | ------------------------ | ------------------------------------------------------------------- |
+| `using_amount`  | `data.balance.pending`   | 进行中交易预留的金额（提币金额加上交易费用）。                       |
+| `locked_amount` | `data.balance.locked`    | 为进行中交易锁定的资金价值；对于 UTXO 链，为所选 UTXO 的总值。       |
+| `spendable`     | `data.balance.available` | 准备花费的金额。                                                     |
+
+可用余额的计算方式如下：
+
+`spendable = 链上余额 - using_amount - 待合规筛查的金额 - 净冻结金额`
+
+即使没有明显的待处理提币，可用余额也可能低于当前余额，例如当资金处于合规筛查中或被冻结时。
+
 ## 更新时间
 
 这些值在充币和提币交易期间在不同时间更新。
@@ -60,6 +76,15 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
    - 锁定金额：等于 0。
    - 可用余额：等于当前余额。
 
+## 资金锁定
+
+当您创建并签署提币或其他出金交易时，资金会被锁定。锁定分两个阶段进行：
+
+1. 当交易创建并签署时，所需金额从可用余额转移到锁定金额。这就是为什么在提币提交后、链上确认之前，可用余额会立即下降。有关相应的余额变化，请参见 [更新时间](#提币) 中的 `PendingSignature` 步骤。
+2. 锁定资金仅在交易成功，或链上确认失败时才会释放。已确认失败是指网络已最终确定该交易不会被打包（例如交易被回滚或丢弃），此时资金返还至可用余额。
+
+对于比特币等 UTXO 链，当币种选择跨越多个地址时，单笔提币可以同时锁定多个地址上的 UTXO。所有选定的 UTXO 一起锁定，仅限于该笔交易，并在交易结算或失败时一起释放。
+
 ## Replace-By-Fee (RBF) 交易
 
 如果您使用 RBF 交易加速交易，则 RBF 交易将用于计算待处理金额和锁定金额。
@@ -73,3 +98,38 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - (提币金额 + 交易费用) > 可用余额：无法提交提币请求。
 - (提币金额 + 交易费用) ≤ (当前余额 - 锁定金额)：您的提币请求将被立即处理。
 - (当前余额 - 锁定金额) < (提币金额 + 交易费用) ≤ 可用余额：您可以成功提交提币请求，但您的交易将被排队。
+
+## 比特币与 UTXO 注意事项
+
+### 充币后的可用余额
+
+对于比特币和其他基于 UTXO 的链，充币后当前余额和可用余额的更新时间可能不同。当前余额可能会先反映这笔充币，而可用余额仍显示为 0，因为新收到的 UTXO 还没有完成处理并进入可花费集合。换句话说，这笔钱可能已经显示在地址余额中，但暂时还不能用于提币。请等待新的 UTXO 完成处理后，再提取已充入的资金。
+
+### 最低转账金额（尘埃阈值）
+
+每个代币都有由 Cobo 预先维护的最小提币金额（尘埃阈值）。金额低于该代币尘埃阈值的提币将以错误 `30010`（金额低于尘埃阈值）被拒绝，而非错误 `12007`（余额不足）。要继续操作，请调用 [Get token information](/v2/api-references/wallets/get-token-information) 查询该代币的最小提币金额，并将金额提高到超过该阈值。
+
+### UTXO 归集
+
+消耗大量小额 UTXO 的提币会产生更大的交易和更高的网络费用。请在进行大额提币前归集小额 UTXO，以减小交易大小并降低费用。
+
+## 支付余额
+
+支付余额遵循与 MPC 钱包余额不同的模型。以下概念适用于支付账户：
+
+- **当前余额（Total balance）**：可用余额加上冻结金额。
+- **可用余额（Available balance）**：可以提取的余额。
+- **冻结金额（Frozen amount）**：为进行中的付款所保留的部分。
+
+有关支付的完整详情，请参见 [支付文档](https://www.cobo.com/payments/cn/guides/overview)。
+
+## 排查余额不足
+
+当提币以错误 `12007`（余额不足）被拒绝时，请依次进行以下检查：
+
+1. **先检查公开余额字段**：调用 [List token balances by address](/v2/api-references/wallets/list-token-balances-by-address) 查询源地址余额，并记录 `data.balance.total`、`data.balance.pending`、`data.balance.locked` 和 `data.balance.available`。
+2. **真实的余额不足**：将提币金额加上交易费用与 `data.balance.available` 进行比较。如果超过可用余额，则该地址缺少可花费的资金。请充入更多资金或减少金额。
+3. **Portal 交叉检查**：在 Cobo Portal 中打开源地址，比较可用余额与当前余额。如果可用余额更低，请继续检查下面几项，确认原因。
+4. **锁定、待处理、筛查中或冻结的资金**：如果 `data.balance.available` 低于 `data.balance.total`，说明资金被预留在 `data.balance.pending` 中、被进行中的交易锁定在 `data.balance.locked` 中，或处于合规筛查中或被冻结。请等待其结算或释放。有关详情，请参见 [余额可用性模型](#余额可用性模型) 和 [资金锁定](#资金锁定)。
+5. **未建立索引的 UTXO**：在比特币和其他 UTXO 链上，如果充币后不久可用余额显示为 0，则新的 UTXO 可能仍在建立索引中。请稍后重新检查。有关详情，请参见 [比特币与 UTXO 注意事项](#比特币与-utxo-注意事项)。
+6. **尘埃**：如果金额非常小，它可能会以错误 `30010`（低于尘埃阈值）而非 `12007` 被拒绝。请改用更大的金额重试。
