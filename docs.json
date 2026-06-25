@@ -64,6 +64,7 @@
                     ]
                   },
                   "v2/guides/transactions/manage-transactions",
+                  "v2/guides/transactions/validate-addresses",
                   {
                     "group": "Smart contract call samples",
                     "pages": [
@@ -872,6 +873,7 @@
                     ]
                   },
                   "v2_cn/guides/transactions/manage-transactions",
+                  "v2_cn/guides/transactions/validate-addresses",
                   {
                     "group": "智能合约调用示例",
                     "pages": [

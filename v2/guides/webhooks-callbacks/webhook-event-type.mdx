@@ -254,6 +254,42 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+### `ComplianceKytScreenings` event data
+
+The `compliance.kyt.screenings.status.updated` event carries a `ComplianceKytScreenings` payload (`KytScreeningsEventData`). This payload reports two independent status fields, `review_status` and `funds_status`. Track them separately: `review_status` reflects the screening and review progress of the case, and `funds_status` reflects the state of the associated funds.
+
+**`review_status` (`ReviewStatusType`)**
+
+| Value | Meaning |
+|-------|---------|
+| `PendingScreening` | The screening case has been created and is waiting for AML/KYT screening to run. |
+| `Screened` | AML/KYT screening has completed for the case. |
+| `PendingDecision` | Screening has completed and the case is awaiting a decision. |
+| `PendingReview` | The case requires manual review before a decision is reached. |
+| `Approved` | The case has been approved. |
+| `Rejected` | The case has been rejected. |
+| `Unsupported` | The case involves a chain or token that screening does not support. |
+| `Bypassed` | Screening was skipped for the case. |
+
+**`funds_status` (`FundsStatusType`)**
+
+| Value | Meaning |
+|-------|---------|
+| `Frozen` | The associated funds have been frozen. |
+| `Refunding` | A refund of the funds is in progress. |
+| `Refunded` | The funds have been refunded. |
+| `RefundFailed` | The refund attempt failed. |
+| `Unfreezing` | The funds are being unfrozen. |
+| `Unfrozen` | The funds have been unfrozen. |
+| `UnfreezingFailed` | The attempt to unfreeze the funds failed. |
+| `Isolating` | The funds are being isolated. |
+| `Isolated` | The funds have been isolated. |
+| `IsolationFailed` | The attempt to isolate the funds failed. |
+| `CoboDisposition` | The funds are being handled through a Cobo disposition. |
+| `Normal` | The funds are in a normal state with no compliance action applied. |
+
+The case decision that drives these status changes is represented by `KytScreeningsDecisionsType`, which has the values `Approval`, `ApprovalWithAlert`, `Rejection`, and `ManualReview`.
+
 ## Data structure of webhook events           
 For a complete introduction of the webhook event data and its data structure, refer to the [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) property in the response of the Retrieve event information operation or the [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) property in the response of the List all webhook event operation. 
 

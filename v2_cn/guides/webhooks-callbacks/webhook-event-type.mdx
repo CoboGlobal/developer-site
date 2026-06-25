@@ -256,6 +256,42 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+### `ComplianceKytScreenings` 事件数据
+
+`compliance.kyt.screenings.status.updated` 事件携带 `ComplianceKytScreenings` 负载（`KytScreeningsEventData`）。该负载报告两个独立的状态字段 `review_status` 和 `funds_status`。请分别跟踪它们：`review_status` 反映案件的扫描与审核进度，`funds_status` 反映相关资金的状态。
+
+**`review_status`（`ReviewStatusType`）**
+
+| 值 | 含义 |
+|-------|---------|
+| `PendingScreening` | 扫描案件已创建，正在等待 AML/KYT 扫描运行。 |
+| `Screened` | 案件的 AML/KYT 扫描已完成。 |
+| `PendingDecision` | 扫描已完成，案件正在等待决策。 |
+| `PendingReview` | 案件在做出决策前需要人工审核。 |
+| `Approved` | 案件已批准。 |
+| `Rejected` | 案件已拒绝。 |
+| `Unsupported` | 案件涉及扫描不支持的链或代币。 |
+| `Bypassed` | 案件的扫描已被跳过。 |
+
+**`funds_status`（`FundsStatusType`）**
+
+| 值 | 含义 |
+|-------|---------|
+| `Frozen` | 相关资金已被冻结。 |
+| `Refunding` | 资金退款正在进行中。 |
+| `Refunded` | 资金已退款。 |
+| `RefundFailed` | 退款尝试失败。 |
+| `Unfreezing` | 资金正在解冻中。 |
+| `Unfrozen` | 资金已解冻。 |
+| `UnfreezingFailed` | 资金解冻尝试失败。 |
+| `Isolating` | 资金正在隔离中。 |
+| `Isolated` | 资金已隔离。 |
+| `IsolationFailed` | 资金隔离尝试失败。 |
+| `CoboDisposition` | 资金正在通过 Cobo 处置进行处理。 |
+| `Normal` | 资金处于正常状态，未应用任何合规操作。 |
+
+驱动这些状态变化的案件决策由 `KytScreeningsDecisionsType` 表示，其取值包括 `Approval`、`ApprovalWithAlert`、`Rejection` 和 `ManualReview`。
+
 ## Webhook 事件数据结构
 有关 webhook 事件数据和其数据结构的完整介绍，请参阅 Retrieve event information 操作的响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性或 List all webhook events 操作的响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。
 
