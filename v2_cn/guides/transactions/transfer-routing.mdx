@@ -1,7 +1,7 @@
 ---
 title: "转账路由"
 lang: "zh-hans"
-description: "了解代币转账如何通过 Cobo Loop 内部路由或链上外部路由，以及如何使用请求参数控制路由。"
+description: "了解代币转账如何通过 Cobo Loop 转账或链上转账处理，以及如何使用请求参数控制该行为。"
 ---
 
 import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
@@ -10,20 +10,20 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ## 概述
 
-每笔代币转账都会通过内部或外部路由：
+每笔代币转账都会以下列方式之一处理：
 
-- **内部路由**：当目的地支持时，通过 Cobo Loop 转账网络在 Cobo Portal 账户之间以链下方式结算。
-- **外部路由**：将交易广播到区块链上。
+- **Cobo Loop 转账**：当目的地支持时，通过 Cobo Loop 转账网络在 Cobo Portal 账户之间以链下方式结算。
+- **链上转账**：将交易广播到区块链上。
 
 ## 使用请求参数控制路由
 
-[Transfer token](/v2/api-references/transactions/transfer-token) 操作提供两个布尔参数来控制路由：`force_internal` 和 `force_external`。
+[Transfer token](/v2/api-references/transactions/transfer-token) 操作提供两个布尔参数，用于控制转账是使用 Cobo Loop 还是发送到链上：`force_internal` 和 `force_external`。
 
 | 设置 | 路由行为 |
 |---------|------------------|
-| `force_internal` = `true` | 强制通过 Cobo Loop 进行内部路由（链下）。 |
-| `force_external` = `true` | 强制进行链上外部路由。 |
-| 两者均为 `false`（默认） | 如果目的地支持，则通过 Cobo Loop 路由；否则进行链上路由。 |
+| `force_internal` = `true` | 强制转账使用 Cobo Loop（链下）。 |
+| `force_external` = `true` | 强制转账发送到链上。 |
+| 两者均为 `false`（默认） | 如果目的地支持，则使用 Cobo Loop；否则发送到链上。 |
 | 两者均为 `true` | 请求将被拒绝，返回 HTTP 400 错误（错误码 `2006`，参数无效）。 |
 
 这些参数仅适用于目的地为地址的转账。有关支持的目的地类型，请参阅 [Transfer token](/v2/api-references/transactions/transfer-token) 操作。
