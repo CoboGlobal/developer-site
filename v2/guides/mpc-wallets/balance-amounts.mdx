@@ -104,11 +104,11 @@ The maximum amount you can withdraw is affected by the transaction fee, availabl
 
 ### Available balance after a deposit
 
-For Bitcoin and other UTXO-based chains, the available balance is derived from indexed on-chain UTXO data. After a deposit, the current balance can already reflect the deposit while the available balance still reads 0 until the new UTXOs finish indexing. Wait for indexing to complete before withdrawing the deposited funds.
+For Bitcoin and other UTXO-based chains, the current balance and the available balance may update at different times after a deposit. The current balance can reflect the deposit first, while the available balance may still read 0 because the newly received UTXOs have not yet been processed into the spendable set. In other words, the funds may already appear in the address balance but are not yet ready to spend. Wait for the new UTXOs to finish processing before withdrawing the deposited funds.
 
 ### Minimum transfer amount (dust threshold)
 
-Each token has a configurable dust threshold. A withdrawal whose amount is below that token's dust threshold is rejected with error `30010` (amount below the dust threshold), not error `12007` (insufficient balance). To proceed, increase the amount above the threshold. The dust threshold is configured per token.
+Each token has a predefined minimum withdrawal amount (dust threshold) maintained by Cobo. A withdrawal whose amount is below that token's dust threshold is rejected with error `30010` (amount below the dust threshold), not error `12007` (insufficient balance). To proceed, call [Get token information](/v2/api-references/wallets/get-token-information) to check the minimum withdrawal amount for the token, then increase the amount above that threshold.
 
 ### Consolidating UTXOs
 
@@ -128,7 +128,9 @@ For full details on payments, see the [Payments documentation](https://www.cobo.
 
 When a withdrawal is rejected with error `12007` (insufficient balance), work through the following checks:
 
-1. **Genuine shortfall**: Compare the withdrawal amount plus the transaction fee against `data.balance.available`. If it exceeds the available balance, the address lacks spendable funds. Deposit more funds or reduce the amount.
-2. **Locked, pending, screening, or frozen funds**: If `data.balance.available` is lower than `data.balance.total`, funds are reserved in `data.balance.pending`, held in `data.balance.locked` by in-flight transactions, or held for compliance screening or frozen. Wait for them to settle or be released. For details, see [Balance availability model](#balance-availability-model) and [Fund locking](#fund-locking).
-3. **Un-indexed UTXOs**: On Bitcoin and other UTXO chains, if the available balance reads 0 shortly after a deposit, the new UTXOs may still be indexing. Wait and recheck. For details, see [Bitcoin and UTXO considerations](#bitcoin-and-utxo-considerations).
-4. **Dust**: If the amount is very small, it may instead be rejected with error `30010` (below the dust threshold) rather than `12007`. Increase the amount above the token's dust threshold.
+1. **Check the public balance fields first**: Call [List token balances by address](/v2/api-references/wallets/list-token-balances-by-address) for the source address and note `data.balance.total`, `data.balance.pending`, `data.balance.locked`, and `data.balance.available`.
+2. **Genuine shortfall**: Compare the withdrawal amount plus the transaction fee against `data.balance.available`. If it exceeds the available balance, the address lacks spendable funds. Deposit more funds or reduce the amount.
+3. **Portal cross-check**: In Cobo Portal, open the source address and compare the available balance with the current balance. If the available balance is lower, continue with the checks below to determine why.
+4. **Locked, pending, screening, or frozen funds**: If `data.balance.available` is lower than `data.balance.total`, funds are reserved in `data.balance.pending`, held in `data.balance.locked` by in-flight transactions, or held for compliance screening or frozen. Wait for them to settle or be released. For details, see [Balance availability model](#balance-availability-model) and [Fund locking](#fund-locking).
+5. **Un-indexed UTXOs**: On Bitcoin and other UTXO chains, if the available balance reads 0 shortly after a deposit, the new UTXOs may still be indexing. Wait and recheck. For details, see [Bitcoin and UTXO considerations](#bitcoin-and-utxo-considerations).
+6. **Dust**: If the amount is very small, it may instead be rejected with error `30010` (below the dust threshold) rather than `12007`. Retry with a larger amount.

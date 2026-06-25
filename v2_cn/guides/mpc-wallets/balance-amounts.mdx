@@ -25,7 +25,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ## 余额可用性模型
 
-[定义](#定义)中的值是 [按地址列出代币余额](/v2/api-references/wallets/list-token-balances-by-address) 操作返回的公开字段。当提币因余额不足被拒绝时，错误响应可能会报告内部字段名。下表将这些内部字段名映射到公开余额字段。
+[定义](#定义)中的值是 [List token balances by address](/v2/api-references/wallets/list-token-balances-by-address) 操作返回的公开字段。当提币因余额不足被拒绝时，错误响应可能会报告内部字段名。下表将这些内部字段名映射到公开余额字段。
 
 | 错误响应字段 | 公开余额字段             | 含义                                                                 |
 | ------------ | ------------------------ | ------------------------------------------------------------------- |
@@ -103,11 +103,11 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### 充币后的可用余额
 
-对于比特币和其他基于 UTXO 的链，可用余额来自已建立索引的链上 UTXO 数据。充币后，当前余额可能已经反映该笔充币，而可用余额仍显示为 0，直到新的 UTXO 完成索引。请等待索引完成后再提取已充入的资金。
+对于比特币和其他基于 UTXO 的链，充币后当前余额和可用余额的更新时间可能不同。当前余额可能会先反映这笔充币，而可用余额仍显示为 0，因为新收到的 UTXO 还没有完成处理并进入可花费集合。换句话说，这笔钱可能已经显示在地址余额中，但暂时还不能用于提币。请等待新的 UTXO 完成处理后，再提取已充入的资金。
 
 ### 最低转账金额（尘埃阈值）
 
-每个代币都有可配置的尘埃阈值。金额低于该代币尘埃阈值的提币将以错误 `30010`（金额低于尘埃阈值）被拒绝，而非错误 `12007`（余额不足）。要继续操作，请将金额增加到超过该阈值。尘埃阈值按代币配置。
+每个代币都有由 Cobo 预先维护的最小提币金额（尘埃阈值）。金额低于该代币尘埃阈值的提币将以错误 `30010`（金额低于尘埃阈值）被拒绝，而非错误 `12007`（余额不足）。要继续操作，请调用 [Get token information](/v2/api-references/wallets/get-token-information) 查询该代币的最小提币金额，并将金额提高到超过该阈值。
 
 ### UTXO 归集
 
@@ -127,7 +127,9 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 当提币以错误 `12007`（余额不足）被拒绝时，请依次进行以下检查：
 
-1. **真实的余额不足**：将提币金额加上交易费用与 `data.balance.available` 进行比较。如果超过可用余额，则该地址缺少可花费的资金。请充入更多资金或减少金额。
-2. **锁定、待处理、筛查中或冻结的资金**：如果 `data.balance.available` 低于 `data.balance.total`，说明资金被预留在 `data.balance.pending` 中、被进行中的交易锁定在 `data.balance.locked` 中，或处于合规筛查中或被冻结。请等待其结算或释放。有关详情，请参见 [余额可用性模型](#余额可用性模型) 和 [资金锁定](#资金锁定)。
-3. **未建立索引的 UTXO**：在比特币和其他 UTXO 链上，如果充币后不久可用余额显示为 0，则新的 UTXO 可能仍在建立索引中。请稍后重新检查。有关详情，请参见 [比特币与 UTXO 注意事项](#比特币与-utxo-注意事项)。
-4. **尘埃**：如果金额非常小，它可能会以错误 `30010`（低于尘埃阈值）而非 `12007` 被拒绝。请将金额增加到超过该代币的尘埃阈值。
+1. **先检查公开余额字段**：调用 [List token balances by address](/v2/api-references/wallets/list-token-balances-by-address) 查询源地址余额，并记录 `data.balance.total`、`data.balance.pending`、`data.balance.locked` 和 `data.balance.available`。
+2. **真实的余额不足**：将提币金额加上交易费用与 `data.balance.available` 进行比较。如果超过可用余额，则该地址缺少可花费的资金。请充入更多资金或减少金额。
+3. **Portal 交叉检查**：在 Cobo Portal 中打开源地址，比较可用余额与当前余额。如果可用余额更低，请继续检查下面几项，确认原因。
+4. **锁定、待处理、筛查中或冻结的资金**：如果 `data.balance.available` 低于 `data.balance.total`，说明资金被预留在 `data.balance.pending` 中、被进行中的交易锁定在 `data.balance.locked` 中，或处于合规筛查中或被冻结。请等待其结算或释放。有关详情，请参见 [余额可用性模型](#余额可用性模型) 和 [资金锁定](#资金锁定)。
+5. **未建立索引的 UTXO**：在比特币和其他 UTXO 链上，如果充币后不久可用余额显示为 0，则新的 UTXO 可能仍在建立索引中。请稍后重新检查。有关详情，请参见 [比特币与 UTXO 注意事项](#比特币与-utxo-注意事项)。
+6. **尘埃**：如果金额非常小，它可能会以错误 `30010`（低于尘埃阈值）而非 `12007` 被拒绝。请改用更大的金额重试。
