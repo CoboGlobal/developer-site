@@ -161,7 +161,7 @@ The following error codes are returned by compliance and Know Your Transaction (
 |---|---|---|
 | 40101 | The compliance request for the specified `transaction_id` was not found. | Verify the `transaction_id` is correct and that a compliance check has been initiated for it. |
 | 40102 | The compliance request cannot be retried because it is not in a failed state. | Check the current status of the compliance request before retrying. Only requests in a `Failed` state can be retried. |
-| 40103 | This transaction does not support the requested operation (it is not an EOA/Web3 transaction, or it does not have an on-chain transaction ID). | Confirm that the transaction is an EOA or Web3 transaction and that an on-chain transaction ID has been recorded for it. If the transaction is not EOA/Web3, or if the on-chain transaction ID has not yet been generated or synced, this operation cannot be performed. Retry only after those conditions are met, or use a transaction type that supports this operation. |
+| 40103 | This transaction does not support the requested operation (it is not an EOA/Web3 transaction, or it does not have an on-chain transaction ID). | Confirm that the request type you are submitting is supported by the compliance API. |
 | 40104 | The KYT disposal type provided is invalid. | Provide a valid disposal type for the KYT operation. |
 | 40105 | The specified KYT request was not found. | Verify the KYT request ID. |
 | 40106 | A disposal request for this KYT screening already exists. | Check for an existing disposal request before creating a new one. |
