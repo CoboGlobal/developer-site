@@ -12,6 +12,15 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.38.0
+
+此版本于 2026 年 6 月 25 日发布。
+
+### 兼容性变更
+
+- 在 [获取交易审批详情](/v2/api-references/transactions/get-transaction-approval-details) 接口响应的 `user_details` 中新增 `result_token` 字段。在校验审批签名时，完整的签名内容按 `{message}||{result_token}` 拼接。
+- 澄清 `PendingAuthorization` 交易状态同时涵盖人工审批环节和系统内部的自动风控、KYT 及合规筛查。处于该状态的交易不一定需要人工处理。详见 [交易状态与子状态](/v2_cn/guides/transactions/status)。
+
 ## v1.37.0
 
 此版本于 2026 年 6 月 10 日发布。
