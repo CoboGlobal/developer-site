@@ -117,6 +117,7 @@
                         ]
                       },
                       "v2/guides/mpc-wallets/server-co-signer/key-share-verify",
+                      "v2/guides/mpc-wallets/server-co-signer/troubleshooting",
                       "v2/guides/mpc-wallets/server-co-signer/appendix"
                     ]
                   },
@@ -926,6 +927,7 @@
                         ]
                       },
                       "v2_cn/guides/mpc-wallets/server-co-signer/key-share-verify",
+                      "v2_cn/guides/mpc-wallets/server-co-signer/troubleshooting",
                       "v2_cn/guides/mpc-wallets/server-co-signer/appendix"
                     ]
                   },
