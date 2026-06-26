@@ -45,6 +45,21 @@ To learn more about event types and event data types, see [Webhook event type an
 
 To manage webhook events using Cobo CLI, refer to the following guides: [Listen and Forward Events](/v2/developer-tools/cobo-cli/listen-and-forward-events), [Trigger Webhook Events](/v2/developer-tools/cobo-cli/trigger-events), and [List Event Types](/v2/developer-tools/cobo-cli/event-types).
 
+## Delivery semantics
+
+Review the following rules so you can tell whether a missing notification is expected behavior or a problem to investigate.
+
+- **Event triggers.** A transaction emits webhook events as its status changes. To track the full lifecycle of a transaction with a single subscription, subscribe to `wallets.transaction.updated`, which covers creation, updates, completion, and failure. For the full list of events, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+- **Ordering and retries.** Event ordering is not guaranteed, and the same event may be delivered more than once, so deduplicate by a unique identifier. Failed deliveries are retried automatically. See [Retry behavior](/v2/guides/webhooks-callbacks/set-up-endpoint#retry-behavior) and [Delivery guarantees](/v2/guides/webhooks-callbacks/set-up-endpoint#delivery-guarantees).
+
+### No webhook received? Self-diagnosis
+
+If your endpoint does not receive an expected webhook event, work through the following checklist:
+
+1. Confirm that your endpoint subscribes to the relevant event type, in particular `wallets.transaction.updated` for transaction status changes.
+2. Confirm that the event you expect is one the WaaS service emits, using [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+3. Inspect the delivery logs on **Cobo Portal** > **Developer** > **Webhook Events**, then click the event to view each delivery attempt, its response code, and its response body.
+4. If the event status is `Failed`, resolve the cause (see [Common delivery failures](/v2/guides/webhooks-callbacks/set-up-endpoint#common-delivery-failures)), then click **Retry** to resend the event.
 
 ## Notes on upgrading from WaaS 1.0 to Waas 2.0
 
