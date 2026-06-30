@@ -170,7 +170,7 @@ The following steps introduce how to calculate an API signature.
     | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
     | `METHOD`    | The HTTP method.                                             | `GET`                                                          |
     | `PATH`      | The API endpoint.                                            | `/v2/transactions/transfer`                                    |
-    | `TIMESTAMP` | The current time in Unix timestamp format, measured in milliseconds. This value must be the same as the nonce in the request header. | `1718587017026`                                                |
+    | `TIMESTAMP` | The current Unix timestamp in milliseconds. This value must be the same as the value of the `Biz-Api-Nonce` request header. | `1718587017026`                                                |
     | `PARAMS`    | (If applicable) The query parameters.                        | `chain_id=ETH&limit=10`                                        |
     | `BODY`      | (If applicable) The raw request body in string format.       | `{"name":"Default","wallet_subtype":"Asset","wallet_type":"Custodial"}` |
 

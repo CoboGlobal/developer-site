@@ -13,7 +13,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 为确保您加密资产的安全访问，WaaS 服务要求您使用 EdDSA 签名对每个 API 请求进行签名（可公开访问的 API 操作除外）。
 
-您需要在请求头中提供 API Key、随机数和 API 签名：
+您需要在请求头中提供 API Key、`Biz-Api-Nonce`（当前 Unix 时间戳（毫秒））和 API 签名：
 
 ```
 headers = {
@@ -24,7 +24,7 @@ headers = {
 ```
 
 - Biz-Api-Key：用于请求的 API Key。更多详情，请参阅 [API Key](#api-key)。
-- Biz-Api-Nonce：随机数。随机数是以毫秒为单位的当前 Unix 时间戳。
+- Biz-Api-Nonce：当前 Unix 时间戳（毫秒）。该值用作请求的 nonce。
 - Biz-Api-Signature：API 签名。要了解如何计算 API 签名，请参阅[计算 API 签名](#calculate-the-api-signature)。
 
 如果您使用 Cobo 的 WaaS SDK，您只需提供 API Key，因为 SDK 会为您处理其余步骤。
@@ -137,9 +137,9 @@ Public Key (Hex):
 开发环境和生产环境使用**各自独立的 Cobo Portal 和 API Key**。在开发环境（`portal.dev.cobo.com`）注册的 API Key 无法用于生产环境的 API Host（`api.cobo.com`），反之亦然。使用错误环境的 API Key 将返回 HTTP 401 / 错误码 2024，错误信息为 `Your API key is not registered in this environment. Development and Production environments use separate API keys.`。各环境的 Host 和 Portal 地址请参阅[开发环境和生产环境](/v2_cn/guides/overview/environments)。
 </Warning>
 
-## 随机数
+## Nonce
 
-随机数为 Unix 时间戳格式的当前时间，以毫秒为单位。
+在 WaaS 2.0 身份验证中，Nonce 指请求头 `Biz-Api-Nonce` 的值。该值必须是当前 Unix 时间戳（毫秒）。
 
 <a name="calculate-the-api-signature"></a>
 ## 计算 API 签名
@@ -154,7 +154,7 @@ Public Key (Hex):
     | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
     | METHOD    | HTTP 方法。                                             | `GET`                                                          |
     | PATH      | API 端点。                                            | `/v2/transactions/transfer`                                    |
-    | NONCE     | 随机数值。以毫秒为单位的当前 Unix 时间戳，该值必须与 `Biz-Api-Nonce` 请求头的值相同。 | `1718587017026`                                                |
+    | NONCE     | 当前 Unix 时间戳（毫秒）。该值必须与请求头 `Biz-Api-Nonce` 的值完全相同。 | `1718587017026`                                                |
     | PARAMS    | （如有）查询参数。                        | `chain_id=ETH&limit=10`                                        |
     | BODY      | （如有）原始请求包体的字符串格式。       | `{"name":"Default","wallet_subtype":"Asset","wallet_type":"Custodial"}` |
 
