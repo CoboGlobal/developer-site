@@ -1,0 +1,43 @@
+---
+title: "RBF (Replace-By-Fee) 交易生命周期"
+lang: "zh-hans"
+description: "了解 Replace-By-Fee (RBF) 如何替换未确认交易、原交易的状态如何变化，以及您会收到哪些事件。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+Replace-By-Fee (RBF) 使用新版本替换已广播但尚未确认的交易。本指南介绍 RBF 替换的完整生命周期：您可以执行的替换操作、原交易的状态如何变化，以及您会收到哪些事件。
+
+有关分步操作，请参阅 [管理交易](/v2_cn/guides/transactions/manage-transactions)。有关适用于 RBF 交易的费用规则，请参阅 [估算交易费用](/v2_cn/guides/transactions/estimate-fees#replace-by-fee-rbf-交易费用)。
+
+## 替换操作
+
+WaaS 2.0 支持以下 RBF 操作：
+
+- **Speed up**：用更高费用的版本替换原交易，使其更快确认。请使用 [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) 操作。
+- **Drop**：用可有效取消原交易的版本替换原交易。请使用 [Drop transaction](/v2/api-references/transactions/drop-transaction) 操作。
+
+这两种操作仅在原交易处于 `Broadcasting` 状态时适用。它们不适用于以下链上的交易：VET、TRON、TVET、SOL 和 TON。
+
+## 替换后原交易的状态
+
+当替换交易生效时，原交易将转入 `Failed` 状态，子状态为 `ReplacedByNewTransaction`。有关状态和子状态的完整列表，请参阅 [交易状态和子状态](/v2_cn/guides/transactions/status)。
+
+## 链式替换
+
+任何后续的放弃或加速操作都将继续应用于原交易。例如，如果您创建交易 A，使用交易 B 对交易 A 执行放弃操作，然后使用交易 C 对交易 B 执行加速操作，则该加速操作仍将应用于交易 A，而不是交易 B。
+
+## 事件
+
+RBF 的状态变化通过 WaaS 2.0 交易 Webhook 事件呈现。请订阅 `wallets.transaction.updated` 事件，该事件覆盖交易的完整生命周期（包括失败）。有关详细信息，请参阅 [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。
+
+## 相关指南
+
+- [管理交易](/v2_cn/guides/transactions/manage-transactions)
+- [估算交易费用](/v2_cn/guides/transactions/estimate-fees)
+- [交易状态和子状态](/v2_cn/guides/transactions/status)
+- [交易来源和目的地](/v2_cn/guides/transactions/sources-and-destinations)

@@ -274,6 +274,20 @@ The table below provides an overview of transaction statuses and sub-statuses re
   </tr>
 </table>
 
+## Status details
+
+<Note>
+The `PendingAuthorization` status aggregates both manual approval steps and internal automated checks. Manual steps include `PendingApproverCheck`, `PendingSpenderCheck`, and `PendingDoubleCheck`. Automated checks include `PendingRiskControlCheck` and `PendingCoboCheck`. A transaction in `PendingAuthorization` does not necessarily require a person to act, because it may be undergoing automated risk-control or compliance checks.
+</Note>
+
+<Warning>
+After a transaction is approved, it enters the `PendingSignature` status and must be signed by the MPC signer group within a limited signing window. If signing does not complete within this window, the transaction automatically fails and moves to the `Failed` status with the sub-status `FailedSignerTimeout`. To find out why a transaction failed, check the `sub_status` field returned by [List all transactions](/v2/api-references/transactions/list-all-transactions) or [Get transaction information](/v2/api-references/transactions/get-transaction-information). If you encounter `FailedSignerTimeout`, the transaction is in a terminal `Failed` state and cannot be resumed. Submit a new transaction of the same type to try again: use [Transfer token](/v2/api-references/transactions/transfer-token) for token transfers, [Call smart contract](/v2/api-references/transactions/call-smart-contract) for contract calls, or [Sign message](/v2/api-references/transactions/sign-message) for message signing.
+</Warning>
+
+<Note>
+A transaction in the `Confirming` status with the sub-status `PendingBlockConfirmations` is waiting for the required number of block confirmations on its chain. This is a normal part of processing and does not mean the transaction is stuck. The required number of confirmations and the expected confirmation time vary by chain.
+</Note>
+
 ## Available actions
 
 You can perform the following actions based on the transaction status:
@@ -285,5 +299,7 @@ You can perform the following actions based on the transaction status:
   - `PendingSignature` (Only when the sub-status is `Queue`, `InsufficientBalance`, `InsufficientBalanceFundLocked`, `PendingSignerApproval`, `PendingSystemProcessing`, or `Built`)
 - Resend a transaction if its status is `Failed`.
 - Speed up or drop a transaction if its status is `Broadcasting`.
+
+For details on how a replaced transaction's status changes, see [RBF (Replace-By-Fee) transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle).
 
 For more details, refer to [Manage transactions](/v2/guides/transactions/manage-transactions).

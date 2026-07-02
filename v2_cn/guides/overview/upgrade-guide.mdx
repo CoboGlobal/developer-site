@@ -62,15 +62,19 @@ WaaS 2.0 相较于 WaaS 1.0 进行了重大升级，面向支付、代币化、�
 
 |                            | WaaS 1.0                                                     | WaaS 2.0                                                     |
 | -------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 创建钱包                   | 不支持，因为 API Key 是钱包特定的                            | [创建钱包](/v2/api-references/wallets/create-wallet) |
-| 创建地址                   | <ul><li>**[全托管钱包]** [获取新充币地址](/v1/api-references/custody-wallet/new_address)</li><li>**[MPC 钱包]** [生成地址](/v1/api-references/mpc-wallet/mpc_generate_addresses) 和 [生成地址备注](/v1/api-references/mpc-wallet/mpc_generate_address_memo)</li></ul> | [在钱包中创建地址](/v2/api-references/wallets/create-addresses-in-wallet) |
-| 提取代币                   | <ul><li>**[全托管钱包]** [新建提币请求](/v1/api-references/custody-wallet/new_withdraw_request)</li><li>**[MPC 钱包]** [创建交易](/v1/api-references/mpc-wallet/mpc_create_transaction)</li></ul> | [转账代币](/v2/api-references/transactions/transfer-token) |
-| RBF 交易（加速）           | **[MPC 钱包]** [加速交易](/v1/api-references/mpc-wallet/mpc_speedup_transaction) | [加速交易](/v2/api-references/transactions/speed-up-transaction) |
-| RBF 交易（放弃）           | **[MPC 钱包]** [放弃交易](/v1/api-references/mpc-wallet/mpc_drop_transaction) | [放弃交易](/v2/api-references/transactions/drop-transaction) |
-| 取消交易                   | 不支持                                                        | [取消交易](/v2/api-references/transactions/cancel-transaction) |
-| 调用合约                   | 不支持                                                        | [调用智能合约](/v2/api-references/transactions/call-smart-contract) |
-| 签名消息                   | 不支持                                                        | [签名消息](/v2/api-references/transactions/sign-message) |
-| 查询交易                   | <ul><li>**[全托管钱包]** [交易历史](/v1/api-references/custody-wallet/transaction_history)</li><li>**[MPC 钱包]** [获取交易列表](/v1/api-references/mpc-wallet/mpc_list_transactions)</li></ul> | <ul><li>[列出所有交易](/v2/api-references/transactions/list-all-transactions)</li><li>[获取交易信息](/v2/api-references/transactions/get-transaction-information)</li></ul>|
+| 创建钱包                   | 不支持，因为 API Key 是钱包特定的                            | [Create wallet](/v2/api-references/wallets/create-wallet) |
+| 创建地址                   | <ul><li>**[全托管钱包]** [获取新充币地址](/v1/api-references/custody-wallet/new_address)</li><li>**[MPC 钱包]** [生成地址](/v1/api-references/mpc-wallet/mpc_generate_addresses) 和 [生成地址备注](/v1/api-references/mpc-wallet/mpc_generate_address_memo)</li></ul> | [Create addresses in wallet](/v2/api-references/wallets/create-addresses-in-wallet) |
+| 提取代币                   | <ul><li>**[全托管钱包]** [新建提币请求](/v1/api-references/custody-wallet/new_withdraw_request)</li><li>**[MPC 钱包]** [创建交易](/v1/api-references/mpc-wallet/mpc_create_transaction)</li></ul> | [Transfer token](/v2/api-references/transactions/transfer-token) |
+| RBF 交易（加速）           | **[MPC 钱包]** [加速交易](/v1/api-references/mpc-wallet/mpc_speedup_transaction) | [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) |
+| RBF 交易（放弃）           | **[MPC 钱包]** [放弃交易](/v1/api-references/mpc-wallet/mpc_drop_transaction) | [Drop transaction](/v2/api-references/transactions/drop-transaction) |
+| 取消交易                   | 不支持                                                        | [Cancel transaction](/v2/api-references/transactions/cancel-transaction) |
+| 调用合约                   | 不支持                                                        | [Call smart contract](/v2/api-references/transactions/call-smart-contract) |
+| 签名消息                   | 不支持                                                        | [Sign message](/v2/api-references/transactions/sign-message) |
+| 查询交易                   | <ul><li>**[全托管钱包]** [交易历史](/v1/api-references/custody-wallet/transaction_history)</li><li>**[MPC 钱包]** [获取交易列表](/v1/api-references/mpc-wallet/mpc_list_transactions)</li></ul> | <ul><li>[List all transactions](/v2/api-references/transactions/list-all-transactions)</li><li>[Get transaction information](/v2/api-references/transactions/get-transaction-information)</li></ul>|
+
+<Warning>
+WaaS 2.0 的列表类接口（例如 [List all transactions](/v2/api-references/transactions/list-all-transactions)）会分页返回结果。默认情况下每页返回 10 条记录，最大每页为 50 条，通过 `limit` 参数设置。这与 WaaS 1.0 不同：在 1.0 中单次响应可返回全部结果。因此 WaaS 2.0 的单页会遗漏后续结果。如需获取全部记录，请使用游标参数 `before` 和 `after` 遍历所有页。
+</Warning>
 
 ## 升级步骤
 

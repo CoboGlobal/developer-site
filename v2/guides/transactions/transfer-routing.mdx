@@ -1,0 +1,34 @@
+---
+title: "Transfer routing"
+lang: "en"
+description: "Understand how token transfers are processed as Cobo Loop transfers or on-chain transfers, and how to control that behavior with request parameters."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+Every token transfer is processed in one of the following ways:
+
+- **Cobo Loop transfer** settles off-chain between accounts on Cobo Portal through the Cobo Loop transfer network, when the destination supports it.
+- **On-chain transfer** broadcasts the transaction to the blockchain.
+
+## Control routing with request parameters
+
+The [Transfer token](/v2/api-references/transactions/transfer-token) operation provides two boolean parameters to control whether the transfer uses Cobo Loop or is sent on-chain: `force_internal` and `force_external`.
+
+| Setting | Routing behavior |
+|---------|------------------|
+| `force_internal` = `true` | Forces the transfer to use Cobo Loop (off-chain). |
+| `force_external` = `true` | Forces the transfer to be sent on-chain. |
+| Both `false` (default) | Uses Cobo Loop if the destination supports it; otherwise sends the transfer on-chain. |
+| Both `true` | The request is rejected with an HTTP 400 error (error code `2006`, invalid parameter). |
+
+These parameters are available only for transfers to an address destination. For the supported destination types, see the [Transfer token](/v2/api-references/transactions/transfer-token) operation.
+
+## Related guides
+
+- [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations)
+- [Cobo Loop](https://manuals.cobo.com/en/portal/custodial-wallets/cobo-loop)

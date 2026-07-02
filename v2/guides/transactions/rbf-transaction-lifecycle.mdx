@@ -1,0 +1,43 @@
+---
+title: "RBF (Replace-By-Fee) transaction lifecycle"
+lang: "en"
+description: "Understand how Replace-By-Fee (RBF) replaces an unconfirmed transaction, how the original transaction's status changes, and the events you receive."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+Replace-By-Fee (RBF) replaces an unconfirmed, already-broadcast transaction with a new version. This guide describes the full lifecycle of an RBF replacement: the replacement operations you can perform, how the original transaction's status changes, and the events you receive.
+
+For the step-by-step operations, see [Manage transactions](/v2/guides/transactions/manage-transactions). For the fee rules that apply to RBF transactions, see [Estimate transaction fees](/v2/guides/transactions/estimate-fees#replace-by-fee-rbf-transaction-fee).
+
+## Replacement operations
+
+WaaS 2.0 supports the following RBF operations:
+
+- **Speed up**: Replaces the original transaction with a higher-fee version so that it confirms faster. Use the [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) operation.
+- **Drop**: Replaces the original transaction with a version that effectively cancels it. Use the [Drop transaction](/v2/api-references/transactions/drop-transaction) operation.
+
+Both operations apply only when the original transaction is in the `Broadcasting` status. They do not apply to transactions on the following chains: VET, TRON, TVET, SOL, and TON.
+
+## Original transaction status after replacement
+
+When a replacement transaction takes effect, the original transaction moves to the `Failed` status with the sub-status `ReplacedByNewTransaction`. For the complete list of statuses and sub-statuses, see [Transaction statuses and sub-statuses](/v2/guides/transactions/status).
+
+## Chained replacements
+
+Any subsequent drop or speed-up operations continue to apply to the original transaction. For example, if you create Transaction A, perform a drop operation on Transaction A using Transaction B, and then perform a speed-up operation on Transaction B using Transaction C, the speed-up operation still applies to Transaction A, not Transaction B.
+
+## Events
+
+RBF status changes are surfaced through the WaaS 2.0 transaction webhook events. Subscribe to the `wallets.transaction.updated` event, which covers the full transaction lifecycle including failure. For details, see [Webhook event types](/v2/guides/webhooks-callbacks/webhook-event-type).
+
+## Related guides
+
+- [Manage transactions](/v2/guides/transactions/manage-transactions)
+- [Estimate transaction fees](/v2/guides/transactions/estimate-fees)
+- [Transaction statuses and sub-statuses](/v2/guides/transactions/status)
+- [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations)

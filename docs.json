@@ -53,6 +53,7 @@
                 "group": "Transactions",
                 "pages": [
                   "v2/guides/transactions/sources-and-destinations",
+                  "v2/guides/transactions/transfer-routing",
                   "v2/guides/transactions/estimate-fees",
                   "v2/guides/transactions/solana-token-account-rent",
                   {
@@ -64,6 +65,7 @@
                     ]
                   },
                   "v2/guides/transactions/manage-transactions",
+                  "v2/guides/transactions/rbf-transaction-lifecycle",
                   "v2/guides/transactions/validate-addresses",
                   {
                     "group": "Smart contract call samples",
@@ -863,6 +865,7 @@
                 "group": "交易",
                 "pages": [
                   "v2_cn/guides/transactions/sources-and-destinations",
+                  "v2_cn/guides/transactions/transfer-routing",
                   "v2_cn/guides/transactions/estimate-fees",
                   "v2_cn/guides/transactions/solana-token-account-rent",
                   {
@@ -874,6 +877,7 @@
                     ]
                   },
                   "v2_cn/guides/transactions/manage-transactions",
+                  "v2_cn/guides/transactions/rbf-transaction-lifecycle",
                   "v2_cn/guides/transactions/validate-addresses",
                   {
                     "group": "智能合约调用示例",
