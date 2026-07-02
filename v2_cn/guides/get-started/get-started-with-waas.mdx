@@ -70,7 +70,7 @@ openssl pkey -pubin -in public_key.pem -text | grep 'pub:' -A 3 | tail -n +2 | t
 
 <Note>如果您选择[使用 WaaS SDK](/v2_cn/developer-tools/quickstart-python)，则可以跳过此步骤，因为 SDK 封装了认证机制。</Note>
 
-在发送 API 请求时，您需要在请求头中包含 API Key、`Biz-Api-Nonce`（当前 Unix 时间戳（毫秒））和 API 签名，以作为身份认证信息。有关更多信息，请参阅 [Cobo Auth](/v2_cn/guides/overview/cobo-auth)。
+在发送 API 请求时，您需要在请求头中包含 API Key、`Biz-Api-Nonce`（随机字符串）和 API 签名，以作为身份认证信息。有关更多信息，请参阅 [Cobo Auth](/v2_cn/guides/overview/cobo-auth)。
 
 ```
 headers = {
@@ -81,7 +81,7 @@ headers = {
 ```
 
 - Biz-Api-Key：API Key。要了解如何生成 API Key，请参阅[生成 API Key 和 API Secret](/v2_cn/guides/overview/cobo-auth#generate-an-api-key-and-an-api-secret)。
-- Biz-Api-Nonce：当前 Unix 时间戳（毫秒），用作请求的 nonce。
+- Biz-Api-Nonce：用作请求 nonce 的随机字符串。
 - Biz-Api-Signature：API 签名。要了解如何计算 API 签名，请参阅[计算 API 签名](/v2_cn/guides/overview/cobo-auth#calculate-the-api-signature)。
 
 ## 发送请求
