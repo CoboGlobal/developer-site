@@ -28,8 +28,6 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 这些参数仅适用于目的地为地址的转账。有关支持的目的地类型，请参阅 [Transfer token](/v2/api-references/transactions/transfer-token) 操作。
 
-<Note>`force_internal` 和 `force_external` 互斥：在同一请求中将两者均设为 `true` 是无效的，将返回 HTTP 400 错误（错误码 `2006`）。若要强制指定路由方式，请只将其中一个设为 `true`，另一个保持 `false`（或省略）。</Note>
-
 以下示例展示了如何在 [Transfer token](/v2/api-references/transactions/transfer-token) 请求体中设置路由参数：
 
 ```json 强制使用 Cobo Loop 转账
