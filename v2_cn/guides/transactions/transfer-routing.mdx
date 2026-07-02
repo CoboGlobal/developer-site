@@ -28,42 +28,6 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 这些参数仅适用于目的地为地址的转账。有关支持的目的地类型，请参阅 [Transfer token](/v2/api-references/transactions/transfer-token) 操作。
 
-以下示例展示了如何在 [Transfer token](/v2/api-references/transactions/transfer-token) 请求体中设置路由参数：
-
-```json 强制使用 Cobo Loop 转账
-{
-  "request_id": "your_unique_request_id",
-  "source": { ... },
-  "destination": { ... },
-  "token_id": "ETH_USDT",
-  "amount": "100",
-  "force_internal": true,
-  "force_external": false
-}
-```
-
-```json 强制使用链上转账
-{
-  "request_id": "your_unique_request_id",
-  "source": { ... },
-  "destination": { ... },
-  "token_id": "ETH_USDT",
-  "amount": "100",
-  "force_internal": false,
-  "force_external": true
-}
-```
-
-```json 默认路由（优先 Cobo Loop，不支持时发送到链上）
-{
-  "request_id": "your_unique_request_id",
-  "source": { ... },
-  "destination": { ... },
-  "token_id": "ETH_USDT",
-  "amount": "100"
-}
-```
-
 ## 相关指南
 
 - [交易来源和目的地](/v2_cn/guides/transactions/sources-and-destinations)
