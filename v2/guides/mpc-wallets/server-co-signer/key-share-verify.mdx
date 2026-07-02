@@ -78,8 +78,8 @@ This section explains how to verify your active key shares - the ones currently 
 
 
 
-### Note
-Key share verification is enabled by default in a TSS Node. If you want to disable key share verification by using the embedded risk control module, you can modify the `configs/cobo-tss-node-config.yaml` file as follows:
+### Manual key share verification and callback risk control
+Key share verification (also called manual key share verification or manual verification) is enabled by default in a TSS Node. If you want to disable key share verification by using the embedded risk control module, you can modify the `configs/cobo-tss-node-config.yaml` file as follows:
 
 ```yaml
 embedded_risk_control_rules:
@@ -88,7 +88,7 @@ embedded_risk_control_rules:
     reject_all: true
 ```
 
-By default, the TSS Node callback does not include risk control for key share verification. If you want to implement risk control for key share verification in the TSS Node callback, please reach out to our support team at <a href="mailto:help@cobo.com">help@cobo.com</a> for assistance.
+By default, the TSS Node callback does not perform risk control for key share verification, and there is no self-serve callback `check_policy` configuration to turn it on. The only built-in control is the embedded risk control module shown above, configured through `embedded_risk_control_rules.enable` together with `key_share_sign.reject_all` in `configs/cobo-tss-node-config.yaml`. To enable callback-based risk control for key share verification for your organization, contact Cobo at <a href="mailto:help@cobo.com">help@cobo.com</a>.
 
 
 

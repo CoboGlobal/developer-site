@@ -1,0 +1,28 @@
+---
+title: "Solana 代币账户租金"
+lang: "zh-hans"
+description: "介绍 Solana 代币子地址（ATA）租金的工作机制、支付方及对交易记录的影响。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+在 Solana 链上，每种代币都存放在一个独立的代币子地址中，称为 Associated Token Account（ATA）。向一个从未接收过 SOL 或某种特定代币的地址转账时，发送方（来源地址）需要额外支付一次性激活费用（即租金），以创建并激活该代币的 ATA，交易才能完成。
+
+以下是在 Solana 代币转账中需要了解的重要说明：
+
+**租金由发送方支付**
+
+如果收款方从未接收过 SOL 或某种代币，来源（发送）地址需要额外支付租金以创建并激活代币的 ATA（子地址）。该费用与 Solana 正常的网络交易手续费相互独立。
+
+**`fee_used` 不包含租金**
+
+Solana 交易记录中的 `fee_used` 字段仅包含链上网络交易手续费，不包含租金。详情请参阅[估算交易费用](/v2_cn/guides/transactions/estimate-fees)。
+
+**已完成交易中不解析租金数据**
+
+当 Cobo 处理链上已完成的交易时，`rent_amount` 不会从交易数据中解析提取，因此：
+- 已完成交易记录中的 `rent_amount` 字段不会反映实际收取的租金金额。
+- 租金转账至子地址不会生成任何充币记录。
+- 租金支付不会触发 `wallets.addresses.created` 或 `wallets.transaction.*` Webhook 事件。

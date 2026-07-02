@@ -15,5 +15,5 @@ description: "Frequently Asked Questions about Address Management "
 ### How to verify whether a withdraw address is legitimate?
     <Expandable title="Answer">
         <ResponseField >You can use the [GET /v1/custody/is_valid_address/](/v1/api-references/custody-wallet/is_valid_address) endpoint to query whether a withdraw address under a Custodial Wallet is legitimate.
-        For an MPC Wallet, please use the [GET /v1/custody/mpc/is_valid_address/](/v1/api-references/mpc-wallet/mpc_is_valid_address) endpoint instead. If the response returns an zero, it indicates that the address is deemed invalid.</ResponseField>
+        For an MPC Wallet, please use the [GET /v1/custody/mpc/is_valid_address/](/v1/api-references/mpc-wallet/mpc_is_valid_address) endpoint instead. If the response returns an zero, it indicates that the address is deemed invalid. If you are using WaaS 2.0, validate addresses with the [Check address validity](/v2/api-references/wallets/check-address-validity) operation instead. For more information, see [Validate addresses](/v2/guides/transactions/validate-addresses).</ResponseField>
   </Expandable>

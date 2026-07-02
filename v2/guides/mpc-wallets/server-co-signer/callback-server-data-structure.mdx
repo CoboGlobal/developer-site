@@ -92,6 +92,10 @@ Used for transaction or message signing operations.
 | source_addresses | `array[object]` | The information of the source addresses of the transaction. For details, see the response of the [List wallet addresses](/v2/api-references/wallets/list-wallet-addresses) operation. |
 | transaction | `object` | The information of the transaction to sign. For details, see the response of the [Get transaction information](/v2/api-references/transactions/get-transaction-information) operation. |
 
+<Note>
+The `transaction` object includes an `initiator_type` field that identifies how the transaction was initiated, so your callback server can distinguish, for example, an API-initiated transaction from an App-initiated one. Possible values are `API` (initiated through the WaaS API), `Web` (initiated from Cobo Portal), `App` (initiated from Cobo Portal Apps), and `External` (initiated outside Cobo). For the full transaction schema, see the response of the [Get transaction information](/v2/api-references/transactions/get-transaction-information) operation.
+</Note>
+
 ### TypeKeyReshare request
 
 Used for [key resharing](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/manage-key-share-groups#manage-recovery-groups) operations. Resharing means to use an existing key share holder group to generate key shares for a new group.
@@ -132,7 +136,36 @@ Your callback server must respond to all callback requests with the following st
 | action | `string` | Action to take. Possible values:<br/>- `APPROVE`: Approve the request and proceed with the operation<br/>- `REJECT`: Deny the request and stop the operation |
 | error | `string` | The error message:<br/>- When `status` is not `0`: Contains internal error messages from the callback server.<br/>- When `status` is `0` and action is `REJECT`: Contains the specific reason for the rejection. |
 
+### HTTP response requirements
+
+The callback response described above is the JSON body of the HTTP response. Return your response with an HTTP `200` (OK) status code, and set the body `status` field to `0` to indicate that your callback server processed the callback successfully.
+
+The HTTP status code and the body `status` field are different. The HTTP status code reports whether the HTTP request reached and was handled by your callback server, while the body `status` field reports the result of processing the callback: a value of `0` indicates success, and any other value indicates that an error occurred in the callback server while processing the request.
+
+#### Example
+
+```json
+// Callback request (TypeKeySign) from the TSS Node
+{
+  "request_id": "f1e2d3c4b5a6",
+  "request_type": 2,
+  "request_detail": "{...}",
+  "extra_info": "{...}"
+}
+```
+
+```json
+// Callback response (HTTP status code 200)
+{
+  "status": 0,
+  "request_id": "f1e2d3c4b5a6",
+  "action": "APPROVE",
+  "error": ""
+}
+```
+
 ### Important notes
 
 - If the TSS Node fails to receive an HTTP response, it will retry the callback request.
 - After exceeding the maximum retry attempts, the risk control result will be set to `REJECT`.
+- For `TypePing` requests, a successful response (body `status` `0`) indicates that your callback server is available.
