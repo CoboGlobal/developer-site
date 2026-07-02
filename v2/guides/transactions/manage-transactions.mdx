@@ -10,6 +10,24 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
 
 This guide outlines the processes for canceling, speeding up, and dropping transactions. By mastering these techniques, you can ensure that your transactions are processed promptly and accurately. 
 
+## Paginate the transaction list
+
+The [List all transactions](/v2/api-references/transactions/list-all-transactions) operation returns results one page at a time. Pagination is controlled by two separate cursor parameters, `before` and `after`, which move the page window in opposite directions. The `direction` parameter is unrelated to paging and only controls sort order.
+
+- `after`: Pages forward to the next page. Pass the `after` value returned in the `pagination` object of the previous response.
+- `before`: Pages backward to the previous page. Pass the `before` value returned in the `pagination` object of the previous response.
+
+On your first request, do not include either `before` or `after`. Cobo returns the first page together with a `pagination` object that contains the `before` and `after` cursor values you use to navigate from it. Use the `limit` parameter to set the number of records per page.
+
+<Note>The `direction` parameter is a separate sort control and does not move the page window. It accepts `ASC` (ascending, the default) or `DESC` (descending), and only determines the order in which records are returned. Paging forward and backward is always controlled by `after` and `before`.</Note>
+
+### Pagination walkthrough
+
+1. Send the first request with no `before` and no `after` parameter. The response returns the first page and a `pagination` object containing `before`, `after`, and `total_count`.
+2. To move forward to the next page, send another request with `after` set to the `after` value from the previous response.
+3. To move backward to the previous page, send another request with `before` set to the `before` value from the previous response.
+4. When the response returns an empty `after` value, you have reached the end of the results. When the response returns an empty `before` value, you have reached the start of the results.
+
 ## Cancel a transaction
 
 Canceling a transaction stops it while it is still pending.

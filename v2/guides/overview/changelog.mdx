@@ -12,6 +12,30 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.38.0
+
+This version was released on June 25, 2026.
+
+### Compatibility changes
+
+- Added the `result_token` field to `user_details` in the response of the [Get transaction approval details](/v2/api-references/transactions/get-transaction-approval-details) operation. When verifying approval signatures, the full signing content is constructed as `{message}||{result_token}`.
+- Clarified that the `PendingAuthorization` transaction status covers both manual approval steps and internal automated risk-control, KYT, and compliance screening checks. A transaction in this status does not necessarily require human action. See [Transaction statuses and sub-statuses](/v2/guides/transactions/status).
+
+## v1.37.0
+
+This version was released on June 10, 2026.
+
+### Compatibility changes
+
+- Added the following new webhook event types:
+  - `wallets.updated`
+  - `mpc_vaults.updated`
+  - `mpc_vaults.deleted`
+  - `organizations.updated`
+- Added two new webhook event data types, `Organization` and `FiatTransaction`, to the webhook event payload. Affected operations:
+  - [Retrieve event information](/v2/api-references/developers--webhooks/retrieve-event-information)
+  - [List all webhook events](/v2/api-references/developers--webhooks/list-all-webhook-events)
+
 ## v1.36.0
 
 This version was released on May 27, 2026.

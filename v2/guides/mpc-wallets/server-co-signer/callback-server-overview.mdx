@@ -24,6 +24,23 @@ After startup, the TSS Node establishes a persistent connection with the Cobo Wa
 
 Without the callback mechanism, the TSS Node executes tasks directly or waits for approval from the [embedded risk control module](/v2/guides/mpc-wallets/server-co-signer/embedded-risk-controls) if it is enabled. With the callback mechanism enabled, the TSS Node requests approval from your TSS Node callback servers for each task. The TSS Node only executes tasks that all of your callback servers approve.
 
+## Callback request types
+
+Each callback request carries a `request_type` field that identifies the operation the TSS Node asks your callback server to approve.
+
+| `request_type` | Name | Meaning |
+|---|---|---|
+| `0` | `TypePing` | Heartbeat check that verifies your callback server is reachable. |
+| `1` | `TypeKeyGen` | A request to create new key shares for your MPC Wallets. |
+| `2` | `TypeKeySign` | A request to sign a transaction or message. |
+| `3` | `TypeKeyReshare` | A request to redistribute key shares to a new key share holder group. |
+
+For the full payload schema of each request type, and for the HTTP response your callback server must return, see [Callback request and response formats](/v2/guides/mpc-wallets/server-co-signer/callback-server-data-structure).
+
+<Note>
+These callback `request_type` values are sent by the TSS Node to your callback server for approval. They are distinct from Cobo webhook event types (such as `wallets.transaction.*` and `wallets.mpc.tss_request.*`), which the WaaS service sends to notify your application of status changes. For webhook event types, see [Webhook event types](/v2/guides/webhooks-callbacks/webhook-event-type).
+</Note>
+
 ## Communication security
 
 The TSS Node and callback server communicate via HTTP, using JSON Web Token (JWT) with RS256 signing algorithm to ensure secure data transmission. This involves:

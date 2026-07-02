@@ -92,6 +92,10 @@ callback:
 | source_addresses | `array[object]` | 交易源地址的信息。详情请参阅[列出钱包地址](/v2/api-references/wallets/list-wallet-addresses)操作的响应。 |
 | transaction | `object` | 要签名的交易信息。详情请参阅[获取交易信息](/v2/api-references/transactions/get-transaction-information)操作的响应。 |
 
+<Note>
+`transaction` 对象包含一个 `initiator_type` 字段，用于标识交易的发起方式，因此您的回调服务器可以区分交易，例如区分通过 API 发起的交易和通过 App 发起的交易。可能的值为 `API`（通过 WaaS API 发起）、`Web`（通过 Cobo Portal 发起）、`App`（通过 Cobo Portal Apps 发起）和 `External`（在 Cobo 之外发起）。有关完整的交易结构，请参阅[获取交易信息](/v2/api-references/transactions/get-transaction-information)操作的响应。
+</Note>
+
 ### TypeKeyReshare 请求
 
 用于[密钥reshare](https://manuals.cobo.com/cn/portal/mpc-wallets/ocw/manage-key-share-groups#manage-recovery-groups)操作。reshare意味着使用现有的私钥分片持有者组为新组生成私钥分片。
@@ -131,6 +135,34 @@ callback:
 | request_id | `string` | 回调请求的唯一 ID。|
 | action | `string` | 要采取的操作。可能的值：<br/>- `APPROVE`：批准请求并继续操作<br/>- `REJECT`：拒绝请求并停止操作 |
 | error | `string` | 错误消息：<br/>- 当 `status` 不为 `0` 时：包含回调服务器的内部错误消息。<br/>- 当 `status` 为 `0` 且 action 为 `REJECT` 时：包含拒绝的具体原因。 |
+
+### HTTP 响应要求
+
+上述回调响应是 HTTP 响应的 JSON 包体。请使用 HTTP `200`（OK）状态码返回您的响应，并将包体中的 `status` 字段设置为 `0`，以表明您的回调服务器已成功处理该回调。
+
+HTTP 状态码和包体中的 `status` 字段是不同的：HTTP 状态码表示 HTTP 请求是否到达并由您的回调服务器处理，而包体中的 `status` 字段表示回调的处理结果——值为 `0` 表示成功，任何其他值表示回调服务器在处理请求时发生了错误。
+
+#### 示例
+
+```json
+// 来自 TSS Node 的回调请求（TypeKeySign）
+{
+  "request_id": "f1e2d3c4b5a6",
+  "request_type": 2,
+  "request_detail": "{...}",
+  "extra_info": "{...}"
+}
+```
+
+```json
+// 回调响应（HTTP 状态码 200）
+{
+  "status": 0,
+  "request_id": "f1e2d3c4b5a6",
+  "action": "APPROVE",
+  "error": ""
+}
+```
 
 ### 重要说明
 

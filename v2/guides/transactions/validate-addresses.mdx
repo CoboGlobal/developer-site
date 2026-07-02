@@ -1,0 +1,38 @@
+---
+title: "Validate addresses"
+lang: "en"
+description: "Validate transaction destination addresses server-side with the Cobo API instead of hand-coded, per-chain format rules."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+Validating an address before you use it as a transaction destination helps you avoid failed transactions and funds sent to malformed addresses. The canonical way to validate an address is to call the Cobo API, which performs the check server-side for the specified chain. Do not rely on hand-coded, per-chain address-format rules in your own integration, because address formats differ by chain and change over time.
+
+## Validate a single address (WaaS 2.0)
+
+Use the [Check address validity](/v2/api-references/wallets/check-address-validity) operation (`GET /wallets/check_address_validity`). Pass two query parameters: `chain_id` (the chain to validate against) and `address` (the address to check). The response contains a single boolean field, `validity`: `true` means the address is valid for that chain, and `false` means it is not. The response is a boolean only and does not include a reason field.
+
+Worked example — validating an XRP address: pass `chain_id` set to `XRP` and `address` set to the address you want to check. Because validation is performed server-side per `chain_id`, the same address is judged against the rules of the chain you specify.
+
+## Validate multiple addresses (WaaS 2.0)
+
+Two batch operations are available:
+
+- [Check addresses validity](/v2/api-references/wallets/check-addresses-validity) (`GET /wallets/check_addresses_validity`): validates multiple addresses for a single chain in one request.
+- [Check address validity across chains](/v2/api-references/wallets/check-address-validity-across-chains) (`GET /wallets/check_address_chains_validity`): validates one address across multiple chains in one request.
+
+## Validate an address (WaaS 1.0)
+
+If you are still on WaaS 1.0, use the equivalent legacy operations:
+
+- [GET /v1/custody/is_valid_address/](/v1/api-references/custody-wallet/is_valid_address) for Custodial Wallets.
+- [GET /v1/custody/mpc/is_valid_address/](/v1/api-references/mpc-wallet/mpc_is_valid_address) for MPC Wallets.
+
+It is recommended to migrate to WaaS 2.0 and use Check address validity.
+
+## Related guides
+
+- [List all transactions](/v2/api-references/transactions/list-all-transactions)
+- [Check address validity](/v2/api-references/wallets/check-address-validity)
