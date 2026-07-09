@@ -12,6 +12,28 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.39.0
+
+此版本于 2026 年 7 月 9 日发布。
+
+### 新功能
+
+- 在 [查询已启用代币](/v2/api-references/wallets/list-enabled-tokens) 接口中新增 `token_addresses` 查询参数，支持按代币合约地址过滤（最多 500 个，逗号分隔，大小写不敏感）。同一合约地址可能部署在多条链上，建议配合 `chain_ids` 缩小范围。原生代币无合约地址，不会出现在结果中。
+- 在 [列出交易模板](/v2/api-references/transactions/list-transaction-templates) 接口中新增 `action` 查询参数，用于指定审批动作类型（`Transfer`、`Drop` 或 `SpeedUp`）。省略时默认为 `Transfer`。
+- 增强 [查询交易详情](/v2/api-references/transactions/get-transaction-information) 和 [查询交易列表](/v2/api-references/transactions/list-all-transactions) 接口：当 `extra_type=FeePayer` 时，`transaction.extra` 可返回 `FeePayer` 信息，包含指定的 Solana fee payer 地址。
+- 在审批响应的 `user_details` 中新增 `action` 字段。受影响的接口：
+  - [获取交易审批详情](/v2/api-references/transactions/get-transaction-approval-details)
+  - [列出交易审批详情](/v2/api-references/transactions/list-transaction-approval-details)
+
+### 兼容性变更
+
+- 出于安全考虑，[签署消息](/v2/api-references/transactions/sign-message) 接口中的 `Raw_Message_Signature` 已废弃，不再允许使用，未来版本可能移除。
+- 澄清 [创建钱包](/v2/api-references/wallets/create-wallet) 接口的钱包名称约束：`name` 为必填且不能为空；不支持 `@` 等特殊字符，否则返回 `400 Bad Request`。
+- 澄清 [估算交易费用](/v2/api-references/transactions/estimate-transaction-fee) 接口返回的手续费预估为瞬时数据、时效较短。提交提现前应重新估算，避免因手续费不足导致交易被拒绝。
+- 澄清 [创建自动归集任务](/v2/api-references/autosweep/create-auto-sweep-task) 接口的异步行为：任务创建后 `status` 为 `Submitted` 且 `transaction_ids` 为空属正常；请轮询 [获取自动归集任务详情](/v2/api-references/autosweep/get-auto-sweep-task-details) 直至 `status` 变为 `TransactionCreated`。归集需要原生链币支付 gas，可从充币地址、Fee Station 或 Auto-Fuel 获取。
+- 澄清 [查询交易详情](/v2/api-references/transactions/get-transaction-information) 和 [查询交易列表](/v2/api-references/transactions/list-all-transactions) 响应中的 `transaction_hash` 仅在链上广播后才有值，广播前可能为 `null` 或缺失。
+- 澄清 Solana 交易费用字段：`fee_used` 仅包含链上网络手续费，不含 ATA 激活租金；费用预估响应中的 `rent_amount` 为 ATA 激活租金预留字段，当前不返回。
+
 ## v1.38.0
 
 此版本于 2026 年 6 月 25 日发布。
