@@ -15,12 +15,21 @@ Webhook 和 Callback 是 WaaS 服务与您的 App 进行通信的重要机制。
 
 Callback 和 webhook 在您的业务操作中具有不同的用途。
 
-| 机制 | 描述                        | 触发条件                                        | 接收到消息后需要采取的操作              |
-| ------------- | -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Callback     | 类似于 2FA 验证。您必须注册一个 Callback Endpoint才能批准并完成代币提币。 | 当您使用 WaaS API 发起提币或合约调用时触发。 | 检查交易是否符合预期，并以成功状态码（`200` 或 `201`）和响应体 `ok` 或 `deny` 响应，以指示交易批准或拒绝。 |
-| Webhook      | 用作事件的实时通知，例如交易状态更新。  | 当某些事件发生时触发，例如交易状态或 TSS 请求状态更改，基于您订阅的事件类型。              | 以成功状态码（`200` 或 `201`）响应。             |
+| 机制 | 描述 | 触发条件 | 接收到消息后需要采取的操作 | 方向 | 是否必须 |
+| --- | --- | --- | --- | --- | --- |
+| Callback | 类似于 2FA 验证。您必须注册一个 Callback Endpoint 才能批准并完成代币提币。 | 当您使用 WaaS API 发起提币或合约调用时触发。 | 检查交易是否符合预期，并以成功状态码（`200` 或 `201`）和响应体 `ok` 或 `deny` 响应，以指示交易批准或拒绝。 | Cobo WaaS 服务向您的服务器 Endpoint 推送消息，由您调用 API 发起操作时触发。 | 是——您必须注册 Callback Endpoint 才能批准并完成代币提币和合约调用。您的服务器必须以 `ok` 或 `deny` 响应。 |
+| Webhook | 用作事件的实时通知，例如交易状态更新。 | 当某些事件发生时触发，例如交易状态或 TSS 请求状态更改，基于您订阅的事件类型。 | 以成功状态码（`200` 或 `201`）响应。 | Cobo WaaS 服务向您的服务器 Endpoint 推送消息，由订阅的平台事件触发。 | 否——仅订阅您需要的事件类型即可。 |
 
 您可以在 **Cobo Portal** > **开发者** > **Webhook 事件** / **Callback消息** 中查看您团队中所有 webhook 事件和Callback消息的数据。
+
+<Note>
+Webhook Endpoint URL、Callback Endpoint URL 和 TSS Callback URL 是三个不同的概念：
+- **Webhook Endpoint URL**：在 Cobo Portal 的**开发者** > **WaaS 2.0** > **Webhooks** 中注册的 URL。Cobo WaaS 服务将事件通知推送到此 URL。
+- **Callback Endpoint URL**：在**开发者** > **WaaS 2.0** > **API Keys** 中与 API Key 关联的 URL。Cobo WaaS 服务将提币和合约调用的审批请求推送到此 URL。
+- **TSS Callback URL**：`cobo-tss-node-config.yaml` 中 `callback.cb_server_v2` 下的 `service_address` 字段。该 URL 由 TSS Node 软件本身（而非 WaaS 服务）在执行 MPC 签名操作前调用，在 TSS Node YAML 配置文件中设置，不在 Cobo Portal 中配置。
+
+如果您使用带有服务器联署人的 MPC 钱包，请参阅 [TSS Node Callback 机制](/v2_cn/guides/mpc-wallets/server-co-signer/callback-server-overview)。
+</Note>
 
 ## 处理 webhook 事件和Callback消息
 
@@ -34,7 +43,10 @@ Callback 和 webhook 在您的业务操作中具有不同的用途。
     - 验证签名。
     - 响应 API 请求。
     - 添加其他处理逻辑（如果适用）。
-3. 在 Cobo Portal 上注册Endpoint。
+3. 在 Cobo Portal 上注册 Endpoint。
+
+   Webhook Endpoint：在 Cobo Portal 中，前往 **开发者** > **WaaS 2.0** > **Webhooks**，然后点击**注册 Webhook Endpoint**。Callback Endpoint：在 Cobo Portal 中，前往 **开发者** > **WaaS 2.0** > **API Keys**，创建或编辑 API Key，在配置弹窗中添加 Callback URL。
+
     <Note>注册 Webhook Endpoint 时，您需要指定要订阅的事件类型。</Note>
 
 要创建Endpoint并实现处理逻辑，请参阅 [设置Callback或 Webhook Endpoint](/v2_cn/guides/webhooks-callbacks/set-up-endpoint)。
