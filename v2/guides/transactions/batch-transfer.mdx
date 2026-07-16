@@ -31,6 +31,12 @@ The address of the batch transfer smart contract is [`0x3d963e23a9229D2ACd25E9FF
 - You have basic knowledge of interacting with smart contracts, including preparing `calldata`, locating contract methods, and using the `approve` method on a token contract to authorize the batch transfer contract to spend tokens.  
 - The batch transfer feature currently only supports transactions initiated from MPC Wallets and Custodial Wallets (Web3 Wallets).
 
+## Risk control prerequisites
+
+Batch transfers submitted through the [Call smart contract](/v2/api-references/transactions/call-smart-contract) API are contract-call transactions. Like any contract-call transaction, they are evaluated against your organization's on-chain Transaction Policies in Cobo Portal, specifically the Contract Call Policy type. Before you submit batch transfer requests, configure a Contract Call Policy that permits calls to the batch transfer contract address (`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`) on the relevant chain for the source wallet. See [Risk controls](https://manuals.cobo.com/en/portal/risk-controls/introduction) for how to configure Transaction Policies in Cobo Portal. If no Contract Call Policy permits this contract address for the source wallet, the transaction can be rejected.
+
+Cobo Portal risk controls treat contract-call transactions and token-transfer transactions as distinct, independently configurable policy types: Contract Call Policy and Token Transfer Policy. Because this guide's batch transfers go through [Call smart contract](/v2/api-references/transactions/call-smart-contract), they are governed by Contract Call Policy, a separate configuration from the Token Transfer Policy that governs ordinary transfers submitted through [Transfer token](/v2/api-references/transactions/transfer-token). Configuring one policy type does not configure the other.
+
 ## Batch transfer of ETH
 The following steps apply to batch transfers of ETH (native coin) on the supported chains:
 
@@ -88,6 +94,7 @@ The following steps apply to batch transfers of ERC-20 tokens on the supported c
 - Number of recipients exceeds the limit.  
 - Mismatch between the `value` in the API request and the amounts in the `calldata` (for ETH transfers).  
 - Insufficient gas limit.
+- The batch transfer contract address is not covered by a Contract Call Policy configured for the source wallet, causing the transaction to be rejected with the `RejectedTransactionPolicy` status. See [Transaction status](/v2/guides/transactions/status) for the full status table.
 
 
 ## Example script for generating `calldata`

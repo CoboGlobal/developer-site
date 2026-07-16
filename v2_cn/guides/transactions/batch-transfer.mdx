@@ -32,6 +32,12 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - 具备调用链上智能合约的基础知识，包括准备 `calldata`、查找合约方法，以及在 Token 合约中找到并调用 `approve` 方法以授权批量转账合约代扣代币。
 - 当前批量转账功能仅支持使用 MPC 钱包和全托管钱包（Web3 钱包）发起交易。
 
+## 风控前提条件
+
+批量转账通过 [Call smart contract](/v2/api-references/transactions/call-smart-contract) 接口提交，属于合约交互类型的交易。与其他合约交互交易一样，此类交易会依据您所在团队在 Cobo Portal 中配置的链上交易风控策略（Transaction Policies）进行评估，具体对应 Contract Call Policy 这一策略类型。在提交批量转账请求前，请为来源钱包配置一条 Contract Call Policy，允许在相应链上调用批量转账合约地址（`0x3d963e23a9229D2ACd25E9FFC358be1a35460ecc`）。有关如何在 Cobo Portal 中配置交易风控策略，请参考[风控策略](https://manuals.cobo.com/en/portal/risk-controls/introduction)。如果没有 Contract Call Policy 允许来源钱包调用该合约地址，交易可能会被拒绝。
+
+Cobo Portal 的风控策略将合约交互交易和代币转账交易视为两种独立、可分别配置的策略类型：Contract Call Policy 与 Token Transfer Policy。由于本指南中的批量转账通过 [Call smart contract](/v2/api-references/transactions/call-smart-contract) 发起，因此由 Contract Call Policy 管控，这与管控普通转账（通过 [Transfer token](/v2/api-references/transactions/transfer-token) 发起）的 Token Transfer Policy 是各自独立的配置，配置其中一种策略并不会自动配置另一种。
+
 ## 批量转 ETH
 以下步骤适用于在支持的链上批量转账 ETH（原生币）的场景：
 
@@ -88,6 +94,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - 收款地址数量超过限制。  
 - `value` 与 `calldata` 中金额不一致（针对 ETH 转账）。  
 - Gas 预估不足。  
+- 批量转账合约地址未被来源钱包所配置的 Contract Call Policy 覆盖，导致交易被拒绝，返回 `RejectedTransactionPolicy` 状态。参考[交易状态](/v2_cn/guides/transactions/status)查看完整状态表。
 
 
 ## 生成 `calldata` 示例脚本
