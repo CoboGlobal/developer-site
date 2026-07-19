@@ -32,22 +32,22 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   <tbody>
     <tr>
       <td><code>wallets.transaction.created</code></td>
-      <td><code>Transaction</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/transaction-payload-reference"><code>Transaction</code></a></td>
       <td>A transaction has been detected on the blockchain, generating a transaction record. This event does not indicate that the transaction was successful.</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.updated</code></td>
-      <td><code>Transaction</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/transaction-payload-reference"><code>Transaction</code></a></td>
       <td>There are changes to a transaction's status or confirmation numbers.<Note>The <code>wallets.transaction.updated</code> event covers the entire lifecycle of a transaction, including creation, completion, and failure. If you want to track every status change, you need only subscribe to this event.</Note></td>
     </tr>
     <tr>
       <td><code>wallets.transaction.succeeded</code></td>
-      <td><code>Transaction</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/transaction-payload-reference"><code>Transaction</code></a></td>
       <td>A transaction has been successfully completed.</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.failed</code></td>
-      <td><code>Transaction</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/transaction-payload-reference"><code>Transaction</code></a></td>
       <td>A transaction failed.</td>
     </tr>
     <tr>
@@ -290,8 +290,11 @@ The `compliance.kyt.screenings.status.updated` event carries a `ComplianceKytScr
 
 The case decision that drives these status changes is represented by `KytScreeningsDecisionsType`, which has the values `Approval`, `ApprovalWithAlert`, `Rejection`, and `ManualReview`.
 
-## Data structure of webhook events           
-For a complete introduction of the webhook event data and its data structure, refer to the [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) property in the response of the Retrieve event information operation or the [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) property in the response of the List all webhook event operation. 
+## Data structure of webhook events
+
+For the wallets.transaction.* event family, see [Transaction webhook payload reference](/v2/guides/webhooks-callbacks/transaction-payload-reference) for the full field reference and worked JSON examples.
+
+For a complete introduction to the webhook event data and its data structure across all event types, refer to the [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) property in the response of the Retrieve event information operation or the [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) property in the response of the List all webhook event operation.
 
 <img src="/v2/images/guides/webhook_data_structure.png" class="screenshot_full_screen" alt="Screenshot of the data property" />
 
