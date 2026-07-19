@@ -1,0 +1,32 @@
+---
+title: "Balance update 负载字段词典"
+lang: "zh-hans"
+description: "定义 BalanceUpdateInfo Webhook 负载字段及触发行为。"
+sidebarTitle: "Balance update 字段词典"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文定义 `BalanceUpdateInfo` Webhook 事件的高频字段和触发行为。
+
+### Trigger behavior
+
+两种 balance update 事件类型都由 `BalanceEventManager` 派发；该 manager 根据 wallet type 选择 `wallet.mpc.balance.updated` 或 `wallet.web3.balance.updated`，并发送相同的负载结构（`custody/waas2/webhooks/managers/balance_event.py:15-16`，`custody/waas2/webhooks/managers/balance_event.py:80-105`）。已确认的唯一入口是 `on_eoa_wallet_balance_update`（`custody/custody/web3/managers/transaction_request.py:6427`）。
+
+该事件源自 blockchain-scanner callback pipeline。`BlockChainHandler.handle_bc_callback_message` 会把 scanner balance refresh message 路由到 `create_asset_update_webhook`；当 chain-scanning 和 balance-refresh pipeline 观察到新的或已变化的链上余额时，它会发出 webhook（`custody/custody/handler/blockchain_handler.py:81-117`，`custody/custody/handler/blockchain_handler.py:156`，`custody/custody/handler/blockchain_handler.py:890`，`custody/custody/handler/blockchain_handler.py:899`）。它不是固定周期的 reconciliation job，也不依赖 transaction ledger completion。
+
+### Field dictionary
+
+| 字段 | 说明 |
+|-------|-------------|
+| `token_id` | 余额发生变化的 token 或 currency。 |
+| `address` | 被刷新余额的 on-chain address。 |
+| `wallet_uuid` | 此 balance 负载中的 wallet identifier。该字段名为 `wallet_uuid`，不是 Transaction 和 Addresses 负载中常见的 `wallet_id`。 |
+| `updated_timestamp` | 记录 balance update 的时间。 |
+| `balance.total` | 该 address 上该 token 的 total balance。`Balance` schema 要求此字段（`dev_openapi.yaml:6801-6830`）。 |
+| `balance.available` | 当前可用的 balance。`Balance` schema 要求此字段（`dev_openapi.yaml:6801-6830`）。 |
+| `balance.pending` | 等待最终可用的 balance。 |
+| `balance.locked` | 由于平台或流程约束而 locked 的 balance。 |
+| `balance.frozen` | 由于 compliance 或 risk control 而 frozen 的 balance。 |

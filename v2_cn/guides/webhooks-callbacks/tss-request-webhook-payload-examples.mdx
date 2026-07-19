@@ -1,0 +1,50 @@
+---
+title: "TSS request Webhook 负载示例"
+lang: "zh-hans"
+description: "展示 MPC key generation 和 recovery 请求的 TSSRequest Webhook 事件负载完整 JSON 示例。"
+sidebarTitle: "TSS request Webhook 负载示例"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文展示 `wallets.mpc.tss_request.*` Webhook 事件中传递的完整 `TSSRequest` 数据类型负载。事件列表请参阅 [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。
+
+### KeyGen request created
+
+`KeyGen` 请求可以携带 `source_key_share_holder_group: null`。Webhook manager 会让 KeyGen 请求的 source group 为空，并为 reshare 或 migrate 类请求填充该字段（`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:115-128`）。
+
+```json
+{
+  "tss_request_id": "tss-req-20250701-0001",
+  "source_key_share_holder_group": null,
+  "target_key_share_holder_group_id": "kshg-target-001",
+  "type": "KeyGen",
+  "status": "PendingKeyHolderConfirmation",
+  "description": "Create an MPC key share holder group",
+  "created_timestamp": 1751328000000
+}
+```
+
+### Recovery request succeeded
+
+对于 `Recovery` 请求，`source_key_share_holder_group` 标识 source key share holder group，以及该 source group 中包含的 TSS Node ID（`dev_openapi.yaml:7877-7896`）。
+
+```json
+{
+  "tss_request_id": "tss-req-20250701-0002",
+  "source_key_share_holder_group": {
+    "key_share_holder_group_id": "kshg-source-001",
+    "tss_node_ids": [
+      "tss-node-001",
+      "tss-node-002"
+    ]
+  },
+  "target_key_share_holder_group_id": "kshg-target-002",
+  "type": "Recovery",
+  "status": "Success",
+  "description": "Recover an MPC key share holder group",
+  "created_timestamp": 1751328600000
+}
+```

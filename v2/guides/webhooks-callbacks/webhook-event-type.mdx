@@ -107,6 +107,8 @@ Because a callback is triggered when you initiate a withdrawal or contract call,
   </tbody>
 </table>
 
+For complete example payloads of the Fee Station `Transaction` data type, see [Fee Station transactions](/v2/guides/webhooks-callbacks/transaction-webhook-payload-examples#fee-station-transactions).
+
 ### MPC TSS request events
 
 <table class="table-three-cols">
@@ -141,6 +143,8 @@ Because a callback is triggered when you initiate a withdrawal or contract call,
   </tbody>
 </table>
 
+For complete example payloads of the `TSSRequest` data type, see [TSS request webhook payload examples](/v2/guides/webhooks-callbacks/tss-request-webhook-payload-examples).
+
 ### Wallet and address management events
 
 <table class="table-three-cols">
@@ -171,6 +175,8 @@ Because a callback is triggered when you initiate a withdrawal or contract call,
 </table>
 
 <Note>Activating a Solana token sub-address (Associated Token Account) does not emit a `wallets.addresses.created` event. The rent transfer that funds the activation does not emit any `wallets.transaction.*` event and does not produce a deposit or transaction record. As a result, Solana token account activation and its rent are not visible through webhooks. For details, see [Solana token account rent](/v2/guides/transactions/solana-token-account-rent).</Note>
+
+For complete example payloads of the `Addresses`, `WalletInfo`, and `MPCVault` data types, see [Wallet and address webhook payload examples](/v2/guides/webhooks-callbacks/wallet-address-webhook-payload-examples).
 
 ### Token and chain management events
 
@@ -216,6 +222,8 @@ Because a callback is triggered when you initiate a withdrawal or contract call,
   </tbody>
 </table>
 
+For complete example payloads of the `Tokens`, `Chains`, and `TokenListing` data types, see [Token and chain webhook payload examples](/v2/guides/webhooks-callbacks/token-chain-webhook-payload-examples).
+
 ### Balance update events
 
 <table class="table-three-cols">
@@ -240,6 +248,8 @@ Because a callback is triggered when you initiate a withdrawal or contract call,
   </tbody>
 </table>
 
+For complete example payloads of the `BalanceUpdateInfo` data type, see [Balance update webhook payload examples](/v2/guides/webhooks-callbacks/balance-update-webhook-payload-examples).
+
 ### Compliance events
 
 <table class="table-three-cols">
@@ -263,6 +273,42 @@ Because a callback is triggered when you initiate a withdrawal or contract call,
     </tr>
   </tbody>
 </table>
+
+### `ComplianceDisposition` event data
+
+The `compliance.disposition.status.updated` event carries a `ComplianceDisposition` payload (`DispositionEventData`) with `transaction_id`, `disposition_type`, `disposition_status`, `destination_address`, `disposition_amount`, and `updated_timestamp` (`dev_openapi.yaml:18864-18895`).
+
+Unlike KYT screening status updates, this event follows a receive-and-forward pattern. An external screening-app service posts a status change to `DispositionFundsWebhookApi`; the request then flows through `ScreeningWebhookController.send_events` into `ScreeningWebhookProcessor.create_webhook_event`, which filters for `compliance.disposition.status.updated` before dispatching the webhook (`custody/waas2/compliance/compliance_apps/urls_app.py:51-54`, `custody/waas2/compliance/compliance_apps/views/request_approval.py:173-194`, `custody/waas2/compliance/compliance_apps/controllers/screening_webhook.py:8-11`, `custody/waas2/compliance/compliance_apps/processors/screening_webhook.py:18`, `custody/waas2/compliance/compliance_apps/processors/screening_webhook.py:44-68`).
+
+**`disposition_type` (`DispositionType`)**
+
+| Value | Meaning |
+|-------|---------|
+| `Refund` | Refunds funds through the `compliance/funds/disposition/refund` operation (`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:36-61`). |
+| `Isolate` | Isolates funds through the `compliance/funds/disposition/isolate` operation (`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:64-89`). |
+| `Unfreeze` | Unfreezes funds through the `compliance/funds/disposition/unfreeze` operation (`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:92-119`). |
+
+Each operation forwards the disposition request to the external screening-app service through `ScreeningAppClientProxy` (`custody/waas2/compliance/compliance_apps/clients/screening_app.py:74-90`).
+
+**`disposition_status` (`DispositionStatus`)**
+
+| Value | Meaning |
+|-------|---------|
+| `Submitted` | The disposition request has been submitted. |
+| `Refunding` | A refund of the funds is in progress. |
+| `Refunded` | The funds have been refunded. |
+| `RefundFailed` | The refund attempt failed. |
+| `Frozen` | The associated funds have been frozen. |
+| `Unfreezing` | The funds are being unfrozen. |
+| `Unfrozen` | The funds have been unfrozen. |
+| `UnfreezeFailed` | The attempt to unfreeze the funds failed. |
+| `Isolating` | The funds are being isolated. |
+| `Isolated` | The funds have been isolated. |
+| `IsolateFailed` | The attempt to isolate the funds failed. |
+| `CoboDisposition` | The funds are being handled through a Cobo disposition. |
+| `Normal` | The funds are in a normal state with no compliance action applied. |
+
+These values are defined by the `DispositionStatus` schema (`dev_openapi.yaml:18719-18736`).
 
 ### `ComplianceKytScreenings` event data
 

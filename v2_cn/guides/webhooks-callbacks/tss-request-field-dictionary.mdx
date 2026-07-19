@@ -1,0 +1,48 @@
+---
+title: "TSS request 负载字段词典"
+lang: "zh-hans"
+description: "定义 TSSRequest Webhook 负载中的字段和触发行为。"
+sidebarTitle: "TSS request 字段词典"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文定义 `wallets.mpc.tss_request.*` Webhook 事件使用的高频 `TSSRequest` 字段。Webhook 负载与已记录的 `TSSRequest` schema 完全一致，没有额外字段或遗漏字段（`custody/waas2/mpc/bo/dev/webhook.py:8-9`，`custody/waas2/mpc/bo/dev/vault.py:235-242`，`dev_openapi.yaml:7763`）。
+
+### Request type
+
+| 值 | 说明 |
+|-------|-------------|
+| `KeyGen` | 创建新的 key share holder group。 |
+| `KeyGenFromKeyGroup` | 从已有 key group 创建新的 key share holder group。 |
+| `Recovery` | 恢复或重组已有 key share holder group。 |
+
+这些值由 `TSSRequest` schema 定义（`dev_openapi.yaml:7842-7855`）。
+
+### Request status
+
+| 值 | 说明 |
+|-------|-------------|
+| `PendingKeyHolderConfirmation` | 请求正在等待足够的 key share holder 批准。 |
+| `KeyHolderConfirmationFailed` | key share holder 未能批准该 TSS request 的操作。 |
+| `KeyGenerating` | 正在为该 TSS request 的操作生成 key share。 |
+| `MPCProcessing` | TSS request 审批正在等待开始或正在进行中。 |
+| `KeyGeneratingFailed` | 该 TSS request 操作的 key share 生成流程失败。 |
+| `Success` | 请求已成功完成。 |
+
+这些值由 `TSSRequest` schema 定义（`dev_openapi.yaml:7815-7841`）。
+
+### Event trigger behavior
+
+四种事件类型都由 `WalletMpcWebhookEventManager.create_tss_request_event` 派发（`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:24-73`）。
+
+| Event type | Trigger |
+|------------|---------|
+| `wallets.mpc.tss_request.created` | 请求新建或进入 new-request 状态（`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:42-47`）。 |
+| `wallets.mpc.tss_request.succeeded` | 请求状态变为 `Success`（`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:50-57`）。 |
+| `wallets.mpc.tss_request.failed` | 请求进入最终失败状态（`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:59-66`）。 |
+| `wallets.mpc.tss_request.updated` | 其他受支持的状态转换。该 fallback 仅限 portal key generation 和 reshare 请求（`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:29-33`，`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:68-73`）。 |
+
+创建事件由 MPC vault 创建流程发出（`custody/waas2/mpc/processors/mpc_vault.py:1087-1210`，`custody/waas2/mpc/processors/dev/mpc_vault.py:1051-1052`）。状态转换事件由 TSS Node 和 TSS request service 发出（`custody/custody/managers/tss_node_v2.py:2284`，`custody/custody/managers/tss_node_v2.py:2451`，`custody/custody/managers/tss_node_v2.py:2597`，`custody/custody/managers/tss_node_v2.py:2988`，`custody/custody/managers/tss_node_v2.py:3023`，`custody/custody/managers/tss_node_v2.py:3133-3163`，`custody/custody/managers/tss_node_v2.py:3198`，`custody/custody/managers/tss_node_v2.py:3227`，`custody/custody/managers/tss_node_v2.py:3241`，`custody/custody/services/tss_request_service_v2.py:294`，`custody/custody/services/tss_request_service_v2.py:341`，`custody/custody/services/tss_request_service_v2.py:357`，`custody/custody/services/tss_request_service_v2.py:401`）。

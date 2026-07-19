@@ -38,3 +38,13 @@ RBF, or Replace-By-Fee, lets a pending transaction be replaced by another transa
 `cobo_category` is an array of Cobo-defined category strings that describes the logical category or purpose of a transaction. The Fee-Station-related subset is documented in [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories).
 
 Beyond Fee Station, `AutoSweep` is a high-signal value because it identifies an automatic fund-consolidation transaction. It can explain balance movements that were not initiated by an explicit API call. The enum also includes staking, screening, tokenization, and other categories. See [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories) for the broader reference.
+
+### `fueling_info` (Fee Station only)
+
+`fueling_info` is populated only when the transaction has an associated Fee Station fueling record; otherwise it is null (`custody/waas2/transactions/mongo/manager/read/waas_transaction.py:154-161`). Use it with `cobo_category`, especially `AutoFueling`, to connect the Fee Station gas transaction to the fueling request and the main transaction.
+
+| Field | Description |
+|-------|-------------|
+| `request_id` | The Fee Station fueling request identifier. |
+| `transaction_id` | The transaction ID of the gas or fee transaction initiated by Fee Station. |
+| `main_transaction_id` | The transaction ID of the main transaction that required fueling. This field is set only when the current record is a gas or fee transaction initiated by Fee Station (`dev_openapi.yaml:10444-10461`). |

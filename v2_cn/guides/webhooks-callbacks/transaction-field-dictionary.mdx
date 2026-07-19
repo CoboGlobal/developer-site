@@ -38,3 +38,13 @@ RBF（Replace-By-Fee）允许用另一笔交易替换待处理交易。当一笔
 `cobo_category` 是 Cobo 定义的类别字符串数组，用于描述交易的逻辑类别或用途。Fee Station 相关子集已在 [Cobo-defined categories](/v2_cn/guides/transactions/manage-transactions#cobo-defined-categories) 中说明。
 
 除 Fee Station 外，`AutoSweep` 是一个高频关键值，因为它标识自动资金归集交易。它可解释并非由显式 API 调用发起的余额变动。该枚举还包括 staking、screening、tokenization 以及其他类别。更完整的参考请参阅 [Cobo-defined categories](/v2_cn/guides/transactions/manage-transactions#cobo-defined-categories)。
+
+### `fueling_info`（仅 Fee Station）
+
+只有当交易存在关联的 Fee Station fueling 记录时，`fueling_info` 才会被填充；否则为 null（`custody/waas2/transactions/mongo/manager/read/waas_transaction.py:154-161`）。请将它与 `cobo_category`（尤其是 `AutoFueling`）结合使用，以把 Fee Station gas 交易关联到 fueling 请求和主交易。
+
+| 字段 | 说明 |
+|-------|-------------|
+| `request_id` | Fee Station fueling 请求标识符。 |
+| `transaction_id` | Fee Station 发起的 gas 或费用交易的交易 ID。 |
+| `main_transaction_id` | 需要 fueling 的主交易的交易 ID。只有当当前记录是 Fee Station 发起的 gas 或费用交易时，此字段才会被设置（`dev_openapi.yaml:10444-10461`）。 |

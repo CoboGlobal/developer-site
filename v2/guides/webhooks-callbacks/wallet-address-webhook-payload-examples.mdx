@@ -1,0 +1,90 @@
+---
+title: "Wallet and address webhook payload examples"
+lang: "en"
+description: "Full JSON examples of wallet, address, and MPC vault management webhook event payloads."
+sidebarTitle: "Wallet and address payload examples"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page shows complete payload examples for wallet and address management webhook events. For the event list, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+
+### Address creation
+
+`wallets.addresses.created` delivers an `Addresses` payload. It fires for both single and batch address creation because the signal handler reads `kwargs.get("batch", [instance])` and sends the batch when present (`custody/waas2/webhooks/apps.py:52-54`, `custody/waas2/webhooks/managers/address_event.py:171`).
+
+```json
+{
+  "addresses": [
+    {
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+      "chain_id": "ETH",
+      "memo": null,
+      "path": "m/44'/60'/0'/0/0",
+      "encoding": null,
+      "pubkey": "03f0288924f1c...",
+      "x_only_pubkey": null,
+      "root_pubkey": "xpub6CUGRU...",
+      "taproot_script_tree_hash": null,
+      "taproot_internal_address": null,
+      "stellar_trusted_token_ids": []
+    },
+    {
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "address": "bc1qexampleaddress0000000000000000000000000",
+      "chain_id": "BTC",
+      "memo": null,
+      "path": "m/84'/0'/0'/0/0",
+      "encoding": "ENCODING_BECH32",
+      "pubkey": "02c6047f9441ed...",
+      "x_only_pubkey": "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+      "root_pubkey": "xpub6DExample...",
+      "taproot_script_tree_hash": null,
+      "taproot_internal_address": "bc1pinternaladdress000000000000000000000000",
+      "stellar_trusted_token_ids": []
+    }
+  ]
+}
+```
+
+### Wallet creation
+
+`wallets.created` delivers a `WalletInfo` payload. The webhook is emitted from a generic wallet-source creation path used across wallet types, and the payload variant is selected through `WalletController.get_wallet_details` (`custody/waas2/base/managers/wallet_source.py:23-49`, `custody/waas2/base/controllers/dev/wallets.py:40-59`, `custody/waas2/base/controllers/dev/wallets.py:168-174`).
+
+```json
+{
+  "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "wallet_type": "MPC",
+  "wallet_subtype": "Org-Controlled",
+  "name": "Treasury MPC Wallet",
+  "vault_id": "vault-20250701-001",
+  "project_id": "project-20250701-001"
+}
+```
+
+### MPC vault creation
+
+`mpc_vaults.created` delivers an `MPCVault` payload. It fires for both Org-Controlled and User-Controlled vaults, and `root_pubkeys` is a list of objects rather than a list of bare strings (`custody/waas2/webhooks/managers/vault_event.py:15-24`, `custody/waas2/mpc/processors/dev/mpc_vault.py:1174-1202`, `dev_openapi.yaml:7697-7723`).
+
+```json
+{
+  "vault_id": "vault-20250701-001",
+  "project_id": "project-20250701-001",
+  "name": "Treasury MPC Vault",
+  "type": "Org-Controlled",
+  "root_pubkeys": [
+    {
+      "root_pubkey": "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKp...",
+      "curve": "SECP256K1"
+    },
+    {
+      "root_pubkey": "xpub6DExampleRootPubkeyForEd25519...",
+      "curve": "ED25519"
+    }
+  ],
+  "created_timestamp": 1751328000000
+}
+```

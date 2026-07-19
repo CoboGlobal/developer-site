@@ -1,0 +1,44 @@
+---
+title: "Token and chain payload field dictionary"
+lang: "en"
+description: "Definitions and trigger behavior for token, chain, and token listing webhook payloads."
+sidebarTitle: "Token and chain field dictionary"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page defines high-signal fields and trigger behavior for token and chain management webhook events.
+
+### Token scope events
+
+`wallet.token.enabled` and `wallet.token.disabled` are emitted when Cobo internal admin tooling changes a token's wallet-scope visibility. They are sent from `CustodyCoinManager.update_asset_coin`, with callers in Aladdin and internal WaaS token tooling (`custody/coin/managers/coin.py:793`, `custody/coin/managers/coin.py:842`, `custody/aladdin/controller/asset_coin.py:35`, `custody/waas2/internal/managers/token.py:49`). They are not triggered by an organization self-service action.
+
+| Field | Description |
+|-------|-------------|
+| `tokens` | The enabled or disabled token records. Each item follows `TokenInfo` (`dev_openapi.yaml:6566-6632`). |
+| `wallet_type` | The wallet family whose token scope changed. |
+| `wallet_subtypes` | The wallet subtypes affected by the token-scope change. |
+
+### Chain scope events
+
+`wallet.chain.enabled` and `wallet.chain.disabled` are emitted by an MFA-guarded organization-facing action. They fire when an organization admin updates which chains their package or wallet type supports through `package_chain_update` (`custody/waas2/data/controllers/package.py:436-463`).
+
+| Field | Description |
+|-------|-------------|
+| `chains` | The enabled or disabled chain records. Each item follows `ChainInfo` (`dev_openapi.yaml:6660-6707`). |
+| `wallet_type` | The wallet family whose chain scope changed. |
+| `wallet_subtypes` | The wallet subtypes affected by the chain-scope change. |
+
+### Token listing events
+
+`wallets.token_listing.succeeded` and `wallets.token_listing.failed` are part of an end-user token listing flow. Organizations create requests with `POST wallets/tokens/listing_requests`; Cobo proxies the request to Aladdin for review, and the succeeded or failed webhook is emitted when Aladdin calls back with the final status (`custody/waas2/base/views/dev/token_listing_requests.py:33-84`, `custody/waas2/base/controllers/dev/token_listing_requests.py:338-376`, `custody/waas2/base/urls_dev.py:46`).
+
+| Field | Description |
+|-------|-------------|
+| `request_id` | The token listing request identifier. |
+| `status` | Final request status. Values are `Submitted`, `Succeeded`, and `Failed` (`dev_openapi.yaml:7510-7519`). |
+| `source` | Request source. Values are `API` and `Admin` (`dev_openapi.yaml:7520-7531`). |
+| `feedback` | Review feedback for the request, usually populated when the listing fails. |
+| `token` | The token record produced by a successful listing. It follows `TokenInfo` (`dev_openapi.yaml:6566-6632`). |

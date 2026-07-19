@@ -296,6 +296,72 @@ TRON-style transactions use the Fixed fee model. The Fixed fee model, used by TR
 }
 ```
 
+### Fee Station transactions
+
+`fee_station.transaction.*` events deliver the same `Transaction` payload schema as `wallets.transaction.*` events. The webhook code uses the same transaction detail serializer for both event families; the Fee Station branch only chooses the `fee_station.` event-type prefix and removes wallet-scope metadata fields from `wallet_scopes_info` (`custody/waas2/webhooks/managers/wallet_event_by_source.py:34-113`, `custody/waas2/webhooks/managers/wallet_event.py:42-44`).
+
+The `type` field does not distinguish Fee Station transactions. Internal Fee Station query types are mapped to the public `Deposit` or `Withdrawal` values before the payload is returned (`custody/waas2/transactions/mongo/manager/read/waas_transaction.py:712-727`, `custody/waas2/transactions/dev/enums/transaction.py:104-143`).
+
+The following AutoFueling example uses the same `Transaction` wrapper and adds Fee-Station-specific `cobo_category` and `fueling_info` values.
+
+```json
+{
+  "transaction_id": "f6b7c8d9-0a1b-4c2d-9e3f-456789abcdef",
+  "cobo_id": "20250701000106000000000000000000",
+  "request_id": null,
+  "wallet_id": "fee-station-wallet-001",
+  "type": "Withdrawal",
+  "status": "Success",
+  "sub_status": null,
+  "token_id": "ETH",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "fee-station-wallet-001",
+    "address": "0xfee0000000000000000000000000000000000001"
+  },
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+      "amount": "0.05"
+    }
+  },
+  "result": {
+    "amount": "0.05",
+    "token_id": "ETH"
+  },
+  "fee": {
+    "fee_type": "EVM_EIP_1559",
+    "token_id": "ETH",
+    "fee_used": "0.001",
+    "max_fee_per_gas": "9000000000000",
+    "max_priority_fee_per_gas": "1000000000000",
+    "gas_limit": "21000",
+    "gas_used": "21000"
+  },
+  "confirmed_num": 15,
+  "confirming_threshold": 12,
+  "transaction_hash": "0x6c7d8e9f01234567890abcdef1234567890abcdef1234567890abcdef1234",
+  "raw_tx_info": {
+    "used_nonce": 11,
+    "raw_tx": "0x02f901..."
+  },
+  "replacement": null,
+  "description": "AutoFueling transaction",
+  "created_timestamp": 1751328600000,
+  "updated_timestamp": 1751328660000,
+  "cobo_category": ["AutoFueling"],
+  "fueling_info": {
+    "request_id": "fuel-20250701-0001",
+    "transaction_id": "f6b7c8d9-0a1b-4c2d-9e3f-456789abcdef",
+    "main_transaction_id": "b3f2a891-6c4d-4e2a-8f1b-7d5e9c3a2f10"
+  }
+}
+```
+
+<Note>Use `cobo_category` to identify Fee-Station-specific transaction categories. The Fee Station values are defined by `TransactionCoboCategory` (`custody/waas2/transactions/mongo/enums/transaction_fields.py:45-63`) and are documented in [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories).</Note>
+
 ### Native coin vs. token, and Exchange Wallet asset_id
 
 For MPC Wallet, Custodial Wallet, and Smart Contract Wallet transactions, use `token_id` to identify the currency or token. `asset_id` is absent or null even for token transactions.

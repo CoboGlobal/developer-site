@@ -1,0 +1,30 @@
+---
+title: "Balance update Webhook 负载示例"
+lang: "zh-hans"
+description: "展示 BalanceUpdateInfo Webhook 事件负载的完整 JSON 示例。"
+sidebarTitle: "Balance update 负载示例"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文展示 `wallet.mpc.balance.updated` 和 `wallet.web3.balance.updated` Webhook 事件中传递的完整 `BalanceUpdateInfo` 负载。事件列表请参阅 [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。
+
+`wallet.mpc.balance.updated` 和 `wallet.web3.balance.updated` 使用相同的 schema，只是触发事件的钱包类型不同（`dev_openapi.yaml:6887-6917`）。
+
+```json
+{
+  "token_id": "ETH_USDT",
+  "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+  "wallet_uuid": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "updated_timestamp": 1751328600000,
+  "balance": {
+    "total": "1250.50",
+    "available": "1200.00",
+    "pending": "25.50",
+    "locked": "20.00",
+    "frozen": "5.00"
+  }
+}
+```

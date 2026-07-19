@@ -109,6 +109,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 Fee Station `Transaction` 数据类型的完整示例负载，请参阅 [Fee Station 交易](/v2_cn/guides/webhooks-callbacks/transaction-webhook-payload-examples#fee-station-交易)。
+
 ### MPC 钱包 TSS 请求事件
 
 <table class="table-three-cols">
@@ -143,6 +145,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 `TSSRequest` 数据类型的完整示例负载，请参阅 [TSS request Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/tss-request-webhook-payload-examples)。
+
 ### 钱包与地址管理事件
 
 <table class="table-three-cols">
@@ -173,6 +177,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 </table>
 
 <Note>激活 Solana 代币子地址（Associated Token Account）不会触发 `wallets.addresses.created` 事件。为激活该地址而发生的租金转账也不会触发任何 `wallets.transaction.*` 事件，且不会生成充币或交易记录。因此，Solana 代币账户的激活及其租金无法通过 webhook 感知。详情请参阅 [Solana 代币账户租金](/v2_cn/guides/transactions/solana-token-account-rent)。</Note>
+
+如需查看 `Addresses`、`WalletInfo` 和 `MPCVault` 数据类型的完整示例负载，请参阅 [Wallet 和 address Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/wallet-address-webhook-payload-examples)。
 
 ### 代币与链管理事件
 
@@ -218,6 +224,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 `Tokens`、`Chains` 和 `TokenListing` 数据类型的完整示例负载，请参阅 [Token 和 chain Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/token-chain-webhook-payload-examples)。
+
 ### 余额更新事件
 
 <table class="table-three-cols">
@@ -242,6 +250,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 `BalanceUpdateInfo` 数据类型的完整示例负载，请参阅 [Balance update Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/balance-update-webhook-payload-examples)。
+
 ### 合规事件
 
 <table class="table-three-cols">
@@ -265,6 +275,42 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
     </tr>
   </tbody>
 </table>
+
+### `ComplianceDisposition` 事件数据
+
+`compliance.disposition.status.updated` 事件携带 `ComplianceDisposition` 负载（`DispositionEventData`），包含 `transaction_id`、`disposition_type`、`disposition_status`、`destination_address`、`disposition_amount` 和 `updated_timestamp`（`dev_openapi.yaml:18864-18895`）。
+
+与 KYT screening status update 不同，此事件采用 receive-and-forward 模式。外部 screening-app service 会向 `DispositionFundsWebhookApi` POST status change；请求随后经由 `ScreeningWebhookController.send_events` 进入 `ScreeningWebhookProcessor.create_webhook_event`，并在过滤 `compliance.disposition.status.updated` 后派发 webhook（`custody/waas2/compliance/compliance_apps/urls_app.py:51-54`，`custody/waas2/compliance/compliance_apps/views/request_approval.py:173-194`，`custody/waas2/compliance/compliance_apps/controllers/screening_webhook.py:8-11`，`custody/waas2/compliance/compliance_apps/processors/screening_webhook.py:18`，`custody/waas2/compliance/compliance_apps/processors/screening_webhook.py:44-68`）。
+
+**`disposition_type`（`DispositionType`）**
+
+| 值 | 含义 |
+|-------|---------|
+| `Refund` | 通过 `compliance/funds/disposition/refund` 操作退款（`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:36-61`）。 |
+| `Isolate` | 通过 `compliance/funds/disposition/isolate` 操作隔离资金（`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:64-89`）。 |
+| `Unfreeze` | 通过 `compliance/funds/disposition/unfreeze` 操作解冻资金（`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:92-119`）。 |
+
+每个操作都会通过 `ScreeningAppClientProxy` 将 disposition request 转发到外部 screening-app service（`custody/waas2/compliance/compliance_apps/clients/screening_app.py:74-90`）。
+
+**`disposition_status`（`DispositionStatus`）**
+
+| 值 | 含义 |
+|-------|---------|
+| `Submitted` | disposition request 已提交。 |
+| `Refunding` | 资金退款正在进行中。 |
+| `Refunded` | 资金已退款。 |
+| `RefundFailed` | 退款尝试失败。 |
+| `Frozen` | 相关资金已被冻结。 |
+| `Unfreezing` | 资金正在解冻中。 |
+| `Unfrozen` | 资金已解冻。 |
+| `UnfreezeFailed` | 资金解冻尝试失败。 |
+| `Isolating` | 资金正在隔离中。 |
+| `Isolated` | 资金已隔离。 |
+| `IsolateFailed` | 资金隔离尝试失败。 |
+| `CoboDisposition` | 资金正在通过 Cobo disposition 处理。 |
+| `Normal` | 资金处于正常状态，未应用任何合规操作。 |
+
+这些值由 `DispositionStatus` schema 定义（`dev_openapi.yaml:18719-18736`）。
 
 ### `ComplianceKytScreenings` 事件数据
 

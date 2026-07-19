@@ -1,0 +1,44 @@
+---
+title: "Token 和 chain 负载字段词典"
+lang: "zh-hans"
+description: "定义 token、chain 和 token listing Webhook 负载字段及触发行为。"
+sidebarTitle: "Token 和 chain 字段词典"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文定义 token 和 chain management Webhook 事件的高频字段及触发行为。
+
+### Token scope events
+
+`wallet.token.enabled` 和 `wallet.token.disabled` 会在 Cobo internal admin tooling 更改 token 的 wallet-scope visibility 时发出。它们由 `CustodyCoinManager.update_asset_coin` 发送，调用方位于 Aladdin 和 internal WaaS token tooling（`custody/coin/managers/coin.py:793`，`custody/coin/managers/coin.py:842`，`custody/aladdin/controller/asset_coin.py:35`，`custody/waas2/internal/managers/token.py:49`）。这些事件不会由 organization self-service action 触发。
+
+| 字段 | 说明 |
+|-------|-------------|
+| `tokens` | 已 enabled 或 disabled 的 token record。每个条目遵循 `TokenInfo`（`dev_openapi.yaml:6566-6632`）。 |
+| `wallet_type` | token scope 发生变化的 wallet family。 |
+| `wallet_subtypes` | token-scope change 影响的 wallet subtype。 |
+
+### Chain scope events
+
+`wallet.chain.enabled` 和 `wallet.chain.disabled` 由需要 MFA 的 organization-facing action 发出。当 organization admin 通过 `package_chain_update` 更新其 package 或 wallet type 支持的 chain 时，这些事件会触发（`custody/waas2/data/controllers/package.py:436-463`）。
+
+| 字段 | 说明 |
+|-------|-------------|
+| `chains` | 已 enabled 或 disabled 的 chain record。每个条目遵循 `ChainInfo`（`dev_openapi.yaml:6660-6707`）。 |
+| `wallet_type` | chain scope 发生变化的 wallet family。 |
+| `wallet_subtypes` | chain-scope change 影响的 wallet subtype。 |
+
+### Token listing events
+
+`wallets.token_listing.succeeded` 和 `wallets.token_listing.failed` 属于 end-user token listing flow。Organization 通过 `POST wallets/tokens/listing_requests` 创建请求；Cobo 将请求代理到 Aladdin 审核，并在 Aladdin 回调最终状态时发出 succeeded 或 failed webhook（`custody/waas2/base/views/dev/token_listing_requests.py:33-84`，`custody/waas2/base/controllers/dev/token_listing_requests.py:338-376`，`custody/waas2/base/urls_dev.py:46`）。
+
+| 字段 | 说明 |
+|-------|-------------|
+| `request_id` | token listing request 标识符。 |
+| `status` | 最终 request status。取值为 `Submitted`、`Succeeded` 和 `Failed`（`dev_openapi.yaml:7510-7519`）。 |
+| `source` | request source。取值为 `API` 和 `Admin`（`dev_openapi.yaml:7520-7531`）。 |
+| `feedback` | 请求的 review feedback，通常在 listing 失败时填充。 |
+| `token` | listing 成功后生成的 token record。它遵循 `TokenInfo`（`dev_openapi.yaml:6566-6632`）。 |

@@ -1,0 +1,86 @@
+---
+title: "Token and chain webhook payload examples"
+lang: "en"
+description: "Full JSON examples of token, chain, and token listing webhook event payloads."
+sidebarTitle: "Token and chain payload examples"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page shows complete payload examples for token and chain management webhook events. For the event list, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+
+### Token enabled or disabled
+
+`wallet.token.enabled` and `wallet.token.disabled` deliver a `TokensEventData` payload with `tokens`, `wallet_type`, and `wallet_subtypes` (`dev_openapi.yaml:12317-12335`).
+
+```json
+{
+  "tokens": [
+    {
+      "token_id": "ETH_USDT",
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "chain_id": "ETH",
+      "decimal": 6,
+      "token_address": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+    }
+  ],
+  "wallet_type": "MPC",
+  "wallet_subtypes": [
+    "Org-Controlled",
+    "User-Controlled"
+  ]
+}
+```
+
+### Chain enabled or disabled
+
+`wallet.chain.enabled` and `wallet.chain.disabled` deliver a `ChainsEventData` payload with `chains`, `wallet_type`, and `wallet_subtypes` (`dev_openapi.yaml:12298-12316`).
+
+```json
+{
+  "chains": [
+    {
+      "chain_id": "ETH",
+      "symbol": "ETH",
+      "icon_url": "https://example.com/chains/eth.png",
+      "explorer_tx_url": "https://etherscan.io/tx/{txn_id}",
+      "explorer_address_url": "https://etherscan.io/address/{address}",
+      "require_memo": false
+    }
+  ],
+  "wallet_type": "MPC",
+  "wallet_subtypes": [
+    "Org-Controlled"
+  ]
+}
+```
+
+### Token listing succeeded or failed
+
+`wallets.token_listing.succeeded` and `wallets.token_listing.failed` deliver a `TokenListing` payload. The payload includes the final request status, request source, optional feedback, and the listed token details (`dev_openapi.yaml:12360-12408`).
+
+```json
+{
+  "request_id": "token-listing-20250701-0001",
+  "chain_id": "ETH",
+  "contract_address": "0x1234567890abcdef1234567890abcdef12345678",
+  "wallet_type": "MPC",
+  "wallet_subtype": "Org-Controlled",
+  "token": {
+    "token_id": "ETH_EXAMPLE",
+    "name": "Example Token",
+    "symbol": "EXAMPLE",
+    "chain_id": "ETH",
+    "decimal": 18,
+    "token_address": "0x1234567890abcdef1234567890abcdef12345678"
+  },
+  "status": "Succeeded",
+  "source": "API",
+  "feedback": null,
+  "created_timestamp": 1751328000000,
+  "updated_timestamp": 1751328600000
+}
+```

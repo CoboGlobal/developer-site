@@ -1,0 +1,50 @@
+---
+title: "TSS request webhook payload examples"
+lang: "en"
+description: "Full JSON examples of TSSRequest webhook event payloads for MPC key generation and recovery requests."
+sidebarTitle: "TSS request webhook payload examples"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page shows complete `TSSRequest` data-type payloads as delivered in `wallets.mpc.tss_request.*` webhook events. For the event list, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+
+### KeyGen request created
+
+A `KeyGen` request can carry `source_key_share_holder_group: null`. The webhook manager leaves the source group empty for KeyGen requests and populates it for reshare or migrate-style requests (`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:115-128`).
+
+```json
+{
+  "tss_request_id": "tss-req-20250701-0001",
+  "source_key_share_holder_group": null,
+  "target_key_share_holder_group_id": "kshg-target-001",
+  "type": "KeyGen",
+  "status": "PendingKeyHolderConfirmation",
+  "description": "Create an MPC key share holder group",
+  "created_timestamp": 1751328000000
+}
+```
+
+### Recovery request succeeded
+
+For a `Recovery` request, `source_key_share_holder_group` identifies the source key share holder group and the TSS Node IDs included in that source group (`dev_openapi.yaml:7877-7896`).
+
+```json
+{
+  "tss_request_id": "tss-req-20250701-0002",
+  "source_key_share_holder_group": {
+    "key_share_holder_group_id": "kshg-source-001",
+    "tss_node_ids": [
+      "tss-node-001",
+      "tss-node-002"
+    ]
+  },
+  "target_key_share_holder_group_id": "kshg-target-002",
+  "type": "Recovery",
+  "status": "Success",
+  "description": "Recover an MPC key share holder group",
+  "created_timestamp": 1751328600000
+}
+```
