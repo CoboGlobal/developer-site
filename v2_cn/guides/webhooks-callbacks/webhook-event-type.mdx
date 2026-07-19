@@ -64,6 +64,16 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 `Transaction` 数据类型的完整示例负载，请参阅 [Transaction Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/transaction-webhook-payload-examples)。
+
+<Warning>只有 `wallets.transaction.succeeded` 事件表示交易已成功完成。这是唯一可安全用于触发充币入账的 Transaction 事件。`wallets.transaction.updated` 会在交易整个生命周期中的每次状态变化时触发，包括交易确认前甚至广播前的状态，因此不得用于入账。请仅将其用于状态或 UI 跟踪。Confirming 阶段通知同样只表示进度，不表示完成。请等待 `wallets.transaction.succeeded`，或轮询 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 并确认 `status: Success` 后，再为充币入账。</Warning>
+
+### Callback 阶段的 transaction 负载
+
+发送 Callback 消息时，其 `Transaction` 负载使用与 Webhook 事件和查询 API 负载相同的 schema。Webhook 和 Callback 的区别请参阅 [Webhooks vs callbacks](/v2_cn/guides/webhooks-callbacks/introduction#webhooks-vs-callbacks)。
+
+由于 Callback 在您发起提币或合约调用时触发，也就是交易广播到链上或确认之前，因此该负载中的若干字段尚未填充。Callback 阶段最常见的未填充字段包括 `cobo_id`、`asset_id`、`result`、`confirmed_num` 和 `confirming_threshold`，因为它们代表的值（例如链上广播跟踪 ID、Exchange 资产记账、执行结果和确认数）需要等交易广播并开始确认后才会出现。`cobo_category` 在此阶段也可能为空。这些是常见示例；schema 中的 nullable 字段通常也可能因交易阶段不同而为空。
+
 
 ### Fee Station 相关事件
 
@@ -294,6 +304,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ## Webhook 事件数据结构
 有关 webhook 事件数据和其数据结构的完整介绍，请参阅 Retrieve event information 操作的响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性或 List all webhook events 操作的响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。
+
+如需查看覆盖充币、提币以及不同链的 `Transaction` 数据类型完整 JSON 示例，请参阅 [Transaction Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/transaction-webhook-payload-examples)。
 
 <img src="/v2/images/guides/webhook_data_structure.png" className="screenshot_full_screen" alt="Webhook 数据结构截图" />
 

@@ -46,7 +46,10 @@
                 "pages": [
                   "v2/guides/webhooks-callbacks/introduction",
                   "v2/guides/webhooks-callbacks/set-up-endpoint",
-                  "v2/guides/webhooks-callbacks/webhook-event-type"
+                  "v2/guides/webhooks-callbacks/webhook-event-type",
+                  "v2/guides/webhooks-callbacks/transaction-webhook-payload-examples",
+                  "v2/guides/webhooks-callbacks/transaction-field-dictionary",
+                  "v2/guides/webhooks-callbacks/subscription-scenarios"
                 ]
               },
               {
@@ -858,7 +861,10 @@
                 "pages": [
                   "v2_cn/guides/webhooks-callbacks/introduction",
                   "v2_cn/guides/webhooks-callbacks/set-up-endpoint",
-                  "v2_cn/guides/webhooks-callbacks/webhook-event-type"
+                  "v2_cn/guides/webhooks-callbacks/webhook-event-type",
+                  "v2_cn/guides/webhooks-callbacks/transaction-webhook-payload-examples",
+                  "v2_cn/guides/webhooks-callbacks/transaction-field-dictionary",
+                  "v2_cn/guides/webhooks-callbacks/subscription-scenarios"
                 ]
               },
               {

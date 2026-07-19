@@ -63,6 +63,16 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+For complete example payloads of the `Transaction` data type, see [Transaction webhook payload examples](/v2/guides/webhooks-callbacks/transaction-webhook-payload-examples).
+
+<Warning>Only the `wallets.transaction.succeeded` event indicates that a transaction has completed successfully. This is the only Transaction event safe to trigger deposit fund-crediting from. `wallets.transaction.updated` fires on every status change during a transaction's entire lifecycle, including states before the transaction is confirmed or even broadcast, so it must never be used to credit funds. Use it only for status or UI tracking. The same applies to Confirming-stage notifications: they indicate progress, not completion. Wait for `wallets.transaction.succeeded` or poll [Get transaction information](/v2/api-references/transactions/get-transaction-information) for `status: Success` before crediting a deposit.</Warning>
+
+### Callback-stage transaction payloads
+
+When a callback message is sent, its `Transaction` payload uses the same schema as the webhook event and query-API payloads. For the difference between webhooks and callbacks, see [Webhooks vs callbacks](/v2/guides/webhooks-callbacks/introduction#webhooks-vs-callbacks).
+
+Because a callback is triggered when you initiate a withdrawal or contract call, before the transaction is broadcast to the chain or confirmed, several fields on that payload will not yet be populated. The fields most commonly seen unpopulated at callback time include `cobo_id`, `asset_id`, `result`, `confirmed_num`, and `confirming_threshold`, because the values they represent, such as the chain broadcast tracking ID, exchange asset accounting, execution result, and confirmation counts, do not exist until the transaction has been broadcast and started confirming. `cobo_category` may also be empty at this stage. These are common examples; the schema's nullable fields in general may be empty depending on the transaction stage.
+
 ### Fee Station events
 
 <table class="table-three-cols">
@@ -292,6 +302,8 @@ The case decision that drives these status changes is represented by `KytScreeni
 
 ## Data structure of webhook events           
 For a complete introduction of the webhook event data and its data structure, refer to the [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) property in the response of the Retrieve event information operation or the [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) property in the response of the List all webhook event operation. 
+
+For full worked JSON examples of the `Transaction` data type across deposits, withdrawals, and different chains, see [Transaction webhook payload examples](/v2/guides/webhooks-callbacks/transaction-webhook-payload-examples).
 
 <img src="/v2/images/guides/webhook_data_structure.png" class="screenshot_full_screen" alt="Screenshot of the data property" />
 

@@ -1,0 +1,40 @@
+---
+title: "Transaction payload field dictionary"
+lang: "en"
+description: "Definitions and disambiguation for high-signal fields in the Transaction webhook, callback, and query-API payload."
+sidebarTitle: "Transaction field dictionary"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page defines high-signal `Transaction` fields that often affect webhook, callback, and transaction-query integrations.
+
+### `token_id` vs. `asset_id`
+
+`token_id` is the token or currency identifier for the transaction. It is the field you should use for transaction accounting, deposit crediting, and reconciliation across MPC Wallets, Custodial Wallets, Smart Contract Wallets, and Exchange Wallets. For example, an Ethereum USDT transaction uses `token_id: "ETH_USDT"`.
+
+`asset_id` is populated only when the wallet involved is an Exchange Wallet. For every MPC Wallet, Custodial Wallet, and Smart Contract Wallet transaction, `asset_id` is absent or null.
+
+<Warning>
+A common integration mistake is treating `asset_id` as a shortened token identifier, such as expecting `asset_id: "USDT"` beside `token_id: "ETH_USDT"`. For MPC Wallets, Custodial Wallets, and Smart Contract Wallets, `asset_id` is always empty. Use `token_id`, not `asset_id`, unless the wallet involved is an Exchange Wallet.
+</Warning>
+
+### Source and destination direction
+
+For a deposit, `source` shows where funds came from and `destination.wallet_id` is the receiving wallet. For a withdrawal, `source.wallet_id` is the paying wallet and `destination` shows where funds went. For the full type reference, see [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations).
+
+### `request_id`
+
+`request_id` is an optional caller-provided identifier supplied when creating a transaction request. It helps you map the resulting transaction back to a request in your own system. It may be null or absent for transactions that were not created through an API call that supplied `request_id`, such as inbound deposits or requests that omitted it.
+
+### `replacement.replaced_by_transaction_hash`
+
+RBF, or Replace-By-Fee, lets a pending transaction be replaced by another transaction. When a transaction is replaced, `replacement.replaced_by_transaction_hash`, `replacement.replaced_by_transaction_id`, and `replacement.replaced_by_type` on the original transaction point to the transaction that replaced it. The replacing transaction carries `replacement.replaced_transaction_hash`, `replacement.replaced_transaction_id`, and `replacement.replaced_type` to identify the original transaction.
+
+### High-signal `cobo_category` values
+
+`cobo_category` is an array of Cobo-defined category strings that describes the logical category or purpose of a transaction. The Fee-Station-related subset is documented in [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories).
+
+Beyond Fee Station, `AutoSweep` is a high-signal value because it identifies an automatic fund-consolidation transaction. It can explain balance movements that were not initiated by an explicit API call. The enum also includes staking, screening, tokenization, and other categories. See [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories) for the broader reference.

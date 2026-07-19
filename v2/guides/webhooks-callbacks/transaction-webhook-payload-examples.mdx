@@ -1,0 +1,357 @@
+---
+title: "Transaction webhook payload examples"
+lang: "en"
+description: "Full JSON examples of Transaction webhook event payloads for deposits, withdrawals, and different chain and fee models."
+sidebarTitle: "Transaction webhook payload examples"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page shows complete `Transaction` data-type payloads as delivered in `wallets.transaction.*` webhook events. For the event list, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type). For the full `source` and `destination` type reference, see [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations).
+
+### Deposit vs. withdrawal
+
+The following native-coin EVM deposit uses `source.source_type: DepositFromAddress` and `destination.destination_type: DepositToAddress`. The `source` shows where funds came from, and `destination.wallet_id` identifies the receiving wallet.
+
+```json
+{
+  "transaction_id": "aff0e1cb-15b2-4e1f-9b9d-a9133715986f",
+  "cobo_id": "20250701000101000000000000000000",
+  "request_id": null,
+  "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "type": "Deposit",
+  "status": "Success",
+  "sub_status": null,
+  "token_id": "ETH",
+  "asset_id": null,
+  "source": {
+    "source_type": "DepositFromAddress",
+    "wallet_type": "MPC",
+    "addresses": [
+      "0x7d4e9f2b6a1c3d8e5f901234567890abcdef1234"
+    ]
+  },
+  "destination": {
+    "destination_type": "DepositToAddress",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "wallet_type": "MPC",
+    "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+    "amount": "1.25"
+  },
+  "result": {
+    "amount": "1.25",
+    "token_id": "ETH"
+  },
+  "fee": {
+    "fee_type": "EVM_EIP_1559",
+    "token_id": "ETH",
+    "fee_used": "0.002",
+    "max_fee_per_gas": "9000000000000",
+    "max_priority_fee_per_gas": "1000000000000",
+    "gas_limit": "21000",
+    "gas_used": "21000"
+  },
+  "confirmed_num": 20,
+  "confirming_threshold": 12,
+  "transaction_hash": "0x9f2c6d8e1a4b3c5d7e901234567890abcdef1234567890abcdef1234567890",
+  "raw_tx_info": {
+    "used_nonce": 9,
+    "raw_tx": "0xa22cb465..."
+  },
+  "replacement": null,
+  "description": null,
+  "created_timestamp": 1751328000000,
+  "updated_timestamp": 1751328060000,
+  "cobo_category": []
+}
+```
+
+<Note>An Exchange-Wallet-to-Exchange-Wallet deposit uses `DepositFromWallet` on `source` and `DepositToWallet` on `destination` instead of the address-based deposit types shown above.</Note>
+
+The following token withdrawal uses a wallet-origin `source` and an address `destination`. Contract-call and message-sign destinations, such as `EVM_Contract` and `EVM_EIP_191_Signature`, use the same `Transaction` wrapper with different `destination` shapes. See [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations) for those destination types.
+
+```json
+{
+  "transaction_id": "b3f2a891-6c4d-4e2a-8f1b-7d5e9c3a2f10",
+  "cobo_id": "20250701000102000000000000000000",
+  "request_id": "withdraw-20250701-0001",
+  "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "type": "Withdrawal",
+  "status": "Success",
+  "sub_status": null,
+  "token_id": "ETH_USDT",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+    "signer_key_share_holder_group_id": "9a0f5d51-3f7d-4d2f-9d7e-a514bf60f2c1"
+  },
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "0x8ba1f109551bd432803012645ac136ddd64dba72",
+      "amount": "100"
+    }
+  },
+  "result": {
+    "amount": "100",
+    "token_id": "ETH_USDT"
+  },
+  "fee": {
+    "fee_type": "EVM_EIP_1559",
+    "token_id": "ETH",
+    "fee_used": "0.002",
+    "max_fee_per_gas": "9000000000000",
+    "max_priority_fee_per_gas": "1000000000000",
+    "gas_limit": "65000",
+    "gas_used": "61234"
+  },
+  "confirmed_num": 18,
+  "confirming_threshold": 12,
+  "transaction_hash": "0x1d3f5a7c9e0b2d4f6a8c01234567890abcdef1234567890abcdef12345678",
+  "raw_tx_info": {
+    "used_nonce": 10,
+    "raw_tx": "0x02f8b1..."
+  },
+  "replacement": null,
+  "description": "Customer withdrawal",
+  "created_timestamp": 1751328200000,
+  "updated_timestamp": 1751328260000,
+  "cobo_category": []
+}
+```
+
+### Fee models
+
+For EVM transactions using EIP-1559, inspect `raw_tx_info.used_nonce` and `raw_tx_info.raw_tx` when you debug nonce handling or RBF behavior.
+
+```json
+{
+  "transaction_id": "c94d7e12-3a8b-4f6c-9e2d-1f8a5b6c7d34",
+  "cobo_id": "20250701000103000000000000000000",
+  "request_id": "eth-transfer-0001",
+  "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "type": "Withdrawal",
+  "status": "Success",
+  "token_id": "ETH",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+    "signer_key_share_holder_group_id": "9a0f5d51-3f7d-4d2f-9d7e-a514bf60f2c1"
+  },
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "0x742d35cc6634c0532925a3b844bc454e4438f44e",
+      "amount": "0.5"
+    }
+  },
+  "result": {
+    "amount": "0.5",
+    "token_id": "ETH"
+  },
+  "fee": {
+    "fee_type": "EVM_EIP_1559",
+    "token_id": "ETH",
+    "fee_used": "0.002",
+    "max_fee_per_gas": "9000000000000",
+    "max_priority_fee_per_gas": "1000000000000",
+    "gas_limit": "21000",
+    "gas_used": "21000"
+  },
+  "confirmed_num": 16,
+  "confirming_threshold": 12,
+  "transaction_hash": "0x2b4d6f8a0c1e3f5a7b9d01234567890abcdef1234567890abcdef12345678",
+  "raw_tx_info": {
+    "used_nonce": 9,
+    "raw_tx": "0xa22cb465..."
+  },
+  "replacement": null,
+  "created_timestamp": 1751328300000,
+  "updated_timestamp": 1751328360000,
+  "cobo_category": []
+}
+```
+
+For UTXO transactions, `source.included_utxos` shows requested inputs when they were specified, and `raw_tx_info.selected_utxos` shows the inputs selected for the broadcast transaction.
+
+```json
+{
+  "transaction_id": "d1e8f423-9b6a-4c3d-8e1f-2a7b9c5d6e48",
+  "cobo_id": "20250701000104000000000000000000",
+  "request_id": "btc-transfer-0001",
+  "wallet_id": "6d9f3b29-7841-4b10-85f2-a674dc371ad1",
+  "type": "Withdrawal",
+  "status": "Success",
+  "token_id": "BTC",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "6d9f3b29-7841-4b10-85f2-a674dc371ad1",
+    "address": "bc1qsourceaddress000000000000000000000000",
+    "included_utxos": [
+      {
+        "tx_hash": "6f1c9a2b3d4e5f678901234567890abcdef1234567890abcdef1234567890",
+        "vout_n": 0
+      }
+    ]
+  },
+  "destination": {
+    "destination_type": "Address",
+    "utxo_outputs": [
+      {
+        "address": "bc1qdestination000000000000000000000000000",
+        "amount": "0.01"
+      }
+    ]
+  },
+  "result": {
+    "amount": "0.01",
+    "token_id": "BTC"
+  },
+  "fee": {
+    "fee_type": "UTXO",
+    "token_id": "BTC",
+    "fee_used": "0.00015",
+    "fee_rate": "50",
+    "max_fee_amount": "0.0002"
+  },
+  "confirmed_num": 6,
+  "confirming_threshold": 3,
+  "transaction_hash": "4b8e1d6c9f2a34567890abcdef1234567890abcdef1234567890abcdef12",
+  "raw_tx_info": {
+    "selected_utxos": [
+      {
+        "tx_hash": "6f1c9a2b3d4e5f678901234567890abcdef1234567890abcdef1234567890",
+        "vout_n": 0,
+        "token_id": "BTC",
+        "address": "bc1qsourceaddress000000000000000000000000"
+      }
+    ],
+    "utxo_changes": [
+      {
+        "address": "bc1qchangeaddress0000000000000000000000000",
+        "value": "0.00485",
+        "token_id": "BTC"
+      }
+    ]
+  },
+  "replacement": null,
+  "created_timestamp": 1751328400000,
+  "updated_timestamp": 1751328460000,
+  "cobo_category": []
+}
+```
+
+<Note>The schema field for UTXO change outputs is `utxo_changes`, a plural array. The singular `utxo_change` field is deprecated and should not be used in new examples or integrations.</Note>
+
+TRON-style transactions use the Fixed fee model. The Fixed fee model, used by TRON and similar chains, has no gas or priority-fee sub-fields. It carries `token_id`, `fee_used`, `estimated_fee_used`, and `max_fee_amount`.
+
+```json
+{
+  "transaction_id": "e5a3b678-2c9d-4f1e-8b6a-3d7c8e9f1a52",
+  "cobo_id": "20250701000105000000000000000000",
+  "request_id": "tron-transfer-0001",
+  "wallet_id": "22fb96d7-5d43-4af5-bb8f-c2bb0f57f4a2",
+  "type": "Withdrawal",
+  "status": "Success",
+  "token_id": "TRON_USDT",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "22fb96d7-5d43-4af5-bb8f-c2bb0f57f4a2",
+    "address": "TSourceAddress111111111111111111111111"
+  },
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "TDestination1111111111111111111111111",
+      "amount": "50"
+    }
+  },
+  "result": {
+    "amount": "50",
+    "token_id": "TRON_USDT"
+  },
+  "fee": {
+    "fee_type": "Fixed",
+    "token_id": "TRON",
+    "fee_used": "0.1",
+    "estimated_fee_used": "0.1",
+    "max_fee_amount": "0.2"
+  },
+  "confirmed_num": 20,
+  "confirming_threshold": 19,
+  "transaction_hash": "9abf1c2d3e4f567890abcdef1234567890abcdef1234567890abcdef1234",
+  "raw_tx_info": null,
+  "replacement": null,
+  "created_timestamp": 1751328500000,
+  "updated_timestamp": 1751328560000,
+  "cobo_category": []
+}
+```
+
+### Native coin vs. token, and Exchange Wallet asset_id
+
+For MPC Wallet, Custodial Wallet, and Smart Contract Wallet transactions, use `token_id` to identify the currency or token. `asset_id` is absent or null even for token transactions.
+
+```json
+[
+  {
+    "type": "Deposit",
+    "token_id": "ETH",
+    "asset_id": null,
+    "source": {
+      "source_type": "DepositFromAddress",
+      "wallet_type": "MPC",
+      "addresses": ["0x7d4e9f2b6a1c3d8e5f901234567890abcdef1234"]
+    },
+    "destination": {
+      "destination_type": "DepositToAddress",
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "wallet_type": "MPC",
+      "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+      "amount": "1.25"
+    }
+  },
+  {
+    "type": "Deposit",
+    "token_id": "ETH_USDT",
+    "asset_id": null,
+    "source": {
+      "source_type": "DepositFromAddress",
+      "wallet_type": "MPC",
+      "addresses": ["0x7d4e9f2b6a1c3d8e5f901234567890abcdef1234"]
+    },
+    "destination": {
+      "destination_type": "DepositToAddress",
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "wallet_type": "MPC",
+      "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+      "amount": "100"
+    }
+  },
+  {
+    "type": "Withdrawal",
+    "token_id": "TRON_USDT",
+    "asset_id": "USDT",
+    "source": {
+      "source_type": "Main",
+      "exchange_id": "binance-main"
+    },
+    "destination": {
+      "destination_type": "ExchangeWallet",
+      "exchange_id": "okx-main"
+    }
+  }
+]
+```
+
+<Note>This array is trimmed to the fields relevant to the `token_id` and `asset_id` contrast and is not a complete `Transaction` payload. A full `Transaction` payload includes the complete `source` and `destination` objects, as shown in the full examples above.</Note>
+
+`asset_id` is populated only when the wallet involved is an Exchange Wallet. For every other wallet type, it is absent or null. For details, see [`token_id` vs. `asset_id`](/v2/guides/webhooks-callbacks/transaction-field-dictionary#token_id-vs-asset_id).
