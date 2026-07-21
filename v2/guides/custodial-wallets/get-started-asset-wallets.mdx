@@ -332,6 +332,64 @@ public class ListTransactionsExample {
 ```
 </Accordion>
 
+## Deposit prerequisites
+
+Before you deposit tokens, make sure the chain is activated for your organization and the token is listed and enabled for deposits. A token accepts deposits only when its `can_deposit` property is `true`. Deposits made to a token that is not enabled (`can_deposit` is `false`, meaning deposits are currently suspended) may not be detected or credited automatically, so confirm this property before you send funds.
+
+**Check whether a token accepts deposits**
+
+Call the [List supported tokens](/v2/api-references/wallets/list-supported-tokens) operation and set the query parameter `token_ids` to the token you want to check (for example, `ETH_USDT`). In the response, read the `can_deposit` field of the token:
+- `true`: Deposits are enabled. You can deposit to this token.
+- `false`: Deposits are currently suspended. Do not send funds.
+
+To check a single token, you can also call [Get token information](/v2/api-references/wallets/get-token-information) with the `token_id` path parameter. Both operations accept the optional query parameters `wallet_type`, `wallet_subtype`, and `chain_ids` to narrow the results.
+
+**Check the status of a deposit you already sent**
+
+If you have already sent a deposit to a token that was not enabled at the time, do not send further funds to the same address. Instead, confirm the current status of the transfer by calling the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation with the following query parameters:
+- `types`: `Deposit`.
+- `token_ids`: The token you deposited, for example `ETH_USDT`.
+- `wallet_ids`: The ID of your wallet.
+- `transaction_hash` (optional): The on-chain transaction hash, to locate a specific transfer.
+
+Read the `status` field of each returned transaction to determine whether the deposit has been recorded. For sample code that calls this operation, see [Option 2: Get transaction status by API call](#option-2-get-transaction-status-by-api-call).
+
+## Memo and tag requirements
+
+Some chains require a memo or tag in addition to the deposit address so that the deposit can be routed to the correct account, such as XRP, XLM, EOS, ATOM, TON, IOST, BNB Chain, and Hedera. A deposit sent to one of these chains without the required memo or tag, or with an incorrect memo or tag, will fail to match the deposit address and will not be credited automatically. If a deposit on a memo-required chain does not appear in your transaction list, contact [help@cobo.com](mailto:help@cobo.com) for assistance.
+
+**Check whether a chain requires a memo or tag**
+
+Call the [List supported chains](/v2/api-references/wallets/list-supported-chains) operation (or [List enabled chains](/v2/api-references/wallets/list-enabled-chains) for the chains enabled for your organization) and read the `require_memo` field of the chain:
+- `true`: The chain requires a memo or tag for every deposit.
+- `false`: No memo or tag is required.
+
+To check a single chain, call [Get chain information](/v2/api-references/wallets/get-chain-information) with the `chain_id` path parameter.
+
+**Get the memo or tag for a deposit address**
+
+The memo or tag is bound to the deposit address. When you generate an address on a memo-required chain, the address response includes a `memo` field. Retrieve it from the response of [Create addresses in wallet](/v2/api-references/wallets/create-addresses-in-wallet), or look it up later with [List wallet addresses](/v2/api-references/wallets/list-wallet-addresses). When you deposit, provide both the address and its `memo` value from this response, and include the exact memo or tag with every transfer.
+
+**Confirm a deposit on a memo-required chain**
+
+To check whether a deposit to a memo-required chain has been credited, call the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation with `types` set to `Deposit` and `wallet_ids` set to your wallet ID, then read the `status` field of each returned transaction.
+
+## Internal and contract-triggered transactions
+
+The deposit detection mechanism tracks standard top-level transfers to your deposit addresses. Transfers that are not top-level — such as internal (trace) transfers produced by a contract call, or token movements emitted by a smart contract rather than sent directly to your address — may not be detected or credited automatically. This applies to several chains.
+
+If you expect a deposit from this type of transfer and it does not appear, first verify that the transaction was completed on-chain using the relevant blockchain explorer, then use the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation to check whether it has been recorded by Cobo. If no record is found, contact [help@cobo.com](mailto:help@cobo.com) for assistance.
+
+## Deposit troubleshooting
+
+### How do I re-check a deposit if I missed its webhook notification?
+
+Webhook notifications can be missed if your endpoint was temporarily unavailable. You do not need to wait for a new notification to confirm a deposit. Query the current state directly with the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation, or retrieve a single transfer with the [Get transaction information](/v2/api-references/transactions/get-transaction-information) operation. Make sure your webhook endpoint returns a success status code so that future events are delivered reliably; see [Introduction to webhooks and callbacks](/v2/guides/webhooks-callbacks/introduction).
+
+### What happens to deposits made before a token is listed?
+
+Deposits sent before a token is listed and enabled for deposits may not be detected or credited at the time of the transfer. Before depositing, confirm that the token is enabled as described in [Deposit prerequisites](#deposit-prerequisites). To check whether such a deposit has since been recorded, use the [List all transactions](/v2/api-references/transactions/list-all-transactions) operation. If the transaction does not appear, there is no automatic recovery for pre-listing deposits. Contact [help@cobo.com](mailto:help@cobo.com) for assistance.
+
 ## 4. Withdraw tokens
 
 Now that you have tokens in your wallet, it's time to try withdrawing them. 

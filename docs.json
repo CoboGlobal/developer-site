@@ -348,7 +348,7 @@
                       "v2/api-references/autosweep/create-auto-sweep-task",
                       "v2/api-references/autosweep/list-auto-sweep-tasks",
                       "v2/api-references/autosweep/get-auto-sweep-task-details",
-                      "v2/api-references/autosweep/cancel-auto-sweep-task-by-id"
+                      "v2/api-references/autosweep/cancel-auto-sweep-task"
                     ]
                   },
                   {

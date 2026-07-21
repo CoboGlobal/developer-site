@@ -50,8 +50,8 @@ headers = {
     "Authorization": Bearer {ORG_ACCESS_TOKEN},
     // 将 `<APP_KEY>` 替换为您的 App Key。
     "Biz-Api-Key": {APP_KEY}.hex(),
-    // 将 `{Nonce}` 替换为当前时间的 Unix 时间戳格式（以毫秒为单位）。
-    // 此值必须与 API 签名中的 `TIMESTAMP` 字段的值相同。
+    // 将 `{Nonce}` 替换为用作请求 nonce 的随机字符串。
+    // 此值必须与 API 签名中的 `TIMESTAMP` 字段值相同。
     "Biz-Api-Nonce": {Nonce},
     // 将 `{YOUR_API_SIGNATURE}` 替换为计算的 API 签名。
     "Biz-Api-Signature": {YOUR_API_SIGNATURE}.hex(),
@@ -170,7 +170,7 @@ openssl pkey -pubin -in public_key.pem -text | grep 'pub:' -A 3 | tail -n +2 | t
     | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
     | `METHOD`    | HTTP 方法。 | `GET` |
     | `PATH`      | API 端点。 | `/v2/transactions/transfer` |
-    | `TIMESTAMP` | 当前时间的 Unix 时间戳格式（以毫秒为单位）。此值必须与请求头中的随机数相同。 | `1718587017026` |
+    | `TIMESTAMP` | Nonce 值。此值必须与请求头 `Biz-Api-Nonce` 的值相同。 | `1718587017026` |
     | `PARAMS`    | （如果适用）查询参数。 | `chain_id=ETH&limit=10` |
     | `BODY`      | （如果适用）原始请求包体的字符串格式。 | `{"name":"Default","wallet_subtype":"Asset","wallet_type":"Custodial"}` |
 

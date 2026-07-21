@@ -76,7 +76,7 @@
 | 30027 | 目标钱包当前不支持充币。 | 请先确认目标代币已添加到目标钱包，且该代币所属的链已在团队中启用。如需启用或禁用链，请参阅[启用或禁用公链](https://manuals.cobo.com/cn/portal/enable-or-disable-chains)。如果该代币或钱包仍不支持充币，请改用支持充币的目标钱包。 |
 | 30028 | `request_id` 参数缺失或无效。 | 请在请求中提供有效的非空 `request_id`。 |
 | 30029 | 交易账户子钱包不能在交易所钱包中发起提币交易。 | 请使用交易所钱包的主账户发起提币，而非交易账户子钱包。 |
-| 30030 | 该代币的提币和充币服务暂时暂停。 | 此暂停为临时性措施，请稍后重试。 |
+| 30030 | 无法执行充币或提币操作，因为 Cobo 已临时暂停该代币的充币或提币处理。在暂停解除之前，平台将拒绝相关操作。 | 您无法自行解除该暂停，该状态由 Cobo 侧控制。如需在代币被暂停时收到通知，请在注册 Webhook Endpoint 时订阅 `token.suspended.deposit` 和 `token.suspended.withdraw` 事件：可在 Cobo Portal 注册（参见 [Register a webhook endpoint](https://manuals.cobo.com/cn/portal/developer-console/webhooks-create)，在注册时选择要订阅的事件类型），或调用 [Register webhook endpoint](/v2/api-references/developers--webhooks/register-webhook-endpoint) 操作（`POST /webhooks/endpoints`），并将 `subscribed_events` 设为 `["token.suspended.deposit", "token.suspended.withdraw"]`。暂停解除后，请重试该操作。 |
 | 30031 | 指定代币尚未在该团队中启用。 | 请先调用 [List enabled tokens](/v2/api-references/wallets/list-enabled-tokens) 接口确认该代币尚未启用。然后在目标钱包中添加该代币；如果添加过程中提示该代币所属链尚未启用，请参阅[启用或禁用公链](https://manuals.cobo.com/cn/portal/enable-or-disable-chains)。完成后再重试。 |
 | 30032 | 该 MPC 钱包没有可用于签名的私钥分片持有者组。 | 请在 Cobo Portal 中进入 **钱包** > **MPC 钱包** > 目标 Vault > **私钥分片管理**，确认该 Vault 下存在可用于签名的 **主控组** 或 **签名组**。如果两者都不存在，或现有分组不可用，请先在 **私钥分片管理** 中创建或恢复所需分组，再重试交易。 |
 | 30033 | 收款地址不属于 Cobo，或这些钱包已禁用 Cobo Loop。 | 请确认收款地址是 Cobo 地址，且两个钱包均已启用 Cobo Loop。如需向非 Cobo 地址转账，请使用普通提币方式。 |

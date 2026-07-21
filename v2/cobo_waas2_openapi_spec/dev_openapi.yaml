@@ -210,6 +210,7 @@ paths:
         - $ref: '#/components/parameters/optionalWalletSubtypeParam'
         - $ref: '#/components/parameters/optionalChainIdListWithLimitParam'
         - $ref: '#/components/parameters/optionalTokenListIdWithLimitParam'
+        - $ref: '#/components/parameters/optionalTokenAddressListWithLimitParam'
         - $ref: '#/components/parameters/limit500Param'
         - $ref: '#/components/parameters/beforeParam'
         - $ref: '#/components/parameters/afterParam'
@@ -1481,6 +1482,8 @@ paths:
         You need to specify the transaction information, including the request ID, request type, source address, destination address, token ID (only applicable to token transfers), and chain ID (only applicable to contract calls).
 
         The response can contain different properties based on the transaction fee model used by the chain. For the legacy, EIP-1559, and UTXO fee models, Cobo also supports three different transaction speed levels: slow, recommended, and fast. For more information about estimating transaction fees, refer to [Estimate transaction fee](https://www.cobo.com/developers/v2/guides/transactions/estimate-fees).
+
+        <Note>Fee estimates are point-in-time and short-lived. Because on-chain gas prices change continuously, re-estimate the fee immediately before submitting a withdrawal. Submitting a transaction based on a stale estimate may cause the transaction to be rejected because the fee is insufficient.</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1913,6 +1916,19 @@ paths:
       parameters:
         - $ref: '#/components/parameters/requiredTemplateKeyParam'
         - $ref: '#/components/parameters/optionalTemplateVersionParam'
+        - name: action
+          in: query
+          required: false
+          description: |
+            The approval action type. If omitted, `Transfer` is used by default. Possible values include:
+              - `Transfer`: To approve a transaction transfer.
+              - `Drop`: To approve dropping a transaction.
+              - `SpeedUp`: To approve speeding up a transaction.
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ApprovalAction'
+            default: Transfer
+          example: Transfer
       responses:
         '200':
           $ref: '#/components/responses/getTemplatesResponse'
@@ -5353,8 +5369,8 @@ paths:
       operationId: create_report
       summary: Generate reports
       description: |
-
         This operation generates reports for a variety of payment activities, including pay-ins, payouts, and commission fees.
+        <Note>For `report_types`, report scope, exported field differences, and report-specific usage notes, see [Reports](/payments/en/guides/reports).</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -5375,6 +5391,7 @@ paths:
       summary: List all reports
       description: |
         This operation retrieves the information of all reports.
+        <Note>For `report_types`, report scope, exported field differences, and report-specific usage notes, see [Reports](/payments/en/guides/reports).</Note>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -6134,6 +6151,10 @@ paths:
       summary: Create auto-sweep task
       description: |
         This operation creates an auto-sweep task for the specified wallet and token. The task triggers transactions to sweep the full balance of the specified token to the configured sweep-to address.
+
+        <Note>A sweep requires native chain coin to pay for gas. The gas must be available either in the source (deposit) address, or supplied by a configured Fee Station or Auto-Fuel. Reaching the deposit threshold alone does not trigger a sweep. If no gas is available, the sweep is blocked (for example, with an insufficient-balance error) or the Fee Station quota check fails. When a sweep is blocked, the reason is reported in the `failed_reasons` array of the auto-sweep task.</Note>
+
+        <Info>This operation is asynchronous. When the task is created, it is returned with `status` set to `Submitted` and an empty `transaction_ids` array; this is expected and does not indicate a failure. The `transaction_ids` array is populated only after `status` becomes `TransactionCreated`. To retrieve the transaction IDs, poll [Get auto-sweep task details](https://www.cobo.com/developers/v2/api-references/autosweep/get-auto-sweep-task-details) using the returned `task_id` until the status changes.</Info>
       security:
         - CoboAuth: []
         - OAuth2:
@@ -7197,7 +7218,10 @@ components:
         name:
           type: string
           example: My WaaS 2.0 Wallet
-          description: The wallet name.
+          description: |
+            The wallet name. This field is required and cannot be empty. Letters, numbers, and spaces are supported (for example, `My WaaS 2.0 Wallet`).
+
+            <Note>Some special characters are not accepted. For example, the at sign (`@`) is rejected. If the name is empty or contains unsupported characters, the request fails with a `400 Bad Request` error.</Note>
         wallet_type:
           $ref: '#/components/schemas/WalletType'
         wallet_subtype:
@@ -7580,10 +7604,10 @@ components:
 
         - `RecoveryGroup`: A [Recovery Group](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups).
 
-        **Note:** For `MainGroup` and `SigningGroup`, a key share holder backed by Cobo's multi-cloud infrastructure will be added automatically.
+        **Note:** For `MainGroup` and `SigningGroup`, a Cobo key share holder will be added automatically.
     CreateKeyShareHolder:
       type: object
-      description: 'When creating MainKeyGroup and SigningKeyGroup, a key share holder backed by Cobo''s multi-cloud infrastructure will be added automatically.'
+      description: 'When creating MainKeyGroup and SigningKeyGroup, the Cobo key share holder will be added automatically.'
       properties:
         name:
           type: string
@@ -7599,7 +7623,7 @@ components:
           type: boolean
           example: true
           description: |
-            Whether the key share holder has been selected as the designated transaction signer. For example, in a 2-3 [Threshold Signature Scheme (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss), the key share stored within Cobo's multi-cloud infrastructure can act as one signer, and you can choose one of the other two key share holders to act as the second transaction signer.
+            Whether the key share holder has been selected as the designated transaction signer. For example, in a 2-3 [Threshold Signature Scheme (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss), Cobo will serve as one signer, and you can choose one of the other two key share holders to act as the second transaction signer.
             - `true`: The key share holder is a designated transaction signer.
 
             - `false`: The key share holder is not a designated transaction signer.
@@ -7628,7 +7652,7 @@ components:
           type: boolean
           example: true
           description: |
-            Whether the key share holder has been selected as the designated transaction signer. For example, in a 2-3 [Threshold Signature Scheme (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss), the key share stored within Cobo's multi-cloud infrastructure can act as one signer, and you can choose one of the other two key share holders to act as the second transaction signer.
+            Whether the key share holder has been selected as the designated transaction signer. For example, in a 2-3 [Threshold Signature Scheme (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss), Cobo will serve as one signer, and you can choose one of the other two key share holders to act as the second transaction signer.
             - `true`: The key share holder is a designated transaction signer.
 
             - `false`: The key share holder is not a designated transaction signer.
@@ -7665,7 +7689,7 @@ components:
       description: |
         The key share holder's TSS Node type. Possible values include:
 
-        - `Cobo`: The TSS Node is generated within and stored in Cobo's multi-cloud infrastructure.
+        - `Cobo`: The TSS Node is generated and held by Cobo.
 
         - `Mobile`: The TSS Node is generated and held by a [mobile co-signer](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/create-key-share-groups#create-a-main-group) using [Cobo Guard](https://manuals.cobo.com/en/guard/introduction).
 
@@ -7871,7 +7895,7 @@ components:
           description: |
             The TSS Node IDs participating in creating a new key share holder group when `type` is set to either `KeyGenFromKeyGroup` or `Recovery`. 
 
-            **Note:** In any [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) such as the 2-2, 2-3, and 3-3 schemes (in the "threshold - participants" format), for `tss_node_ids`, you only need to fill in 1 Cobo TSS Node ID and enough non-Cobo TSS Node IDs to satisfy the number of approvers specified in `threshold`. To obtain the Cobo TSS Node ID, run [List all Cobo key share holders](https://www.cobo.com/developers/v2/api-references/wallets--mpc-wallets/list-all-cobo-key-share-holders). The Cobo TSS Node ID refers to the key share stored within Cobo's multi-cloud infrastructure.
+            **Note:** In any [Threshold Signature Schemes (TSS)](https://manuals.cobo.com/en/portal/mpc-wallets/introduction#threshold-signature-scheme-tss) such as the 2-2, 2-3, and 3-3 schemes (in the "threshold - participants" format), for `tss_node_ids`, you only need to fill in 1 Cobo TSS Node ID and enough non-Cobo TSS Node IDs to satisfy the number of approvers specified in `threshold`. To obtain the Cobo TSS Node ID, run [List all Cobo key share holders](https://www.cobo.com/developers/v2/api-references/wallets--mpc-wallets/list-all-cobo-key-share-holders).
     FeeType:
       type: string
       enum:
@@ -8082,7 +8106,7 @@ components:
           example: '0.000005'
         rent_amount:
           type: string
-          description: 'The one-time rent required to activate a Solana token Associated Token Account (ATA) before the token can be received or used. **This field is reserved for future use and is currently not populated.**'
+          description: The one-time rent required to activate a Solana token Associated Token Account (ATA) before the token can be received or used. **This field is reserved for future use and is currently not populated.**
           example: '0.00001'
     SOLComputeUnit:
       type: object
@@ -8689,7 +8713,10 @@ components:
           example: 15
         transaction_hash:
           type: string
-          description: The transaction hash.
+          description: |
+            The transaction hash (on-chain transaction identifier, also referred to as `txid`).
+
+            This property is populated only after the transaction is broadcast on-chain, so it may be `null` or absent before broadcast. In contrast, `transaction_id` (the Cobo internal transaction ID) is assigned at creation and is always present.
           example: 239861be9a4afe080c359b7fe4a1d035945ec46256b1a0f44d1267c71de8ec28
         block_info:
           $ref: '#/components/schemas/TransactionBlockInfo'
@@ -8916,6 +8943,8 @@ components:
       example: Submitted
       description: |
         The transaction status. For more details including sub-statuses, please refer to [Transaction statuses and sub-statuses](https://www.cobo.com/developers/v2/guides/transactions/status).
+
+        <Info>The `PendingAuthorization` status covers both manual approval steps and internal automated risk-control, KYT, and compliance screening checks. A transaction in this status does not necessarily require a human to take action.</Info>
     TransactionSubStatus:
       type: string
       enum:
@@ -10676,6 +10705,7 @@ components:
         - $ref: '#/components/schemas/TransactionBabylonTxParameters'
         - $ref: '#/components/schemas/TransactionCoreStakeInfo'
         - $ref: '#/components/schemas/TransactionWalletConnectInfo'
+        - $ref: '#/components/schemas/TransactionFeePayer'
       discriminator:
         propertyName: extra_type
         mapping:
@@ -10683,6 +10713,7 @@ components:
           BabylonTxParameters: '#/components/schemas/TransactionBabylonTxParameters'
           CoreStakeInfo: '#/components/schemas/TransactionCoreStakeInfo'
           WalletConnectInfo: '#/components/schemas/TransactionWalletConnectInfo'
+          FeePayer: '#/components/schemas/TransactionFeePayer'
     TransactionExtraType:
       type: string
       enum:
@@ -10690,6 +10721,7 @@ components:
         - BabylonTxParameters
         - CoreStakeInfo
         - WalletConnectInfo
+        - FeePayer
       example: BabylonBusinessInfo
       description: |
         The transaction extra information type. Possible values include:
@@ -10697,6 +10729,7 @@ components:
           - `BabylonTxParameters`: The extra information of Babylon transaction parameters.
           - `CoreStakeInfo`: The extra information of core stake.
           - `WalletConnectInfo`: The extra information of transaction initiated by walletconnect.
+          - `FeePayer`: The extra information of fee payer.
     TransactionBabylonBusinessInfo:
       type: object
       description: The extra information related to Babylon business logic.
@@ -10789,6 +10822,19 @@ components:
         session_id:
           type: string
           description: The session id that initiated this transaction
+    TransactionFeePayer:
+      type: object
+      description: The extra information of fee payer.
+      title: Fee Payer Information
+      required:
+        - extra_type
+      properties:
+        extra_type:
+          $ref: '#/components/schemas/TransactionExtraType'
+        fee_payer:
+          type: string
+          description: 'The address of the designated Solana fee payer account that covers the transaction fees, separating the fee payment from the main signer or source account.'
+          example: 9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM
     ApprovalDetail:
       type: object
       description: Details of the transaction approval.
@@ -10883,6 +10929,20 @@ components:
           - `Rejected`: The transaction is rejected.
           - `Pending`: The transaction is pending approval.
           - `Approved`: The transaction is approved.
+    ApprovalAction:
+      type: string
+      nullable: true
+      description: |
+        The approval action type. Possible values include:
+          - `Transfer`: To approve a transaction transfer.
+          - `Drop`: To approve dropping a transaction.
+          - `SpeedUp`: To approve speeding up a transaction.
+      enum:
+        - Transfer
+        - Drop
+        - SpeedUp
+        - null
+      example: Transfer
     ApprovalUserDetail:
       type: object
       description: |
@@ -10965,6 +11025,8 @@ components:
             The result token appended to the signing content when verifying signatures.
             The full signing content is constructed as `{message}||{result_token}`.
           example: abc123token
+        action:
+          $ref: '#/components/schemas/ApprovalAction'
     CustodialTransferSource:
       type: object
       description: |
@@ -11917,6 +11979,20 @@ components:
           description: 'The structured data to be signed, formatted as a JSON object according to the EIP-712 standard.'
           example: |
             {"types": {"EIP712Domain": [{"name": "name", "type": "string"}, {"name": "version", "type": "string"}, {"name": "chainId", "type": "uint256"}, {"name": "verifyingContract", "type": "address"}], "Person": [{"name": "name", "type": "string"}, {"name": "wallet", "type": "address"}], "Mail": [{"name": "from", "type": "Person"}, {"name": "to", "type": "Person"}, {"name": "contents", "type": "string"}]}, "primaryType": "Mail", "domain": {"name": "Ether Mail", "version": "1", "chainId": 1, "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"}, "message": {"from": {"name": "Cow", "wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"}, "to": {"name": "Bob", "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"}, "contents": "Hello, Bob!"}}
+    RawMessageSignDestination:
+      title: Raw_Message_Signature
+      deprecated: true
+      description: '[Deprecated] Due to security concerns, `Raw_Message_Signature` is no longer allowed and must not be used. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for details.'
+      type: object
+      required:
+        - destination_type
+        - msg_hash
+      properties:
+        destination_type:
+          $ref: '#/components/schemas/MessageSignDestinationType'
+        msg_hash:
+          type: string
+          description: 'Message hash to be signed, in hexadecimal format.'
     BTCBIP322MessageSignDestination:
       title: BTC_BIP_322_Signature
       description: 'The information about the destination `BTC_BIP_322_Signature`. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.'
@@ -11971,6 +12047,8 @@ components:
         The type of the signature format. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.
 
         Each signature format type requires a different set of properties. Switch between the above tabs for details.
+
+        Due to security concerns, `Raw_Message_Signature` is deprecated and not recommended for use. It may be removed in a future version.
     MessageSignDestination:
       oneOf:
         - $ref: '#/components/schemas/EvmEIP191MessageSignDestination'
@@ -18020,6 +18098,24 @@ components:
         description:
           type: string
           description: The description of the allocation item.
+        status:
+          $ref: '#/components/schemas/AllocationItemStatus'
+          description: The status of the allocation item.
+          example: Pending
+    AllocationItemStatus:
+      type: string
+      enum:
+        - Pending
+        - Transferring
+        - Completed
+        - Failed
+      example: Pending
+      description: |
+        The current status of the allocation item.
+        - `Pending`: The allocation item has been created and recorded in the ledger. The system is determining whether further action is required.
+        - `Transferring`: The on-chain transaction for the allocation item is in progress.
+        - `Completed`: The allocation item is completed. Ledger-only allocation items are completed immediately, while on-chain allocation items are completed after the transfer succeeds.
+        - `Failed`: The on-chain transfer failed or was rejected, including rejections caused by screening.
     AllocationParam:
       type: object
       required:
@@ -18080,6 +18176,10 @@ components:
           type: string
           description: 'The initiator of this batch allocation, usually the API key you used to create the batch allocation.'
           example: b2ae1b5aaade686c968ef2bbd31cc75ba94e5a85fd9cb0b35b81dcc15f520e9d
+        status:
+          $ref: '#/components/schemas/BatchAllocationStatus'
+          description: The status of the batch allocation.
+          example: Pending
         created_timestamp:
           type: integer
           description: 'The created time of the batch allocation, represented as a UNIX timestamp in seconds.'
@@ -18088,6 +18188,22 @@ components:
           type: integer
           description: 'The updated time of the batch allocation, represented as a UNIX timestamp in seconds.'
           example: 1744689600
+    BatchAllocationStatus:
+      type: string
+      enum:
+        - Pending
+        - Processing
+        - Completed
+        - PartiallyCompleted
+        - Failed
+      example: Pending
+      description: |
+        The current status of the batch allocation.
+        - `Pending`: The batch allocation has been created and is waiting to be processed.
+        - `Processing`: The batch allocation is being processed.
+        - `Completed`: All allocation items are completed.
+        - `PartiallyCompleted`: Some allocation items are completed and some allocation items failed, with no allocation items still in progress.
+        - `Failed`: All allocation items failed.
     BatchAllocationDetail:
       type: object
       required:
@@ -18110,6 +18226,10 @@ components:
           type: string
           description: 'The initiator of this batch allocation, usually the user''s API key.'
           example: b2ae1b5aaade686c968ef2bbd31cc75ba94e5a85fd9cb0b35b81dcc15f520e9d
+        status:
+          $ref: '#/components/schemas/BatchAllocationStatus'
+          description: The status of the batch allocation.
+          example: Pending
         created_timestamp:
           type: integer
           description: 'The created time of the batch allocation, represented as a UNIX timestamp in seconds.'
@@ -18432,7 +18552,7 @@ components:
       example: Strict
       description: |
         The execution mode of the bulk send.
-        - `Strict`: The bulk send is executed in strict mode, which means all bulk send items should be successfully executed or all failed.
+        - `Strict`: The bulk send is executed in strict mode. All-or-nothing is enforced at the validation stage: if any item fails validation, the entire batch is rejected and no items are sent. Note that this all-or-nothing guarantee applies at validation only, not at execution. After validation passes, individual items may still be rejected by risk control or fail during on-chain execution, which can result in a `PartiallyCompleted` bulk send status.
         - `Partial`: The bulk send is executed in partial mode, which means some bulk send items can be successfully executed and some can be failed.
     PaymentBulkSendItemStatus:
       type: string
@@ -18456,12 +18576,14 @@ components:
         - Pending
         - Validated
         - ValidationFailed
+        - NotExecuted
       example: Pending
       description: |
         The current validation status of the bulk send item. Possible values include:
         - `Pending`: The bulk send item has not yet been validated.
         - `Validated`: The bulk send item has passed validation and is ready to be processed.
         - `ValidationFailed`: The bulk send item has failed validation and cannot be processed.
+        - `NotExecuted`: The bulk send item validation was not executed.
     PaymentBridgeStatus:
       description: |
         The current status of the payout bridge. Possible values include:
@@ -21331,7 +21453,8 @@ components:
           items:
             type: string
             example: 0011039d-27fb-49ba-b172-6e0aa80e37ec
-          description: IDs of the transactions triggered by the task.
+          description: |
+            IDs of the transactions triggered by the task. This array is empty while the task `status` is `Submitted`, and is populated only after the status becomes `TransactionCreated`. Poll [Get auto-sweep task details](https://www.cobo.com/developers/v2/api-references/autosweep/get-auto-sweep-task-details) until the transaction IDs are available.
         failed_reasons:
           type: array
           items:
@@ -21542,6 +21665,15 @@ components:
         type: string
         description: 'A list of token IDs, separated by comma.'
       example: 'ETH_USDT,ETH_USDC'
+    optionalTokenAddressListWithLimitParam:
+      name: token_addresses
+      in: query
+      required: false
+      description: 'A list of token contract addresses (Supports up to 500), separated by comma. Matching is case-insensitive, so you can pass either lowercase or checksum addresses. Because the same contract address may be deployed on multiple chains, this filter can return tokens across different chain IDs; combine it with `chain_ids` to narrow the result to a specific chain. Native tokens have no contract address and are excluded from the result.'
+      schema:
+        type: string
+        description: 'A list of token contract addresses, separated by comma.'
+      example: '0xdac17f958d2ee523a2206206994597c13d831ec7'
     optionalTokenListIdParam:
       name: token_ids
       in: query
@@ -24977,7 +25109,7 @@ components:
                 $ref: '#/components/schemas/PaymentBulkSendExecutionMode'
               description:
                 type: string
-                description: The description for the entire bulk send batch.
+                description: 'The description for the entire bulk send batch. Maximum length: 255 characters.'
                 example: Monthly vendor payments - January 2024
               payout_params:
                 type: array
@@ -25003,7 +25135,7 @@ components:
                       example: '500.00'
                     description:
                       type: string
-                      description: A note or comment about the bulk send item.
+                      description: 'A note or comment about the bulk send item. Maximum length: 255 characters.'
                       example: 'Invoice #INV-2024-001'
     triggerTestPaymentsWebhookEventBody:
       description: |
