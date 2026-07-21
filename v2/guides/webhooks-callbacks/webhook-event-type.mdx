@@ -276,19 +276,19 @@ For complete example payloads of the `BalanceUpdateInfo` data type, see [Balance
 
 ### `ComplianceDisposition` event data
 
-The `compliance.disposition.status.updated` event carries a `ComplianceDisposition` payload (`DispositionEventData`) with `transaction_id`, `disposition_type`, `disposition_status`, `destination_address`, `disposition_amount`, and `updated_timestamp` (`dev_openapi.yaml:18864-18895`).
+The `compliance.disposition.status.updated` event notifies you that the status of a compliance disposition has changed for a transaction. The `ComplianceDisposition` payload includes `transaction_id`, `disposition_type`, `disposition_status`, `destination_address`, `disposition_amount`, and `updated_timestamp`.
 
-Unlike KYT screening status updates, this event follows a receive-and-forward pattern. An external screening-app service posts a status change to `DispositionFundsWebhookApi`; the request then flows through `ScreeningWebhookController.send_events` into `ScreeningWebhookProcessor.create_webhook_event`, which filters for `compliance.disposition.status.updated` before dispatching the webhook (`custody/waas2/compliance/compliance_apps/urls_app.py:51-54`, `custody/waas2/compliance/compliance_apps/views/request_approval.py:173-194`, `custody/waas2/compliance/compliance_apps/controllers/screening_webhook.py:8-11`, `custody/waas2/compliance/compliance_apps/processors/screening_webhook.py:18`, `custody/waas2/compliance/compliance_apps/processors/screening_webhook.py:44-68`).
+Cobo emits this event when your organization's Screening App integration reports a disposition status change. Because the update originates from the Screening App, treat it as that service's current view of the disposition rather than a status Cobo computed locally. Use `transaction_id` to correlate the event with the transaction you called [Refund funds](/v2/api-references/compliance/refund-funds), [Isolate funds](/v2/api-references/compliance/isolate-funds), or [Unfreeze frozen funds](/v2/api-references/compliance/unfreeze-frozen-funds) on.
 
 **`disposition_type` (`DispositionType`)**
 
 | Value | Meaning |
 |-------|---------|
-| `Refund` | Refunds funds through the `compliance/funds/disposition/refund` operation (`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:36-61`). |
-| `Isolate` | Isolates funds through the `compliance/funds/disposition/isolate` operation (`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:64-89`). |
-| `Unfreeze` | Unfreezes funds through the `compliance/funds/disposition/unfreeze` operation (`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:92-119`). |
+| `Refund` | The disposition was created by calling [Refund funds](/v2/api-references/compliance/refund-funds). |
+| `Isolate` | The disposition was created by calling [Isolate funds](/v2/api-references/compliance/isolate-funds). |
+| `Unfreeze` | The disposition was created by calling [Unfreeze frozen funds](/v2/api-references/compliance/unfreeze-frozen-funds). |
 
-Each operation forwards the disposition request to the external screening-app service through `ScreeningAppClientProxy` (`custody/waas2/compliance/compliance_apps/clients/screening_app.py:74-90`).
+Each operation submits the disposition request to your organization's Screening App integration for processing.
 
 **`disposition_status` (`DispositionStatus`)**
 
@@ -308,7 +308,7 @@ Each operation forwards the disposition request to the external screening-app se
 | `CoboDisposition` | The funds are being handled through a Cobo disposition. |
 | `Normal` | The funds are in a normal state with no compliance action applied. |
 
-These values are defined by the `DispositionStatus` schema (`dev_openapi.yaml:18719-18736`).
+When you receive this event, record the reported `disposition_type` and `disposition_status` as an update to that transaction's disposition state, keyed by `transaction_id`. To confirm the current disposition state at any time, such as before deciding on further action, call [Get disposition status](/v2/api-references/compliance/get-disposition-status) for that transaction.
 
 ### `ComplianceKytScreenings` event data
 

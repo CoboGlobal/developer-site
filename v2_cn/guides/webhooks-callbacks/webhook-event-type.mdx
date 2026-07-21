@@ -278,19 +278,19 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### `ComplianceDisposition` 事件数据
 
-`compliance.disposition.status.updated` 事件携带 `ComplianceDisposition` 负载（`DispositionEventData`），包含 `transaction_id`、`disposition_type`、`disposition_status`、`destination_address`、`disposition_amount` 和 `updated_timestamp`（`dev_openapi.yaml:18864-18895`）。
+`compliance.disposition.status.updated` 事件用于通知你某笔交易的 compliance disposition 状态已发生变化。`ComplianceDisposition` 负载包含 `transaction_id`、`disposition_type`、`disposition_status`、`destination_address`、`disposition_amount` 和 `updated_timestamp`。
 
-与 KYT screening status update 不同，此事件采用 receive-and-forward 模式。外部 screening-app service 会向 `DispositionFundsWebhookApi` POST status change；请求随后经由 `ScreeningWebhookController.send_events` 进入 `ScreeningWebhookProcessor.create_webhook_event`，并在过滤 `compliance.disposition.status.updated` 后派发 webhook（`custody/waas2/compliance/compliance_apps/urls_app.py:51-54`，`custody/waas2/compliance/compliance_apps/views/request_approval.py:173-194`，`custody/waas2/compliance/compliance_apps/controllers/screening_webhook.py:8-11`，`custody/waas2/compliance/compliance_apps/processors/screening_webhook.py:18`，`custody/waas2/compliance/compliance_apps/processors/screening_webhook.py:44-68`）。
+当你所在机构的 Screening App 集成报告 disposition 状态变化时，Cobo 会发出此事件。由于该更新来自 Screening App，请将其视为该服务记录的当前 disposition 状态，而不是 Cobo 在本地计算的状态。使用 `transaction_id` 将事件与调用 [Refund funds](/v2/api-references/compliance/refund-funds)、[Isolate funds](/v2/api-references/compliance/isolate-funds) 或 [Unfreeze frozen funds](/v2/api-references/compliance/unfreeze-frozen-funds) 时所针对的交易相关联。
 
 **`disposition_type`（`DispositionType`）**
 
 | 值 | 含义 |
 |-------|---------|
-| `Refund` | 通过 `compliance/funds/disposition/refund` 操作退款（`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:36-61`）。 |
-| `Isolate` | 通过 `compliance/funds/disposition/isolate` 操作隔离资金（`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:64-89`）。 |
-| `Unfreeze` | 通过 `compliance/funds/disposition/unfreeze` 操作解冻资金（`custody/waas2/compliance/compliance_apps/views/dev/screening_disposition.py:92-119`）。 |
+| `Refund` | 该 disposition 由调用 [Refund funds](/v2/api-references/compliance/refund-funds) 创建。 |
+| `Isolate` | 该 disposition 由调用 [Isolate funds](/v2/api-references/compliance/isolate-funds) 创建。 |
+| `Unfreeze` | 该 disposition 由调用 [Unfreeze frozen funds](/v2/api-references/compliance/unfreeze-frozen-funds) 创建。 |
 
-每个操作都会通过 `ScreeningAppClientProxy` 将 disposition request 转发到外部 screening-app service（`custody/waas2/compliance/compliance_apps/clients/screening_app.py:74-90`）。
+每项操作都会将 disposition 请求提交到你所在机构的 Screening App 集成进行处理。
 
 **`disposition_status`（`DispositionStatus`）**
 
@@ -310,7 +310,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 | `CoboDisposition` | 资金正在通过 Cobo disposition 处理。 |
 | `Normal` | 资金处于正常状态，未应用任何合规操作。 |
 
-这些值由 `DispositionStatus` schema 定义（`dev_openapi.yaml:18719-18736`）。
+收到此事件后，请以 `transaction_id` 为键，将报告的 `disposition_type` 和 `disposition_status` 记录为该交易 disposition 状态的增量更新。要随时确认当前 disposition 状态（例如在决定后续操作之前），请针对该交易调用 [Get disposition status](/v2/api-references/compliance/get-disposition-status)。
 
 ### `ComplianceKytScreenings` 事件数据
 
