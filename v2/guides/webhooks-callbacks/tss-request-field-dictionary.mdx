@@ -9,7 +9,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
 
 <WaasSkillReminder />
 
-This page defines high-signal `TSSRequest` fields used by `wallets.mpc.tss_request.*` webhook events. The webhook payload matches the documented `TSSRequest` schema exactly, with no extra or omitted fields (`custody/waas2/mpc/bo/dev/webhook.py:8-9`, `custody/waas2/mpc/bo/dev/vault.py:235-242`, `dev_openapi.yaml:7763`).
+This page defines high-signal `TSSRequest` fields used by `wallets.mpc.tss_request.*` webhook events. The webhook payload matches the documented `TSSRequest` schema exactly, with no extra or omitted fields.
 
 ### Request type
 
@@ -19,7 +19,7 @@ This page defines high-signal `TSSRequest` fields used by `wallets.mpc.tss_reque
 | `KeyGenFromKeyGroup` | Creates a new key share holder group from an existing key group. |
 | `Recovery` | Recovers or reshapes an existing key share holder group. |
 
-These values are defined by the `TSSRequest` schema (`dev_openapi.yaml:7842-7855`).
+These values are defined by the `TSSRequest` schema.
 
 ### Request status
 
@@ -32,17 +32,13 @@ These values are defined by the `TSSRequest` schema (`dev_openapi.yaml:7842-7855
 | `KeyGeneratingFailed` | The key share generation process has failed for the action to be done to the TSS request. |
 | `Success` | The request completed successfully. |
 
-These values are defined by the `TSSRequest` schema (`dev_openapi.yaml:7815-7841`).
+These values are defined by the `TSSRequest` schema.
 
 ### Event trigger behavior
 
-All four event types are dispatched by `WalletMpcWebhookEventManager.create_tss_request_event` (`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:24-73`).
-
 | Event type | Trigger |
 |------------|---------|
-| `wallets.mpc.tss_request.created` | The request is newly created or enters the new-request status (`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:42-47`). |
-| `wallets.mpc.tss_request.succeeded` | The request status becomes `Success` (`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:50-57`). |
-| `wallets.mpc.tss_request.failed` | The request reaches a final failed status (`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:59-66`). |
-| `wallets.mpc.tss_request.updated` | Any other supported status transition. This fallback is restricted to portal key generation and reshare requests (`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:29-33`, `custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:68-73`). |
-
-Creation events are emitted from MPC vault creation flows (`custody/waas2/mpc/processors/mpc_vault.py:1087-1210`, `custody/waas2/mpc/processors/dev/mpc_vault.py:1051-1052`). Status transition events are emitted from TSS Node and TSS request services (`custody/custody/managers/tss_node_v2.py:2284`, `custody/custody/managers/tss_node_v2.py:2451`, `custody/custody/managers/tss_node_v2.py:2597`, `custody/custody/managers/tss_node_v2.py:2988`, `custody/custody/managers/tss_node_v2.py:3023`, `custody/custody/managers/tss_node_v2.py:3133-3163`, `custody/custody/managers/tss_node_v2.py:3198`, `custody/custody/managers/tss_node_v2.py:3227`, `custody/custody/managers/tss_node_v2.py:3241`, `custody/custody/services/tss_request_service_v2.py:294`, `custody/custody/services/tss_request_service_v2.py:341`, `custody/custody/services/tss_request_service_v2.py:357`, `custody/custody/services/tss_request_service_v2.py:401`).
+| `wallets.mpc.tss_request.created` | The request is newly created or enters the new-request status. |
+| `wallets.mpc.tss_request.succeeded` | The request status becomes `Success`. |
+| `wallets.mpc.tss_request.failed` | The request reaches a final failed status. |
+| `wallets.mpc.tss_request.updated` | Any other supported status transition. This fallback is restricted to portal key generation and reshare requests. |

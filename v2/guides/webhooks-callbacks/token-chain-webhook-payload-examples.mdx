@@ -13,7 +13,7 @@ This page shows complete payload examples for token and chain management webhook
 
 ### Token enabled or disabled
 
-`wallet.token.enabled` and `wallet.token.disabled` deliver a `TokensEventData` payload with `tokens`, `wallet_type`, and `wallet_subtypes` (`dev_openapi.yaml:12317-12335`).
+`wallet.token.enabled` and `wallet.token.disabled` deliver a `TokensEventData` payload with `tokens`, `wallet_type`, and `wallet_subtypes`.
 
 ```json
 {
@@ -37,7 +37,7 @@ This page shows complete payload examples for token and chain management webhook
 
 ### Chain enabled or disabled
 
-`wallet.chain.enabled` and `wallet.chain.disabled` deliver a `ChainsEventData` payload with `chains`, `wallet_type`, and `wallet_subtypes` (`dev_openapi.yaml:12298-12316`).
+`wallet.chain.enabled` and `wallet.chain.disabled` deliver a `ChainsEventData` payload with `chains`, `wallet_type`, and `wallet_subtypes`.
 
 ```json
 {
@@ -60,7 +60,7 @@ This page shows complete payload examples for token and chain management webhook
 
 ### Token listing succeeded or failed
 
-`wallets.token_listing.succeeded` and `wallets.token_listing.failed` deliver a `TokenListing` payload. The payload includes the final request status, request source, optional feedback, and the listed token details (`dev_openapi.yaml:12360-12408`).
+`wallets.token_listing.succeeded` and `wallets.token_listing.failed` deliver a `TokenListing` payload. The payload includes the final request status, request source, optional feedback, and the listed token details.
 
 ```json
 {

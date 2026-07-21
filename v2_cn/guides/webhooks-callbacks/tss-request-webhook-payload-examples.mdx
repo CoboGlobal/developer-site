@@ -13,7 +13,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### KeyGen request created
 
-`KeyGen` 请求可以携带 `source_key_share_holder_group: null`。Webhook manager 会让 KeyGen 请求的 source group 为空，并为 reshare 或 migrate 类请求填充该字段（`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:115-128`）。
+`KeyGen` 请求可以携带 `source_key_share_holder_group: null`。该字段在 `KeyGen` 请求中为空，并为 reshare 或 migrate 类请求填充。
 
 ```json
 {
@@ -29,7 +29,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### Recovery request succeeded
 
-对于 `Recovery` 请求，`source_key_share_holder_group` 标识 source key share holder group，以及该 source group 中包含的 TSS Node ID（`dev_openapi.yaml:7877-7896`）。
+对于 `Recovery` 请求，`source_key_share_holder_group` 标识 source key share holder group，以及该 source group 中包含的 TSS Node ID。
 
 ```json
 {

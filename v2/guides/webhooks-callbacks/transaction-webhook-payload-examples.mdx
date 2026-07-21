@@ -298,9 +298,9 @@ TRON-style transactions use the Fixed fee model. The Fixed fee model, used by TR
 
 ### Fee Station transactions
 
-`fee_station.transaction.*` events deliver the same `Transaction` payload schema as `wallets.transaction.*` events. The webhook code uses the same transaction detail serializer for both event families; the Fee Station branch only chooses the `fee_station.` event-type prefix and removes wallet-scope metadata fields from `wallet_scopes_info` (`custody/waas2/webhooks/managers/wallet_event_by_source.py:34-113`, `custody/waas2/webhooks/managers/wallet_event.py:42-44`).
+`fee_station.transaction.*` events deliver the same `Transaction` payload schema as `wallets.transaction.*` events. The Fee Station variant uses the `fee_station.` event-type prefix and omits wallet-scope metadata fields from `wallet_scopes_info`.
 
-The `type` field does not distinguish Fee Station transactions. Internal Fee Station query types are mapped to the public `Deposit` or `Withdrawal` values before the payload is returned (`custody/waas2/transactions/mongo/manager/read/waas_transaction.py:712-727`, `custody/waas2/transactions/dev/enums/transaction.py:104-143`).
+The `type` field does not distinguish Fee Station transactions. Internal Fee Station query types are mapped to the public `Deposit` or `Withdrawal` values before the payload is returned.
 
 The following AutoFueling example uses the same `Transaction` wrapper and adds Fee-Station-specific `cobo_category` and `fueling_info` values.
 
@@ -360,7 +360,7 @@ The following AutoFueling example uses the same `Transaction` wrapper and adds F
 }
 ```
 
-<Note>Use `cobo_category` to identify Fee-Station-specific transaction categories. The Fee Station values are defined by `TransactionCoboCategory` (`custody/waas2/transactions/mongo/enums/transaction_fields.py:45-63`) and are documented in [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories).</Note>
+<Note>Use `cobo_category` to identify Fee-Station-specific transaction categories. These values are documented in [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories).</Note>
 
 ### Native coin vs. token, and Exchange Wallet asset_id
 

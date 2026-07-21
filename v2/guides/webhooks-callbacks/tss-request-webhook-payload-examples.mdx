@@ -13,7 +13,7 @@ This page shows complete `TSSRequest` data-type payloads as delivered in `wallet
 
 ### KeyGen request created
 
-A `KeyGen` request can carry `source_key_share_holder_group: null`. The webhook manager leaves the source group empty for KeyGen requests and populates it for reshare or migrate-style requests (`custody/waas2/mpc/managers/dev/webhook_wallet_mpc.py:115-128`).
+A `KeyGen` request can carry `source_key_share_holder_group: null`. This field is empty for `KeyGen` requests and populated for reshare or migrate-style requests.
 
 ```json
 {
@@ -29,7 +29,7 @@ A `KeyGen` request can carry `source_key_share_holder_group: null`. The webhook 
 
 ### Recovery request succeeded
 
-For a `Recovery` request, `source_key_share_holder_group` identifies the source key share holder group and the TSS Node IDs included in that source group (`dev_openapi.yaml:7877-7896`).
+For a `Recovery` request, `source_key_share_holder_group` identifies the source key share holder group and the TSS Node IDs included in that source group.
 
 ```json
 {

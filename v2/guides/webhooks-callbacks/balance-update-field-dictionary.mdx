@@ -13,9 +13,9 @@ This page defines high-signal fields and trigger behavior for `BalanceUpdateInfo
 
 ### Trigger behavior
 
-Both balance update event types are dispatched by `BalanceEventManager`; the manager selects `wallet.mpc.balance.updated` or `wallet.web3.balance.updated` based on wallet type and sends the same payload shape (`custody/waas2/webhooks/managers/balance_event.py:15-16`, `custody/waas2/webhooks/managers/balance_event.py:80-105`). The single confirmed entry point is `on_eoa_wallet_balance_update` (`custody/custody/web3/managers/transaction_request.py:6427`).
+Both balance update event types share the same payload shape. Which event type is emitted — `wallet.mpc.balance.updated` or `wallet.web3.balance.updated` — depends on the wallet type that triggered the balance change.
 
-The event originates from the blockchain-scanner callback pipeline. `BlockChainHandler.handle_bc_callback_message` routes scanner balance refresh messages to `create_asset_update_webhook`, which emits the webhook when the chain-scanning and balance-refresh pipeline observes a new or changed on-chain balance (`custody/custody/handler/blockchain_handler.py:81-117`, `custody/custody/handler/blockchain_handler.py:156`, `custody/custody/handler/blockchain_handler.py:890`, `custody/custody/handler/blockchain_handler.py:899`). It is not a fixed periodic reconciliation job and is not gated on transaction-ledger completion.
+The event fires when Cobo's chain-scanning and balance-refresh pipeline detects a new or changed on-chain balance. It is not a fixed periodic reconciliation job, and it is not gated on transaction-ledger completion.
 
 ### Field dictionary
 
@@ -25,8 +25,8 @@ The event originates from the blockchain-scanner callback pipeline. `BlockChainH
 | `address` | The on-chain address whose balance was refreshed. |
 | `wallet_uuid` | The wallet identifier for this balance payload. This field is named `wallet_uuid`, not `wallet_id`, unlike Transaction and Addresses payloads. |
 | `updated_timestamp` | The time when the balance update was recorded. |
-| `balance.total` | Total balance for the token at the address. Required by the `Balance` schema (`dev_openapi.yaml:6801-6830`). |
-| `balance.available` | Balance currently available for use. Required by the `Balance` schema (`dev_openapi.yaml:6801-6830`). |
+| `balance.total` | Total balance for the token at the address. Required by the `Balance` schema. |
+| `balance.available` | Balance currently available for use. Required by the `Balance` schema. |
 | `balance.pending` | Balance pending final availability. |
 | `balance.locked` | Balance locked by platform or workflow constraints. |
 | `balance.frozen` | Balance frozen by compliance or risk controls. |

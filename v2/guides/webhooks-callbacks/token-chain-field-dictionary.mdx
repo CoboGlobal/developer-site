@@ -27,22 +27,22 @@ Treat each event as a delta scoped by `wallet_type` and `wallet_subtypes`. For `
 
 ### Chain scope events
 
-`wallet.chain.enabled` and `wallet.chain.disabled` are emitted by an MFA-guarded organization-facing action. They fire when an organization admin updates which chains their package or wallet type supports through `package_chain_update` (`custody/waas2/data/controllers/package.py:436-463`).
+`wallet.chain.enabled` and `wallet.chain.disabled` are emitted by an MFA-guarded organization-facing action. They fire when an organization admin updates which chains their package or wallet type supports.
 
 | Field | Description |
 |-------|-------------|
-| `chains` | The enabled or disabled chain records. Each item follows `ChainInfo` (`dev_openapi.yaml:6660-6707`). |
+| `chains` | The enabled or disabled chain records. Each item follows `ChainInfo`. |
 | `wallet_type` | The wallet family whose chain scope changed. |
 | `wallet_subtypes` | The wallet subtypes affected by the chain-scope change. |
 
 ### Token listing events
 
-`wallets.token_listing.succeeded` and `wallets.token_listing.failed` are part of an end-user token listing flow. Organizations create requests with `POST wallets/tokens/listing_requests`; Cobo proxies the request to Aladdin for review, and the succeeded or failed webhook is emitted when Aladdin calls back with the final status (`custody/waas2/base/views/dev/token_listing_requests.py:33-84`, `custody/waas2/base/controllers/dev/token_listing_requests.py:338-376`, `custody/waas2/base/urls_dev.py:46`).
+`wallets.token_listing.succeeded` and `wallets.token_listing.failed` are part of an end-user token listing flow. Organizations create requests with `POST wallets/tokens/listing_requests`. Cobo reviews the request, and the succeeded or failed webhook is emitted when the review reaches a final status.
 
 | Field | Description |
 |-------|-------------|
 | `request_id` | The token listing request identifier. |
-| `status` | Final request status. Values are `Submitted`, `Succeeded`, and `Failed` (`dev_openapi.yaml:7510-7519`). |
-| `source` | Request source. Values are `API` and `Admin` (`dev_openapi.yaml:7520-7531`). |
+| `status` | Final request status. Values are `Submitted`, `Succeeded`, and `Failed`. |
+| `source` | Request source. Values are `API` and `Admin`. |
 | `feedback` | Review feedback for the request, usually populated when the listing fails. |
-| `token` | The token record produced by a successful listing. It follows `TokenInfo` (`dev_openapi.yaml:6566-6632`). |
+| `token` | The token record produced by a successful listing. It follows `TokenInfo`. |

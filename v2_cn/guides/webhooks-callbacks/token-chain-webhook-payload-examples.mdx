@@ -13,7 +13,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### Token enabled or disabled
 
-`wallet.token.enabled` 和 `wallet.token.disabled` 传递 `TokensEventData` 负载，其中包含 `tokens`、`wallet_type` 和 `wallet_subtypes`（`dev_openapi.yaml:12317-12335`）。
+`wallet.token.enabled` 和 `wallet.token.disabled` 传递 `TokensEventData` 负载，其中包含 `tokens`、`wallet_type` 和 `wallet_subtypes`。
 
 ```json
 {
@@ -37,7 +37,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### Chain enabled or disabled
 
-`wallet.chain.enabled` 和 `wallet.chain.disabled` 传递 `ChainsEventData` 负载，其中包含 `chains`、`wallet_type` 和 `wallet_subtypes`（`dev_openapi.yaml:12298-12316`）。
+`wallet.chain.enabled` 和 `wallet.chain.disabled` 传递 `ChainsEventData` 负载，其中包含 `chains`、`wallet_type` 和 `wallet_subtypes`。
 
 ```json
 {
@@ -60,7 +60,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### Token listing succeeded or failed
 
-`wallets.token_listing.succeeded` 和 `wallets.token_listing.failed` 传递 `TokenListing` 负载。该负载包含最终 request status、request source、可选 feedback 和 listed token 详情（`dev_openapi.yaml:12360-12408`）。
+`wallets.token_listing.succeeded` 和 `wallets.token_listing.failed` 传递 `TokenListing` 负载。该负载包含最终 request status、request source、可选 feedback 和 listed token 详情。
 
 ```json
 {

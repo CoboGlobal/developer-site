@@ -13,22 +13,22 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### `addresses`
 
-`addresses` 是已创建 wallet address 的数组。单个地址创建事件也使用同一个数组包装结构。每个条目包含 `wallet_id` 以及 `AddressInfo` 字段 `address`、`chain_id`、`memo`、`path`、`encoding`、`pubkey`、`x_only_pubkey`、`root_pubkey`、`taproot_script_tree_hash`、`taproot_internal_address` 和 `stellar_trusted_token_ids`（`custody/waas2/base/bo/dev/address.py:16-27`，`custody/waas2/webhooks/managers/address_event.py:161`，`dev_openapi.yaml:7143-7193`）。
+`addresses` 是已创建 wallet address 的数组。单个地址创建事件也使用同一个数组包装结构。每个条目包含 `wallet_id` 以及 `AddressInfo` 字段 `address`、`chain_id`、`memo`、`path`、`encoding`、`pubkey`、`x_only_pubkey`、`root_pubkey`、`taproot_script_tree_hash`、`taproot_internal_address` 和 `stellar_trusted_token_ids`。
 
 对于 Solana Associated Token Account 激活，请参阅 [钱包与地址管理事件](/v2_cn/guides/webhooks-callbacks/webhook-event-type#wallet-and-address-management-events) 中的 note。
 
 ### `WalletInfo`
 
-`WalletInfo` 是按 wallet type 选择的 oneOf 负载。派发路径不限制 wallet type：`WalletSourceManager.create_ref` 被共享 wallet 创建流程使用，并已在 MPC vault-wallet 和 Custodial wallet 创建路径中确认（`custody/waas2/base/managers/wallet_source.py:23-49`，`custody/waas2/base/controllers/dev/wallets.py:40-59`，`custody/waas2/mpc/processors/mpc_vault.py:1662`，`custody/custody/managers/custody_wallet/standard.py:298`）。
+`WalletInfo` 是按 wallet type 选择的 oneOf 负载。该派发路径在各 wallet type 间共享，包括 MPC vault-wallet 和 Custodial wallet 创建。
 
 | 字段 | 说明 |
 |-------|-------------|
 | `wallet_id` | 已创建 wallet 的标识符。 |
 | `wallet_type` | wallet family，例如 `MPC`，用于决定返回哪个 oneOf branch。 |
 | `wallet_subtype` | wallet family 内的 subtype，例如 `Org-Controlled`。 |
-| `vault_id` | 对于 `MPCWalletInfo` 负载，表示拥有该 wallet 的 MPC vault（`dev_openapi.yaml:6993-7015`）。 |
-| `project_id` | 对于 `MPCWalletInfo` 负载，表示与该 wallet 关联的 project（`dev_openapi.yaml:6993-7015`）。 |
+| `vault_id` | 对于 `MPCWalletInfo` 负载，表示拥有该 wallet 的 MPC vault。 |
+| `project_id` | 对于 `MPCWalletInfo` 负载，表示与该 wallet 关联的 project。 |
 
 ### `MPCVault`
 
-`MPCVault` 标识已创建 vault 及其生成的 root public key。`root_pubkeys` 是包含 `root_pubkey` 和 `curve` 的 `RootPubkey` 对象数组，而不是字符串数组（`dev_openapi.yaml:7697-7723`，`custody/waas2/mpc/processors/dev/mpc_vault.py:1174-1202`）。
+`MPCVault` 标识已创建 vault 及其生成的 root public key。`root_pubkeys` 是包含 `root_pubkey` 和 `curve` 的 `RootPubkey` 对象数组，而不是字符串数组。
