@@ -1,0 +1,94 @@
+---
+title: "MPC TSS request Webhook 事件"
+lang: "zh-hans"
+description: "了解 wallets.mpc.tss_request.* Webhook 事件的 Payload 和生命周期信号。"
+sidebarTitle: "MPC TSS request Webhook 事件"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+`wallets.mpc.tss_request.*` Webhook 事件报告 MPC 钱包在 Cobo Portal 中执行密钥生成和 reshare 操作的生命周期。`KeyGen` 创建组织的首个 Main Group；`KeyGenFromKeyGroup` 从现有 Main Group 派生新的 Signing Group 或 Recovery Group；`Recovery` 替换 Main Group 中某位持有者的私钥分片。
+
+## 事件生命周期
+
+<table class="table-three-cols">
+  <thead><tr><th>事件</th><th>数据类型</th><th>发生时机</th></tr></thead>
+  <tbody>
+    <tr><td><code>wallets.mpc.tss_request.created</code></td><td><code>TSSRequest</code></td><td>请求创建后、任何私钥分片持有者交互前触发一次。</td></tr>
+    <tr><td><code>wallets.mpc.tss_request.updated</code></td><td><code>TSSRequest</code></td><td>后续每次中间状态变化时触发，包括私钥分片持有者确认、密钥生成和 MPC 处理状态。</td></tr>
+    <tr><td><code>wallets.mpc.tss_request.succeeded</code></td><td><code>TSSRequest</code></td><td>请求到达 <code>Success</code> 终态时触发一次。</td></tr>
+    <tr><td><code>wallets.mpc.tss_request.failed</code></td><td><code>TSSRequest</code></td><td>请求到达无法继续处理的失败终态时触发一次。</td></tr>
+  </tbody>
+</table>
+
+`PendingKeyHolderConfirmation`、`KeyHolderConfirmationFailed`、`KeyGenerating` 和 `MPCProcessing` 等中间状态通过 `updated` 事件投递，而不会通过终态事件投递。初始请求状态通过 `created` 投递；最终结果通过 `succeeded` 或 `failed` 投递。
+
+## Payload 参考
+
+| 字段 | 类型 | 说明 |
+|-------|------|------|
+| `tss_request_id` | string | TSS 请求的唯一标识符。 |
+| `source_key_share_holder_group` | object | 现有来源私钥分片持有者组。该字段在 `KeyGenFromKeyGroup` 和 `Recovery` 请求中填充；`KeyGen` 没有现有来源组，因此不包含该字段。 |
+| `target_key_share_holder_group_id` | string | 所有请求类型的目标组：`KeyGen` 新建的 Main Group、`KeyGenFromKeyGroup` 派生的 Signing Group 或 Recovery Group，或者 `Recovery` 中成员私钥分片被替换的 Main Group。 |
+| `type` | string | 请求类型：`KeyGen`、`KeyGenFromKeyGroup` 或 `Recovery`。 |
+| `status` | string | TSS 请求当前所处的生命周期状态。 |
+| `description` | string | TSS 请求的说明。 |
+| `created_timestamp` | integer | 请求创建时间，采用毫秒级 Unix 时间戳。 |
+
+提供 `source_key_share_holder_group` 时，该对象包含：
+
+| 字段 | 类型 | 说明 |
+|-------|------|------|
+| `key_share_holder_group_id` | string | 来源私钥分片持有者组的标识符。 |
+| `tss_node_ids` | array of strings | 参与创建新私钥分片持有者组的 TSS Node ID。 |
+
+以下示例涵盖四种结果。每个对象均包含对应请求中已填充的全部字段。
+
+### Created
+
+```json
+{
+  "event_id": "8f2e919a-6a7b-4a9b-8c1a-4c0b3f5b8b1f",
+  "url": "https://example.com/webhook",
+  "created_timestamp": 1701396866000,
+  "type": "wallets.mpc.tss_request.created",
+  "data": {
+    "data_type": "TSSRequest",
+    "tss_request_id": "20240711114129000132315000003970",
+    "target_key_share_holder_group_id": "fd9519ae-507b-4605-b108-04d4e5ffcdd3",
+    "type": "KeyGen",
+    "status": "PendingKeyHolderConfirmation",
+    "description": "Create the first Main Group",
+    "created_timestamp": 1701396866000
+  },
+  "status": "Delivered"
+}
+```
+
+### Updated
+
+```json
+{"event_id":"event-tss-updated","url":"https://example.com/webhook","created_timestamp":1701396966000,"type":"wallets.mpc.tss_request.updated","data":{"data_type":"TSSRequest","tss_request_id":"20240711114129000132315000003971","source_key_share_holder_group":{"key_share_holder_group_id":"f47ac10b-58cc-4372-a567-0e02b2c3d479","tss_node_ids":["cobo5yb7BNEBwwp5XXedbhnzQfvQtp132W4dH4Jz4x4eDp4KA"]},"target_key_share_holder_group_id":"fd9519ae-507b-4605-b108-04d4e5ffcdd3","type":"KeyGenFromKeyGroup","status":"MPCProcessing","description":"Create a Signing Group","created_timestamp":1701396866000},"status":"Delivered"}
+```
+
+### Succeeded
+
+```json
+{"event_id":"event-tss-succeeded","url":"https://example.com/webhook","created_timestamp":1701397066000,"type":"wallets.mpc.tss_request.succeeded","data":{"data_type":"TSSRequest","tss_request_id":"20240711114129000132315000003971","source_key_share_holder_group":{"key_share_holder_group_id":"f47ac10b-58cc-4372-a567-0e02b2c3d479","tss_node_ids":["cobo5yb7BNEBwwp5XXedbhnzQfvQtp132W4dH4Jz4x4eDp4KA"]},"target_key_share_holder_group_id":"fd9519ae-507b-4605-b108-04d4e5ffcdd3","type":"KeyGenFromKeyGroup","status":"Success","description":"Create a Signing Group","created_timestamp":1701396866000},"status":"Delivered"}
+```
+
+### Failed
+
+```json
+{"event_id":"event-tss-failed","url":"https://example.com/webhook","created_timestamp":1701397166000,"type":"wallets.mpc.tss_request.failed","data":{"data_type":"TSSRequest","tss_request_id":"20240711114129000132315000003972","target_key_share_holder_group_id":"fd9519ae-507b-4605-b108-04d4e5ffcdd4","type":"KeyGen","status":"KeyGeneratingFailed","description":"Create the first Main Group","created_timestamp":1701396866000},"status":"Delivered"}
+```
+
+如需了解投递和重试行为，请参阅[设置 Callback 或 Webhook Endpoint](/v2_cn/guides/webhooks-callbacks/set-up-endpoint)。
+
+## 相关指南
+
+- [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)

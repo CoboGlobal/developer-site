@@ -1,0 +1,126 @@
+---
+title: "Transaction fields"
+lang: "en"
+description: "Reference the Transaction object returned by transaction API operations and delivered in transaction webhook events and callback messages."
+sidebarTitle: "Transaction fields"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+The `Transaction` object represents a transaction throughout its lifecycle. Transaction API operations, transaction webhook events, and callback messages use this object.
+
+<table class="table-three-cols">
+  <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>transaction_id</code></td><td>string</td><td>Cobo's unique identifier for the transaction.</td></tr>
+    <tr><td><code>cobo_id</code></td><td>string</td><td>The Cobo ID that you can use to track the transaction.</td></tr>
+    <tr><td><code>request_id</code></td><td>string</td><td>Your unique identifier for the API request that initiated the transaction. It is absent when no corresponding request exists, such as for a deposit.</td></tr>
+    <tr><td><code>wallet_id</code></td><td>string</td><td>The unique identifier of the wallet associated with the transaction.</td></tr>
+    <tr><td><code>type</code></td><td>string</td><td>The transaction type, such as <code>Deposit</code>, <code>Withdrawal</code>, <code>ContractCall</code>, or <code>MessageSign</code>.</td></tr>
+    <tr><td><code>status</code></td><td>string</td><td>The transaction's lifecycle stage.</td></tr>
+    <tr><td><code>sub_status</code></td><td>string</td><td>A more specific reason or stage within <code>status</code>.</td></tr>
+    <tr><td><code>failed_reason</code></td><td>string</td><td>Additional detail about why the transaction failed.</td></tr>
+    <tr><td><code>chain_id</code></td><td>string</td><td>The unique identifier of the blockchain on which the transaction occurs.</td></tr>
+    <tr><td><code>token_id</code></td><td>string</td><td>The WaaS token catalog identifier for Custodial Wallet, Web3 Wallet, and MPC Wallet transactions.</td></tr>
+    <tr><td><code>asset_id</code></td><td>string</td><td>The asset identifier in your linked exchange account. It applies only to Exchange Wallet transactions.</td></tr>
+    <tr><td><code>source</code></td><td>object</td><td>The transaction origin. Its shape is selected by <code>source_type</code>.</td></tr>
+    <tr><td><code>destination</code></td><td>object</td><td>The transaction target or signing input. Its shape is selected by <code>destination_type</code>.</td></tr>
+    <tr><td><code>result</code></td><td>object</td><td>The signing result for a <code>MessageSign</code> transaction. It is absent for every other transaction type.</td></tr>
+    <tr><td><code>fee</code></td><td>object</td><td>The network fee details, discriminated by <code>fee_type</code>. It is populated after broadcast and absent while signature or broadcast is pending.</td></tr>
+    <tr><td><code>initiator</code></td><td>string</td><td>The name or identifier of the transaction initiator.</td></tr>
+    <tr><td><code>initiator_type</code></td><td>string</td><td>The channel through which the transaction was initiated.</td></tr>
+    <tr><td><code>confirmed_num</code></td><td>integer</td><td>The number of confirmations received.</td></tr>
+    <tr><td><code>confirming_threshold</code></td><td>integer</td><td>The minimum confirmation count required by Cobo.</td></tr>
+    <tr><td><code>transaction_hash</code></td><td>string</td><td>The on-chain transaction identifier, also called the transaction hash or <code>txid</code>. It is populated only after broadcast.</td></tr>
+    <tr><td><code>block_info</code></td><td>object</td><td>The number, timestamp, and hash of the confirmed block. It is absent before on-chain confirmation and for <code>MessageSign</code> transactions.</td></tr>
+    <tr><td><code>raw_tx_info</code></td><td>object</td><td>The constructed transaction data and any nonce or UTXO details. It is populated after assembly for broadcast and is absent before that stage and for <code>MessageSign</code> transactions.</td></tr>
+    <tr><td><code>replacement</code></td><td>object</td><td>Forward or backward links between an original transaction and its replacement. It appears only when a replacement operation exists.</td></tr>
+    <tr><td><code>category</code></td><td>array of strings</td><td>Your custom categories for organizing transactions.</td></tr>
+    <tr><td><code>description</code></td><td>string</td><td>Your description of the transaction.</td></tr>
+    <tr><td><code>is_loop</code></td><td>boolean</td><td>Whether the transaction was executed as a Cobo Loop transfer.</td></tr>
+    <tr><td><code>cobo_category</code></td><td>array of strings</td><td>System-assigned categories that identify Cobo workflows associated with the transaction.</td></tr>
+    <tr><td><code>extra</code></td><td>array of strings</td><td>JSON-encoded, business-specific information; each item identifies its shape with <code>extra_type</code>.</td></tr>
+    <tr><td><code>fueling_info</code></td><td>object</td><td>Fee Station fueling details associated with the transaction.</td></tr>
+    <tr><td><code>created_timestamp</code></td><td>integer</td><td>The creation time as a Unix timestamp in milliseconds.</td></tr>
+    <tr><td><code>updated_timestamp</code></td><td>integer</td><td>The most recent update time as a Unix timestamp in milliseconds.</td></tr>
+  </tbody>
+</table>
+
+For the complete status and sub-status values, see [Transaction statuses and sub-statuses](/v2/guides/transactions/status).
+
+## `token_id` and `asset_id`
+
+`token_id` is the token's identifier in the WaaS token catalog, such as `ETH`, `ETH_USDT`, or `BTC`. Use [List enabled tokens](/v2/api-references/wallets/list-enabled-tokens) to retrieve the identifiers available to your organization.
+
+`token_id` is populated for Custodial Wallet, Web3 Wallet, and MPC Wallet transactions. `asset_id` is the asset identifier in your linked exchange account and is populated only for Exchange Wallet transactions. A transaction has one field or the other based on its wallet type, not both. The fields are not interchangeable.
+
+## `request_id`
+
+`request_id` is present only for transactions that you initiated through an API request, such as a transaction-creation operation. Use it to correlate the transaction with your original request. It is absent for deposits and other transactions that Cobo created without a corresponding request from you.
+
+## `replacement` and RBF links
+
+The `replacement` object links transactions involved in replacement operations:
+
+| Field | Description |
+|-------|-------------|
+| `replaced_by_type` | The replacement operation applied to the original transaction: `Drop`, `Resend`, or `SpeedUp`. |
+| `replaced_by_transaction_id` | The Cobo transaction ID of the transaction that replaced this transaction. |
+| `replaced_by_transaction_hash` | The on-chain hash of the transaction that replaced this transaction. |
+| `replaced_type` | The replacement operation through which this transaction replaced another transaction. |
+| `replaced_transaction_id` | The Cobo transaction ID of the transaction replaced by this transaction. |
+| `replaced_transaction_hash` | The on-chain hash of the transaction replaced by this transaction. |
+
+See [RBF (Replace-By-Fee) transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle) for replacement operations and status changes.
+
+`replaced_by_transaction_hash` is populated only after the replacing transaction from a `Drop`, `Resend`, or `SpeedUp` operation has broadcast. Use it together with `replaced_by_transaction_id` to look up the replacing transaction.
+
+## `cobo_category`
+
+`cobo_category` is assigned by Cobo and is distinct from your `category` and `description` values. Examples include `AutoFueling`, `BillPayment`, and `AutoSweep`. See [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories) for the categorized value list.
+
+## Structured and conditional fields
+
+### `fee`
+
+`fee` is populated after the transaction broadcasts. It is absent while signature or broadcast is pending.
+
+The `fee_type` discriminator selects the fee shape for the chain's fee model: `EVM_EIP_1559`, `EVM_Legacy`, `UTXO`, `Fixed`, `SOL`, or `FIL`. Fee shapes can include the fee token in `token_id`, the charged amount in `fee_used`, and the estimate in `estimated_fee_used`. Chain-specific shapes add fields such as gas prices and gas usage, UTXO fee rates, Solana compute units, or Filecoin gas parameters. See [Estimate transaction fees](/v2/guides/transactions/estimate-fees) for fee models.
+
+### `block_info`
+
+`block_info` is populated after the transaction broadcasts and receives on-chain confirmation. It is absent for pending transactions and for `MessageSign` transactions.
+
+`block_info` contains:
+
+| Field | Description |
+|-------|-------------|
+| `block_number` | The number of the block containing the transaction. |
+| `block_timestamp` | The block creation time as a Unix timestamp in milliseconds. |
+| `block_hash` | The block's hash. |
+
+### `raw_tx_info`
+
+`raw_tx_info` is populated after the transaction has been assembled for broadcast. It is absent before that stage and for `MessageSign` transactions.
+
+`raw_tx_info` contains constructed transaction data:
+
+| Field | Description |
+|-------|-------------|
+| `used_nonce` | The nonce used by the transaction. |
+| `selected_utxos` | The inputs selected for a UTXO transaction. Each item can include `tx_hash`, `vout_n`, `token_id`, `address`, and `value`, plus script or object-chain details when applicable. |
+| `raw_tx` | The serialized raw transaction. |
+| `unsigned_raw_tx` | The serialized transaction before signing. |
+| `utxo_changes` | UTXO change outputs. Each item contains `address`, `value`, and `token_id`. |
+
+### `result`
+
+`result` is present only for `MessageSign` transactions. For a message-signing result, `result_type` is `Signature` and `signature` contains the raw signature data.
+
+## Sources and destinations
+
+`source` and `destination` are discriminated objects. `source_type` identifies the wallet or deposit origin, while `destination_type` identifies an address, wallet, contract call, deposit target, or message-signing format. See [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations) for the complete fields supported by each transaction type.
