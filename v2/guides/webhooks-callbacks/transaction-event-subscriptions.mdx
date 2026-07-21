@@ -1,0 +1,55 @@
+---
+title: "Transaction event subscriptions"
+lang: "en"
+description: "Recommended webhook event subscriptions for common transaction scenarios: deposit crediting, withdrawal tracking, AutoSweep, and Portal-originated withdrawals."
+sidebarTitle: "Transaction event subscriptions"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+Use these subscription and payload-inspection patterns for common transaction flows. For the complete schema, see [Transaction payload reference](/v2/guides/webhooks-callbacks/wallets-transaction-payload).
+
+## Deposit crediting
+
+- Subscribe to `wallets.transaction.succeeded` as your primary crediting signal. It fires when a deposit reaches `Completed`.
+- Subscribe to `wallets.transaction.created` and `wallets.transaction.updated` for detection and confirmation progress, but do not credit funds from these notifications.
+- Subscribe to `wallets.transaction.failed` to detect rejected deposits. For example, a transaction can have `status=Rejected` with `sub_status=RejectedByCoboKYT` or `RejectedByScreeningApp`. Reconcile these transactions against the sender instead of silently discarding them.
+- Subscribe to `compliance.kyt.screenings.status.updated` when you need to track KYT case state independently. See [`ComplianceKytScreenings` event data](/v2/guides/webhooks-callbacks/webhook-event-type#compliancekytscreenings-event-data).
+
+Make balance updates idempotent by using the always-present `transaction_id` as the transaction key. Use nullable `cobo_id` to cross-reference Cobo Portal records and nullable `request_id` to cross-reference API-initiated flows once those identifiers are populated; see [Transaction fields](/v2/guides/webhooks-callbacks/wallets-transaction-payload#transaction-fields) for their lifecycle semantics. For delivery-level deduplication with `event_id`, see [Endpoint scope and reconciliation](/v2/guides/webhooks-callbacks/introduction#endpoint-scope-and-reconciliation). When you need the current state, call [Get transaction information](/v2/api-references/transactions/get-transaction-information) or [List all transactions](/v2/api-references/transactions/list-all-transactions).
+
+## Withdrawal tracking
+
+<table class="table-three-cols">
+<thead><tr><th>Status</th><th>Event(s)</th><th>How to handle it</th></tr></thead>
+<tbody>
+<tr><td><code>PendingAuthorization</code></td><td><code>created</code>, <code>updated</code></td><td>Track creation and changes through the authorization sub-statuses.</td></tr>
+<tr><td><code>Broadcasting</code></td><td><code>updated</code></td><td>The signed transaction is being submitted to the network.</td></tr>
+<tr><td><code>Confirming</code></td><td><code>updated</code></td><td>Track confirmation progress without treating it as final.</td></tr>
+<tr><td><code>Completed</code></td><td><code>updated</code>, <code>succeeded</code></td><td>Treat <code>succeeded</code> as the dedicated positive terminal signal.</td></tr>
+<tr><td><code>Rejected</code></td><td><code>updated</code>, <code>failed</code></td><td>Inspect <code>sub_status</code>, such as <code>RejectedApproverAuth</code>, <code>RejectedBySigner</code>, or <code>RejectedRiskControlCheck</code>, to identify the rejection source.</td></tr>
+<tr><td><code>Failed</code></td><td><code>updated</code>, <code>failed</code></td><td>Inspect <code>sub_status</code>, such as <code>FailedSignerTimeout</code>, <code>FailedOnChain</code>, or <code>ReplacedByNewTransaction</code>, to determine the outcome.</td></tr>
+</tbody>
+</table>
+
+Portal-initiated and API-initiated withdrawals use the same status-to-event mapping. There is no separate event family for Portal withdrawals. Subscribe to `wallets.transaction.created`, `wallets.transaction.updated`, `wallets.transaction.succeeded`, and `wallets.transaction.failed` together so that you receive progress and terminal approval, rejection, or failure outcomes.
+
+## AutoSweep transactions
+
+AutoSweep transactions, identified by `cobo_category` containing `AutoSweep`, use the same `wallets.transaction.*` event path and Transaction payload as other transactions. There is no separate AutoSweep event or payload. See [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories).
+
+## Portal-originated withdrawals
+
+Portal-originated and API-originated withdrawals share the status-to-event mapping in [Withdrawal tracking](#withdrawal-tracking). Process both through the same subscription handlers.
+
+## Related guides
+
+- [Transaction payload reference](/v2/guides/webhooks-callbacks/wallets-transaction-payload)
+- [TSS request payload reference](/v2/guides/webhooks-callbacks/wallets-mpc-tss-request-payload)
+- [Transaction statuses and sub-statuses](/v2/guides/transactions/status)
+- [Manage transactions](/v2/guides/transactions/manage-transactions)
+- [RBF transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle)
