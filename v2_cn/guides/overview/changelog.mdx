@@ -30,7 +30,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - 出于安全考虑，[签署消息](/v2/api-references/transactions/sign-message) 接口中的 `Raw_Message_Signature` 已废弃，不再允许使用，未来版本可能移除。
 - 澄清 [创建钱包](/v2/api-references/wallets/create-wallet) 接口的钱包名称约束：`name` 为必填且不能为空；不支持 `@` 等特殊字符，否则返回 `400 Bad Request`。
 - 澄清 [估算交易费用](/v2/api-references/transactions/estimate-transaction-fee) 接口返回的手续费预估为瞬时数据、时效较短。提交提现前应重新估算，避免因手续费不足导致交易被拒绝。
-- 澄清 [创建自动归集任务](/v2/api-references/autosweep/create-auto-sweep-task) 接口的异步行为：任务创建后 `status` 为 `Submitted` 且 `transaction_ids` 为空属正常；请轮询 [获取自动归集任务详情](/v2/api-references/autosweep/get-auto-sweep-task-details) 直至 `status` 变为 `TransactionCreated`。归集需要原生链币支付 gas，可从充币地址、Fee Station 或 Auto-Fuel 获取。
+- 澄清 [Create auto-sweep task](/v2/api-references/autosweep/create-auto-sweep-task) 接口的异步行为：请求会被异步接受处理，返回时 `status` 为 `Submitted` 且 `transaction_ids` 为空属正常。请轮询 [Get auto-sweep task details](/v2/api-references/autosweep/get-auto-sweep-task-details)，并结合 `status`、`transaction_ids` 与 `failed_reasons` 共同判断任务状态；并非每个任务都保证会脱离 `Submitted` 状态。归集需要原生链币支付 gas，可从充币地址、Fee Station 或 Auto-Fuel 获取。
 - 澄清 [查询交易详情](/v2/api-references/transactions/get-transaction-information) 和 [查询交易列表](/v2/api-references/transactions/list-all-transactions) 响应中的 `transaction_hash` 仅在链上广播后才有值，广播前可能为 `null` 或缺失。
 - 澄清 Solana 交易费用字段：`fee_used` 仅包含链上网络手续费，不含 ATA 激活租金；费用预估响应中的 `rent_amount` 为 ATA 激活租金预留字段，当前不返回。
 
