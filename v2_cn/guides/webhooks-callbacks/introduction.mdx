@@ -45,6 +45,22 @@ Callback 和 webhook 在您的业务操作中具有不同的用途。
 
 要使用 Cobo CLI 管理 webhook 事件，请参阅以下指南：[监听和转发事件](/v2_cn/developer-tools/cobo-cli/listen-and-forward-events)、[触发 webhook 事件](/v2_cn/developer-tools/cobo-cli/trigger-events) 和 [列出事件类型](/v2_cn/developer-tools/cobo-cli/event-types)。
 
+## 投递机制
+
+请阅读以下规则，以便判断未收到通知是预期行为还是需要排查的问题。
+
+- **事件触发。** 交易会随着其状态变化发出 webhook 事件。如需通过单个订阅跟踪交易的完整生命周期，请订阅 `wallets.transaction.updated`，它涵盖创建、更新、完成和失败。有关完整的事件列表，请参阅 [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。
+- **顺序与重试。** 事件顺序不保证，且同一事件可能被多次投递，因此请使用唯一标识符进行去重。失败的投递会自动重试。请参阅 [重试行为](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#重试行为) 和 [投递保证](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#投递保证)。
+
+### 未收到 Webhook 事件？自助排查
+
+如果您的 Endpoint 未收到预期的 webhook 事件，请按照以下清单逐项排查：
+
+1. 确认您的 Endpoint 已订阅相关的事件类型，特别是用于交易状态变化的 `wallets.transaction.updated`。调用 [Get webhook endpoint information](/v2/api-references/developers--webhooks/get-webhook-endpoint-information) 查看该 Endpoint 当前的 `subscribed_events` 列表。如需添加或移除事件类型，请调用 [Update webhook endpoint](/v2/api-references/developers--webhooks/update-webhook-endpoint)，并将 `subscribed_events` 参数设置为您希望该 Endpoint 接收的完整事件类型列表。
+2. 使用 [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type) 确认您期望的事件是 WaaS 服务会发出的事件。
+3. 在 **Cobo Portal** > **开发者** > **WaaS 2.0** > **Webhook 事件** 中查看投递日志，然后单击该事件以查看每次投递尝试、其响应码和响应包体。
+4. 如果事件状态为 `Failed`，请先参阅 [常见投递失败原因](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#常见投递失败原因) 排查并解决原因。然后在第 3 步打开的 **Webhook 事件** 列表中单击该失败事件以打开其详情页面，单击 **重新发送**，并在弹窗中确认以重新投递该事件。您也可以使用该 Endpoint 的 `endpoint_id` 和该事件的 `event_id` 调用 [Retry event](/v2/api-references/developers--webhooks/retry-event)。
+
 ## 从 WaaS 1.0 升级到 WaaS 2.0 的注意事项
 
 WaaS 1.0 服务使用 API Callback进行交易通知和提币确认，类似于 WaaS 2.0 中引入的 webhook 和Callback。以下表格提供了两种版本基于事件通知机制的比较：

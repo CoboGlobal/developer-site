@@ -82,17 +82,21 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
 
 #### Webhook 事件
 
-当您的 Webhook Endpoint 收到 Webhook 事件时，它应该响应状态码 `200` 或 `201` 以指示事件已成功接收和处理。一旦发送此响应，WaaS 服务将停止重试发送事件，事件状态将变为**已送达**。
+当您的 Webhook Endpoint 收到 Webhook 事件时，它应该响应状态码 `200` 或 `201` 以指示事件已成功接收和处理。一旦发送此响应，WaaS 服务将停止重试发送事件，事件状态将变为 `Delivered`。
 
-默认情况下，每个 Webhook 事件的超时时间为 2 秒。如果 Webhook Endpoint 没有响应或响应状态码不是 `200` 或 `201`，WaaS 服务将继续重试发送事件。如果重试次数达到 10 次，WaaS 服务将停止发送事件，事件状态将变为**发送失败**。您可以通过单击 Cobo Portal > 开发者 > WaaS 2.0 > Webhook 事件上的**重新发送**来重新发送事件。
+##### 重试行为
 
-Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以下事件：
+默认情况下，每个 Webhook 事件的超时时间为 2 秒。WaaS 服务按如下方式评估您 Endpoint 的响应：
 
-- `wallets.transaction.created`
-- `wallets.transaction.updated`
-- `wallets.transaction.succeeded`
+- 状态码 `200` 或 `201` 被视为成功。事件状态变为 `Delivered`，不再进行后续投递尝试。
+- 其他任何状态码、无效响应或在超时时间内无响应，均被视为可重试的失败，WaaS 服务将重试投递。
 
-您的 Endpoint 不应假设事件将按此顺序到达。
+WaaS 服务最多尝试投递 10 次。在第 10 次投递失败后，WaaS 服务将停止发送事件，事件状态变为 `Failed`。您可以单击 **Cobo Portal** > **开发者** > **WaaS 2.0** > **Webhook 事件** 上的 **重新发送** 来重新发送失败的事件。
+
+##### 投递保证
+
+- **不保证投递顺序。** WaaS 服务不保证事件按生成顺序投递。例如，创建转账会生成 `wallets.transaction.created`、`wallets.transaction.updated` 和 `wallets.transaction.succeeded`；您的 Endpoint 不应假设事件将按此顺序到达。
+- **可能重复投递。** 由于事件会被重试，您的 Endpoint 可能会多次收到同一事件。请使用唯一标识符（例如 Event ID、Transaction Hash 或 Transaction ID）进行去重，并忽略已处理的事件。
 
 #### Callback 消息
 
