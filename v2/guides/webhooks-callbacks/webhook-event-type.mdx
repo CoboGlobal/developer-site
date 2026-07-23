@@ -63,6 +63,8 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+See [Transaction webhook events](/v2/guides/webhooks-callbacks/transaction-webhook-events) for the shared payload, lifecycle signals, and a worked JSON example.
+
 ### Fee Station events
 
 <table class="table-three-cols">
@@ -131,6 +133,8 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+See [MPC TSS request webhook events](/v2/guides/webhooks-callbacks/mpc-tss-request-webhook-events) for the shared payload, request types, statuses, and a worked JSON example.
+
 ### Wallet and address management events
 
 <table class="table-three-cols">
@@ -153,14 +157,35 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
       <td>A new wallet has been created.</td>
     </tr>
     <tr>
+      <td><code>wallets.updated</code></td>
+      <td><code>WalletInfo</code></td>
+      <td>A wallet has been updated.</td>
+    </tr>
+    <tr>
       <td><code>mpc_vaults.created</code></td>
       <td><code>MPCVault</code></td>
       <td>A new MPC vault has been created.</td>
+    </tr>
+    <tr>
+      <td><code>mpc_vaults.updated</code></td>
+      <td><code>MPCVault</code></td>
+      <td>An MPC vault has been updated.</td>
+    </tr>
+    <tr>
+      <td><code>mpc_vaults.deleted</code></td>
+      <td><code>MPCVault</code></td>
+      <td>An MPC vault has been deleted.</td>
     </tr>
   </tbody>
 </table>
 
 <Note>Activating a Solana token sub-address (Associated Token Account) does not emit a `wallets.addresses.created` event. The rent transfer that funds the activation does not emit any `wallets.transaction.*` event and does not produce a deposit or transaction record. As a result, Solana token account activation and its rent are not visible through webhooks. For details, see [Solana token account rent](/v2/guides/transactions/solana-token-account-rent).</Note>
+
+### Organization events
+
+| Event type | Event data type | When it occurs |
+|------------|-----------------|----------------|
+| `organizations.updated` | `Organization` | An organization has been updated. The payload includes `org_id` and `name` to identify the organization. |
 
 ### Token and chain management events
 
@@ -291,7 +316,7 @@ The `compliance.kyt.screenings.status.updated` event carries a `ComplianceKytScr
 The case decision that drives these status changes is represented by `KytScreeningsDecisionsType`, which has the values `Approval`, `ApprovalWithAlert`, `Rejection`, and `ManualReview`.
 
 ## Data structure of webhook events           
-For a complete introduction of the webhook event data and its data structure, refer to the [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) property in the response of the Retrieve event information operation or the [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) property in the response of the List all webhook event operation. 
+For field-level guidance, see [Transaction webhook events](/v2/guides/webhooks-callbacks/transaction-webhook-events) and [MPC TSS request webhook events](/v2/guides/webhooks-callbacks/mpc-tss-request-webhook-events). To inspect the raw schema for any event data type, refer to the [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) property in the response of the Retrieve event information operation or the [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) property in the response of the List all webhook event operation.
 
 <img src="/v2/images/guides/webhook_data_structure.png" class="screenshot_full_screen" alt="Screenshot of the data property" />
 

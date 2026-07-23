@@ -1,0 +1,118 @@
+---
+title: "Transaction Webhook 事件"
+lang: "zh-hans"
+description: "了解 wallets.transaction.* Webhook 事件的 Payload 和生命周期信号。"
+sidebarTitle: "Transaction Webhook 事件"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+交易 Webhook 事件适用于充币、提币、合约调用和消息签名。四个 `wallets.transaction.*` 事件使用相同的 Webhook Envelope，并在 `data` 中携带 `Transaction` 对象。
+
+## Event Envelope
+
+| 字段 | 说明 |
+|-------|------|
+| `event_id` | Webhook 事件的唯一标识符，重试投递时保持不变。 |
+| `url` | Cobo 投递事件的 Endpoint。 |
+| `created_timestamp` | 事件创建时间，采用毫秒级 Unix 时间戳。 |
+| `type` | 事件类型，例如 `wallets.transaction.updated`。 |
+| `data` | 事件 Payload。对于这些事件，`data_type` 为 `Transaction`。 |
+| `status` | 事件的投递状态。 |
+| `next_retry_timestamp` | `status` 为 `Retrying` 时的下次计划投递时间。 |
+| `retries_left` | `status` 为 `Retrying` 时剩余的投递次数。 |
+
+如需了解签名验证、响应、投递顺序、重试和重复处理，请参阅[设置 Callback 或 Webhook Endpoint](/v2_cn/guides/webhooks-callbacks/set-up-endpoint)。
+
+## 事件生命周期
+
+<table class="table-three-cols">
+  <thead><tr><th>事件</th><th>数据类型</th><th>发生时机</th></tr></thead>
+  <tbody>
+    <tr><td><code>wallets.transaction.created</code></td><td><code>Transaction</code></td><td>Cobo 在链上检测到交易或收到 API 请求并首次创建交易记录时触发一次。</td></tr>
+    <tr><td><code>wallets.transaction.updated</code></td><td><code>Transaction</code></td><td>从创建记录到终态，只要状态或确认数发生变化就会触发。</td></tr>
+    <tr><td><code>wallets.transaction.succeeded</code></td><td><code>Transaction</code></td><td>交易到达成功终态时触发一次。</td></tr>
+    <tr><td><code>wallets.transaction.failed</code></td><td><code>Transaction</code></td><td>交易到达 <code>Failed</code>、<code>Rejected</code> 或 <code>Canceled</code> 终态时触发一次。这三种状态均映射到该事件。</td></tr>
+  </tbody>
+</table>
+
+<Note>
+`wallets.transaction.created` 表示交易记录已存在，不表示交易已成功。
+</Note>
+
+`wallets.transaction.updated` 涵盖交易生命周期，包括创建、完成和失败。如果您需要跟踪每次状态或确认数变化，请订阅此事件。请参阅[交易状态和子状态](/v2_cn/guides/transactions/status)了解 `status` 和 `sub_status`。
+
+## 安全处理更新
+
+Cobo 不保证交易事件按照生成顺序到达。投递也可能重试。请确保处理逻辑具有幂等性，并记录已经处理的 `event_id`、`transaction_id` 或交易哈希。应用状态变化前，请将收到的事件与您已保存的交易状态进行核对。
+
+## Payload 参考
+
+`data` 对象包含 `data_type: "Transaction"` 以及交易属性。请参阅 [Transaction 字段](/v2_cn/guides/transactions/transaction-fields)了解完整的顶层字段字典，以及展开后的 `fee`、`block_info`、`raw_tx_info`、`replacement`、`source` 和 `destination` 对象。
+
+以下完整序列化示例涵盖各事件结果、充币和提币、EVM、UTXO 和 TRON 链，以及原生代币和合约代币。未在相应生命周期阶段填充的字段不会出现。
+
+### Created：EVM 原生代币提币
+
+```json
+{
+  "event_id": "8f2e919a-6a7b-4a9b-8c1a-4c0b3f5b8b1f",
+  "url": "https://example.com/webhook",
+  "created_timestamp": 1717740300000,
+  "type": "wallets.transaction.created",
+  "data": {
+    "data_type": "Transaction",
+    "transaction_id": "tx-eth-created",
+    "cobo_id": "202406070001",
+    "request_id": "withdraw-eth-001",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "type": "Withdrawal",
+    "status": "PendingSignature",
+    "chain_id": "ETH",
+    "token_id": "ETH",
+    "source": {"source_type": "Org-Controlled", "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479", "address": "0x1111111111111111111111111111111111111111"},
+    "destination": {"destination_type": "Address", "account_output": {"address": "0x2222222222222222222222222222222222222222", "amount": "0.5"}},
+    "initiator_type": "API",
+    "confirmed_num": 0,
+    "confirming_threshold": 12,
+    "created_timestamp": 1717740300000,
+    "updated_timestamp": 1717740300000
+  },
+  "status": "Delivered"
+}
+```
+
+### Updated：EVM 合约代币提币
+
+```json
+{"event_id":"event-eth-updated","url":"https://example.com/webhook","created_timestamp":1717740419000,"type":"wallets.transaction.updated","data":{"data_type":"Transaction","transaction_id":"tx-eth-usdt-updated","cobo_id":"202406070002","request_id":"withdraw-usdt-001","wallet_id":"wallet-mpc-001","type":"Withdrawal","status":"Confirming","chain_id":"ETH","token_id":"ETH_USDT","source":{"source_type":"Org-Controlled","wallet_id":"wallet-mpc-001","address":"0x1111111111111111111111111111111111111111"},"destination":{"destination_type":"Address","account_output":{"address":"0x3333333333333333333333333333333333333333","amount":"100"}},"fee":{"fee_type":"EVM_EIP_1559","token_id":"ETH","fee_used":"0.00042","estimated_fee_used":"0.0005"},"initiator_type":"API","confirmed_num":3,"confirming_threshold":12,"transaction_hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","block_info":{"block_number":20123456,"block_timestamp":1717740400000,"block_hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},"raw_tx_info":{"used_nonce":42,"raw_tx":"0x02f8..."},"created_timestamp":1717740300000,"updated_timestamp":1717740419000},"status":"Delivered"}
+```
+
+### Succeeded：UTXO 原生代币充币
+
+```json
+{"event_id":"event-btc-succeeded","url":"https://example.com/webhook","created_timestamp":1717740520000,"type":"wallets.transaction.succeeded","data":{"data_type":"Transaction","transaction_id":"tx-btc-deposit","cobo_id":"202406070003","wallet_id":"wallet-custodial-001","type":"Deposit","status":"Completed","chain_id":"BTC","token_id":"BTC","source":{"source_type":"DepositFromAddress","addresses":["bc1qsenderexample"]},"destination":{"destination_type":"DepositToAddress","wallet_id":"wallet-custodial-001","wallet_type":"Custodial","address":"bc1qcoboexample","amount":"0.015"},"initiator_type":"Blockchain","confirmed_num":6,"confirming_threshold":6,"transaction_hash":"9f86d081884c7d659a2feaa0c55ad01500000000000000000000000000000000","block_info":{"block_number":848210,"block_timestamp":1717740500000,"block_hash":"00000000000000000002example"},"raw_tx_info":{"selected_utxos":[{"tx_hash":"4a44dc15364204a80fe80e9039455cc1","vout_n":1,"token_id":"BTC","address":"bc1qsenderexample","value":"0.015"}],"raw_tx":"02000000..."},"created_timestamp":1717740000000,"updated_timestamp":1717740520000},"status":"Delivered"}
+```
+
+### Failed：TRON 合约代币提币
+
+```json
+{"event_id":"event-tron-failed","url":"https://example.com/webhook","created_timestamp":1717740600000,"type":"wallets.transaction.failed","data":{"data_type":"Transaction","transaction_id":"tx-tron-usdt-rejected","cobo_id":"202406070004","request_id":"withdraw-tron-usdt-001","wallet_id":"wallet-mpc-002","type":"Withdrawal","status":"Rejected","failed_reason":"The transaction was rejected during approval.","chain_id":"TRON","token_id":"TRON_USDT","source":{"source_type":"Org-Controlled","wallet_id":"wallet-mpc-002","address":"TSourceExample111111111111111111"},"destination":{"destination_type":"Address","account_output":{"address":"TDestinationExample1111111111111","amount":"250"}},"initiator_type":"Web","confirmed_num":0,"confirming_threshold":20,"created_timestamp":1717740550000,"updated_timestamp":1717740600000},"status":"Delivered"}
+```
+
+### Succeeded：TRON 原生代币充币
+
+```json
+{"event_id":"event-tron-succeeded","url":"https://example.com/webhook","created_timestamp":1717740720000,"type":"wallets.transaction.succeeded","data":{"data_type":"Transaction","transaction_id":"tx-tron-deposit","cobo_id":"202406070005","wallet_id":"wallet-custodial-002","type":"Deposit","status":"Completed","chain_id":"TRON","token_id":"TRON","source":{"source_type":"DepositFromAddress","addresses":["TExternalExample11111111111111111"]},"destination":{"destination_type":"DepositToAddress","wallet_id":"wallet-custodial-002","wallet_type":"Custodial","address":"TCoboExample111111111111111111111","amount":"120"},"initiator_type":"Blockchain","confirmed_num":20,"confirming_threshold":20,"transaction_hash":"8c7dd922ad47494fc02c388e12c00eac","block_info":{"block_number":62345678,"block_timestamp":1717740700000,"block_hash":"0000000003b75a4eexample"},"created_timestamp":1717740650000,"updated_timestamp":1717740720000},"status":"Delivered"}
+```
+
+## 相关指南
+
+- [Transaction 字段](/v2_cn/guides/transactions/transaction-fields)
+- [交易来源与目标](/v2_cn/guides/transactions/sources-and-destinations)
+- [交易状态和子状态](/v2_cn/guides/transactions/status)
+- [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)
