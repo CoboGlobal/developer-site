@@ -3918,6 +3918,80 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  '/payments/merchants/{merchant_id}/kyc':
+    post:
+      tags:
+        - Payment
+      operationId: submit_merchant_kyc
+      summary: Submit merchant KYC
+      description: |
+        This operation submits KYC information for a specified merchant.
+
+        You need to provide the merchant contact information, merchant type, country, industry, and company information.
+
+        The merchant ID can be retrieved by calling [List all merchants](https://www.cobo.com/developers/v2/api-references/payment/list-all-merchants).
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.create
+      parameters:
+        - $ref: '#/components/parameters/MerchantIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/submitMerchantKycBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/submitMerchantKycResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: get_merchant_kyc
+      summary: Get merchant KYC
+      description: |
+        This operation retrieves the KYC submission for a specified merchant.
+
+        The merchant ID can be retrieved by calling [List all merchants](https://www.cobo.com/developers/v2/api-references/payment/list-all-merchants).
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.read
+      parameters:
+        - $ref: '#/components/parameters/MerchantIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/getMerchantKycResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /payments/files:
+    post:
+      tags:
+        - Payment
+      operationId: upload_payment_file
+      summary: Upload file
+      description: |
+        This operation uploads a file for payment-related use cases, such as merchant KYC attachments.
+
+        You need to specify the file to upload. After a successful upload, use the returned AWS file link in `file_id` when calling
+        [Submit merchant KYC](https://www.cobo.com/developers/v2/api-references/payment/submit-merchant-kyc).
+        The returned file link expires at the time specified by `expired_timestamp`.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.create
+      requestBody:
+        $ref: '#/components/requestBodies/uploadPaymentFileBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/uploadPaymentFileResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /payments/refunds:
     post:
       tags:
@@ -4495,31 +4569,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/listPaymentPayersResponse'
-        4XX:
-          $ref: '#/components/responses/badRequestError'
-        5XX:
-          $ref: '#/components/responses/internalServerError'
-  /payments/topup/payer_accounts:
-    get:
-      tags:
-        - Payment
-      operationId: list_top_up_payer_accounts
-      summary: List top-up payer accounts
-      description: |
-        This operation retrieves the accounts of all payers. You can filter the result by merchant ID and payer_id.
-      security:
-        - CoboAuth: []
-        - OAuth2:
-            - payment_orders_payin.read
-      parameters:
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/beforeParam'
-        - $ref: '#/components/parameters/afterParam'
-        - $ref: '#/components/parameters/MerchantIdOptionalParam'
-        - $ref: '#/components/parameters/PayerIdOptionalParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/listPayerAccountsResponse'
         4XX:
           $ref: '#/components/responses/badRequestError'
         5XX:
@@ -16307,6 +16356,10 @@ components:
           example: '0x9876543210abcdef1234567890abcdef12345678'
         status:
           $ref: '#/components/schemas/RefundStatus'
+        failed_reason:
+          type: string
+          description: The reason why the refund failed.
+          example: 'Cannot charge payout fee: Fee Station balance is insufficient. Please add funds to Fee Station and try again.'
         refund_type:
           $ref: '#/components/schemas/RefundType'
         created_timestamp:
@@ -16651,6 +16704,12 @@ components:
           example: '0.15'
         status:
           $ref: '#/components/schemas/TransactionStatus'
+        sub_status:
+          $ref: '#/components/schemas/TransactionSubStatus'
+        failed_reason:
+          type: string
+          description: (This property is applicable to approval failures and signature failures only) The reason why the transaction failed.
+          example: Rejected by signer Cobo TSS
         counterparty:
           $ref: '#/components/schemas/Counterparty'
         destination:
@@ -16779,73 +16838,6 @@ components:
             Whether the token supports fiat off-ramp.
             - `true`: The token can be used for fiat off-ramp.
             - `false`: The token cannot be used for fiat off-ramp.
-    Account:
-      type: object
-      description: 'Details of a payment account used for top-up operations, including address and balance metadata.'
-      required:
-        - token_id
-        - address
-        - merchant_balance
-        - psp_balance
-      properties:
-        token_id:
-          type: string
-          description: The ID of the cryptocurrency that this account is configured to handle.
-          example: ETH_USDT
-        address:
-          type: string
-          description: The top-up address corresponding to the account.
-          example: '0xF8e4bfc10A2821DF52D3322cB5170E5E9276b537'
-        merchant_balance:
-          type: string
-          description: The amount of merchant funds under this account.
-          example: '0.15'
-        psp_balance:
-          type: string
-          description: The amount of developer funds under this account.
-          example: '0.15'
-        created_timestamp:
-          type: integer
-          format: int64
-          description: 'The creation time of the account, in Unix timestamp format, measured in milliseconds.'
-          example: 1610445878970
-        updated_timestamp:
-          type: integer
-          format: int64
-          description: 'The last update time of the account, in Unix timestamp format, measured in milliseconds.'
-          example: 1610445878970
-    PayerAccount:
-      type: object
-      required:
-        - merchant_id
-        - payer_id
-        - developer_fee_rate
-      properties:
-        merchant_id:
-          type: string
-          description: The merchant ID.
-          example: M1001
-        payer_id:
-          type: string
-          description: A unique identifier assigned by Cobo to track and identify individual payers.
-          example: P20250619T0310056d7aa
-        developer_fee_rate:
-          type: string
-          description: The developer fee rate applied to the top-up transactions made by the payer. Expressed as a decimal string where "0.1" represents 10%.
-          example: '0.01'
-        created_timestamp:
-          type: integer
-          description: 'The creation time of the payer, represented as a UNIX timestamp in seconds.'
-          example: 1744689600
-        updated_timestamp:
-          type: integer
-          description: 'The last update time of the payer, represented as a UNIX timestamp in seconds.'
-          example: 1744693200
-        accounts:
-          type: array
-          description: An array of accounts associated with this payer.
-          items:
-            $ref: '#/components/schemas/Account'
     ForcedSweepRequest:
       type: object
       required:
@@ -17076,14 +17068,12 @@ components:
         fee_rate:
           type: string
           description: |
-            The exchange rate used to convert cryptos to fiat currencies during off-ramp. The final fiat amount is calculated using the following formula:
+            The OTC fee rate applied to calculate the variable portion of the OTC fee.
 
-            Final Fiat Amount = (Token Amount - Bridging Fee) × Exchange Rate
-
-            Note: The actual fiat amount received may be lower due to additional bank transfer fees.
+            This rate-based fee is charged cumulatively on top of `otc_fixed_fee`.
         token_id:
           type: string
-          description: The ID of the token you want to off-ramp.
+          description: The token id in otc.
     PaymentEstimatedFee:
       type: object
       required:
@@ -17111,11 +17101,381 @@ components:
       properties:
         token_id:
           type: string
-          description: The token ID for which fees will be calculated.
+          description: The ID of the cryptocurrency you want to refund.
         amount:
           type: string
-          description: The transaction amount for which fees will be calculated.
+          description: |
+            The OffRamp settlement amount.
           example: '500.00'
+    SubmitMerchantKyc:
+      type: object
+      required:
+        - email
+        - phone
+        - merchant_type
+        - country
+        - industry
+        - company_info
+      properties:
+        email:
+          type: string
+          description: The merchant email address.
+          example: merchant@example.com
+        phone:
+          type: string
+          description: The merchant phone number.
+          example: '+85212345678'
+        merchant_type:
+          $ref: '#/components/schemas/MerchantKycMerchantType'
+        country:
+          $ref: '#/components/schemas/MerchantKycCountry'
+        industry:
+          type: array
+          description: The industry categories of the merchant.
+          items:
+            type: string
+          example:
+            - E-commerce
+        company_info:
+          $ref: '#/components/schemas/MerchantKycCompanyInfo'
+    MerchantKycInfo:
+      type: object
+      required:
+        - kyc_submission_id
+        - merchant_id
+        - status
+      properties:
+        kyc_submission_id:
+          type: string
+          format: uuid
+          description: The KYC submission ID.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        merchant_id:
+          type: string
+          description: The merchant ID.
+          example: M1001
+        status:
+          $ref: '#/components/schemas/MerchantKycStatus'
+    MerchantKycSubmission:
+      type: object
+      required:
+        - kyc_submission_id
+        - merchant_id
+        - status
+        - email
+        - phone
+        - merchant_type
+        - country
+        - industry
+        - company_info
+        - created_timestamp
+      properties:
+        kyc_submission_id:
+          type: string
+          format: uuid
+          description: The KYC submission ID.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        merchant_id:
+          type: string
+          description: The merchant ID.
+          example: M1001
+        status:
+          $ref: '#/components/schemas/MerchantKycStatus'
+        email:
+          type: string
+          description: The merchant email address.
+          example: merchant@example.com
+        phone:
+          type: string
+          description: The merchant phone number.
+          example: '+85212345678'
+        merchant_type:
+          $ref: '#/components/schemas/MerchantKycMerchantType'
+        country:
+          $ref: '#/components/schemas/MerchantKycCountry'
+        industry:
+          type: array
+          description: The industry categories of the merchant.
+          items:
+            type: string
+          example:
+            - E-commerce
+        company_info:
+          $ref: '#/components/schemas/MerchantKycCompanyInfo'
+        created_timestamp:
+          type: integer
+          format: int64
+          description: The creation timestamp in Unix seconds.
+          example: 1744689600
+        updated_timestamp:
+          type: integer
+          format: int64
+          description: The last update timestamp in Unix seconds.
+          example: 1744689600
+    MerchantKycStatus:
+      type: string
+      enum:
+        - PendingReview
+        - Completed
+        - Failed
+      example: PendingReview
+      description: |
+        The KYC submission status. Possible values include:
+        - `PendingReview`: The KYC submission is pending review.
+        - `Completed`: The KYC submission has been completed.
+        - `Failed`: The KYC submission has failed.
+    MerchantKycMerchantType:
+      type: string
+      enum:
+        - B2B
+        - B2C
+      example: B2B
+      description: |
+        The merchant type. Possible values include:
+        - `B2B`: Business-to-business merchant.
+        - `B2C`: Business-to-consumer merchant.
+    MerchantKycCountry:
+      type: string
+      description: 'The country/region of the merchant, in ISO 3166-1 alpha-3 format.'
+      example: HKG
+    MerchantKycCompanyType:
+      type: string
+      enum:
+        - Corporation
+        - Partnership
+        - IICH
+        - Limited Company
+        - Others
+      example: Corporation
+      description: The company type.
+    MerchantKycCompanyAttachmentFileType:
+      type: string
+      enum:
+        - BI
+        - BR
+        - CI
+        - NNC1
+        - NAR
+        - SSC
+        - AOA
+        - Other
+        - BAP
+        - ANNUAL_RETURN
+        - PLATFORM_SCREENSHOT
+        - BUSINESS_DOCUMENT
+      example: BR
+      description: The company attachment file type.
+    MerchantKycPersonAttachmentFileType:
+      type: string
+      enum:
+        - PRC_ID_Emblem
+        - PRC_ID_Portrait
+        - OIC
+        - PP
+        - FIC
+        - HK_RP
+        - HK_MTP
+        - HK_PP
+        - HK_PID
+        - HKM_RP
+        - HK/Mac_MTP
+        - BACK
+      example: PRC_ID_Emblem
+      description: The person attachment file type.
+    MerchantKycCompanyAttachment:
+      type: object
+      required:
+        - file_id
+        - file_type
+      properties:
+        file_id:
+          type: string
+          description: |
+            The AWS file link of the uploaded file, which you can retrieve by calling
+            [Upload file](https://www.cobo.com/developers/v2/api-references/payment/upload-file).
+          example: 'https://example-bucket.s3.us-east-1.amazonaws.com/uploads/business_registration.pdf'
+        file_type:
+          $ref: '#/components/schemas/MerchantKycCompanyAttachmentFileType'
+    MerchantKycPersonAttachment:
+      type: object
+      required:
+        - file_id
+        - file_type
+      properties:
+        file_id:
+          type: string
+          description: |
+            The AWS file link of the uploaded file, which you can retrieve by calling
+            [Upload file](https://www.cobo.com/developers/v2/api-references/payment/upload-file).
+          example: 'https://example-bucket.s3.us-east-1.amazonaws.com/uploads/id_card_front.jpg'
+        file_type:
+          $ref: '#/components/schemas/MerchantKycPersonAttachmentFileType'
+    MerchantKycAddress:
+      type: object
+      required:
+        - country
+        - state
+        - city
+        - postcode
+        - line1
+      properties:
+        country:
+          type: string
+          description: The country.
+          example: HK
+        state:
+          type: string
+          description: The state or province.
+          example: Hong Kong
+        city:
+          type: string
+          description: The city.
+          example: Hong Kong
+        postcode:
+          type: string
+          description: The postal code.
+          example: '999077'
+        line1:
+          type: string
+          description: The address line.
+          example: 1 Example Street
+    MerchantKycPersonInfo:
+      type: object
+      required:
+        - name
+        - name_en
+        - id_number
+        - date_of_birth
+        - issue_date
+        - expiration_date
+        - attachments
+        - residential_address
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          description: The name or title of an identification document.
+          example: 张三
+        name_en:
+          type: string
+          maxLength: 64
+          description: The English-language equivalent of the identification document's name.
+          example: Zhang San
+        id_number:
+          type: string
+          maxLength: 64
+          description: The unique identification number associated with the identification document.
+          example: '110101199001011234'
+        date_of_birth:
+          type: string
+          maxLength: 64
+          description: |
+            The date of birth of the individual, usually in the format YYYYMMDD.
+          example: '19900101'
+        issue_date:
+          type: string
+          maxLength: 64
+          description: |
+            The issue date refers to the date when a document, such as an identification card or passport,
+            was officially issued or granted, usually in the format YYYYMMDD.
+          example: '20180101'
+        expiration_date:
+          type: string
+          maxLength: 64
+          description: |
+            The expiration date refers to the date when a document, such as an identification card or passport,
+            is no longer valid or legally usable, usually in the format YYYYMMDD.
+          example: '20280101'
+        attachments:
+          type: array
+          description: |
+            Additional files or documents associated with a message or record to provide extra information or context.
+          items:
+            $ref: '#/components/schemas/MerchantKycPersonAttachment'
+        residential_address:
+          $ref: '#/components/schemas/MerchantKycAddress'
+    MerchantKycCompanyInfo:
+      type: object
+      required:
+        - company_type
+        - listed
+        - attachments
+        - operation_address
+        - identify_no
+        - company_name
+        - company_name_en
+        - establish_date
+        - commencement_date
+        - valid_period
+        - register_address
+        - legal_info
+        - ubo_infos
+      properties:
+        company_type:
+          $ref: '#/components/schemas/MerchantKycCompanyType'
+        listed:
+          type: boolean
+          description: Whether the company is listed.
+          example: false
+        attachments:
+          type: array
+          description: The attachments of the company.
+          items:
+            $ref: '#/components/schemas/MerchantKycCompanyAttachment'
+        operation_address:
+          $ref: '#/components/schemas/MerchantKycAddress'
+        identify_no:
+          type: string
+          description: The company identification number.
+          example: '12345678'
+        company_name:
+          type: string
+          description: The company name in local language.
+          example: 示例有限公司
+        company_name_en:
+          type: string
+          description: The company name in English.
+          example: Example Limited
+        establish_date:
+          type: string
+          description: The establishment date of the company.
+          example: '2020-01-01'
+        commencement_date:
+          type: string
+          description: The commencement date of the company.
+          example: '2020-01-01'
+        valid_period:
+          type: string
+          description: The valid period of the company registration.
+          example: '2020-01-01'
+        register_address:
+          $ref: '#/components/schemas/MerchantKycAddress'
+        legal_info:
+          $ref: '#/components/schemas/MerchantKycPersonInfo'
+        ubo_infos:
+          type: array
+          description: The ultimate beneficial owner information.
+          items:
+            $ref: '#/components/schemas/MerchantKycPersonInfo'
+        online_store_url:
+          type: string
+          description: The online store URL. Required when merchant type is B2B.
+          example: 'https://example.com/store'
+    PaymentUploadedFile:
+      type: object
+      required:
+        - file_id
+        - expired_timestamp
+      properties:
+        file_id:
+          type: string
+          description: The AWS file link of the uploaded file.
+          example: 'https://example-bucket.s3.us-east-1.amazonaws.com/uploads/business_registration.pdf'
+        expired_timestamp:
+          type: integer
+          format: int64
+          description: 'The time when the uploaded file link expires, in Unix timestamp format, measured in milliseconds.'
+          example: 1701483266000
     PaymentFeeType:
       type: string
       enum:
@@ -17438,6 +17798,40 @@ components:
           type: string
           description: Beneficiary's city.
           example: New York
+        payment_method:
+          $ref: '#/components/schemas/BankAccountPaymentMethod'
+        holder_type:
+          $ref: '#/components/schemas/BankAccountHolderType'
+        beneficiary_province:
+          type: string
+          description: |
+            The province or state of the beneficiary. Required when `payment_method` is `Swift`.
+            Cannot be a pure number or contain Chinese characters.
+          example: Hong Kong
+        beneficiary_post_code:
+          type: string
+          description: |
+            The postal code of the beneficiary. Required when `payment_method` is `Swift`.
+          example: '999077'
+        bank_account_name:
+          type: string
+          description: |
+            The bank account name. Cannot contain Chinese characters.
+          example: Example Company Limited
+        bank_branch_code:
+          type: string
+          description: |
+            The branch code. Required when `payment_method` is `Local` (HK only).
+          example: '123'
+        bank_country:
+          $ref: '#/components/schemas/PaymentCountry'
+        bank_province:
+          type: string
+          description: |
+            The province or state of the bank. Cannot be a pure number or contain Chinese characters.
+          example: Hong Kong
+        contract_file_id:
+          $ref: '#/components/schemas/ContractFileId'
     WalletAddress:
       type: object
       required:
@@ -17573,6 +17967,12 @@ components:
         - `Organization`: The destination is an organization.
     CreateDestinationBankAccount:
       type: object
+      description: |
+        The bank account details for creating a destination bank account.
+
+        For USD company bank accounts, optional prefixed fields may be required depending on `payment_method`:
+        - When `payment_method` is `Swift`, `beneficiary_province` and `beneficiary_post_code` are required.
+        - When `payment_method` is `Local` (HK only), `bank_branch_code` is required.
       required:
         - account_alias
         - account_number
@@ -17626,13 +18026,57 @@ components:
         intermediary_bank_info:
           $ref: '#/components/schemas/IntermediaryBankInfo'
         country:
-          type: string
-          description: 'Beneficiary''s country, in ISO 3166-1 alpha-3 format.'
-          example: USA
+          $ref: '#/components/schemas/PaymentCountry'
         city:
           type: string
           description: Beneficiary's city.
           example: New York
+        payment_method:
+          $ref: '#/components/schemas/BankAccountPaymentMethod'
+        holder_type:
+          $ref: '#/components/schemas/BankAccountHolderType'
+        beneficiary_province:
+          type: string
+          description: |
+            The province or state of the beneficiary. Required when `payment_method` is `Swift`.
+            Cannot be a pure number or contain Chinese characters.
+          example: Hong Kong
+        beneficiary_post_code:
+          type: string
+          description: |
+            The postal code of the beneficiary. Required when `payment_method` is `Swift`.
+          example: '999077'
+        bank_account_name:
+          type: string
+          description: |
+            The bank account name. Cannot contain Chinese characters.
+          example: Example Company Limited
+        bank_branch_code:
+          type: string
+          description: |
+            The branch code. Required when `payment_method` is `Local` (HK only).
+          example: '123'
+        bank_country:
+          $ref: '#/components/schemas/PaymentCountry'
+        bank_province:
+          type: string
+          description: |
+            The province or state of the bank. Cannot be a pure number or contain Chinese characters.
+          example: Hong Kong
+        contract_file_id:
+          $ref: '#/components/schemas/ContractFileId'
+    PaymentCountry:
+      type: string
+      description: 'The country, in ISO 3166-1 alpha-3 format.'
+      example: HKG
+    ContractFileId:
+      type: string
+      format: uuid
+      description: |
+        The file ID of the contract document (e.g., cooperation agreement) that proves
+        the business relationship between you and the beneficiary, which you can retrieve by calling
+        [Upload file](https://www.cobo.com/developers/v2/api-references/payment/upload-file).
+      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     CreateWalletAddress:
       type: object
       required:
@@ -17673,6 +18117,12 @@ components:
           example: BOFAUS33
     UpdateDestinationBankAccount:
       type: object
+      description: |
+        The bank account details for updating a destination bank account.
+
+        For USD company bank accounts, optional prefixed fields may be required depending on `payment_method`:
+        - When `payment_method` is `Swift`, `beneficiary_province` and `beneficiary_post_code` are required.
+        - When `payment_method` is `Local` (HK only), `bank_branch_code` is required.
       required:
         - account_alias
         - account_number
@@ -17726,13 +18176,45 @@ components:
         intermediary_bank_info:
           $ref: '#/components/schemas/IntermediaryBankInfo'
         country:
-          type: string
-          description: 'Beneficiary''s country, in ISO 3166-1 alpha-3 format.'
-          example: USA
+          $ref: '#/components/schemas/PaymentCountry'
         city:
           type: string
           description: Beneficiary's city.
           example: New York
+        payment_method:
+          $ref: '#/components/schemas/BankAccountPaymentMethod'
+        holder_type:
+          $ref: '#/components/schemas/BankAccountHolderType'
+        beneficiary_province:
+          type: string
+          description: |
+            The province or state of the beneficiary. Required when `payment_method` is `Swift`.
+            Cannot be a pure number or contain Chinese characters.
+          example: Hong Kong
+        beneficiary_post_code:
+          type: string
+          description: |
+            The postal code of the beneficiary. Required when `payment_method` is `Swift`.
+          example: '999077'
+        bank_account_name:
+          type: string
+          description: |
+            The bank account name. Cannot contain Chinese characters.
+          example: Example Company Limited
+        bank_branch_code:
+          type: string
+          description: |
+            The branch code. Required when `payment_method` is `Local` (HK only).
+          example: '123'
+        bank_country:
+          $ref: '#/components/schemas/PaymentCountry'
+        bank_province:
+          type: string
+          description: |
+            The province or state of the bank. Cannot be a pure number or contain Chinese characters.
+          example: Hong Kong
+        contract_file_id:
+          $ref: '#/components/schemas/ContractFileId'
     CounterpartyDetail:
       type: object
       required:
@@ -17844,6 +18326,19 @@ components:
         - `Pending`: The bank account is pending verification by Cobo.
         - `Approved`: The bank account has been approved by Cobo.
         - `Rejected`: The bank account has been rejected by Cobo.
+    BankAccountPaymentMethod:
+      type: string
+      enum:
+        - Local
+        - Swift
+      example: Swift
+      description: The payment method of the bank account.
+    BankAccountHolderType:
+      type: string
+      enum:
+        - Company
+      example: Company
+      description: The holder type of the bank account.
     CounterpartyWalletAddressDetail:
       type: object
       required:
@@ -18027,6 +18522,40 @@ components:
           type: string
           description: Beneficiary's city.
           example: New York
+        payment_method:
+          $ref: '#/components/schemas/BankAccountPaymentMethod'
+        holder_type:
+          $ref: '#/components/schemas/BankAccountHolderType'
+        beneficiary_province:
+          type: string
+          description: |
+            The province or state of the beneficiary. Required when `payment_method` is `Swift`.
+            Cannot be a pure number or contain Chinese characters.
+          example: Hong Kong
+        beneficiary_post_code:
+          type: string
+          description: |
+            The postal code of the beneficiary. Required when `payment_method` is `Swift`.
+          example: '999077'
+        bank_account_name:
+          type: string
+          description: |
+            The bank account name. Cannot contain Chinese characters.
+          example: Example Company Limited
+        bank_branch_code:
+          type: string
+          description: |
+            The branch code. Required when `payment_method` is `Local` (HK only).
+          example: '123'
+        bank_country:
+          $ref: '#/components/schemas/PaymentCountry'
+        bank_province:
+          type: string
+          description: |
+            The province or state of the bank. Cannot be a pure number or contain Chinese characters.
+          example: Hong Kong
+        contract_file_id:
+          $ref: '#/components/schemas/ContractFileId'
         created_timestamp:
           type: integer
           description: 'The created time of the bank account, represented as a UNIX timestamp in seconds.'
@@ -18302,6 +18831,10 @@ components:
           example: Payout for customer 123
         status:
           $ref: '#/components/schemas/PaymentPayoutStatus'
+        failed_reason:
+          type: string
+          description: The reason why the payout failed.
+          example: 'Cannot charge payout fee: Fee Station balance is insufficient. Please add funds to Fee Station and try again.'
         created_timestamp:
           type: integer
           description: 'The created time of the payout, represented as a UNIX timestamp in seconds.'
@@ -18476,6 +19009,10 @@ components:
           $ref: '#/components/schemas/PaymentBulkSendExecutionMode'
         status:
           $ref: '#/components/schemas/PaymentBulkSendStatus'
+        failed_reason:
+          type: string
+          description: The reason why the bulk send failed.
+          example: 'Cannot charge payout fee: Fee Station balance is insufficient. Please add funds to Fee Station and try again.'
         created_timestamp:
           type: integer
           description: 'The created time of the bulk send, represented as a UNIX timestamp in seconds.'
@@ -18526,6 +19063,10 @@ components:
           $ref: '#/components/schemas/PaymentBulkSendItemStatus'
         validation_status:
           $ref: '#/components/schemas/PaymentBulkSendItemValidationStatus'
+        failed_reason:
+          type: string
+          description: The reason why the bulk send item failed.
+          example: 'Cannot charge payout fee: Fee Station balance is insufficient. Please add funds to Fee Station and try again.'
     PaymentBulkSendStatus:
       type: string
       enum:
@@ -24330,6 +24871,25 @@ components:
                 type: string
                 description: 'The developer fee rate applied to this merchant. Must be a valid float between 0 and 1 (inclusive), with up to 4 decimal places. For more information on developer fee rate, please refer to [Accounts and fund allocation](https://www.cobo.com/payments/en/guides/amounts-and-balances).'
                 example: '0.1'
+    submitMerchantKycBody:
+      description: The request body to submit merchant KYC information.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubmitMerchantKyc'
+    uploadPaymentFileBody:
+      description: The request body to upload a file.
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - file
+            properties:
+              file:
+                type: string
+                format: binary
+                description: The file to upload.
     createPaymentOrderBody:
       description: The request body to create a pay-in order.
       content:
@@ -24366,7 +24926,7 @@ components:
                 example: '100.00'
               fee_amount:
                 type: string
-                description: 'The developer fee for the order. It is added to the base amount (`pricing_amount`) to determine the final charge. For example, if `pricing_amount` is "100.00" and `fee_amount` is "2.00", the payer will be charged "102.00" in total, with "100.00" being settled to the merchant account and "2.00" settled to the developer account. Values must be greater than 0 and contain two decimal places.'
+                description: 'The developer fee for the order. It is added to the base amount (`pricing_amount`) to determine the final charge. For example, if `pricing_amount` is "100.00" and `fee_amount` is "2.00", the payer will be charged "102.00" in total, with "100.00" being settled to the merchant account and "2.00" settled to the developer account. Values must be greater than or equal to 0 and contain two decimal places.'
                 example: '2.00'
               payable_currency:
                 type: string
@@ -24616,6 +25176,13 @@ components:
                   - `true`: The payout is transferred to a registered bank account via a VA (virtual account).
                   - `false`: The payout is transferred directly to a registered bank account.
                 example: false
+              bank_account_id:
+                type: string
+                format: uuid
+                description: |
+                  The bank account ID, which you can retrieve by calling
+                  [List counterparty entries](https://www.cobo.com/developers/v2/api-references/payment/list-counterparty-entries).
+                example: 123e4567-e89b-12d3-a456-426614174003
     createPaymentOrderLinkRequest:
       description: The request body to create a payment link for a pay-in order.
       content:
@@ -24625,6 +25192,11 @@ components:
             required:
               - business_info
             properties:
+              request_id:
+                type: string
+                description: The request ID that is used to track an order link request. The request ID is provided by you and must be unique.
+                example: 123e4567-e89b-12d3-a456-426614174004
+                maxLength: 128
               business_info:
                 $ref: '#/components/schemas/OrderLinkBusinessInfo'
               display_info:
@@ -24638,6 +25210,11 @@ components:
             required:
               - business_info
             properties:
+              request_id:
+                type: string
+                description: The request ID that is used to track a refund link request. The request ID is provided by you and must be unique.
+                example: 123e4567-e89b-12d3-a456-426614174004
+                maxLength: 128
               business_info:
                 $ref: '#/components/schemas/RefundLinkBusinessInfo'
               display_info:
@@ -24826,70 +25403,6 @@ components:
                 type: string
                 description: The chain ID of the cryptocurrency.
                 example: TRON
-    createDestinationBankAccountBody:
-      description: The request body to create a destination bank account.
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - destination_id
-              - account_alias
-              - account_number
-              - swift_code
-              - currency
-              - beneficiary_name
-              - beneficiary_address
-              - bank_name
-              - bank_address
-            properties:
-              destination_id:
-                type: string
-                format: uuid
-                description: The destination ID.
-                example: 123e4567-e89b-12d3-a456-426614174003
-              account_alias:
-                type: string
-                description: The alias of the bank account.
-                example: Main Payout Account
-              account_number:
-                type: string
-                description: The bank account number.
-                example: '4111111111111111'
-              swift_code:
-                type: string
-                description: The SWIFT or BIC code of the bank.
-                example: BOFAUS33
-              currency:
-                type: string
-                description: The currency of the bank account.
-                example: USD
-              beneficiary_name:
-                type: string
-                description: The name of the account holder.
-                example: John Doe
-              beneficiary_address:
-                type: string
-                description: The address of the account holder.
-                example: '123 Main St, Anytown, USA'
-              bank_name:
-                type: string
-                description: The name of the bank.
-                example: ABC Bank
-              bank_address:
-                type: string
-                description: The address of the bank.
-                example: '456 Bank Ave, Cityville, USA'
-              iban_code:
-                type: string
-                description: The IBAN code of the bank account.
-                example: '12345678901234567890'
-              further_credit:
-                type: string
-                description: The further credit of the bank account.
-                example: further credit sample
-              intermediary_bank_info:
-                $ref: '#/components/schemas/IntermediaryBankInfo'
     updateDestinationBankAccountBody:
       description: The request body to update a destination bank account.
       content:
@@ -26855,6 +27368,24 @@ components:
                   $ref: '#/components/schemas/Merchant'
               pagination:
                 $ref: '#/components/schemas/Pagination'
+    submitMerchantKycResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MerchantKycInfo'
+    getMerchantKycResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MerchantKycSubmission'
+    uploadPaymentFileResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaymentUploadedFile'
     createPaymentOrderResponse:
       $ref: '#/components/responses/getPaymentOrderResponse'
     listPaymentOrdersResponse:
@@ -27081,19 +27612,6 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/TopUpAddress'
-    listPayerAccountsResponse:
-      description: The request was successful.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PayerAccount'
-              pagination:
-                $ref: '#/components/schemas/Pagination'
     listPayerTransactionsResponse:
       description: The request was successful.
       content:
@@ -27185,6 +27703,13 @@ components:
                 description: A list of estimated fees for the requested operations.
                 items:
                   $ref: '#/components/schemas/PaymentEstimatedFee'
+              otc_fixed_fee:
+                type: string
+                description: |
+                  The fixed OTC fee amount for the payout.
+
+                  This fee is charged in addition to the percentage-based OTC fee calculated using `otc_fee.fee_rate`.
+                example: '10.00'
     createPaymentLinkResponse:
       description: Link created successfully.
       content:
