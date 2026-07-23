@@ -116,6 +116,16 @@ The following table lists the most frequent reasons why callback messages or web
 You can inspect the detailed response body and status code for each delivery attempt in Cobo Portal under **Developer** > **Webhook Events** / **Callback Messages** > click an event or message > **Delivery logs**.
 </Note>
 
+### Recovering missed or failed events
+
+You can query up to 30 days of webhook event history for a given endpoint using [List all webhook events](/v2/api-references/developers--webhooks/list-all-webhook-events). Use this window to detect gaps instead of relying on your delivery logs alone.
+
+For a specific event, use [Retrieve event information](/v2/api-references/developers--webhooks/retrieve-event-information) to inspect its current status and payload, and [List webhook event logs](/v2/api-references/developers--webhooks/list-webhook-event-logs) to see every delivery attempt. Each retry produces its own log entry.
+
+To recover an event stuck in `Retrying` or `Failed`, call [Retry event](/v2/api-references/developers--webhooks/retry-event) after your endpoint is reachable again. This is the API equivalent of clicking **Retry** on Cobo Portal.
+
+Because the 30-day window is a delivery-history query, it does not guarantee that a transaction's current state matches its last delivered event. Always reconcile against [Get transaction information](/v2/api-references/transactions/get-transaction-information) or [List all transactions](/v2/api-references/transactions/list-all-transactions) for the authoritative state instead of trusting the most recent webhook payload alone.
+
 ### Code samples
 
 To see examples of how to implement the handling logic, refer to the following files in the WaaS SDK GitHub repository:

@@ -1,0 +1,105 @@
+---
+title: "TSS request 负载参考"
+lang: "zh-hans"
+description: "wallets.mpc.tss_request Webhook 负载的字段参考，涵盖 MPC 私钥分片持有者组生命周期事件。"
+sidebarTitle: "TSS request 负载参考"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 产生范围
+
+仅 `KeyGen`、`KeyGenFromKeyGroup` 或 `Recovery` 类型的 TSS request 会产生 `wallets.mpc.tss_request.*` 事件。这些类型涵盖 Main Group 私钥分片生成、基于现有 Main Group 创建 Signing Group 或 Recovery Group，以及丢失私钥分片后的恢复。MPC Wallet 的常规交易签名不会创建 TSS request。请通过已签名交易的 `wallets.transaction.*` 事件跟踪此类活动。
+
+## 触发条件
+
+| 事件类型 | 发生时机 |
+| --- | --- |
+| `wallets.mpc.tss_request.created` | 创建了 TSS request。 |
+| `wallets.mpc.tss_request.updated` | 请求进入 `PendingKeyHolderConfirmation`。`KeyGenerating` 和 `MPCProcessing` 中间状态不会派发 Webhook。 |
+| `wallets.mpc.tss_request.succeeded` | 请求的操作已成功完成。 |
+| `wallets.mpc.tss_request.failed` | 请求的操作失败。 |
+
+### 状态到事件的映射
+
+| 状态或转换 | 事件 |
+| --- | --- |
+| 创建请求 | `wallets.mpc.tss_request.created` |
+| `PendingKeyHolderConfirmation` | `wallets.mpc.tss_request.updated` |
+| `Success` | `wallets.mpc.tss_request.succeeded` |
+| `KeyHolderConfirmationFailed` 或 `KeyGeneratingFailed` | `wallets.mpc.tss_request.failed` |
+
+转换到 `KeyGenerating` 和 `MPCProcessing` 时会抑制事件，不会派发任何 `wallets.mpc.tss_request.*` 事件。
+
+## Webhook 信封
+
+对于这些事件，`data.data_type` 始终为 `TSSRequest`。
+
+| 字段 | 描述 |
+| --- | --- |
+| `event_id` | 本次投递记录的 UUID，用于对同一事件的重试投递进行去重。 |
+| `url` | 事件投递到的 Endpoint URL。 |
+| `created_timestamp` | 事件触发时间，采用毫秒级 Unix 时间戳。重试时此值不变。 |
+| `type` | Webhook 事件类型。 |
+| `data` | 包含 `data_type` 以及位于 `data` 中的 TSS request 负载。 |
+| `status` | 投递状态：`Success`、`Retrying` 或 `Failed`。此字段不同于 TSS request 状态。 |
+| `next_retry_timestamp` | 下次重试时间。仅在 `status` 为 `Retrying` 时出现。 |
+| `retries_left` | 剩余投递重试次数。仅在 `status` 为 `Retrying` 时出现。 |
+
+## TSSRequest 字段
+
+<table class="table-three-cols">
+<thead><tr><th>字段</th><th>类型</th><th>描述</th></tr></thead>
+<tbody>
+<tr><td><code>tss_request_id</code></td><td>string</td><td>TSS request 的唯一标识。</td></tr>
+<tr><td><code>source_key_share_holder_group</code></td><td>object，可为 null</td><td>请求读取私钥分片的现有组，包含 <code>key_share_holder_group_id</code> 和 <code>name</code>。操作不使用现有组时可为 <code>null</code>。</td></tr>
+<tr><td><code>target_key_share_holder_group_id</code></td><td>string，可为 null</td><td>请求为其创建私钥分片的组 ID。</td></tr>
+<tr><td><code>type</code></td><td>string</td><td>请求类型：<code>KeyGen</code>、<code>KeyGenFromKeyGroup</code> 或 <code>Recovery</code>。</td></tr>
+<tr><td><code>status</code></td><td>string</td><td>当前公开 TSS request 状态。</td></tr>
+<tr><td><code>description</code></td><td>string</td><td>所请求私钥分片操作的说明。</td></tr>
+<tr><td><code>created_timestamp</code></td><td>integer</td><td>请求创建时间，采用毫秒级 Unix 时间戳。</td></tr>
+</tbody>
+</table>
+
+### `source_key_share_holder_group`
+
+当 `source_key_share_holder_group` 不为 `null` 时，包含：
+
+| 字段 | 类型 | 描述 |
+| --- | --- | --- |
+| `key_share_holder_group_id` | string | 现有 key share holder group 的唯一标识。 |
+| `name` | string | 现有 key share holder group 的名称。 |
+
+## 状态
+
+| 状态 | 含义 |
+| --- | --- |
+| `PendingKeyHolderConfirmation` | 等待足够数量的私钥分片持有者批准请求。 |
+| `KeyHolderConfirmationFailed` | 私钥分片持有者未能批准请求。 |
+| `KeyGenerating` | 正在生成私钥分片。 |
+| `MPCProcessing` | 正在通过 server co-signer 或 mobile co-signer 进行审批或签名。请参阅 [server co-signer 介绍](/v2_cn/guides/mpc-wallets/server-co-signer/tss-node-overview)。 |
+| `KeyGeneratingFailed` | 私钥分片生成失败。 |
+| `Success` | 操作已完成，包括成功取消。 |
+
+## 示例
+
+### 成功的 KeyGen request
+
+```json
+{"event_id":"f47ac10b-58cc-4372-a567-0e02b2c3d479","url":"https://example.com/webhooks","created_timestamp":1720699000000,"type":"wallets.mpc.tss_request.succeeded","data":{"data_type":"TSSRequest","data":{"tss_request_id":"20240711114129000132315000003970","source_key_share_holder_group":null,"target_key_share_holder_group_id":"11111111-1111-4111-8111-111111111111","type":"KeyGen","status":"Success","description":"Generate Main Group key shares","created_timestamp":1720698800000}},"status":"Success"}
+```
+
+### 失败的 Recovery request
+
+```json
+{"event_id":"22222222-2222-4222-8222-222222222222","url":"https://example.com/webhooks","created_timestamp":1720699200000,"type":"wallets.mpc.tss_request.failed","data":{"data_type":"TSSRequest","data":{"tss_request_id":"20240711114129000132315000003971","source_key_share_holder_group":{"key_share_holder_group_id":"33333333-3333-4333-8333-333333333333","name":"Recovery Group"},"target_key_share_holder_group_id":"44444444-4444-4444-8444-444444444444","type":"Recovery","status":"KeyGeneratingFailed","description":"Recover lost Main Group key shares","created_timestamp":1720699100000}},"status":"Success"}
+```
+
+## 相关指南
+
+- [集成 MPC Wallet（Organization-Controlled Wallet）](/v2_cn/guides/mpc-wallets/get-started-ocw)
+- [集成 MPC Wallet（User-Controlled Wallet）](/v2_cn/guides/mpc-wallets/get-started-ucw)
+- [server co-signer 介绍](/v2_cn/guides/mpc-wallets/server-co-signer/tss-node-overview)
+- [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)

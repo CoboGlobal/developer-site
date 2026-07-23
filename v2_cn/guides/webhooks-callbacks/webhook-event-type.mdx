@@ -34,12 +34,12 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
     <tr>
       <td><code>wallets.transaction.created</code></td>
       <td><code>Transaction</code></td>
-      <td>在区块链上检测到交易并生成记录。此事件不代表交易已成功。</td>
+      <td>已创建交易记录。对于充币等入账交易，会在链上检测到交易后创建记录；对于提币等出账交易，会在 Cobo 根据请求创建记录后触发。此事件不代表交易已成功。</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.updated</code></td>
       <td><code>Transaction</code></td>
-      <td>交易的状态或确认数发生变化。<Note>`wallets.transaction.updated` 涵盖交易的整个生命周期，包括创建、完成和失败。如果您想跟踪每个状态变化，订阅此事件即可。</Note></td>
+      <td>交易的状态或确认数发生变化。</td>
     </tr>
     <tr>
       <td><code>wallets.transaction.succeeded</code></td>
@@ -63,6 +63,18 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
     </tr>
   </tbody>
 </table>
+
+有关完整的 Transaction 负载字段参考和示例，请参阅 [Transaction 负载参考](/v2_cn/guides/webhooks-callbacks/wallets-transaction-payload)。
+
+### 单笔交易的事件重叠
+
+| 事件 | 与其他事件的关系 |
+| --- | --- |
+| `created` | 创建交易记录时，除 `updated` 外还会尝试触发此事件。 |
+| `updated` | 交易生命周期内每次处理 `status` 或 `sub_status` 转换时都会尝试触发，包括最终转换。 |
+| `succeeded` / `failed` | 交易达到 `Completed` 或失败、拒绝结果时，除 `updated` 外还会尝试触发此专用终态通知。 |
+
+如果仅订阅 `updated`，您必须检查负载中的 `status` 和 `sub_status`，自行识别完成或失败。额外订阅 `succeeded` 和 `failed` 可获得明确且无需检查负载的专用终态信号。有关顺序和去重指南，请参阅 [设置 Callback 或 Webhook Endpoint](/v2_cn/guides/webhooks-callbacks/set-up-endpoint)。
 
 
 ### Fee Station 相关事件
@@ -101,6 +113,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### MPC 钱包 TSS 请求事件
 
+`wallets.mpc.tss_request` 是目前唯一支持的 `wallets.mpc` 事件类型系列。
+
 <table class="table-three-cols">
   <thead>
     <tr>
@@ -132,6 +146,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
     </tr>
   </tbody>
 </table>
+
+有关完整的 TSSRequest 负载字段参考、产生范围和示例，请参阅 [TSS request 负载参考](/v2_cn/guides/webhooks-callbacks/wallets-mpc-tss-request-payload)。
 
 ### 钱包与地址管理事件
 
@@ -293,7 +309,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 驱动这些状态变化的案件决策由 `KytScreeningsDecisionsType` 表示，其取值包括 `Approval`、`ApprovalWithAlert`、`Rejection` 和 `ManualReview`。
 
 ## Webhook 事件数据结构
-有关 webhook 事件数据和其数据结构的完整介绍，请参阅 Retrieve event information 操作的响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性或 List all webhook events 操作的响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。
+有关 Webhook 事件数据及其结构的完整介绍，请参阅 Retrieve event information 操作响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性，或 List all webhook events 操作响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。有关字段说明和示例，请参阅 [Transaction 负载参考](/v2_cn/guides/webhooks-callbacks/wallets-transaction-payload)和 [TSS request 负载参考](/v2_cn/guides/webhooks-callbacks/wallets-mpc-tss-request-payload)。
 
 <img src="/v2/images/guides/webhook_data_structure.png" className="screenshot_full_screen" alt="Webhook 数据结构截图" />
 

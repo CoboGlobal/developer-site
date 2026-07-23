@@ -45,6 +45,14 @@ Callback 和 webhook 在您的业务操作中具有不同的用途。
 
 要使用 Cobo CLI 管理 webhook 事件，请参阅以下指南：[监听和转发事件](/v2_cn/developer-tools/cobo-cli/listen-and-forward-events)、[触发 webhook 事件](/v2_cn/developer-tools/cobo-cli/trigger-events) 和 [列出事件类型](/v2_cn/developer-tools/cobo-cli/event-types)。
 
+## Endpoint 范围和对账
+
+每个 Webhook Endpoint 在组织中配置一次，其中包含您在注册时选择的事件类型，还可以选择钱包范围以限制该 Endpoint 接收哪些钱包的事件。请在 Cobo Portal 上注册或更新此范围。请参阅[注册 Webhook Endpoint](https://manuals.cobo.com/cn/portal/developer-console/webhooks-create)。
+
+重试可能会重复投递同一事件，并且 `wallets.transaction.updated` 与终态事件（`succeeded` 或 `failed`）可能描述同一笔交易，因此请将 Webhook 事件视为通知，而不是权威数据源。请使用事件的 `event_id` 对投递进行去重。要核对交易当前的权威状态，请使用 `transaction_id` 调用 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 或 [List all transactions](/v2/api-references/transactions/list-all-transactions)；如果您持有的是 `cobo_id`、`request_id` 或 `transaction_hash`，也可以使用相应标识，而不要仅信任最后收到的 Webhook 负载。
+
+有关不同场景的处理指南，请参阅 [Transaction 事件订阅](/v2_cn/guides/webhooks-callbacks/transaction-event-subscriptions)。
+
 ## 从 WaaS 1.0 升级到 WaaS 2.0 的注意事项
 
 WaaS 1.0 服务使用 API Callback进行交易通知和提币确认，类似于 WaaS 2.0 中引入的 webhook 和Callback。以下表格提供了两种版本基于事件通知机制的比较：
