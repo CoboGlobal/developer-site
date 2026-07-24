@@ -13,7 +13,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 为确保您加密资产的安全访问，WaaS 服务要求您使用 EdDSA 签名对每个 API 请求进行签名（可公开访问的 API 操作除外）。
 
-您需要在请求头中提供 API Key、`Biz-Api-Nonce`（随机字符串）和 API 签名：
+您需要在请求头中提供 API Key、`Biz-Api-Nonce`（Nonce）和 API 签名：
 
 ```
 headers = {
@@ -24,7 +24,7 @@ headers = {
 ```
 
 - Biz-Api-Key：用于请求的 API Key。更多详情，请参阅 [API Key](#api-key)。
-- Biz-Api-Nonce：用作请求 nonce 的随机字符串。
+- Biz-Api-Nonce：本次请求的 Nonce 值。Cobo 签名辅助工具会将其设置为当前 Unix 毫秒时间戳，例如 `1718587017026`。该值必须与 `str_to_sign` 中的 `NONCE` 组件完全相同。更多详情，请参阅 [Nonce](#nonce)。
 - Biz-Api-Signature：API 签名。要了解如何计算 API 签名，请参阅[计算 API 签名](#calculate-the-api-signature)。
 
 如果您使用 Cobo 的 WaaS SDK，您只需提供 API Key，因为 SDK 会为您处理其余步骤。
@@ -139,7 +139,21 @@ Public Key (Hex):
 
 ## Nonce
 
-在 WaaS 2.0 身份验证中，Nonce 指请求头 `Biz-Api-Nonce` 的值，可以是任意随机字符串。
+在 WaaS 2.0 身份验证中，Nonce 指请求头 `Biz-Api-Nonce` 的值。Cobo 签名辅助工具会自动将其生成为当前 Unix 毫秒时间戳，例如 `1718587017026`。
+
+请求头 `Biz-Api-Nonce` 的值必须与 `str_to_sign` 中的 `NONCE` 组件完全相同。例如，以下配对有效，因为两个位置使用了相同的毫秒时间戳：
+
+```text
+Biz-Api-Nonce: 1718587017026
+str_to_sign = GET|/v2/transactions/transfer|1718587017026|chain_id=ETH&limit=10|
+```
+
+以下配对无效，因为请求头和 `str_to_sign` 使用了不同的 Nonce 值：
+
+```text
+Biz-Api-Nonce: 1718587017026
+str_to_sign = GET|/v2/transactions/transfer|1718587017027|chain_id=ETH&limit=10|
+```
 
 <a name="calculate-the-api-signature"></a>
 ## 计算 API 签名
