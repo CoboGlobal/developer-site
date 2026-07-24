@@ -32,22 +32,22 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </thead>
   <tbody>
     <tr>
-      <td><code>wallets.transaction.created</code></td>
+      <td><a href="/v2_cn/guides/webhooks-callbacks/transaction-events#walletstransactioncreated"><code>wallets.transaction.created</code></a></td>
       <td><code>Transaction</code></td>
       <td>在区块链上检测到交易并生成记录。此事件不代表交易已成功。</td>
     </tr>
     <tr>
-      <td><code>wallets.transaction.updated</code></td>
+      <td><a href="/v2_cn/guides/webhooks-callbacks/transaction-events#walletstransactionupdated"><code>wallets.transaction.updated</code></a></td>
       <td><code>Transaction</code></td>
-      <td>交易的状态或确认数发生变化。<Note>`wallets.transaction.updated` 涵盖交易的整个生命周期，包括创建、完成和失败。如果您想跟踪每个状态变化，订阅此事件即可。</Note></td>
+      <td>交易状态、确认进度或其他交易数据发生变化。<Note>进入终态时，除 <code>wallets.transaction.succeeded</code> 或 <code>wallets.transaction.failed</code> 外，还会产生此事件。订阅 <code>wallets.transaction.updated</code> 可观察所有生命周期变化。</Note></td>
     </tr>
     <tr>
-      <td><code>wallets.transaction.succeeded</code></td>
+      <td><a href="/v2_cn/guides/webhooks-callbacks/transaction-events#walletstransactionsucceeded"><code>wallets.transaction.succeeded</code></a></td>
       <td><code>Transaction</code></td>
       <td>交易已成功完成。</td>
     </tr>
     <tr>
-      <td><code>wallets.transaction.failed</code></td>
+      <td><a href="/v2_cn/guides/webhooks-callbacks/transaction-events#walletstransactionfailed"><code>wallets.transaction.failed</code></a></td>
       <td><code>Transaction</code></td>
       <td>交易失败。</td>
     </tr>
@@ -111,22 +111,22 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </thead>
   <tbody>
     <tr>
-      <td><code>wallets.mpc.tss_request.created</code></td>
+      <td><a href="/v2_cn/guides/webhooks-callbacks/mpc-tss-request-events#walletsmpctssrequestcreated"><code>wallets.mpc.tss_request.created</code></a></td>
       <td><code>TSSRequest</code></td>
       <td>创建了 TSS 请求。</td>
     </tr>
     <tr>
-      <td><code>wallets.mpc.tss_request.updated</code></td>
+      <td><a href="/v2_cn/guides/webhooks-callbacks/mpc-tss-request-events#walletsmpctssrequestupdated"><code>wallets.mpc.tss_request.updated</code></a></td>
       <td><code>TSSRequest</code></td>
       <td>TSS 请求的状态发生变化。</td>
     </tr>
     <tr>
-      <td><code>wallets.mpc.tss_request.succeeded</code></td>
+      <td><a href="/v2_cn/guides/webhooks-callbacks/mpc-tss-request-events#walletsmpctssrequestsucceeded"><code>wallets.mpc.tss_request.succeeded</code></a></td>
       <td><code>TSSRequest</code></td>
       <td>请求的操作已完成。</td>
     </tr>
     <tr>
-      <td><code>wallets.mpc.tss_request.failed</code></td>
+      <td><a href="/v2_cn/guides/webhooks-callbacks/mpc-tss-request-events#walletsmpctssrequestfailed"><code>wallets.mpc.tss_request.failed</code></a></td>
       <td><code>TSSRequest</code></td>
       <td>请求的操作失败。</td>
     </tr>
@@ -155,9 +155,24 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
       <td>已创建新的钱包。</td>
     </tr>
     <tr>
+      <td><code>wallets.updated</code></td>
+      <td><code>WalletInfo</code></td>
+      <td>钱包记录的变更已保存，并返回当前钱包信息。</td>
+    </tr>
+    <tr>
       <td><code>mpc_vaults.created</code></td>
       <td><code>MPCVault</code></td>
       <td>已创建新的 MPC Vault。</td>
+    </tr>
+    <tr>
+      <td><code>mpc_vaults.updated</code></td>
+      <td><code>MPCVault</code></td>
+      <td>现有 MPC Vault 的配置或元数据发生变化。</td>
+    </tr>
+    <tr>
+      <td><code>mpc_vaults.deleted</code></td>
+      <td><code>MPCVault</code></td>
+      <td>MPC Vault 已删除，无法再用于钱包操作。</td>
     </tr>
   </tbody>
 </table>

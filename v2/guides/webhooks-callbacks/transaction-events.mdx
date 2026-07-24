@@ -1,0 +1,154 @@
+---
+title: "Transaction event payload"
+lang: "en"
+description: "Understand the shared Transaction payload contract for the four wallets.transaction.* webhook events."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+`wallets.transaction.created`, `wallets.transaction.updated`, `wallets.transaction.succeeded`, and `wallets.transaction.failed` all deliver the same `Transaction` payload shape. This page documents that contract once; each event section describes the trigger and lifecycle meaning that differs.
+
+See [Webhook event types](/v2/guides/webhooks-callbacks/webhook-event-type) for the event catalog and [Transaction field reference](/v2/guides/transactions/transaction-fields) for reconciliation guidance for fields such as `chain_id`, `token_id`, and `asset_id`.
+
+## Transaction payload fields
+
+| Field | Type | Conditional | Description |
+| --- | --- | --- | --- |
+| `transaction_id` | string | No | Cobo's unique transaction record identifier. |
+| `cobo_id` | string, nullable | Yes | Cobo's tracking identifier. It can be `null` before it is assigned. |
+| `request_id` | string, nullable | Yes | Your identifier for the request that created the transaction. It is `null` when no client request exists, such as for a deposit. |
+| `wallet_id` | string | No | Destination wallet for a deposit and source wallet for an outbound transaction. |
+| `type` | string | No | Transaction type, such as `Deposit`, `Withdrawal`, `ContractCall`, or `MessageSign`. |
+| `status` | string | No | Public lifecycle status. See [Transaction statuses and sub-statuses](/v2/guides/transactions/status). |
+| `sub_status` | string, nullable | Yes | More specific processing state within `status`, when available. |
+| `failed_reason` | string, nullable | Yes | Failure detail for a transaction that did not complete. |
+| `chain_id` | string, nullable | Yes | Blockchain identifier for an on-chain transaction. |
+| `token_id` | string, nullable | Yes | Cobo token catalog identifier for an on-chain asset. |
+| `asset_id` | string, nullable | Yes | Exchange Wallet asset identifier; it is used instead of `token_id` for that wallet type. |
+| `source` | object | No | Transaction origin. `source_type` selects the shape; other fields can include `wallet_id`, `address`, `addresses`, or `included_utxos`. |
+| `destination` | object | No | Transaction target. `destination_type` selects the shape; other fields can include `wallet_id`, `address`, `amount`, `account_output`, `utxo_outputs`, or contract and message-signing inputs. |
+| `result` | object, nullable | Yes | Completed `MessageSign` result. A signature result contains `result_type` and `signature`; other transaction types return `null`. |
+| `fee` | object, nullable | Yes | Network fee details once known. Fields vary by `fee_type` and can include `token_id`, `fee_used`, `estimated_fee_used`, and maximum-fee values. |
+| `initiator` | string, nullable | Yes | Display identifier of the initiator when available. |
+| `initiator_type` | string, nullable | Yes | Channel through which the transaction was initiated when available. |
+| `confirmed_num` | integer, nullable | Yes | On-chain confirmations received so far. |
+| `confirming_threshold` | integer, nullable | Yes | Confirmations required before the transaction can be confirmed. |
+| `transaction_hash` | string, nullable | Yes | On-chain transaction hash after broadcast. |
+| `block_info` | object, nullable | Yes | Block containing the transaction. It is `null` before the transaction is included in a block. |
+| `block_info.block_number` | integer | When the parent is present | Height of the block containing the transaction. |
+| `block_info.block_timestamp` | integer | When the parent is present | Block creation time as a Unix timestamp in milliseconds. |
+| `block_info.block_hash` | string | When the parent is present | Hash of the block containing the transaction. |
+| `raw_tx_info` | object, nullable | Yes | Constructed transaction details. It is `null` before raw transaction data is available. |
+| `raw_tx_info.raw_tx` | string, nullable | When available | Serialized signed transaction data. |
+| `raw_tx_info.unsigned_raw_tx` | string, nullable | When available | Serialized transaction data before signing. |
+| `raw_tx_info.used_nonce` | integer, nullable | Account-model chains only | Nonce consumed by the transaction. It is `null` for chains that do not use account nonces. |
+| `raw_tx_info.selected_utxos` | array of objects, nullable | UTXO chains only | Inputs selected for a UTXO transaction. |
+| `raw_tx_info.selected_utxos[].tx_hash` | string | When `selected_utxos` is present | Hash of the transaction that created the selected output. |
+| `raw_tx_info.selected_utxos[].vout_n` | integer | When `selected_utxos` is present | Output index within the transaction identified by `tx_hash`. |
+| `raw_tx_info.selected_utxos[].token_id` | string | When `selected_utxos` is present | Token identifier of the selected output. |
+| `raw_tx_info.selected_utxos[].address` | string | When `selected_utxos` is present | Address that owns the selected output. |
+| `raw_tx_info.selected_utxos[].value` | string | When `selected_utxos` is present | Value of the selected output in token units. |
+| `raw_tx_info.utxo_changes` | array of objects, nullable | UTXO chains only | Change outputs created by a UTXO transaction. |
+| `raw_tx_info.utxo_changes[].address` | string | When `utxo_changes` is present | Address receiving the change output. |
+| `raw_tx_info.utxo_changes[].value` | string | When `utxo_changes` is present | Value of the change output in token units. |
+| `raw_tx_info.utxo_changes[].token_id` | string | When `utxo_changes` is present | Token identifier of the change output. |
+| `replacement` | object, nullable | Yes | RBF relationship. It is `null` when the transaction has not replaced another transaction and has not been replaced. |
+| `replacement.replaced_by_type` | string, nullable | Original transaction only | Replacement action applied to this transaction: `Drop`, `Resend`, or `SpeedUp`. |
+| `replacement.replaced_by_transaction_id` | string, nullable | Original transaction only | Cobo transaction ID of the transaction that replaced this transaction. |
+| `replacement.replaced_by_transaction_hash` | string, nullable | Original transaction only | On-chain hash of the transaction that replaced this transaction, once available. |
+| `replacement.replaced_type` | string, nullable | Replacement transaction only | Replacement action through which this transaction replaced another transaction: `Drop`, `Resend`, or `SpeedUp`. |
+| `replacement.replaced_transaction_id` | string, nullable | Replacement transaction only | Cobo transaction ID of the transaction that this transaction replaced. |
+| `replacement.replaced_transaction_hash` | string, nullable | Replacement transaction only | On-chain hash of the transaction that this transaction replaced, once available. |
+| `category` | array of strings, nullable | Yes | Your custom transaction categories. |
+| `cobo_category` | array of strings, nullable | Yes | Cobo-defined operational categories, such as `AutoSweep`. |
+| `description` | string, nullable | Yes | Client-provided transaction description. |
+| `is_loop` | boolean | No | Whether the transfer uses Cobo Loop instead of an on-chain transaction. |
+| `extra` | array of strings, nullable | Yes | Additional structured business data encoded as strings when applicable. |
+| `fueling_info` | object, nullable | Yes | Fee Station transaction relationship. It is `null` when Fee Station is not involved. |
+| `fueling_info.request_id` | string | When the parent is present | Request identifier of the Fee Station transaction. |
+| `fueling_info.transaction_id` | string | When the parent is present | Cobo transaction ID of the Fee Station transaction. |
+| `fueling_info.main_transaction_id` | string, nullable | Fee transaction records only | Cobo transaction ID of the parent transaction whose fee this record funds. It is omitted for the main transaction. |
+| `timeline` | array of objects, nullable | Yes | Ordered lifecycle states for the transaction. |
+| `timeline[].status` | string | When `timeline` is present | Lifecycle state represented by the entry. It uses the same Transaction status enum as the top-level `status` field. |
+| `timeline[].finished` | boolean | When `timeline` is present | Whether processing for this lifecycle state has finished. |
+| `timeline[].finished_timestamp` | integer, nullable | When `timeline` is present | Time the lifecycle state finished, as a Unix timestamp in milliseconds. It is `null` while `finished` is `false`. |
+| `created_timestamp` | integer | No | Transaction creation time as a Unix timestamp in milliseconds. |
+| `updated_timestamp` | integer | No | Most recent transaction update time as a Unix timestamp in milliseconds. |
+
+See [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations) for every supported `source` and `destination` shape, [Estimate transaction fees](/v2/guides/transactions/estimate-fees) for fee variants, and [RBF transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle) for replacement fields.
+
+## Direction: deposits and withdrawals
+
+For a `Deposit`, `wallet_id` identifies the destination wallet, `source` describes the external origin, and `destination` describes the deposit address. For a `Withdrawal`, `wallet_id` and `source` identify the sending wallet, while `destination` identifies the receiving address or account output. Use the `type`, `source.source_type`, and `destination.destination_type` discriminators together rather than inferring direction from addresses.
+
+<a id="walletstransactioncreated"></a>
+## `wallets.transaction.created`
+
+This event is emitted when Cobo first records a transaction. For a deposit, this follows detection on the blockchain. For an outbound transaction, this follows creation of the transaction record from the request. It does not indicate success.
+
+### TRON token deposit example
+
+```json
+{"transaction_id":"55555555-5555-4555-8555-555555555555","cobo_id":null,"request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"PendingScreening","sub_status":"PendingCoboKYTCheck","failed_reason":null,"chain_id":"TRON","token_id":"TRON_USDT","asset_id":null,"source":{"source_type":"DepositFromAddress","address":"TSource11111111111111111111111111111"},"destination":{"destination_type":"DepositToAddress","address":"TDestination111111111111111111111111"},"result":null,"fee":null,"initiator":null,"initiator_type":"Blockchain","confirmed_num":0,"confirming_threshold":19,"transaction_hash":"5555555555555555555555555555555555555555555555555555555555555555","block_info":null,"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":null,"is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"PendingScreening","finished":false,"finished_timestamp":null}],"created_timestamp":1784563000000,"updated_timestamp":1784563000000}
+```
+
+### EVM native-asset withdrawal example
+
+```json
+{"transaction_id":"66666666-6666-4666-8666-666666666666","cobo_id":null,"request_id":"withdrawal-20260721-000","wallet_id":"44444444-4444-4444-8444-444444444444","type":"Withdrawal","status":"Submitted","sub_status":null,"failed_reason":null,"chain_id":"ETH","token_id":"ETH","asset_id":null,"source":{"source_type":"Org-Controlled","wallet_id":"44444444-4444-4444-8444-444444444444","address":"0x3333333333333333333333333333333333333333"},"destination":{"destination_type":"Address","address":"0x4444444444444444444444444444444444444444","amount":"0.10000000"},"result":null,"fee":null,"initiator":"operator@example.com","initiator_type":"API","confirmed_num":0,"confirming_threshold":12,"transaction_hash":null,"block_info":null,"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":"Treasury withdrawal","is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Submitted","finished":false,"finished_timestamp":null}],"created_timestamp":1784563100000,"updated_timestamp":1784563100000}
+```
+
+<a id="walletstransactionupdated"></a>
+## `wallets.transaction.updated`
+
+This event is emitted when transaction data changes, including status or confirmation progress. A transition to a terminal outcome also produces an `updated` event, in addition to the corresponding `succeeded` or `failed` event. Subscribe to `updated` to observe all lifecycle changes; use the terminal events when your workflow needs an explicit outcome signal.
+
+### EVM token deposit example
+
+```json
+{"transaction_id":"11111111-1111-4111-8111-111111111111","cobo_id":"202607210001","request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"Confirming","sub_status":"PendingBlockConfirmations","failed_reason":null,"chain_id":"ETH","token_id":"ETH_USDT","asset_id":null,"source":{"source_type":"DepositFromAddress","address":"0x1111111111111111111111111111111111111111"},"destination":{"destination_type":"DepositToAddress","address":"0x2222222222222222222222222222222222222222"},"result":null,"fee":null,"initiator":null,"initiator_type":"Blockchain","confirmed_num":4,"confirming_threshold":12,"transaction_hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","block_info":{"block_number":24001234,"block_timestamp":1784563200000,"block_hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":null,"is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Confirming","finished":false,"finished_timestamp":null}],"created_timestamp":1784563180000,"updated_timestamp":1784563200000}
+```
+
+### UTXO native-asset withdrawal example
+
+```json
+{"transaction_id":"33333333-3333-4333-8333-333333333333","cobo_id":"202607210002","request_id":"withdrawal-20260721-001","wallet_id":"44444444-4444-4444-8444-444444444444","type":"Withdrawal","status":"Broadcasting","sub_status":"Broadcasting","failed_reason":null,"chain_id":"BTC","token_id":"BTC","asset_id":null,"source":{"source_type":"Org-Controlled","wallet_id":"44444444-4444-4444-8444-444444444444","address":"bc1qsource000000000000000000000000000000000"},"destination":{"destination_type":"Address","address":"bc1qdestination0000000000000000000000000000","amount":"0.01000000"},"result":null,"fee":{"fee_type":"UTXO","token_id":"BTC","fee_used":"0.00001000"},"initiator":"operator@example.com","initiator_type":"API","confirmed_num":0,"confirming_threshold":6,"transaction_hash":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","block_info":null,"raw_tx_info":{"used_nonce":null,"raw_tx":"0200000001...","unsigned_raw_tx":"0200000001...","selected_utxos":[{"tx_hash":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","vout_n":0}],"utxo_changes":[{"address":"bc1qchange000000000000000000000000000000000","value":"0.00499000","token_id":"BTC"}]},"replacement":null,"category":[],"cobo_category":[],"description":"Treasury withdrawal","is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Broadcasting","finished":false,"finished_timestamp":null}],"created_timestamp":1784563300000,"updated_timestamp":1784563320000}
+```
+
+<a id="walletstransactionsucceeded"></a>
+## `wallets.transaction.succeeded`
+
+This event is emitted when the transaction reaches the successful terminal state. For deposit reconciliation, see [When to credit a deposit](/v2/guides/transactions/status#when-to-credit-a-deposit).
+
+### UTXO native-asset deposit example
+
+```json
+{"transaction_id":"77777777-7777-4777-8777-777777777777","cobo_id":"202607210003","request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"Completed","sub_status":null,"failed_reason":null,"chain_id":"BTC","token_id":"BTC","asset_id":null,"source":{"source_type":"DepositFromAddress","address":"bc1qsource111111111111111111111111111111111"},"destination":{"destination_type":"DepositToAddress","address":"bc1qdestination1111111111111111111111111111"},"result":null,"fee":null,"initiator":null,"initiator_type":"Blockchain","confirmed_num":6,"confirming_threshold":6,"transaction_hash":"7777777777777777777777777777777777777777777777777777777777777777","block_info":{"block_number":900001,"block_timestamp":1784563400000,"block_hash":"8888888888888888888888888888888888888888888888888888888888888888"},"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":null,"is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Confirming","finished":true,"finished_timestamp":1784563400000},{"status":"Completed","finished":false,"finished_timestamp":null}],"created_timestamp":1784563340000,"updated_timestamp":1784563400000}
+```
+
+### TRON token withdrawal example
+
+```json
+{"transaction_id":"88888888-8888-4888-8888-888888888888","cobo_id":"202607210004","request_id":"withdrawal-20260721-002","wallet_id":"44444444-4444-4444-8444-444444444444","type":"Withdrawal","status":"Completed","sub_status":null,"failed_reason":null,"chain_id":"TRON","token_id":"TRON_USDT","asset_id":null,"source":{"source_type":"Org-Controlled","wallet_id":"44444444-4444-4444-8444-444444444444","address":"TSource22222222222222222222222222222"},"destination":{"destination_type":"Address","address":"TDestination222222222222222222222222","amount":"25.000000"},"result":null,"fee":{"fee_type":"Fixed","token_id":"TRON","fee_used":"2.000000"},"initiator":"operator@example.com","initiator_type":"API","confirmed_num":19,"confirming_threshold":19,"transaction_hash":"9999999999999999999999999999999999999999999999999999999999999999","block_info":{"block_number":76001234,"block_timestamp":1784563500000,"block_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},"raw_tx_info":{"used_nonce":null,"raw_tx":"0a02...","unsigned_raw_tx":"0a02...","selected_utxos":null,"utxo_changes":null},"replacement":null,"category":[],"cobo_category":[],"description":"Treasury withdrawal","is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Broadcasting","finished":true,"finished_timestamp":1784563460000},{"status":"Completed","finished":false,"finished_timestamp":null}],"created_timestamp":1784563440000,"updated_timestamp":1784563500000}
+```
+
+<a id="walletstransactionfailed"></a>
+## `wallets.transaction.failed`
+
+This event is emitted when the transaction reaches `Failed`, `Rejected`, or `Canceled`. These terminal outcomes also appear through `wallets.transaction.updated`.
+
+### Rejected EVM native-asset deposit example
+
+```json
+{"transaction_id":"99999999-9999-4999-8999-999999999999","cobo_id":"202607210005","request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"Rejected","sub_status":"RejectedByCoboKYT","failed_reason":"The deposit did not pass transaction screening.","chain_id":"ETH","token_id":"ETH","asset_id":null,"source":{"source_type":"DepositFromAddress","address":"0x5555555555555555555555555555555555555555"},"destination":{"destination_type":"DepositToAddress","address":"0x2222222222222222222222222222222222222222"},"result":null,"fee":null,"initiator":null,"initiator_type":"Blockchain","confirmed_num":0,"confirming_threshold":12,"transaction_hash":"0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","block_info":null,"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":null,"is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Rejected","finished":false,"finished_timestamp":null}],"created_timestamp":1784563600000,"updated_timestamp":1784563620000}
+```
+
+### Failed TRON native-asset withdrawal example
+
+```json
+{"transaction_id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","cobo_id":"202607210006","request_id":"withdrawal-20260721-003","wallet_id":"44444444-4444-4444-8444-444444444444","type":"Withdrawal","status":"Failed","sub_status":"FailedOnChain","failed_reason":"The transaction failed on-chain.","chain_id":"TRON","token_id":"TRON","asset_id":null,"source":{"source_type":"Org-Controlled","wallet_id":"44444444-4444-4444-8444-444444444444","address":"TSource33333333333333333333333333333"},"destination":{"destination_type":"Address","address":"TDestination333333333333333333333333","amount":"10.000000"},"result":null,"fee":{"fee_type":"Fixed","token_id":"TRON","fee_used":"1.000000"},"initiator":"operator@example.com","initiator_type":"API","confirmed_num":0,"confirming_threshold":19,"transaction_hash":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","block_info":null,"raw_tx_info":{"used_nonce":null,"raw_tx":"0a02...","unsigned_raw_tx":"0a02...","selected_utxos":null,"utxo_changes":null},"replacement":null,"category":[],"cobo_category":[],"description":"Treasury withdrawal","is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Failed","finished":false,"finished_timestamp":null}],"created_timestamp":1784563700000,"updated_timestamp":1784563720000}
+```

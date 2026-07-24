@@ -1,0 +1,154 @@
+---
+title: "Transaction 事件 Payload"
+lang: "zh-hans"
+description: "了解四种 wallets.transaction.* Webhook 事件共用的 Transaction Payload 结构。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+`wallets.transaction.created`、`wallets.transaction.updated`、`wallets.transaction.succeeded` 和 `wallets.transaction.failed` 使用相同的 `Transaction` Payload 结构。本文统一说明该结构，并在各事件章节中说明不同的触发条件和生命周期含义。
+
+如需查看事件目录，请参阅 [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。如需了解 `chain_id`、`token_id` 和 `asset_id` 等字段的对账用途，请参阅 [Transaction 字段参考](/v2_cn/guides/transactions/transaction-fields)。
+
+## Transaction Payload 字段
+
+| 字段 | 类型 | 是否有条件 | 说明 |
+| --- | --- | --- | --- |
+| `transaction_id` | string | 否 | Cobo 为交易记录分配的唯一标识。 |
+| `cobo_id` | string, nullable | 是 | Cobo 的交易跟踪标识；分配前可以为 `null`。 |
+| `request_id` | string, nullable | 是 | 创建交易的请求所使用的自定义标识。充币等没有客户端请求的交易为 `null`。 |
+| `wallet_id` | string | 否 | 充币交易的目标钱包，或出账交易的来源钱包。 |
+| `type` | string | 否 | 交易类型，例如 `Deposit`、`Withdrawal`、`ContractCall` 或 `MessageSign`。 |
+| `status` | string | 否 | 对外展示的生命周期状态。请参阅 [Transaction 状态和子状态](/v2_cn/guides/transactions/status)。 |
+| `sub_status` | string, nullable | 是 | `status` 内更具体的处理状态（如有）。 |
+| `failed_reason` | string, nullable | 是 | 未完成交易的失败详情。 |
+| `chain_id` | string, nullable | 是 | 链上交易所在的区块链标识。 |
+| `token_id` | string, nullable | 是 | 链上资产在 Cobo 代币目录中的标识。 |
+| `asset_id` | string, nullable | 是 | Exchange Wallet 的资产标识；该钱包类型使用此字段代替 `token_id`。 |
+| `source` | object | 否 | 交易来源。`source_type` 决定结构，其他字段可包括 `wallet_id`、`address`、`addresses` 或 `included_utxos`。 |
+| `destination` | object | 否 | 交易目标。`destination_type` 决定结构，其他字段可包括 `wallet_id`、`address`、`amount`、`account_output`、`utxo_outputs`，以及合约调用或消息签名输入。 |
+| `result` | object, nullable | 是 | 已完成 `MessageSign` 的结果。签名结果包含 `result_type` 和 `signature`；其他交易类型返回 `null`。 |
+| `fee` | object, nullable | 是 | 确定后返回的网络费用详情。字段由 `fee_type` 决定，可包括 `token_id`、`fee_used`、`estimated_fee_used` 和费用上限。 |
+| `initiator` | string, nullable | 是 | 可用时返回的发起人显示标识。 |
+| `initiator_type` | string, nullable | 是 | 可用时返回的交易发起渠道。 |
+| `confirmed_num` | integer, nullable | 是 | 当前已获得的链上确认数。 |
+| `confirming_threshold` | integer, nullable | 是 | 交易转为已确认前所需的确认数。 |
+| `transaction_hash` | string, nullable | 是 | 广播后返回的链上交易哈希。 |
+| `block_info` | object, nullable | 是 | 包含该交易的区块。交易被打包进区块前为 `null`。 |
+| `block_info.block_number` | integer | 父对象存在时 | 包含该交易的区块高度。 |
+| `block_info.block_timestamp` | integer | 父对象存在时 | 区块创建时间，Unix 毫秒时间戳。 |
+| `block_info.block_hash` | string | 父对象存在时 | 包含该交易的区块哈希。 |
+| `raw_tx_info` | object, nullable | 是 | 已构建的交易详情。原始交易数据可用前为 `null`。 |
+| `raw_tx_info.raw_tx` | string, nullable | 可用时 | 序列化的已签名交易数据。 |
+| `raw_tx_info.unsigned_raw_tx` | string, nullable | 可用时 | 签名前序列化的交易数据。 |
+| `raw_tx_info.used_nonce` | integer, nullable | 仅账户模型链 | 交易使用的 nonce。对于不使用账户 nonce 的链，此字段为 `null`。 |
+| `raw_tx_info.selected_utxos` | array of objects, nullable | 仅 UTXO 链 | UTXO 交易选中的输入。 |
+| `raw_tx_info.selected_utxos[].tx_hash` | string | `selected_utxos` 存在时 | 创建所选输出的交易哈希。 |
+| `raw_tx_info.selected_utxos[].vout_n` | integer | `selected_utxos` 存在时 | `tx_hash` 所标识交易中的输出索引。 |
+| `raw_tx_info.selected_utxos[].token_id` | string | `selected_utxos` 存在时 | 所选输出的代币标识。 |
+| `raw_tx_info.selected_utxos[].address` | string | `selected_utxos` 存在时 | 所选输出的所属地址。 |
+| `raw_tx_info.selected_utxos[].value` | string | `selected_utxos` 存在时 | 所选输出的代币单位数值。 |
+| `raw_tx_info.utxo_changes` | array of objects, nullable | 仅 UTXO 链 | UTXO 交易创建的找零输出。 |
+| `raw_tx_info.utxo_changes[].address` | string | `utxo_changes` 存在时 | 接收找零输出的地址。 |
+| `raw_tx_info.utxo_changes[].value` | string | `utxo_changes` 存在时 | 找零输出的代币单位数值。 |
+| `raw_tx_info.utxo_changes[].token_id` | string | `utxo_changes` 存在时 | 找零输出的代币标识。 |
+| `replacement` | object, nullable | 是 | RBF 关联信息。交易未替换其他交易且未被替换时为 `null`。 |
+| `replacement.replaced_by_type` | string, nullable | 仅原交易 | 对该交易执行的替换操作：`Drop`、`Resend` 或 `SpeedUp`。 |
+| `replacement.replaced_by_transaction_id` | string, nullable | 仅原交易 | 替换该交易的新交易的 Cobo 交易 ID。 |
+| `replacement.replaced_by_transaction_hash` | string, nullable | 仅原交易 | 替换该交易的新交易的链上哈希（可用后返回）。 |
+| `replacement.replaced_type` | string, nullable | 仅替换交易 | 该交易替换其他交易时使用的操作：`Drop`、`Resend` 或 `SpeedUp`。 |
+| `replacement.replaced_transaction_id` | string, nullable | 仅替换交易 | 被该交易替换的交易的 Cobo 交易 ID。 |
+| `replacement.replaced_transaction_hash` | string, nullable | 仅替换交易 | 被该交易替换的交易的链上哈希（可用后返回）。 |
+| `category` | array of strings, nullable | 是 | 自定义交易分类。 |
+| `cobo_category` | array of strings, nullable | 是 | Cobo 定义的运营分类，例如 `AutoSweep`。 |
+| `description` | string, nullable | 是 | 客户端提供的交易描述。 |
+| `is_loop` | boolean | 否 | 转账是否使用 Cobo Loop 而不是链上交易。 |
+| `extra` | array of strings, nullable | 是 | 适用时以字符串编码的额外结构化业务数据。 |
+| `fueling_info` | object, nullable | 是 | Fee Station 交易关联信息。未使用 Fee Station 时为 `null`。 |
+| `fueling_info.request_id` | string | 父对象存在时 | Fee Station 交易的请求标识。 |
+| `fueling_info.transaction_id` | string | 父对象存在时 | Fee Station 交易的 Cobo 交易 ID。 |
+| `fueling_info.main_transaction_id` | string, nullable | 仅费用交易记录 | 该记录所资助费用的父交易 Cobo 交易 ID。主交易不包含此字段。 |
+| `timeline` | array of objects, nullable | 是 | 交易经历的有序生命周期状态。 |
+| `timeline[].status` | string | `timeline` 存在时 | 该条目表示的生命周期状态，与顶层 `status` 字段使用相同的 Transaction 状态枚举。 |
+| `timeline[].finished` | boolean | `timeline` 存在时 | 该生命周期状态的处理是否已完成。 |
+| `timeline[].finished_timestamp` | integer, nullable | `timeline` 存在时 | 该生命周期状态完成的时间，Unix 毫秒时间戳。`finished` 为 `false` 时，此字段为 `null`。 |
+| `created_timestamp` | integer | 否 | 交易创建时间，Unix 毫秒时间戳。 |
+| `updated_timestamp` | integer | 否 | 最近一次交易更新时间，Unix 毫秒时间戳。 |
+
+如需查看所有 `source` 和 `destination` 结构，请参阅 [Transaction 来源与目标](/v2_cn/guides/transactions/sources-and-destinations)。费用变体和替换字段分别参见[预估交易费用](/v2_cn/guides/transactions/estimate-fees)和 [RBF 交易生命周期](/v2_cn/guides/transactions/rbf-transaction-lifecycle)。
+
+## 交易方向：充币与提币
+
+对于 `Deposit`，`wallet_id` 表示目标钱包，`source` 描述外部来源，`destination` 描述充币地址。对于 `Withdrawal`，`wallet_id` 和 `source` 表示发送钱包，`destination` 表示接收地址或账户输出。请结合 `type`、`source.source_type` 和 `destination.destination_type` 判断方向，不要仅根据地址推断。
+
+<a id="walletstransactioncreated"></a>
+## `wallets.transaction.created`
+
+Cobo 首次记录交易时触发此事件。对于充币，该事件在链上检测到交易后触发；对于出账交易，该事件在根据请求创建交易记录后触发。此事件不表示交易已成功。
+
+### TRON 代币充币示例
+
+```json
+{"transaction_id":"55555555-5555-4555-8555-555555555555","cobo_id":null,"request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"PendingScreening","sub_status":"PendingCoboKYTCheck","failed_reason":null,"chain_id":"TRON","token_id":"TRON_USDT","asset_id":null,"source":{"source_type":"DepositFromAddress","address":"TSource11111111111111111111111111111"},"destination":{"destination_type":"DepositToAddress","address":"TDestination111111111111111111111111"},"result":null,"fee":null,"initiator":null,"initiator_type":"Blockchain","confirmed_num":0,"confirming_threshold":19,"transaction_hash":"5555555555555555555555555555555555555555555555555555555555555555","block_info":null,"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":null,"is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"PendingScreening","finished":false,"finished_timestamp":null}],"created_timestamp":1784563000000,"updated_timestamp":1784563000000}
+```
+
+### EVM 原生资产提币示例
+
+```json
+{"transaction_id":"66666666-6666-4666-8666-666666666666","cobo_id":null,"request_id":"withdrawal-20260721-000","wallet_id":"44444444-4444-4444-8444-444444444444","type":"Withdrawal","status":"Submitted","sub_status":null,"failed_reason":null,"chain_id":"ETH","token_id":"ETH","asset_id":null,"source":{"source_type":"Org-Controlled","wallet_id":"44444444-4444-4444-8444-444444444444","address":"0x3333333333333333333333333333333333333333"},"destination":{"destination_type":"Address","address":"0x4444444444444444444444444444444444444444","amount":"0.10000000"},"result":null,"fee":null,"initiator":"operator@example.com","initiator_type":"API","confirmed_num":0,"confirming_threshold":12,"transaction_hash":null,"block_info":null,"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":"Treasury withdrawal","is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Submitted","finished":false,"finished_timestamp":null}],"created_timestamp":1784563100000,"updated_timestamp":1784563100000}
+```
+
+<a id="walletstransactionupdated"></a>
+## `wallets.transaction.updated`
+
+交易数据发生变化（包括状态或确认进度变化）时触发此事件。交易进入终态时，除对应的 `succeeded` 或 `failed` 事件外，也会产生 `updated` 事件。订阅 `updated` 可观察所有生命周期变化；需要明确终态信号时，请使用终态事件。
+
+### EVM 代币充币示例
+
+```json
+{"transaction_id":"11111111-1111-4111-8111-111111111111","cobo_id":"202607210001","request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"Confirming","sub_status":"PendingBlockConfirmations","failed_reason":null,"chain_id":"ETH","token_id":"ETH_USDT","asset_id":null,"source":{"source_type":"DepositFromAddress","address":"0x1111111111111111111111111111111111111111"},"destination":{"destination_type":"DepositToAddress","address":"0x2222222222222222222222222222222222222222"},"result":null,"fee":null,"initiator":null,"initiator_type":"Blockchain","confirmed_num":4,"confirming_threshold":12,"transaction_hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","block_info":{"block_number":24001234,"block_timestamp":1784563200000,"block_hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":null,"is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Confirming","finished":false,"finished_timestamp":null}],"created_timestamp":1784563180000,"updated_timestamp":1784563200000}
+```
+
+### UTXO 原生资产提币示例
+
+```json
+{"transaction_id":"33333333-3333-4333-8333-333333333333","cobo_id":"202607210002","request_id":"withdrawal-20260721-001","wallet_id":"44444444-4444-4444-8444-444444444444","type":"Withdrawal","status":"Broadcasting","sub_status":"Broadcasting","failed_reason":null,"chain_id":"BTC","token_id":"BTC","asset_id":null,"source":{"source_type":"Org-Controlled","wallet_id":"44444444-4444-4444-8444-444444444444","address":"bc1qsource000000000000000000000000000000000"},"destination":{"destination_type":"Address","address":"bc1qdestination0000000000000000000000000000","amount":"0.01000000"},"result":null,"fee":{"fee_type":"UTXO","token_id":"BTC","fee_used":"0.00001000"},"initiator":"operator@example.com","initiator_type":"API","confirmed_num":0,"confirming_threshold":6,"transaction_hash":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","block_info":null,"raw_tx_info":{"used_nonce":null,"raw_tx":"0200000001...","unsigned_raw_tx":"0200000001...","selected_utxos":[{"tx_hash":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","vout_n":0}],"utxo_changes":[{"address":"bc1qchange000000000000000000000000000000000","value":"0.00499000","token_id":"BTC"}]},"replacement":null,"category":[],"cobo_category":[],"description":"Treasury withdrawal","is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Broadcasting","finished":false,"finished_timestamp":null}],"created_timestamp":1784563300000,"updated_timestamp":1784563320000}
+```
+
+<a id="walletstransactionsucceeded"></a>
+## `wallets.transaction.succeeded`
+
+交易进入成功终态时触发此事件。有关充币对账，请参阅[何时为充币入账](/v2_cn/guides/transactions/status#何时为充币入账)。
+
+### UTXO 原生资产充币示例
+
+```json
+{"transaction_id":"77777777-7777-4777-8777-777777777777","cobo_id":"202607210003","request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"Completed","sub_status":null,"failed_reason":null,"chain_id":"BTC","token_id":"BTC","asset_id":null,"source":{"source_type":"DepositFromAddress","address":"bc1qsource111111111111111111111111111111111"},"destination":{"destination_type":"DepositToAddress","address":"bc1qdestination1111111111111111111111111111"},"result":null,"fee":null,"initiator":null,"initiator_type":"Blockchain","confirmed_num":6,"confirming_threshold":6,"transaction_hash":"7777777777777777777777777777777777777777777777777777777777777777","block_info":{"block_number":900001,"block_timestamp":1784563400000,"block_hash":"8888888888888888888888888888888888888888888888888888888888888888"},"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":null,"is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Confirming","finished":true,"finished_timestamp":1784563400000},{"status":"Completed","finished":false,"finished_timestamp":null}],"created_timestamp":1784563340000,"updated_timestamp":1784563400000}
+```
+
+### TRON 代币提币示例
+
+```json
+{"transaction_id":"88888888-8888-4888-8888-888888888888","cobo_id":"202607210004","request_id":"withdrawal-20260721-002","wallet_id":"44444444-4444-4444-8444-444444444444","type":"Withdrawal","status":"Completed","sub_status":null,"failed_reason":null,"chain_id":"TRON","token_id":"TRON_USDT","asset_id":null,"source":{"source_type":"Org-Controlled","wallet_id":"44444444-4444-4444-8444-444444444444","address":"TSource22222222222222222222222222222"},"destination":{"destination_type":"Address","address":"TDestination222222222222222222222222","amount":"25.000000"},"result":null,"fee":{"fee_type":"Fixed","token_id":"TRON","fee_used":"2.000000"},"initiator":"operator@example.com","initiator_type":"API","confirmed_num":19,"confirming_threshold":19,"transaction_hash":"9999999999999999999999999999999999999999999999999999999999999999","block_info":{"block_number":76001234,"block_timestamp":1784563500000,"block_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},"raw_tx_info":{"used_nonce":null,"raw_tx":"0a02...","unsigned_raw_tx":"0a02...","selected_utxos":null,"utxo_changes":null},"replacement":null,"category":[],"cobo_category":[],"description":"Treasury withdrawal","is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Broadcasting","finished":true,"finished_timestamp":1784563460000},{"status":"Completed","finished":false,"finished_timestamp":null}],"created_timestamp":1784563440000,"updated_timestamp":1784563500000}
+```
+
+<a id="walletstransactionfailed"></a>
+## `wallets.transaction.failed`
+
+交易进入 `Failed`、`Rejected` 或 `Canceled` 时触发此事件。这些终态也会通过 `wallets.transaction.updated` 发送。
+
+### EVM 原生资产充币被拒绝示例
+
+```json
+{"transaction_id":"99999999-9999-4999-8999-999999999999","cobo_id":"202607210005","request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"Rejected","sub_status":"RejectedByCoboKYT","failed_reason":"The deposit did not pass transaction screening.","chain_id":"ETH","token_id":"ETH","asset_id":null,"source":{"source_type":"DepositFromAddress","address":"0x5555555555555555555555555555555555555555"},"destination":{"destination_type":"DepositToAddress","address":"0x2222222222222222222222222222222222222222"},"result":null,"fee":null,"initiator":null,"initiator_type":"Blockchain","confirmed_num":0,"confirming_threshold":12,"transaction_hash":"0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","block_info":null,"raw_tx_info":null,"replacement":null,"category":[],"cobo_category":[],"description":null,"is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Rejected","finished":false,"finished_timestamp":null}],"created_timestamp":1784563600000,"updated_timestamp":1784563620000}
+```
+
+### TRON 原生资产提币失败示例
+
+```json
+{"transaction_id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","cobo_id":"202607210006","request_id":"withdrawal-20260721-003","wallet_id":"44444444-4444-4444-8444-444444444444","type":"Withdrawal","status":"Failed","sub_status":"FailedOnChain","failed_reason":"The transaction failed on-chain.","chain_id":"TRON","token_id":"TRON","asset_id":null,"source":{"source_type":"Org-Controlled","wallet_id":"44444444-4444-4444-8444-444444444444","address":"TSource33333333333333333333333333333"},"destination":{"destination_type":"Address","address":"TDestination333333333333333333333333","amount":"10.000000"},"result":null,"fee":{"fee_type":"Fixed","token_id":"TRON","fee_used":"1.000000"},"initiator":"operator@example.com","initiator_type":"API","confirmed_num":0,"confirming_threshold":19,"transaction_hash":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","block_info":null,"raw_tx_info":{"used_nonce":null,"raw_tx":"0a02...","unsigned_raw_tx":"0a02...","selected_utxos":null,"utxo_changes":null},"replacement":null,"category":[],"cobo_category":[],"description":"Treasury withdrawal","is_loop":false,"extra":null,"fueling_info":null,"timeline":[{"status":"Failed","finished":false,"finished_timestamp":null}],"created_timestamp":1784563700000,"updated_timestamp":1784563720000}
+```

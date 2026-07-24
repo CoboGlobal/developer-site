@@ -19,6 +19,18 @@ Webhook 事件和 Callback 消息对于确保 WaaS 服务与您的 App 之间的
 
 创建 Endpoint 后，您需要在服务器上实现逻辑以处理 Webhook 事件或 Callback 消息，包括解析 API 请求、验证签名、响应请求以及在必要时添加其他处理逻辑。
 
+### Callback 消息 Payload
+
+Callback 消息的 `data` 字段与 Transaction Webhook 事件使用相同的 `Transaction` 结构。完整字段表请参阅 [Transaction 事件 Payload](/v2_cn/guides/webhooks-callbacks/transaction-events)。这些值表示 Endpoint 必须返回 `ok` 或 `deny` 时已知的信息；不要将 Callback 视为交易终态。
+
+| 字段 | Callback 时的填充情况 |
+| --- | --- |
+| `cobo_id` | Cobo 尚未分配跟踪标识时可以为 `null`。 |
+| `asset_id` | Exchange Wallet 资产的值可用时填充，否则为 `null`。链上钱包交易改用 `token_id`。 |
+| `result` | 在 `MessageSign` 结果可用前为 `null`；对于不产生签名结果的交易类型始终为 `null`。 |
+
+其他可选字段取决于交易类型和值是否可用。完整结构请参阅 [Transaction 事件 Payload](/v2_cn/guides/webhooks-callbacks/transaction-events)，对账语义请参阅 [Transaction 字段参考](/v2_cn/guides/transactions/transaction-fields)。如需后续状态，请通过 API 查询交易或处理后续 Transaction 事件。
+
 ### 验证签名
 
 为了防止未经授权的访问，当您收到 Webhook 事件或 Callback 消息时，您需要通过验证签名来验证 API 请求的真实性。
@@ -80,7 +92,8 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
 
 正确响应 Webhook 事件和 Callback 消息对于确保 Webhook 和 Callback 按预期处理至关重要。本节描述了 Webhook 和 Callback Endpoint 的预期响应。
 
-#### Webhook 事件
+<a id="webhook-events"></a>
+#### Webhook 投递策略
 
 当您的 Webhook Endpoint 收到 Webhook 事件时，它应该响应状态码 `200` 或 `201` 以指示事件已成功接收和处理。一旦发送此响应，WaaS 服务将停止重试发送事件，事件状态将变为**已送达**。
 
@@ -94,11 +107,14 @@ Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以
 
 您的 Endpoint 不应假设事件将按此顺序到达。
 
-#### Callback 消息
+<a id="callback-messages"></a>
+#### Callback 投递策略
 
 当您的 Callback Endpoint 收到 Callback 消息时，它应该响应状态码 `200` 或 `201` 和响应包体 `ok` 或 `deny` 以指示交易批准或拒绝。一旦发送此响应，WaaS 服务将停止重试发送消息，Callback 消息状态将变为**已送达**。
 
 如果 Callback Endpoint 没有响应，响应状态码不是 `200` 或 `201`，或响应包体不包含 `ok` 或 `deny`，WaaS 服务将继续重试发送消息。如果重试次数达到 30 次，WaaS 服务将停止发送消息，Callback 消息状态将变为**发送失败**。您可以使用 [Retry callback message](/v2/api-references/developers/retry-callback-message) 来重新发送消息。
+
+Webhook 事件和 Callback 消息记录会提供投递 `status` 和重试信息。对于 Webhook，请使用 [List webhook event logs](/v2/api-references/developers--webhooks/list-webhook-event-logs) 检查特定 Endpoint 的每次投递。您也可以通过下方 Portal 路径查看每次 Webhook 或 Callback 投递的响应状态和包体。完整恢复流程请参阅 Webhook 和 Callback 运营指南中的[恢复遗漏或失败的事件](/v2_cn/guides/webhooks-callbacks/webhook-operations#恢复遗漏或失败的事件)。
 
 ### 常见投递失败原因
 
@@ -125,6 +141,10 @@ Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以
 - Go：[server_demo.go](https://github.com/CoboGlobal/cobo-waas2-go-sdk/blob/master/cobo_waas2/demo/server_demo.go)
 
 ## 进阶用法
+
+### 多个 Endpoint
+
+如果您运营多个 Webhook Endpoint，或同时运营 Webhook Endpoint 和 Callback Endpoint，请分别检查每个 Endpoint 的事件或消息记录以及特定于该 Endpoint 的投递日志。不要假设不同 Endpoint 共用一个投递状态。请按照[注意事项](#注意事项)让每个 Endpoint 的处理程序保持幂等。
 
 ### 使用钱包级别的 Webhook 分发
 
