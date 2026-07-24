@@ -6994,10 +6994,14 @@ components:
             - `true`: Auto-sweep has been enabled for this wallet.
             - `false`: Auto-sweep has not been enabled for this wallet.
 
-            This field reports whether the capability itself has been enabled. It does not indicate whether automatic sweep triggers are currently paused. Pausing and resuming automatic triggers is managed separately in Cobo Portal and does not change this field's value.
+            This field reports whether the capability itself has been enabled. It does not indicate whether automatic sweep triggers are currently paused. To pause or resume automatic triggers in Cobo Portal:
+            - For a Custodial Web3 Wallet, go to **Wallets > Custodial Wallets > Web3 Wallets**, select the wallet, click **Auto-Sweep Settings**, and then click **Pause Auto-Sweep** or **Resume Auto-Sweep**.
+            - For an Organization-Controlled MPC Wallet, go to **Wallets > MPC Wallets > Organization-Controlled Wallets**, select the vault and wallet, click **Auto-Sweep Settings**, and then click **Pause Auto-Sweep** or **Resume Auto-Sweep**.
+
+            Pausing or resuming automatic triggers does not change this field's value.
 
             <Note>
-            Once enabled, deposit addresses in this wallet cannot initiate public token transfers or contract calls by default. Use the deposit-address transaction setting in Cobo Portal to restore permitted activity for specific addresses.
+            Once enabled, deposit addresses in this wallet cannot initiate public token transfers or contract calls by default. To restore deposit-address transactions in Cobo Portal, follow the applicable wallet path above, click **Auto-Sweep Settings > Sweep Security**, turn on **Deposit Address Transactions**, and click **Confirm**. This setting applies to the wallet's deposit addresses.
             </Note>
     MPCWalletInfo:
       title: MPC Wallets
@@ -7243,7 +7247,7 @@ components:
             - `false`: Does not enable auto-sweep for the wallet.
 
             <Warning>
-            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. You can restore permitted activity for specific deposit addresses using the deposit-address transaction setting in Cobo Portal.
+            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. To restore deposit-address transactions in Cobo Portal, go to **Wallets > Custodial Wallets > Web3 Wallets**, select the wallet, click **Auto-Sweep Settings > Sweep Security**, turn on **Deposit Address Transactions**, and click **Confirm**. This setting applies to the wallet's deposit addresses.
             </Warning>
     CreateMpcWalletParams:
       title: MPC Wallets
@@ -7395,11 +7399,11 @@ components:
             - `false`: Does not disable auto-sweep for a wallet that already has it enabled. This field is a one-way enable control.
 
             <Note>
-            To stop future automatic sweep triggers for a wallet, use the pause control in Cobo Portal instead of setting this field to `false`. Pausing automatic triggers does not undo enablement. This field continues to report `true` for a wallet that was enabled and later paused.
+            To stop future automatic sweep triggers in Cobo Portal, go to **Wallets > Custodial Wallets > Web3 Wallets**, select the wallet, click **Auto-Sweep Settings**, and then click **Pause Auto-Sweep**. Use **Resume Auto-Sweep** to resume automatic triggers. Pausing automatic triggers does not undo enablement. This field continues to report `true` for a wallet that was enabled and later paused.
             </Note>
 
             <Warning>
-            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. Use the deposit-address transaction setting in Cobo Portal to restore permitted activity for specific addresses.
+            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. To restore deposit-address transactions in Cobo Portal, go to **Wallets > Custodial Wallets > Web3 Wallets**, select the wallet, click **Auto-Sweep Settings > Sweep Security**, turn on **Deposit Address Transactions**, and click **Confirm**. This setting applies to the wallet's deposit addresses.
             </Warning>
     UpdateMpcWalletParams:
       type: object
@@ -7422,11 +7426,11 @@ components:
             - `false`: Does not disable auto-sweep for a wallet that already has it enabled. This field is a one-way enable control.
 
             <Note>
-            To stop future automatic sweep triggers for a wallet, use the pause control in Cobo Portal instead of setting this field to `false`. Pausing automatic triggers does not undo enablement. This field continues to report `true` for a wallet that was enabled and later paused.
+            To stop future automatic sweep triggers in Cobo Portal, go to **Wallets > MPC Wallets > Organization-Controlled Wallets**, select the vault and wallet, click **Auto-Sweep Settings**, and then click **Pause Auto-Sweep**. Use **Resume Auto-Sweep** to resume automatic triggers. Pausing automatic triggers does not undo enablement. This field continues to report `true` for a wallet that was enabled and later paused.
             </Note>
 
             <Warning>
-            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. Use the deposit-address transaction setting in Cobo Portal to restore permitted activity for specific addresses.
+            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. To restore deposit-address transactions in Cobo Portal, go to **Wallets > MPC Wallets > Organization-Controlled Wallets**, select the vault and wallet, click **Auto-Sweep Settings > Sweep Security**, turn on **Deposit Address Transactions**, and click **Confirm**. This setting applies to the wallet's deposit addresses.
             </Warning>
     UpdateSmartContractWalletParams:
       type: object

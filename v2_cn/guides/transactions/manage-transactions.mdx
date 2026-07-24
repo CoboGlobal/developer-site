@@ -24,7 +24,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - `PendingAuthorization`
 - `PendingSignature`（仅当子状态为 `Queue`, `InsufficientBalance`, `InsufficientBalanceFundLocked`, `PendingSignerApproval`, `PendingSystemProcessing`, 或 `Built` 时）
     
-要通过 WaaS 2.0 API 取消交易，请使用 [取消交易](/v2/api-references/transactions/cancel-transaction) 操作。这需要您希望取消的交易的交易 ID。
+要通过 WaaS 2.0 API 取消交易，请使用 [Cancel transaction](/v2/api-references/transactions/cancel-transaction) 操作。这需要您希望取消的交易的交易 ID。
 
 ## Replace-By-Fee (RBF) 交易
 
@@ -48,7 +48,7 @@ RBF 的两个最常见用例是加速和放弃交易。
 
 只有当交易状态为 `Broadcasting` 时，才能加速交易。
 
-要加速交易，请使用 [加速交易](/v2/api-references/transactions/speed-up-transaction) 操作。这需要您希望加速的交易的交易 ID。
+要加速交易，请使用 [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) 操作。这需要您希望加速的交易的交易 ID。
 
 <Info>如果您加速智能合约钱包的交易，将触发两个 RBF 交易：一个用于智能合约钱包的交易，另一个用于委托人的交易。</Info>
 
@@ -64,7 +64,7 @@ RBF 的两个最常见用例是加速和放弃交易。
 
 只有当交易状态为 `Broadcasting` 时，才能放弃交易。
 
-要放弃交易，请使用 [放弃交易](/v2/api-references/transactions/drop-transaction) 操作。这需要您希望放弃的交易的交易 ID。
+要放弃交易，请使用 [Drop transaction](/v2/api-references/transactions/drop-transaction) 操作。这需要您希望放弃的交易的交易 ID。
 
 当交易被放弃时，任何后续的放弃或加速操作仍将应用于原始交易。例如，如果用户创建交易 A，然后对交易 A 执行放弃操作使用交易 B，接着对交易 B 执行加速操作使用交易 C，加速操作仍将应用于交易 A，而不是交易 B。
 
