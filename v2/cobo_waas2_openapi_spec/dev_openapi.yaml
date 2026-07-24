@@ -6199,11 +6199,11 @@ paths:
       operationId: create_auto_sweep_task
       summary: Create auto-sweep task
       description: |
-        This operation creates an auto-sweep task for the specified wallet and token. The task triggers transactions to sweep the full balance of the specified token to the configured sweep-to address.
+        This operation creates an on-demand sweep task for the specified token. Unlike automatic sweeping, this task does not wait for the wallet's automatic policy trigger conditions. It is accepted for processing immediately.
 
-        <Note>A sweep requires native chain coin to pay for gas. The gas must be available either in the source (deposit) address, or supplied by a configured Fee Station or Auto-Fuel. Reaching the deposit threshold alone does not trigger a sweep. If no gas is available, the sweep is blocked (for example, with an insufficient-balance error) or the Fee Station quota check fails. When a sweep is blocked, the reason is reported in the `failed_reasons` array of the auto-sweep task.</Note>
+        During execution, Cobo evaluates the request's `min_balance_threshold` and other eligibility constraints for each address, including available gas, reserved balances and fees, and any pending transaction on the address. As a result, execution may create no transaction if no address is eligible.
 
-        <Info>This operation is asynchronous. When the task is created, it is returned with `status` set to `Submitted` and an empty `transaction_ids` array; this is expected and does not indicate a failure. The `transaction_ids` array is populated only after `status` becomes `TransactionCreated`. To retrieve the transaction IDs, poll [Get auto-sweep task details](https://www.cobo.com/developers/v2/api-references/autosweep/get-auto-sweep-task-details) using the returned `task_id` until the status changes.</Info>
+        A `Submitted` status means the task has been accepted for asynchronous processing. It does not guarantee that a sweep transaction will be created. Poll [Get auto-sweep task details](https://www.cobo.com/developers/v2/api-references/autosweep/get-auto-sweep-task-details) and check `status`, `transaction_ids`, and `failed_reasons` together to determine the task's current state. Once `transaction_ids` contains an ID, call [Get transaction information](https://www.cobo.com/developers/v2/api-references/transactions/get-transaction-information) to determine that transaction's outcome.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -7038,7 +7038,20 @@ components:
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         enable_auto_sweep:
           type: boolean
-          description: Enable the auto sweep feature for the wallet
+          description: |
+            Whether the auto-sweep capability has been enabled for this wallet.
+            - `true`: Auto-sweep has been enabled for this wallet.
+            - `false`: Auto-sweep has not been enabled for this wallet.
+
+            This field reports whether the capability itself has been enabled. It does not indicate whether automatic sweep triggers are currently paused. To pause or resume automatic triggers in Cobo Portal:
+            - For a Custodial Web3 Wallet, go to **Wallets > Custodial Wallets > Web3 Wallets**, select the wallet, click **Auto-Sweep Settings**, and then click **Pause Auto-Sweep** or **Resume Auto-Sweep**.
+            - For an Organization-Controlled MPC Wallet, go to **Wallets > MPC Wallets > Organization-Controlled Wallets**, select the vault and wallet, click **Auto-Sweep Settings**, and then click **Pause Auto-Sweep** or **Resume Auto-Sweep**.
+
+            Pausing or resuming automatic triggers does not change this field's value.
+
+            <Note>
+            Once enabled, deposit addresses in this wallet cannot initiate public token transfers or contract calls by default. To restore deposit-address transactions in Cobo Portal, follow the applicable wallet path above, click **Auto-Sweep Settings > Sweep Security**, turn on **Deposit Address Transactions**, and click **Confirm**. This setting applies to the wallet's deposit addresses.
+            </Note>
     MPCWalletInfo:
       title: MPC Wallets
       allOf:
@@ -7277,7 +7290,14 @@ components:
           $ref: '#/components/schemas/WalletSubtype'
         enable_auto_sweep:
           type: boolean
-          description: Enable the auto-sweep feature for the wallet. This parameter only applies to MPC Wallets and Custodial Wallets (Web3 Wallets).
+          description: |
+            Whether to enable the auto-sweep capability for this wallet.
+            - `true`: Enables auto-sweep for the wallet.
+            - `false`: Does not enable auto-sweep for the wallet.
+
+            <Warning>
+            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. To restore deposit-address transactions in Cobo Portal, go to **Wallets > Custodial Wallets > Web3 Wallets**, select the wallet, click **Auto-Sweep Settings > Sweep Security**, turn on **Deposit Address Transactions**, and click **Confirm**. This setting applies to the wallet's deposit addresses.
+            </Warning>
     CreateMpcWalletParams:
       title: MPC Wallets
       allOf:
@@ -7422,7 +7442,18 @@ components:
           description: The wallet name.
         enable_auto_sweep:
           type: boolean
-          description: Enable the auto sweep feature for the wallet
+          description: |
+            Whether to enable the auto-sweep capability for this wallet.
+            - `true`: Enables auto-sweep for the wallet.
+            - `false`: Does not disable auto-sweep for a wallet that already has it enabled. This field is a one-way enable control.
+
+            <Note>
+            To stop future automatic sweep triggers in Cobo Portal, go to **Wallets > Custodial Wallets > Web3 Wallets**, select the wallet, click **Auto-Sweep Settings**, and then click **Pause Auto-Sweep**. Use **Resume Auto-Sweep** to resume automatic triggers. Pausing automatic triggers does not undo enablement. This field continues to report `true` for a wallet that was enabled and later paused.
+            </Note>
+
+            <Warning>
+            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. To restore deposit-address transactions in Cobo Portal, go to **Wallets > Custodial Wallets > Web3 Wallets**, select the wallet, click **Auto-Sweep Settings > Sweep Security**, turn on **Deposit Address Transactions**, and click **Confirm**. This setting applies to the wallet's deposit addresses.
+            </Warning>
     UpdateMpcWalletParams:
       type: object
       title: MPC Wallets
@@ -7438,7 +7469,18 @@ components:
           description: The wallet name.
         enable_auto_sweep:
           type: boolean
-          description: Enable the auto sweep feature for the wallet
+          description: |
+            Whether to enable the auto-sweep capability for this wallet.
+            - `true`: Enables auto-sweep for the wallet.
+            - `false`: Does not disable auto-sweep for a wallet that already has it enabled. This field is a one-way enable control.
+
+            <Note>
+            To stop future automatic sweep triggers in Cobo Portal, go to **Wallets > MPC Wallets > Organization-Controlled Wallets**, select the vault and wallet, click **Auto-Sweep Settings**, and then click **Pause Auto-Sweep**. Use **Resume Auto-Sweep** to resume automatic triggers. Pausing automatic triggers does not undo enablement. This field continues to report `true` for a wallet that was enabled and later paused.
+            </Note>
+
+            <Warning>
+            Enabling auto-sweep is irreversible. After enablement, deposit addresses in this wallet can no longer initiate public token transfers or contract calls by default. To restore deposit-address transactions in Cobo Portal, go to **Wallets > MPC Wallets > Organization-Controlled Wallets**, select the vault and wallet, click **Auto-Sweep Settings > Sweep Security**, turn on **Deposit Address Transactions**, and click **Confirm**. This setting applies to the wallet's deposit addresses.
+            </Warning>
     UpdateSmartContractWalletParams:
       type: object
       title: Smart Contract Wallets
@@ -21995,13 +22037,24 @@ components:
             type: string
             example: 0011039d-27fb-49ba-b172-6e0aa80e37ec
           description: |
-            IDs of the transactions triggered by the task. This array is empty while the task `status` is `Submitted`, and is populated only after the status becomes `TransactionCreated`. Poll [Get auto-sweep task details](https://www.cobo.com/developers/v2/api-references/autosweep/get-auto-sweep-task-details) until the transaction IDs are available.
+            The IDs of the sweep transactions created for this task.
+
+            An empty array means that no sweep transaction has been created for this task yet. It does not mean that submission failed or that funds have already been swept. Check this field together with `failed_reasons` and `status` to determine the task's current state. Poll [Get auto-sweep task details](https://www.cobo.com/developers/v2/api-references/autosweep/get-auto-sweep-task-details) to retrieve the latest task information.
         failed_reasons:
           type: array
           items:
             type: string
-            example: exist pending transaction
-          description: Reasons why the task creation failed.
+            example: Insufficient balance to cover network fees.
+          description: |
+            A list of human-readable diagnostic messages explaining why this task did not create a sweep transaction for one or more addresses. Each message is free-text, and its exact wording may change. Do not parse it for exact text, transaction IDs, or exception strings. Instead, classify messages using the following general categories:
+            - Insufficient balance to cover the sweep after transaction fees are reserved.
+            - Insufficient gas balance to fund the sweep transaction.
+            - The transaction fee would exceed a configured fee cap.
+            - Another transaction from the same address is already pending.
+            - The address balance does not meet the configured minimum-balance threshold.
+            - Chain-specific fee-handling requirements were not met, for example, on TRON.
+            - Fee Station declined to fund the transaction.
+            - The sweep transaction could not be created.
         created_timestamp:
           type: integer
           format: int64
@@ -22019,9 +22072,11 @@ components:
         - TransactionCreated
       example: Submitted
       description: |
-        Auto-sweep task status:
-        - `Submitted`: The auto-sweep task has been submitted.
-        - `TransactionCreated`: The auto-sweep task triggered one or more token sweeping transactions.
+        The status of the auto-sweep task. Possible values:
+        - `Submitted`: The task has been accepted and is still awaiting transaction creation. Check `failed_reasons` and `transaction_ids` for the latest task details.
+        - `TransactionCreated`: Task processing created, or completed its attempt to create, a sweep transaction. Check `transaction_ids` for the resulting transaction IDs and `failed_reasons` for any diagnostic messages.
+
+        Task-level failure is not represented by a dedicated `Failed` status. If a task cannot proceed, the reason is recorded in `failed_reasons`. Once `transaction_ids` contains an ID, retrieve that transaction separately to determine its own success or failure. This status does not reflect downstream transaction outcomes.
     CreateAutoSweepTask:
       type: object
       description: Wallet and token information required to create an auto-sweep task.
@@ -22040,7 +22095,11 @@ components:
         min_balance_threshold:
           type: string
           description: |
-            The minimum token balance threshold for auto sweep. If the token balance of an address is less than this threshold, the address will not be swept.
+            The per-request minimum balance threshold used to filter addresses when this task executes. During execution, any address whose balance is below this threshold is skipped for this task.
+
+            This field only filters which addresses are considered for this task. It does not override other execution checks such as gas requirements, reserved balances, transaction fees, or an existing pending transaction on the same address. If you omit this field, address selection still passes through those other checks.
+
+            It applies only to this manual task.
           example: '0.01'
   parameters:
     sortByParam:
