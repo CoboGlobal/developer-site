@@ -183,6 +183,21 @@ async def handle_webhook(
     logger.info(event.data)
 ```
 
+## Verify your endpoint setup
+
+### Webhook endpoint
+
+1. Trigger a test event using the [Trigger test webhook event](/v2/api-references/developers--webhooks/trigger-test-webhook-event) API or the Cobo CLI command `cobo webhook trigger`. The test event is sent to all registered webhook endpoints and currently supports Transaction and TSSRequest event data types.
+2. In Cobo Portal, go to **Developer** > **WaaS 2.0** > **Webhook Events** and confirm the test event status shows **Delivered**.
+3. Click the event and open **Delivery logs** to inspect the HTTP response status code and body returned by your endpoint.
+4. If the status shows **Retrying** or **Failed**, see [Common delivery failures](#common-delivery-failures).
+
+### Callback endpoint
+
+1. In Cobo Portal, go to **Developer** > **WaaS 2.0** > **API Keys**, create or edit an API key, add your callback URL, and click **Test Connection** to verify the endpoint is reachable. The test returns the HTTP status code, response body, and request latency.
+2. Initiate a token withdrawal or contract call via the WaaS API to trigger a real callback message.
+3. In Cobo Portal, go to **Developer** > **WaaS 2.0** > **Callback Messages** and confirm the message status shows **Delivered** with a response body of `ok` or `deny`.
+
 ## ⚠️⚠️⚠️Important notes
 
 <Warning>

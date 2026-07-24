@@ -171,6 +171,21 @@ async def handle_webhook(
     logger.info(event.data)
 ```
 
+## 验证您的 Endpoint 配置
+
+### Webhook Endpoint
+
+1. 使用[触发测试 Webhook 事件](/v2_cn/api-references/developers--webhooks/trigger-test-webhook-event) API 或 Cobo CLI 命令 `cobo webhook trigger` 触发测试事件。测试事件将发送至所有已注册的 Webhook Endpoint，当前支持 Transaction 和 TSSRequest 事件数据类型。
+2. 在 Cobo Portal 中前往 **开发者** > **WaaS 2.0** > **Webhook 事件**，确认测试事件状态显示为**已送达**。
+3. 点击该事件并打开**投递日志**，查看您的 Endpoint 返回的 HTTP 响应状态码和响应体。
+4. 若状态显示**重试中**或**发送失败**，请参阅[常见投递失败原因](#常见投递失败原因)。
+
+### Callback Endpoint
+
+1. 在 Cobo Portal 中前往 **开发者** > **WaaS 2.0** > **API Keys**，创建或编辑 API Key，添加 Callback URL 后点击 **Test Connection** 验证 Endpoint 是否可达。该测试返回 HTTP 状态码、响应体和请求延迟。
+2. 通过 WaaS API 发起代币提币或合约调用以触发实际 Callback 消息。
+3. 在 Cobo Portal 中前往 **开发者** > **WaaS 2.0** > **Callback 消息**，确认消息状态显示为**已送达**，响应体为 `ok` 或 `deny`。
+
 ## ⚠️⚠️⚠️ 注意事项
 <Warning>
 - 在接收 Webhook 事件时，您的 Endpoint 应该首先快速返回正确的状态码，然后异步处理任何后续处理，以防止超时。
