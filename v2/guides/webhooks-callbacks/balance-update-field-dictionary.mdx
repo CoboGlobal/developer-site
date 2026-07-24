@@ -1,0 +1,32 @@
+---
+title: "Balance update payload field dictionary"
+lang: "en"
+description: "Definitions and trigger behavior for BalanceUpdateInfo webhook payload fields."
+sidebarTitle: "Balance update field dictionary"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page defines high-signal fields and trigger behavior for `BalanceUpdateInfo` webhook events.
+
+### Trigger behavior
+
+Both balance update event types share the same payload shape. Which event type is emitted — `wallet.mpc.balance.updated` or `wallet.web3.balance.updated` — depends on the wallet type that triggered the balance change.
+
+The event fires when Cobo's chain-scanning and balance-refresh pipeline detects a new or changed on-chain balance. It is not a fixed periodic reconciliation job, and it is not gated on transaction-ledger completion.
+
+### Field dictionary
+
+| Field | Description |
+|-------|-------------|
+| `token_id` | The token or currency whose balance changed. |
+| `address` | The on-chain address whose balance was refreshed. |
+| `wallet_uuid` | The wallet identifier for this balance payload. This field is named `wallet_uuid`, not `wallet_id`, unlike Transaction and Addresses payloads. |
+| `updated_timestamp` | The time when the balance update was recorded. |
+| `balance.total` | Total balance for the token at the address. Required by the `Balance` schema. |
+| `balance.available` | Balance currently available for use. Required by the `Balance` schema. |
+| `balance.pending` | Balance pending final availability. |
+| `balance.locked` | Balance locked by platform or workflow constraints. |
+| `balance.frozen` | Balance frozen by compliance or risk controls. |

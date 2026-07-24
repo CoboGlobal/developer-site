@@ -1,0 +1,48 @@
+---
+title: "Token 和 chain 负载字段词典"
+lang: "zh-hans"
+description: "定义 token、chain 和 token listing Webhook 负载字段及触发行为。"
+sidebarTitle: "Token 和 chain 字段词典"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文定义 token 和 chain management Webhook 事件的高频字段及触发行为。
+
+### Token scope events
+
+`wallet.token.enabled` 和 `wallet.token.disabled` 表示机构可用 token 范围发生了变化。Token 的可见范围更新生效后，Cobo 会发出这些事件。如果 token 在更新前后均为公开状态，则不会发出事件。当 token 变为公开状态时，尚未显式启用该 token 的符合条件机构会收到 `wallet.token.enabled`。当 token 不再为公开状态时，未显式保留该 token 的符合条件机构会收到 `wallet.token.disabled`。对于非公开 token，新增至访问列表的机构会收到 `wallet.token.enabled`，从访问列表移除的机构会收到 `wallet.token.disabled`。
+
+只有已启用，并且已为相关 wallet type 启用该 token 所属 chain 的机构才会收到这些事件。事件发生前并不一定存在某个特定的 Portal 操作或 API 调用。Token 自动上币审批是可能的触发原因之一，其他 token 可见范围更新也可能触发这些事件。
+
+| 字段 | 说明 |
+|-------|-------------|
+| `tokens` | 受影响的 token 记录。虽然该字段是数组，但每个事件仅包含一个 token 对象，用于描述在下述钱包范围内可用性发生变化的 token：`token_id`、`chain_id`、`asset_id`、`symbol`、`name`、`decimal`、`icon_url`、`token_address`、`fee_token_id`、`can_deposit`、`can_withdraw`、`dust_threshold`、`custodial_minimum_deposit_threshold` 和 `asset_model_type`。 |
+| `wallet_type` | Token 可用性发生变化的钱包类别，例如 MPC 钱包或托管钱包。 |
+| `wallet_subtypes` | 受影响的 wallet subtype 范围。当底层可见范围映射到多个 subtype 时，该字段可以包含多个值，例如 MPC 钱包的 `Org-Controlled` 和 `User-Controlled`。 |
+
+将每个事件视为以 `wallet_type` 和 `wallet_subtypes` 为范围的增量更新。对于 `wallet.token.enabled`，请在这些范围内添加或刷新该 token。对于 `wallet.token.disabled`，请停止在这些范围内将该 token 视为已启用。要与当前状态重新同步，请针对你的机构以及受影响的 wallet type 和 subtype 调用 [List enabled tokens](/v2/api-references/wallets/list-enabled-tokens)。
+
+### Chain scope events
+
+`wallet.chain.enabled` 和 `wallet.chain.disabled` 由需要 MFA 的 organization-facing action 发出。当 organization admin 更新其 package 或 wallet type 支持的 chain 时，这些事件会触发。
+
+| 字段 | 说明 |
+|-------|-------------|
+| `chains` | 已 enabled 或 disabled 的 chain record。每个条目遵循 `ChainInfo`。 |
+| `wallet_type` | chain scope 发生变化的 wallet family。 |
+| `wallet_subtypes` | chain-scope change 影响的 wallet subtype。 |
+
+### Token listing events
+
+`wallets.token_listing.succeeded` 和 `wallets.token_listing.failed` 属于 end-user token listing flow。Organization 通过 `POST wallets/tokens/listing_requests` 创建请求。Cobo 会审核该请求，并在审核得出最终状态时发出 succeeded 或 failed webhook。
+
+| 字段 | 说明 |
+|-------|-------------|
+| `request_id` | token listing request 标识符。 |
+| `status` | 最终 request status。取值为 `Submitted`、`Succeeded` 和 `Failed`。 |
+| `source` | request source。取值为 `API` 和 `Admin`。 |
+| `feedback` | 请求的 review feedback，通常在 listing 失败时填充。 |
+| `token` | listing 成功后生成的 token record。它遵循 `TokenInfo`。 |

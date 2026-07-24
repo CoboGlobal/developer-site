@@ -64,6 +64,16 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 `Transaction` 数据类型的完整示例负载，请参阅 [Transaction Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/transaction-webhook-payload-examples)。
+
+<Warning>只有 `wallets.transaction.succeeded` 事件表示交易已成功完成。这是唯一可安全用于触发充币入账的 Transaction 事件。`wallets.transaction.updated` 会在交易整个生命周期中的每次状态变化时触发，包括交易确认前甚至广播前的状态，因此不得用于入账。请仅将其用于状态或 UI 跟踪。Confirming 阶段通知同样只表示进度，不表示完成。请等待 `wallets.transaction.succeeded`，或轮询 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 并确认 `status: Success` 后，再为充币入账。</Warning>
+
+### Callback 阶段的 transaction 负载
+
+发送 Callback 消息时，其 `Transaction` 负载使用与 Webhook 事件和查询 API 负载相同的 schema。Webhook 和 Callback 的区别请参阅 [Webhooks vs callbacks](/v2_cn/guides/webhooks-callbacks/introduction#webhooks-vs-callbacks)。
+
+由于 Callback 在您发起提币或合约调用时触发，也就是交易广播到链上或确认之前，因此该负载中的若干字段尚未填充。Callback 阶段最常见的未填充字段包括 `cobo_id`、`asset_id`、`result`、`confirmed_num` 和 `confirming_threshold`，因为它们代表的值（例如链上广播跟踪 ID、Exchange 资产记账、执行结果和确认数）需要等交易广播并开始确认后才会出现。`cobo_category` 在此阶段也可能为空。这些是常见示例；schema 中的 nullable 字段通常也可能因交易阶段不同而为空。
+
 
 ### Fee Station 相关事件
 
@@ -99,6 +109,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 Fee Station `Transaction` 数据类型的完整示例负载，请参阅 [Fee Station 交易](/v2_cn/guides/webhooks-callbacks/transaction-webhook-payload-examples#fee-station-交易)。
+
 ### MPC 钱包 TSS 请求事件
 
 <table class="table-three-cols">
@@ -133,6 +145,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 `TSSRequest` 数据类型的完整示例负载，请参阅 [TSS request Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/tss-request-webhook-payload-examples)。
+
 ### 钱包与地址管理事件
 
 <table class="table-three-cols">
@@ -163,6 +177,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 </table>
 
 <Note>激活 Solana 代币子地址（Associated Token Account）不会触发 `wallets.addresses.created` 事件。为激活该地址而发生的租金转账也不会触发任何 `wallets.transaction.*` 事件，且不会生成充币或交易记录。因此，Solana 代币账户的激活及其租金无法通过 webhook 感知。详情请参阅 [Solana 代币账户租金](/v2_cn/guides/transactions/solana-token-account-rent)。</Note>
+
+如需查看 `Addresses`、`WalletInfo` 和 `MPCVault` 数据类型的完整示例负载，请参阅 [Wallet 和 address Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/wallet-address-webhook-payload-examples)。
 
 ### 代币与链管理事件
 
@@ -208,6 +224,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 `Tokens`、`Chains` 和 `TokenListing` 数据类型的完整示例负载，请参阅 [Token 和 chain Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/token-chain-webhook-payload-examples)。
+
 ### 余额更新事件
 
 <table class="table-three-cols">
@@ -232,6 +250,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+如需查看 `BalanceUpdateInfo` 数据类型的完整示例负载，请参阅 [Balance update Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/balance-update-webhook-payload-examples)。
+
 ### 合规事件
 
 <table class="table-three-cols">
@@ -255,6 +275,42 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
     </tr>
   </tbody>
 </table>
+
+### `ComplianceDisposition` 事件数据
+
+`compliance.disposition.status.updated` 事件用于通知你某笔交易的 compliance disposition 状态已发生变化。`ComplianceDisposition` 负载包含 `transaction_id`、`disposition_type`、`disposition_status`、`destination_address`、`disposition_amount` 和 `updated_timestamp`。
+
+当你所在机构的 Screening App 集成报告 disposition 状态变化时，Cobo 会发出此事件。由于该更新来自 Screening App，请将其视为该服务记录的当前 disposition 状态，而不是 Cobo 在本地计算的状态。使用 `transaction_id` 将事件与调用 [Refund funds](/v2/api-references/compliance/refund-funds)、[Isolate funds](/v2/api-references/compliance/isolate-funds) 或 [Unfreeze frozen funds](/v2/api-references/compliance/unfreeze-frozen-funds) 时所针对的交易相关联。
+
+**`disposition_type`（`DispositionType`）**
+
+| 值 | 含义 |
+|-------|---------|
+| `Refund` | 该 disposition 由调用 [Refund funds](/v2/api-references/compliance/refund-funds) 创建。 |
+| `Isolate` | 该 disposition 由调用 [Isolate funds](/v2/api-references/compliance/isolate-funds) 创建。 |
+| `Unfreeze` | 该 disposition 由调用 [Unfreeze frozen funds](/v2/api-references/compliance/unfreeze-frozen-funds) 创建。 |
+
+每项操作都会将 disposition 请求提交到你所在机构的 Screening App 集成进行处理。
+
+**`disposition_status`（`DispositionStatus`）**
+
+| 值 | 含义 |
+|-------|---------|
+| `Submitted` | disposition request 已提交。 |
+| `Refunding` | 资金退款正在进行中。 |
+| `Refunded` | 资金已退款。 |
+| `RefundFailed` | 退款尝试失败。 |
+| `Frozen` | 相关资金已被冻结。 |
+| `Unfreezing` | 资金正在解冻中。 |
+| `Unfrozen` | 资金已解冻。 |
+| `UnfreezeFailed` | 资金解冻尝试失败。 |
+| `Isolating` | 资金正在隔离中。 |
+| `Isolated` | 资金已隔离。 |
+| `IsolateFailed` | 资金隔离尝试失败。 |
+| `CoboDisposition` | 资金正在通过 Cobo disposition 处理。 |
+| `Normal` | 资金处于正常状态，未应用任何合规操作。 |
+
+收到此事件后，请以 `transaction_id` 为键，将报告的 `disposition_type` 和 `disposition_status` 记录为该交易 disposition 状态的增量更新。要随时确认当前 disposition 状态（例如在决定后续操作之前），请针对该交易调用 [Get disposition status](/v2/api-references/compliance/get-disposition-status)。
 
 ### `ComplianceKytScreenings` 事件数据
 
@@ -294,6 +350,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ## Webhook 事件数据结构
 有关 webhook 事件数据和其数据结构的完整介绍，请参阅 Retrieve event information 操作的响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性或 List all webhook events 操作的响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。
+
+如需查看覆盖充币、提币以及不同链的 `Transaction` 数据类型完整 JSON 示例，请参阅 [Transaction Webhook 负载示例](/v2_cn/guides/webhooks-callbacks/transaction-webhook-payload-examples)。
 
 <img src="/v2/images/guides/webhook_data_structure.png" className="screenshot_full_screen" alt="Webhook 数据结构截图" />
 

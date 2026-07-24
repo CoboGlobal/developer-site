@@ -1,0 +1,44 @@
+---
+title: "TSS request payload field dictionary"
+lang: "en"
+description: "Definitions and trigger behavior for fields in the TSSRequest webhook payload."
+sidebarTitle: "TSS request field dictionary"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page defines high-signal `TSSRequest` fields used by `wallets.mpc.tss_request.*` webhook events. The webhook payload matches the documented `TSSRequest` schema exactly, with no extra or omitted fields.
+
+### Request type
+
+| Value | Description |
+|-------|-------------|
+| `KeyGen` | Creates a new key share holder group. |
+| `KeyGenFromKeyGroup` | Creates a new key share holder group from an existing key group. |
+| `Recovery` | Recovers or reshapes an existing key share holder group. |
+
+These values are defined by the `TSSRequest` schema.
+
+### Request status
+
+| Value | Description |
+|-------|-------------|
+| `PendingKeyHolderConfirmation` | The request is waiting for enough key share holders to approve. |
+| `KeyHolderConfirmationFailed` | Key share holders failed to approve the action to be done to the TSS request. |
+| `KeyGenerating` | The key share is currently being generated for the action to be done to the TSS request. |
+| `MPCProcessing` | The TSS request approval is waiting to be started or is in progress. |
+| `KeyGeneratingFailed` | The key share generation process has failed for the action to be done to the TSS request. |
+| `Success` | The request completed successfully. |
+
+These values are defined by the `TSSRequest` schema.
+
+### Event trigger behavior
+
+| Event type | Trigger |
+|------------|---------|
+| `wallets.mpc.tss_request.created` | The request is newly created or enters the new-request status. |
+| `wallets.mpc.tss_request.succeeded` | The request status becomes `Success`. |
+| `wallets.mpc.tss_request.failed` | The request reaches a final failed status. |
+| `wallets.mpc.tss_request.updated` | Any other supported status transition. This fallback is restricted to portal key generation and reshare requests. |

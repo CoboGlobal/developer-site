@@ -1,0 +1,50 @@
+---
+title: "Transaction 负载字段词典"
+lang: "zh-hans"
+description: "定义并区分 Transaction Webhook、Callback 和查询 API 负载中的高频关键字段。"
+sidebarTitle: "Transaction 字段词典"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文定义会影响 Webhook、Callback 和交易查询集成的高频 `Transaction` 字段。
+
+### `token_id` vs. `asset_id`
+
+`token_id` 是交易的代币或币种标识符。您应该在 MPC Wallet、Custodial Wallet、Smart Contract Wallet 和 Exchange Wallet 的交易记账、充币入账和对账逻辑中使用此字段。例如，Ethereum USDT 交易使用 `token_id: "ETH_USDT"`。
+
+只有当涉及的钱包是 Exchange Wallet 时，`asset_id` 才会被填充。对于每一笔 MPC Wallet、Custodial Wallet 和 Smart Contract Wallet 交易，`asset_id` 都不存在或为 null。
+
+<Warning>
+一种常见的集成错误是把 `asset_id` 当成缩短版代币标识符，例如在 `token_id: "ETH_USDT"` 旁边期待出现 `asset_id: "USDT"`。对于 MPC Wallet、Custodial Wallet 和 Smart Contract Wallet，`asset_id` 始终为空。除非涉及的钱包是 Exchange Wallet，否则请使用 `token_id`，不要使用 `asset_id`。
+</Warning>
+
+### Source 和 destination 方向
+
+对于充币，`source` 表示资金来自哪里，`destination.wallet_id` 是接收钱包。对于提币，`source.wallet_id` 是付款钱包，`destination` 表示资金去向。完整类型参考请参阅 [Transaction sources and destinations](/v2_cn/guides/transactions/sources-and-destinations)。
+
+### `request_id`
+
+`request_id` 是创建交易请求时由调用方提供的可选标识符。它可帮助您将生成的交易映射回您系统中的请求。对于未通过提供了 `request_id` 的 API 调用创建的交易，例如入站充币或省略该字段的请求，`request_id` 可能为 null 或不存在。
+
+### `replacement.replaced_by_transaction_hash`
+
+RBF（Replace-By-Fee）允许用另一笔交易替换待处理交易。当一笔交易被替换时，原交易上的 `replacement.replaced_by_transaction_hash`、`replacement.replaced_by_transaction_id` 和 `replacement.replaced_by_type` 指向替换它的交易。替换交易会携带 `replacement.replaced_transaction_hash`、`replacement.replaced_transaction_id` 和 `replacement.replaced_type` 来标识原交易。
+
+### 高频 `cobo_category` 值
+
+`cobo_category` 是 Cobo 定义的类别字符串数组，用于描述交易的逻辑类别或用途。Fee Station 相关子集已在 [Cobo-defined categories](/v2_cn/guides/transactions/manage-transactions#cobo-defined-categories) 中说明。
+
+除 Fee Station 外，`AutoSweep` 是一个高频关键值，因为它标识自动资金归集交易。它可解释并非由显式 API 调用发起的余额变动。该枚举还包括 staking、screening、tokenization 以及其他类别。更完整的参考请参阅 [Cobo-defined categories](/v2_cn/guides/transactions/manage-transactions#cobo-defined-categories)。
+
+### `fueling_info`（仅 Fee Station）
+
+只有当交易存在关联的 Fee Station fueling 记录时，`fueling_info` 才会被填充；否则为 null。请将它与 `cobo_category`（尤其是 `AutoFueling`）结合使用，以把 Fee Station gas 交易关联到 fueling 请求和主交易。
+
+| 字段 | 说明 |
+|-------|-------------|
+| `request_id` | Fee Station fueling 请求标识符。 |
+| `transaction_id` | Fee Station 发起的 gas 或费用交易的交易 ID。 |
+| `main_transaction_id` | 需要 fueling 的主交易的交易 ID。只有当当前记录是 Fee Station 发起的 gas 或费用交易时，此字段才会被设置。 |

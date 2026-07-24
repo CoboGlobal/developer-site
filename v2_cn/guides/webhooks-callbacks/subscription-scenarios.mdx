@@ -1,0 +1,43 @@
+---
+title: "Webhook 订阅场景"
+lang: "zh-hans"
+description: "基于场景说明如何选择要订阅的 Webhook 事件类型。"
+sidebarTitle: "订阅场景"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文帮助您为常见交易工作流选择 Webhook 事件订阅。
+
+### 充币自动入账的最小订阅
+
+订阅 `wallets.transaction.succeeded` 即可用于充币自动入账。此事件是唯一表示交易已成功完成的 Transaction 事件。请参阅 [Transaction events](/v2_cn/guides/webhooks-callbacks/webhook-event-type#transaction-events-depositswithdrawalscontract-callsmessage-signing) 中的入账规则。
+
+如果您的组织使用 KYT 或合规扫描，并且您的业务逻辑要求资金可用前必须有最终处置结果，请同时跟踪 `compliance.kyt.screenings.status.updated` 和 `compliance.disposition.status.updated`。合规扫描可能独立于交易确认完成，因此当合规状态影响资金可用性时，请同时检查这两类事件流。
+
+### 提币状态跟踪
+
+使用以下事件集合跟踪提币状态。完整的 status 和 sub-status 参考请参阅 [Transaction statuses](/v2_cn/guides/transactions/status)。
+
+| 生命周期信号 | 事件 | 使用方式 |
+|-------------|------|---------|
+| 记录已创建 | `wallets.transaction.created` | 存储交易记录。不要将此事件视为最终结果。 |
+| status 或确认数发生变化 | `wallets.transaction.updated` | 更新 UI 或内部进度状态。不要基于此事件入账。 |
+| 终态成功 | `wallets.transaction.succeeded` | 将提币标记为成功完成。 |
+| 终态失败 | `wallets.transaction.failed` | 将提币标记为失败，并触发您的失败处理流程。 |
+
+### created/updated/succeeded 重叠
+
+`wallets.transaction.created`、`wallets.transaction.updated` 和 `wallets.transaction.succeeded` 不是互斥阶段。`wallets.transaction.updated` 会在每次变化时触发，包括也可能产生 `wallets.transaction.created` 或 `wallets.transaction.succeeded` 的转换点。如果您的 Endpoint 同时订阅这三个事件，应预期 `wallets.transaction.updated` 会在相同生命周期点与其他事件同时出现，而不是作为第四个独立阶段。
+
+### 订阅按 Endpoint 配置，channel 按组织共享
+
+每个 Webhook Endpoint 都有自己的事件类型订阅列表，但同一组织中的所有 Endpoint 共享一个组织级投递 channel。例如，Endpoint A 可以只订阅 `wallets.transaction.succeeded`，而 Endpoint B 订阅 `wallets.transaction.created`、`wallets.transaction.updated`、`wallets.transaction.succeeded` 和 `wallets.transaction.failed`。两个 Endpoint 都属于同一组织，并且各自只接收自己订阅列表中的事件类型。
+
+### Webhook + API 对账模式
+
+请使用 [List all transactions](/v2/api-references/transactions/list-all-transactions) 或 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 作为定期对账 Webhook 驱动状态的事实来源。这可帮助您从漏投、重复投递或您系统中的处理失败中恢复。重复投递处理请参阅 [Important notes](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#important-notes)。
+
+请使用您自己的 Webhook Event Logs 确认 API 流程之外发起的交易适用哪些事件模式，例如通过 Portal 发起的提币或组织中的自动系统流程。

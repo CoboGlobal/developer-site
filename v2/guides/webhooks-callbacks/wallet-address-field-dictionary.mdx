@@ -1,0 +1,34 @@
+---
+title: "Wallet and address payload field dictionary"
+lang: "en"
+description: "Definitions and integration notes for wallet, address, and MPC vault webhook payload fields."
+sidebarTitle: "Wallet and address field dictionary"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page defines high-signal fields used by wallet and address management webhook events.
+
+### `addresses`
+
+`addresses` is an array of created wallet addresses. A single-address creation event still uses the same array wrapper. Each item contains `wallet_id` plus the `AddressInfo` fields `address`, `chain_id`, `memo`, `path`, `encoding`, `pubkey`, `x_only_pubkey`, `root_pubkey`, `taproot_script_tree_hash`, `taproot_internal_address`, and `stellar_trusted_token_ids`.
+
+For Solana Associated Token Account activation, see the note in [Wallet and address management events](/v2/guides/webhooks-callbacks/webhook-event-type#wallet-and-address-management-events).
+
+### `WalletInfo`
+
+`WalletInfo` is a oneOf payload selected by wallet type. The dispatch path is shared across wallet types, including MPC vault-wallet and Custodial wallet creation.
+
+| Field | Description |
+|-------|-------------|
+| `wallet_id` | The created wallet identifier. |
+| `wallet_type` | The wallet family, such as `MPC`, that determines which oneOf branch is returned. |
+| `wallet_subtype` | The subtype inside the wallet family, such as `Org-Controlled`. |
+| `vault_id` | For an `MPCWalletInfo` payload, the MPC vault that owns the wallet. |
+| `project_id` | For an `MPCWalletInfo` payload, the project associated with the wallet. |
+
+### `MPCVault`
+
+`MPCVault` identifies the created vault and the root public keys generated for it. `root_pubkeys` is an array of `RootPubkey` objects with `root_pubkey` and `curve`, not an array of strings.

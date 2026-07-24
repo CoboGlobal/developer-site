@@ -1,0 +1,30 @@
+---
+title: "Balance update webhook payload examples"
+lang: "en"
+description: "Full JSON examples of BalanceUpdateInfo webhook event payloads."
+sidebarTitle: "Balance update payload examples"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page shows complete `BalanceUpdateInfo` payloads as delivered in `wallet.mpc.balance.updated` and `wallet.web3.balance.updated` webhook events. For the event list, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+
+`wallet.mpc.balance.updated` and `wallet.web3.balance.updated` use the identical schema and differ only in which wallet type triggered the event.
+
+```json
+{
+  "token_id": "ETH_USDT",
+  "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+  "wallet_uuid": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "updated_timestamp": 1751328600000,
+  "balance": {
+    "total": "1250.50",
+    "available": "1200.00",
+    "pending": "25.50",
+    "locked": "20.00",
+    "frozen": "5.00"
+  }
+}
+```
