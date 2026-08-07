@@ -17357,10 +17357,11 @@ components:
       properties:
         file_id:
           type: string
+          format: uuid
           description: |
-            The AWS file link of the uploaded file, which you can retrieve by calling
+            The file ID of the uploaded file, which you can retrieve by calling
             [Upload file](https://www.cobo.com/developers/v2/api-references/payment/upload-file).
-          example: 'https://example-bucket.s3.us-east-1.amazonaws.com/uploads/business_registration.pdf'
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         file_type:
           $ref: '#/components/schemas/MerchantKycCompanyAttachmentFileType'
     MerchantKycPersonAttachment:
@@ -17438,21 +17439,21 @@ components:
           maxLength: 64
           description: |
             The date of birth of the individual, usually in the format YYYYMMDD.
-          example: '19900101'
+          example: '20290322'
         issue_date:
           type: string
           maxLength: 64
           description: |
             The issue date refers to the date when a document, such as an identification card or passport,
             was officially issued or granted, usually in the format YYYYMMDD.
-          example: '20180101'
+          example: '20290322'
         expiration_date:
           type: string
           maxLength: 64
           description: |
             The expiration date refers to the date when a document, such as an identification card or passport,
             is no longer valid or legally usable, usually in the format YYYYMMDD.
-          example: '20280101'
+          example: '20290322'
         attachments:
           type: array
           description: |
@@ -17506,15 +17507,15 @@ components:
         establish_date:
           type: string
           description: The establishment date of the company.
-          example: '2020-01-01'
+          example: '20290322'
         commencement_date:
           type: string
           description: The commencement date of the company.
-          example: '2020-01-01'
+          example: '20290322'
         valid_period:
           type: string
           description: The valid period of the company registration.
-          example: '2020-01-01'
+          example: '20290322'
         register_address:
           $ref: '#/components/schemas/MerchantKycAddress'
         legal_info:
