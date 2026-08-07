@@ -1,0 +1,423 @@
+---
+title: "Transaction Webhook 负载示例"
+lang: "zh-hans"
+description: "展示充币、提币以及不同链和费用模型下 Transaction Webhook 事件负载的完整 JSON 示例。"
+sidebarTitle: "Transaction Webhook 负载示例"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文展示 `wallets.transaction.*` Webhook 事件中传递的完整 `Transaction` 数据类型负载。事件列表请参阅 [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。完整的 `source` 和 `destination` 类型参考请参阅 [Transaction sources and destinations](/v2_cn/guides/transactions/sources-and-destinations)。
+
+### 充币与提币
+
+以下原生币 EVM 充币使用 `source.source_type: DepositFromAddress` 和 `destination.destination_type: DepositToAddress`。`source` 表示资金来源，`destination.wallet_id` 标识接收钱包。
+
+```json
+{
+  "transaction_id": "aff0e1cb-15b2-4e1f-9b9d-a9133715986f",
+  "cobo_id": "20250701000101000000000000000000",
+  "request_id": null,
+  "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "type": "Deposit",
+  "status": "Success",
+  "sub_status": null,
+  "token_id": "ETH",
+  "asset_id": null,
+  "source": {
+    "source_type": "DepositFromAddress",
+    "wallet_type": "MPC",
+    "addresses": [
+      "0x7d4e9f2b6a1c3d8e5f901234567890abcdef1234"
+    ]
+  },
+  "destination": {
+    "destination_type": "DepositToAddress",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "wallet_type": "MPC",
+    "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+    "amount": "1.25"
+  },
+  "result": {
+    "amount": "1.25",
+    "token_id": "ETH"
+  },
+  "fee": {
+    "fee_type": "EVM_EIP_1559",
+    "token_id": "ETH",
+    "fee_used": "0.002",
+    "max_fee_per_gas": "9000000000000",
+    "max_priority_fee_per_gas": "1000000000000",
+    "gas_limit": "21000",
+    "gas_used": "21000"
+  },
+  "confirmed_num": 20,
+  "confirming_threshold": 12,
+  "transaction_hash": "0x9f2c6d8e1a4b3c5d7e901234567890abcdef1234567890abcdef1234567890",
+  "raw_tx_info": {
+    "used_nonce": 9,
+    "raw_tx": "0xa22cb465..."
+  },
+  "replacement": null,
+  "description": null,
+  "created_timestamp": 1751328000000,
+  "updated_timestamp": 1751328060000,
+  "cobo_category": []
+}
+```
+
+<Note>Exchange Wallet 到 Exchange Wallet 的充币会在 `source` 中使用 `DepositFromWallet`，并在 `destination` 中使用 `DepositToWallet`，而不是上方示例中的地址类充币类型。</Note>
+
+以下代币提币使用钱包来源 `source` 和地址 `destination`。合约调用和消息签名目的地（例如 `EVM_Contract` 和 `EVM_EIP_191_Signature`）也使用同一个 `Transaction` 包装结构，但 `destination` 形态不同。更多目的地类型请参阅 [Transaction sources and destinations](/v2_cn/guides/transactions/sources-and-destinations)。
+
+```json
+{
+  "transaction_id": "b3f2a891-6c4d-4e2a-8f1b-7d5e9c3a2f10",
+  "cobo_id": "20250701000102000000000000000000",
+  "request_id": "withdraw-20250701-0001",
+  "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "type": "Withdrawal",
+  "status": "Success",
+  "sub_status": null,
+  "token_id": "ETH_USDT",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+    "signer_key_share_holder_group_id": "9a0f5d51-3f7d-4d2f-9d7e-a514bf60f2c1"
+  },
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "0x8ba1f109551bd432803012645ac136ddd64dba72",
+      "amount": "100"
+    }
+  },
+  "result": {
+    "amount": "100",
+    "token_id": "ETH_USDT"
+  },
+  "fee": {
+    "fee_type": "EVM_EIP_1559",
+    "token_id": "ETH",
+    "fee_used": "0.002",
+    "max_fee_per_gas": "9000000000000",
+    "max_priority_fee_per_gas": "1000000000000",
+    "gas_limit": "65000",
+    "gas_used": "61234"
+  },
+  "confirmed_num": 18,
+  "confirming_threshold": 12,
+  "transaction_hash": "0x1d3f5a7c9e0b2d4f6a8c01234567890abcdef1234567890abcdef12345678",
+  "raw_tx_info": {
+    "used_nonce": 10,
+    "raw_tx": "0x02f8b1..."
+  },
+  "replacement": null,
+  "description": "Customer withdrawal",
+  "created_timestamp": 1751328200000,
+  "updated_timestamp": 1751328260000,
+  "cobo_category": []
+}
+```
+
+### 费用模型
+
+对于使用 EIP-1559 的 EVM 交易，调试 nonce 处理或 RBF 行为时，请检查 `raw_tx_info.used_nonce` 和 `raw_tx_info.raw_tx`。
+
+```json
+{
+  "transaction_id": "c94d7e12-3a8b-4f6c-9e2d-1f8a5b6c7d34",
+  "cobo_id": "20250701000103000000000000000000",
+  "request_id": "eth-transfer-0001",
+  "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "type": "Withdrawal",
+  "status": "Success",
+  "token_id": "ETH",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+    "signer_key_share_holder_group_id": "9a0f5d51-3f7d-4d2f-9d7e-a514bf60f2c1"
+  },
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "0x742d35cc6634c0532925a3b844bc454e4438f44e",
+      "amount": "0.5"
+    }
+  },
+  "result": {
+    "amount": "0.5",
+    "token_id": "ETH"
+  },
+  "fee": {
+    "fee_type": "EVM_EIP_1559",
+    "token_id": "ETH",
+    "fee_used": "0.002",
+    "max_fee_per_gas": "9000000000000",
+    "max_priority_fee_per_gas": "1000000000000",
+    "gas_limit": "21000",
+    "gas_used": "21000"
+  },
+  "confirmed_num": 16,
+  "confirming_threshold": 12,
+  "transaction_hash": "0x2b4d6f8a0c1e3f5a7b9d01234567890abcdef1234567890abcdef12345678",
+  "raw_tx_info": {
+    "used_nonce": 9,
+    "raw_tx": "0xa22cb465..."
+  },
+  "replacement": null,
+  "created_timestamp": 1751328300000,
+  "updated_timestamp": 1751328360000,
+  "cobo_category": []
+}
+```
+
+对于 UTXO 交易，`source.included_utxos` 表示请求中指定的输入（如有），`raw_tx_info.selected_utxos` 表示广播交易实际选择的输入。
+
+```json
+{
+  "transaction_id": "d1e8f423-9b6a-4c3d-8e1f-2a7b9c5d6e48",
+  "cobo_id": "20250701000104000000000000000000",
+  "request_id": "btc-transfer-0001",
+  "wallet_id": "6d9f3b29-7841-4b10-85f2-a674dc371ad1",
+  "type": "Withdrawal",
+  "status": "Success",
+  "token_id": "BTC",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "6d9f3b29-7841-4b10-85f2-a674dc371ad1",
+    "address": "bc1qsourceaddress000000000000000000000000",
+    "included_utxos": [
+      {
+        "tx_hash": "6f1c9a2b3d4e5f678901234567890abcdef1234567890abcdef1234567890",
+        "vout_n": 0
+      }
+    ]
+  },
+  "destination": {
+    "destination_type": "Address",
+    "utxo_outputs": [
+      {
+        "address": "bc1qdestination000000000000000000000000000",
+        "amount": "0.01"
+      }
+    ]
+  },
+  "result": {
+    "amount": "0.01",
+    "token_id": "BTC"
+  },
+  "fee": {
+    "fee_type": "UTXO",
+    "token_id": "BTC",
+    "fee_used": "0.00015",
+    "fee_rate": "50",
+    "max_fee_amount": "0.0002"
+  },
+  "confirmed_num": 6,
+  "confirming_threshold": 3,
+  "transaction_hash": "4b8e1d6c9f2a34567890abcdef1234567890abcdef1234567890abcdef12",
+  "raw_tx_info": {
+    "selected_utxos": [
+      {
+        "tx_hash": "6f1c9a2b3d4e5f678901234567890abcdef1234567890abcdef1234567890",
+        "vout_n": 0,
+        "token_id": "BTC",
+        "address": "bc1qsourceaddress000000000000000000000000"
+      }
+    ],
+    "utxo_changes": [
+      {
+        "address": "bc1qchangeaddress0000000000000000000000000",
+        "value": "0.00485",
+        "token_id": "BTC"
+      }
+    ]
+  },
+  "replacement": null,
+  "created_timestamp": 1751328400000,
+  "updated_timestamp": 1751328460000,
+  "cobo_category": []
+}
+```
+
+<Note>UTXO 找零输出的 schema 字段是 `utxo_changes`，这是一个复数数组。单数字段 `utxo_change` 已弃用，不应在新示例或集成中使用。</Note>
+
+TRON 风格交易使用 Fixed 费用模型。TRON 及类似链使用的 Fixed 费用模型没有 gas 或 priority fee 子字段，只包含 `token_id`、`fee_used`、`estimated_fee_used` 和 `max_fee_amount`。
+
+```json
+{
+  "transaction_id": "e5a3b678-2c9d-4f1e-8b6a-3d7c8e9f1a52",
+  "cobo_id": "20250701000105000000000000000000",
+  "request_id": "tron-transfer-0001",
+  "wallet_id": "22fb96d7-5d43-4af5-bb8f-c2bb0f57f4a2",
+  "type": "Withdrawal",
+  "status": "Success",
+  "token_id": "TRON_USDT",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "22fb96d7-5d43-4af5-bb8f-c2bb0f57f4a2",
+    "address": "TSourceAddress111111111111111111111111"
+  },
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "TDestination1111111111111111111111111",
+      "amount": "50"
+    }
+  },
+  "result": {
+    "amount": "50",
+    "token_id": "TRON_USDT"
+  },
+  "fee": {
+    "fee_type": "Fixed",
+    "token_id": "TRON",
+    "fee_used": "0.1",
+    "estimated_fee_used": "0.1",
+    "max_fee_amount": "0.2"
+  },
+  "confirmed_num": 20,
+  "confirming_threshold": 19,
+  "transaction_hash": "9abf1c2d3e4f567890abcdef1234567890abcdef1234567890abcdef1234",
+  "raw_tx_info": null,
+  "replacement": null,
+  "created_timestamp": 1751328500000,
+  "updated_timestamp": 1751328560000,
+  "cobo_category": []
+}
+```
+
+### Fee Station 交易
+
+`fee_station.transaction.*` 事件传递的 `Transaction` 负载 schema 与 `wallets.transaction.*` 事件相同。Fee Station 变体使用 `fee_station.` 事件类型前缀，并从 `wallet_scopes_info` 中省略钱包范围元数据字段。
+
+`type` 字段不会区分 Fee Station 交易。内部 Fee Station 查询类型会在负载返回前映射为公开的 `Deposit` 或 `Withdrawal` 值。
+
+以下 AutoFueling 示例使用相同的 `Transaction` 包装结构，并包含 Fee Station 专属的 `cobo_category` 和 `fueling_info` 值。
+
+```json
+{
+  "transaction_id": "f6b7c8d9-0a1b-4c2d-9e3f-456789abcdef",
+  "cobo_id": "20250701000106000000000000000000",
+  "request_id": null,
+  "wallet_id": "fee-station-wallet-001",
+  "type": "Withdrawal",
+  "status": "Success",
+  "sub_status": null,
+  "token_id": "ETH",
+  "asset_id": null,
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "fee-station-wallet-001",
+    "address": "0xfee0000000000000000000000000000000000001"
+  },
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+      "amount": "0.05"
+    }
+  },
+  "result": {
+    "amount": "0.05",
+    "token_id": "ETH"
+  },
+  "fee": {
+    "fee_type": "EVM_EIP_1559",
+    "token_id": "ETH",
+    "fee_used": "0.001",
+    "max_fee_per_gas": "9000000000000",
+    "max_priority_fee_per_gas": "1000000000000",
+    "gas_limit": "21000",
+    "gas_used": "21000"
+  },
+  "confirmed_num": 15,
+  "confirming_threshold": 12,
+  "transaction_hash": "0x6c7d8e9f01234567890abcdef1234567890abcdef1234567890abcdef1234",
+  "raw_tx_info": {
+    "used_nonce": 11,
+    "raw_tx": "0x02f901..."
+  },
+  "replacement": null,
+  "description": "AutoFueling transaction",
+  "created_timestamp": 1751328600000,
+  "updated_timestamp": 1751328660000,
+  "cobo_category": ["AutoFueling"],
+  "fueling_info": {
+    "request_id": "fuel-20250701-0001",
+    "transaction_id": "f6b7c8d9-0a1b-4c2d-9e3f-456789abcdef",
+    "main_transaction_id": "b3f2a891-6c4d-4e2a-8f1b-7d5e9c3a2f10"
+  }
+}
+```
+
+<Note>请使用 `cobo_category` 识别 Fee Station 专属交易类别。这些取值已在 [Cobo-defined categories](/v2_cn/guides/transactions/manage-transactions#cobo-defined-categories) 中说明。</Note>
+
+### 原生币、代币与 Exchange Wallet asset_id
+
+对于 MPC Wallet、Custodial Wallet 和 Smart Contract Wallet 交易，请使用 `token_id` 标识币种或代币。即使是代币交易，`asset_id` 也为空或不存在。
+
+```json
+[
+  {
+    "type": "Deposit",
+    "token_id": "ETH",
+    "asset_id": null,
+    "source": {
+      "source_type": "DepositFromAddress",
+      "wallet_type": "MPC",
+      "addresses": ["0x7d4e9f2b6a1c3d8e5f901234567890abcdef1234"]
+    },
+    "destination": {
+      "destination_type": "DepositToAddress",
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "wallet_type": "MPC",
+      "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+      "amount": "1.25"
+    }
+  },
+  {
+    "type": "Deposit",
+    "token_id": "ETH_USDT",
+    "asset_id": null,
+    "source": {
+      "source_type": "DepositFromAddress",
+      "wallet_type": "MPC",
+      "addresses": ["0x7d4e9f2b6a1c3d8e5f901234567890abcdef1234"]
+    },
+    "destination": {
+      "destination_type": "DepositToAddress",
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "wallet_type": "MPC",
+      "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+      "amount": "100"
+    }
+  },
+  {
+    "type": "Withdrawal",
+    "token_id": "TRON_USDT",
+    "asset_id": "USDT",
+    "source": {
+      "source_type": "Main",
+      "exchange_id": "binance-main"
+    },
+    "destination": {
+      "destination_type": "ExchangeWallet",
+      "exchange_id": "okx-main"
+    }
+  }
+]
+```
+
+<Note>此数组仅保留与 `token_id` 和 `asset_id` 对比相关的字段，并不是完整的 `Transaction` 负载。完整的 `Transaction` 负载包含完整的 `source` 和 `destination` 对象，如上方完整示例所示。</Note>
+
+只有当涉及的钱包是 Exchange Wallet 时，`asset_id` 才会被填充。对于其他所有钱包类型，`asset_id` 都不存在或为 null。更多详情请参阅 [`token_id` vs. `asset_id`](/v2_cn/guides/webhooks-callbacks/transaction-field-dictionary#token_id-vs-asset_id)。

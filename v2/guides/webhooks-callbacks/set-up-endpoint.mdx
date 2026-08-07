@@ -86,6 +86,8 @@ When your webhook endpoint receives a webhook event, it should respond with a st
 
 The default timeout for each webhook event is 2 seconds. If the webhook endpoint does not respond or responds with a status code other than `200` or `201`, the WaaS service will continue to retry sending the event. If the number of retry attempts reaches 10 , the WaaS service will stop sending the event and the event status will become `Failed`· You can resend the event by clicking **Retry** on **Cobo Portal** > **Developer** > **WaaS 2.0** > **Webhook Events**.
 
+Webhook events are retained for 7 days after generation. After that window, the event is purged and is no longer retrievable through Cobo Portal or the [List all webhook events](/v2/api-references/developers--webhooks/list-all-webhook-events) / [Retrieve event information](/v2/api-references/developers--webhooks/retrieve-event-information) operations. If you need to backfill missed events, do so before the 7-day window closes, using either the Webhook Event Logs view on **Cobo Portal** > **Developer** > **Webhook Events**, or the [List webhook event logs](/v2/api-references/developers--webhooks/list-webhook-event-logs) and [Retry webhook event by ID](/v2/api-references/developers--webhooks/retry-event) operations.
+
 Cobo does not guarantee that events will be delivered in the order they are generated. For example, creating a transfer will generate the following events:
 
 - `wallets.transaction.created`

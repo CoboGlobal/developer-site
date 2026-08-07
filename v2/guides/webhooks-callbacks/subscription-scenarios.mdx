@@ -1,0 +1,43 @@
+---
+title: "Webhook subscription scenarios"
+lang: "en"
+description: "Scenario-based guidance for choosing which webhook event types to subscribe to."
+sidebarTitle: "Subscription scenarios"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This guide helps you choose webhook event subscriptions for common transaction workflows.
+
+### Minimal subscription for deposit auto-crediting
+
+Subscribe to `wallets.transaction.succeeded` for deposit auto-crediting. This event is the only Transaction event that indicates a transaction completed successfully. See the crediting rule in [Transaction events](/v2/guides/webhooks-callbacks/webhook-event-type#transaction-events-depositswithdrawalscontract-callsmessage-signing).
+
+If your organization uses KYT or compliance screening, also track `compliance.kyt.screenings.status.updated` and `compliance.disposition.status.updated` when your business logic requires a final disposition before funds are usable. Compliance screening may complete independently of transaction confirmation, so check both event streams when compliance status affects availability.
+
+### Withdrawal status tracking
+
+Use the following event set to track withdrawal status. For the full status and sub-status reference, see [Transaction statuses](/v2/guides/transactions/status).
+
+| Lifecycle signal | Event | How to use it |
+|------------------|-------|---------------|
+| Record created | `wallets.transaction.created` | Store the transaction record. Do not treat this as a final result. |
+| Status or confirmation changed | `wallets.transaction.updated` | Update UI or internal progress state. Do not credit funds from this event. |
+| Terminal success | `wallets.transaction.succeeded` | Mark the withdrawal as completed successfully. |
+| Terminal failure | `wallets.transaction.failed` | Mark the withdrawal as failed and trigger your failure-handling flow. |
+
+### created/updated/succeeded overlap
+
+`wallets.transaction.created`, `wallets.transaction.updated`, and `wallets.transaction.succeeded` are not mutually exclusive stages. `wallets.transaction.updated` fires on every change, including transitions that can also produce `wallets.transaction.created` or `wallets.transaction.succeeded`. If your endpoint subscribes to all three, expect `wallets.transaction.updated` to appear alongside the other events at the same lifecycle points, not as a fourth distinct stage.
+
+### Subscriptions are per-endpoint, channel is org-wide
+
+Each webhook endpoint has its own event-type subscription list, but all endpoints in an organization share one org-wide delivery channel. For example, endpoint A can subscribe only to `wallets.transaction.succeeded`, while endpoint B subscribes to `wallets.transaction.created`, `wallets.transaction.updated`, `wallets.transaction.succeeded`, and `wallets.transaction.failed`. Both endpoints belong to the same organization, and each receives only the event types in its own subscription list.
+
+### Webhook + API reconciliation pattern
+
+Use [List all transactions](/v2/api-references/transactions/list-all-transactions) or [Get transaction information](/v2/api-references/transactions/get-transaction-information) as the source of truth for periodic reconciliation against webhook-driven state. This lets you recover from missed deliveries, duplicate deliveries, or processing failures in your own system. For duplicate-delivery handling, see [Important notes](/v2/guides/webhooks-callbacks/set-up-endpoint#important-notes).
+
+Use your Webhook Event Logs to confirm which event patterns apply to transactions initiated outside your API flow, such as Portal-initiated withdrawals or automatic system flows in your organization.

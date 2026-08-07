@@ -1,0 +1,48 @@
+---
+title: "Token and chain payload field dictionary"
+lang: "en"
+description: "Definitions and trigger behavior for token, chain, and token listing webhook payloads."
+sidebarTitle: "Token and chain field dictionary"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+This page defines high-signal fields and trigger behavior for token and chain management webhook events.
+
+### Token scope events
+
+`wallet.token.enabled` and `wallet.token.disabled` report an organization-specific change in which tokens are available to use. Cobo emits these events after an update to a token's visibility scope takes effect. A visibility change from public to public emits no event. When a token becomes public, eligible organizations that have not already explicitly enabled it receive `wallet.token.enabled`. When a token stops being public, eligible organizations that are not explicitly retained receive `wallet.token.disabled`. For non-public tokens, organizations added to the access list receive `wallet.token.enabled`, while organizations removed from it receive `wallet.token.disabled`.
+
+Only organizations that are enabled and already have the token's chain enabled for the relevant wallet type receive these events. No single Portal action or API call always precedes them. Automatic token listing approval is one possible cause, but other token visibility updates can also cause these events.
+
+| Field | Description |
+|-------|-------------|
+| `tokens` | The affected token record. Although this field is an array, each event carries exactly one token object describing the token whose availability changed for the wallet scope below: `token_id`, `chain_id`, `asset_id`, `symbol`, `name`, `decimal`, `icon_url`, `token_address`, `fee_token_id`, `can_deposit`, `can_withdraw`, `dust_threshold`, `custodial_minimum_deposit_threshold`, and `asset_model_type`. |
+| `wallet_type` | The wallet family, such as MPC Wallets or Custodial Wallets, whose token availability changed. |
+| `wallet_subtypes` | The affected wallet subtype scope. This field can include more than one value, such as both `Org-Controlled` and `User-Controlled` for MPC Wallets, when the underlying visibility scope maps to multiple subtypes. |
+
+Treat each event as a delta scoped by `wallet_type` and `wallet_subtypes`. For `wallet.token.enabled`, add or refresh the token for those scopes. For `wallet.token.disabled`, stop treating the token as enabled for those scopes. To resynchronize with the current state, call [List enabled tokens](/v2/api-references/wallets/list-enabled-tokens) for your organization and the affected wallet type and subtype.
+
+### Chain scope events
+
+`wallet.chain.enabled` and `wallet.chain.disabled` are emitted by an MFA-guarded organization-facing action. They fire when an organization admin updates which chains their package or wallet type supports.
+
+| Field | Description |
+|-------|-------------|
+| `chains` | The enabled or disabled chain records. Each item follows `ChainInfo`. |
+| `wallet_type` | The wallet family whose chain scope changed. |
+| `wallet_subtypes` | The wallet subtypes affected by the chain-scope change. |
+
+### Token listing events
+
+`wallets.token_listing.succeeded` and `wallets.token_listing.failed` are part of an end-user token listing flow. Organizations create requests with `POST wallets/tokens/listing_requests`. Cobo reviews the request, and the succeeded or failed webhook is emitted when the review reaches a final status.
+
+| Field | Description |
+|-------|-------------|
+| `request_id` | The token listing request identifier. |
+| `status` | Final request status. Values are `Submitted`, `Succeeded`, and `Failed`. |
+| `source` | Request source. Values are `API` and `Admin`. |
+| `feedback` | Review feedback for the request, usually populated when the listing fails. |
+| `token` | The token record produced by a successful listing. It follows `TokenInfo`. |

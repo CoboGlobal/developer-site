@@ -63,6 +63,16 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+For complete example payloads of the `Transaction` data type, see [Transaction webhook payload examples](/v2/guides/webhooks-callbacks/transaction-webhook-payload-examples).
+
+<Warning>Only the `wallets.transaction.succeeded` event indicates that a transaction has completed successfully. This is the only Transaction event safe to trigger deposit fund-crediting from. `wallets.transaction.updated` fires on every status change during a transaction's entire lifecycle, including states before the transaction is confirmed or even broadcast, so it must never be used to credit funds. Use it only for status or UI tracking. The same applies to Confirming-stage notifications: they indicate progress, not completion. Wait for `wallets.transaction.succeeded` or poll [Get transaction information](/v2/api-references/transactions/get-transaction-information) for `status: Success` before crediting a deposit.</Warning>
+
+### Callback-stage transaction payloads
+
+When a callback message is sent, its `Transaction` payload uses the same schema as the webhook event and query-API payloads. For the difference between webhooks and callbacks, see [Webhooks vs callbacks](/v2/guides/webhooks-callbacks/introduction#webhooks-vs-callbacks).
+
+Because a callback is triggered when you initiate a withdrawal or contract call, before the transaction is broadcast to the chain or confirmed, several fields on that payload will not yet be populated. The fields most commonly seen unpopulated at callback time include `cobo_id`, `asset_id`, `result`, `confirmed_num`, and `confirming_threshold`, because the values they represent, such as the chain broadcast tracking ID, exchange asset accounting, execution result, and confirmation counts, do not exist until the transaction has been broadcast and started confirming. `cobo_category` may also be empty at this stage. These are common examples; the schema's nullable fields in general may be empty depending on the transaction stage.
+
 ### Fee Station events
 
 <table class="table-three-cols">
@@ -96,6 +106,8 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
     </tr>
   </tbody>
 </table>
+
+For complete example payloads of the Fee Station `Transaction` data type, see [Fee Station transactions](/v2/guides/webhooks-callbacks/transaction-webhook-payload-examples#fee-station-transactions).
 
 ### MPC TSS request events
 
@@ -131,6 +143,8 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+For complete example payloads of the `TSSRequest` data type, see [TSS request webhook payload examples](/v2/guides/webhooks-callbacks/tss-request-webhook-payload-examples).
+
 ### Wallet and address management events
 
 <table class="table-three-cols">
@@ -161,6 +175,8 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
 </table>
 
 <Note>Activating a Solana token sub-address (Associated Token Account) does not emit a `wallets.addresses.created` event. The rent transfer that funds the activation does not emit any `wallets.transaction.*` event and does not produce a deposit or transaction record. As a result, Solana token account activation and its rent are not visible through webhooks. For details, see [Solana token account rent](/v2/guides/transactions/solana-token-account-rent).</Note>
+
+For complete example payloads of the `Addresses`, `WalletInfo`, and `MPCVault` data types, see [Wallet and address webhook payload examples](/v2/guides/webhooks-callbacks/wallet-address-webhook-payload-examples).
 
 ### Token and chain management events
 
@@ -206,6 +222,8 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+For complete example payloads of the `Tokens`, `Chains`, and `TokenListing` data types, see [Token and chain webhook payload examples](/v2/guides/webhooks-callbacks/token-chain-webhook-payload-examples).
+
 ### Balance update events
 
 <table class="table-three-cols">
@@ -230,6 +248,8 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
+For complete example payloads of the `BalanceUpdateInfo` data type, see [Balance update webhook payload examples](/v2/guides/webhooks-callbacks/balance-update-webhook-payload-examples).
+
 ### Compliance events
 
 <table class="table-three-cols">
@@ -253,6 +273,42 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
     </tr>
   </tbody>
 </table>
+
+### `ComplianceDisposition` event data
+
+The `compliance.disposition.status.updated` event notifies you that the status of a compliance disposition has changed for a transaction. The `ComplianceDisposition` payload includes `transaction_id`, `disposition_type`, `disposition_status`, `destination_address`, `disposition_amount`, and `updated_timestamp`.
+
+Cobo emits this event when your organization's Screening App integration reports a disposition status change. Because the update originates from the Screening App, treat it as that service's current view of the disposition rather than a status Cobo computed locally. Use `transaction_id` to correlate the event with the transaction you called [Refund funds](/v2/api-references/compliance/refund-funds), [Isolate funds](/v2/api-references/compliance/isolate-funds), or [Unfreeze frozen funds](/v2/api-references/compliance/unfreeze-frozen-funds) on.
+
+**`disposition_type` (`DispositionType`)**
+
+| Value | Meaning |
+|-------|---------|
+| `Refund` | The disposition was created by calling [Refund funds](/v2/api-references/compliance/refund-funds). |
+| `Isolate` | The disposition was created by calling [Isolate funds](/v2/api-references/compliance/isolate-funds). |
+| `Unfreeze` | The disposition was created by calling [Unfreeze frozen funds](/v2/api-references/compliance/unfreeze-frozen-funds). |
+
+Each operation submits the disposition request to your organization's Screening App integration for processing.
+
+**`disposition_status` (`DispositionStatus`)**
+
+| Value | Meaning |
+|-------|---------|
+| `Submitted` | The disposition request has been submitted. |
+| `Refunding` | A refund of the funds is in progress. |
+| `Refunded` | The funds have been refunded. |
+| `RefundFailed` | The refund attempt failed. |
+| `Frozen` | The associated funds have been frozen. |
+| `Unfreezing` | The funds are being unfrozen. |
+| `Unfrozen` | The funds have been unfrozen. |
+| `UnfreezeFailed` | The attempt to unfreeze the funds failed. |
+| `Isolating` | The funds are being isolated. |
+| `Isolated` | The funds have been isolated. |
+| `IsolateFailed` | The attempt to isolate the funds failed. |
+| `CoboDisposition` | The funds are being handled through a Cobo disposition. |
+| `Normal` | The funds are in a normal state with no compliance action applied. |
+
+When you receive this event, record the reported `disposition_type` and `disposition_status` as an update to that transaction's disposition state, keyed by `transaction_id`. To confirm the current disposition state at any time, such as before deciding on further action, call [Get disposition status](/v2/api-references/compliance/get-disposition-status) for that transaction.
 
 ### `ComplianceKytScreenings` event data
 
@@ -292,6 +348,8 @@ The case decision that drives these status changes is represented by `KytScreeni
 
 ## Data structure of webhook events           
 For a complete introduction of the webhook event data and its data structure, refer to the [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) property in the response of the Retrieve event information operation or the [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) property in the response of the List all webhook event operation. 
+
+For full worked JSON examples of the `Transaction` data type across deposits, withdrawals, and different chains, see [Transaction webhook payload examples](/v2/guides/webhooks-callbacks/transaction-webhook-payload-examples).
 
 <img src="/v2/images/guides/webhook_data_structure.png" class="screenshot_full_screen" alt="Screenshot of the data property" />
 

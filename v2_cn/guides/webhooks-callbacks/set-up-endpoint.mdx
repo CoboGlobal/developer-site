@@ -86,6 +86,8 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
 
 默认情况下，每个 Webhook 事件的超时时间为 2 秒。如果 Webhook Endpoint 没有响应或响应状态码不是 `200` 或 `201`，WaaS 服务将继续重试发送事件。如果重试次数达到 10 次，WaaS 服务将停止发送事件，事件状态将变为**发送失败**。您可以通过单击 Cobo Portal > 开发者 > WaaS 2.0 > Webhook 事件上的**重新发送**来重新发送事件。
 
+Webhook 事件在生成后保留 7 天。超过该窗口后，事件会被清除，并且无法再通过 Cobo Portal 或 [List all webhook events](/v2/api-references/developers--webhooks/list-all-webhook-events) / [Retrieve event information](/v2/api-references/developers--webhooks/retrieve-event-information) 操作检索。如果您需要回填漏收事件，请在 7 天窗口结束前完成，可使用 **Cobo Portal** > **开发者** > **Webhook 事件** 中的 Webhook Event Logs 视图，或使用 [List webhook event logs](/v2/api-references/developers--webhooks/list-webhook-event-logs) 和 [Retry webhook event by ID](/v2/api-references/developers--webhooks/retry-event) 操作。
+
 Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以下事件：
 
 - `wallets.transaction.created`

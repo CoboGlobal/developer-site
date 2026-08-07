@@ -1,0 +1,90 @@
+---
+title: "Wallet 和 address Webhook 负载示例"
+lang: "zh-hans"
+description: "展示 wallet、address 和 MPC vault 管理 Webhook 事件负载的完整 JSON 示例。"
+sidebarTitle: "Wallet 和 address 负载示例"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+本文展示 wallet 和 address management Webhook 事件的完整负载示例。事件列表请参阅 [Webhook 事件类型和数据类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。
+
+### Address creation
+
+`wallets.addresses.created` 传递 `Addresses` 负载。它会在单个地址创建和批量地址创建时触发，`addresses` 数组会包含该批次中创建的所有地址。
+
+```json
+{
+  "addresses": [
+    {
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "address": "0x5aeda56215b167893e80b4fe645ba6d5bab767de",
+      "chain_id": "ETH",
+      "memo": null,
+      "path": "m/44'/60'/0'/0/0",
+      "encoding": null,
+      "pubkey": "03f0288924f1c...",
+      "x_only_pubkey": null,
+      "root_pubkey": "xpub6CUGRU...",
+      "taproot_script_tree_hash": null,
+      "taproot_internal_address": null,
+      "stellar_trusted_token_ids": []
+    },
+    {
+      "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "address": "bc1qexampleaddress0000000000000000000000000",
+      "chain_id": "BTC",
+      "memo": null,
+      "path": "m/84'/0'/0'/0/0",
+      "encoding": "ENCODING_BECH32",
+      "pubkey": "02c6047f9441ed...",
+      "x_only_pubkey": "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+      "root_pubkey": "xpub6DExample...",
+      "taproot_script_tree_hash": null,
+      "taproot_internal_address": "bc1pinternaladdress000000000000000000000000",
+      "stellar_trusted_token_ids": []
+    }
+  ]
+}
+```
+
+### Wallet creation
+
+`wallets.created` 传递 `WalletInfo` 负载。Webhook 从适用于多种 wallet type 的共享 wallet 创建路径发出，负载变体与 wallet type 相匹配。
+
+```json
+{
+  "wallet_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "wallet_type": "MPC",
+  "wallet_subtype": "Org-Controlled",
+  "name": "Treasury MPC Wallet",
+  "vault_id": "vault-20250701-001",
+  "project_id": "project-20250701-001"
+}
+```
+
+### MPC vault creation
+
+`mpc_vaults.created` 传递 `MPCVault` 负载。它会针对 Org-Controlled 和 User-Controlled vault 触发，并且 `root_pubkeys` 是对象列表，而不是纯字符串列表。
+
+```json
+{
+  "vault_id": "vault-20250701-001",
+  "project_id": "project-20250701-001",
+  "name": "Treasury MPC Vault",
+  "type": "Org-Controlled",
+  "root_pubkeys": [
+    {
+      "root_pubkey": "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKp...",
+      "curve": "SECP256K1"
+    },
+    {
+      "root_pubkey": "xpub6DExampleRootPubkeyForEd25519...",
+      "curve": "ED25519"
+    }
+  ],
+  "created_timestamp": 1751328000000
+}
+```
