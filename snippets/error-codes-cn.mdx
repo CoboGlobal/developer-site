@@ -10,7 +10,7 @@
 |---|---|---|
 | 1000 | 内部服务器错误。此错误可能由多个问题引起，包括 [Org Access Tokens](/v2/apps/org-access-tokens) 过期。 | 检查您的服务器配置设置，包括 Org Access Tokens 是否已过期，然后稍后重试。 |
 | 1003, 2003 | 请求中缺少一个或多个必填参数。 | `error_message` 字段会指出具体缺失的参数。请找到该参数，在所调用接口的 API 参考中确认哪些参数为必填，补充后重试。 |
-| 1006, 2006 | 一个或多个参数格式无效或包含不支持的值。 | `error_message` 字段会指出未通过校验的参数。请在所调用接口的 API 参考中确认该参数的预期类型、格式和允许值，修正后重试。 |
+| 1006, 2006 | 一个或多个参数格式无效或包含不支持的值。对于转账操作，常见变体为金额格式或小数精度错误，例如，当提交金额的小数位数超出该代币支持的精度时，`error_message` 中会出现 `account_output.amount invalid`。 | `error_message` 字段会指出未通过校验的参数。若该参数为金额字段（例如出现 `account_output.amount invalid`），请调用 [Get token information](/v2/api-references/wallets/get-token-information) 接口查询该代币的 `decimal` 精度，确保提交金额的小数位数不超过该精度。对于其他参数，请在所调用接口的 API 参考中确认该参数的预期类型、格式和允许值，修正后重试。 |
 | 2000 | 处理过程中发生内部错误。 | 此为 Cobo 侧的临时错误。请稍后重试。如果错误持续出现，请联系 Cobo 支持团队（[help@cobo.com](mailto:help@cobo.com)），并提供响应中的 `error_id` 以便排查问题。 |
 | 2021 | 请求的 API 接口未实现或当前不可用。 | 请对照 API 参考确认请求路径和 HTTP 方法与目标接口完全一致（多余的斜杠或错误的方法也会返回此错误）。如果均正确，则该接口可能暂时不可用，请采用指数退避策略在短暂延迟后重试。 |
 | 2024 | API key 认证失败。 | <ul><li>若 `error_message` 为 `Your API key is not registered in this environment...`：您使用的 API key 注册在错误的环境中，请切换到正确的 API Host 并使用对应环境的 API key。参见[环境](/v2_cn/guides/overview/environments)。</li><li>若 `error_message` 为 `Your API key is not yet activated...` 或 `Api key is not activated`：请在 Cobo Guard 中完成 Admin 审批以激活该 API key。</li><li>若 `error_message` 提示 IP 白名单问题：请将服务器的出口 IP 加入 Cobo Portal 中该 API key 的 IP 白名单。</li><li>签名失败时，请确认签名串格式为 `METHOD\|PATH\|NONCE\|PARAMS\|BODY`，其中 NONCE 必须与 `Biz-Api-Nonce` 请求头一致。参见[身份验证](/v2_cn/guides/overview/cobo-auth)。</li></ul>详情请参见[注册 API 密钥](https://manuals.cobo.com/cn/portal/developer-console/create-api-key)。 |
@@ -58,7 +58,7 @@
 | 30009 | 金额不能小于零。 | 请提供非负金额。 |
 | 30010 | 提币金额低于该代币的最低提币阈值，无法处理。 | 请增加提币金额。调用 [Get token information](/v2/api-references/wallets/get-token-information) 接口获取该代币的 `dust_threshold` 值。 |
 | 30011 | 充币金额低于该代币的最低充币阈值。 | 请增加充币金额。调用 [Get token information](/v2/api-references/wallets/get-token-information) 接口获取该代币的 `minimum_deposit_threshold` 值。 |
-| 30012, 12007 | 转账金额超过钱包的可用余额。 | 请检查钱包的可用余额（总余额减去待处理和预留金额）。调用 [Get wallet balance](/v2/api-references/wallets/get-wallet-balance) 接口查询当前余额。 |
+| 30012, 12007 | 钱包可用余额或手续费余额不足，无法完成操作。`12007` 也可能在 `error_message` 描述手续费相关不足时，表示手续费代币余额或 Fee Station 余额不足。 | 请查看 `error_message` 以确认哪项余额不足。若提示转账余额不足，可用余额等于总余额减去待处理和预留金额；请调用 [Get wallet balance](/v2/api-references/wallets/get-wallet-balance) 接口查询，充值后重试。若 `error_message`（错误码 `12007`）提示手续费代币或 Fee Station 余额不足，请在 Cobo Portal 中进入 **Fee Station**，为所用网络充值 Gas Token 余额，或根据付款偏好充值美元/美元稳定币余额，余额到账后重试。 |
 | 30013 | 手续费代币余额不足，无法支付交易费用。 | 请确保钱包或 Fee Station 中有足够的手续费代币余额（例如 EVM 链上的 ETH）来支付交易费用。 |
 | 30014 | 目标地址无效或与该代币不兼容。 | 请提供与该代币类型兼容的有效目标地址。 |
 | 30015 | 目标钱包 ID 无效或钱包不存在。 | 请验证 `to_wallet_id` 值是否正确，以及该钱包是否属于您的团队。 |
