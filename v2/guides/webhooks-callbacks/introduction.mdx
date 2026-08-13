@@ -15,12 +15,21 @@ Webhooks and callbacks are essential mechanisms for the WaaS service to communic
 
 Callbacks and webhooks serve distinct purposes within your business operations.   
 
-| Mechanism | Description                        | Trigger Condition                                        | Required Actions Upon Receiving the Message              |
-| ------------- | -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Callbacks     | Serve similarly to a 2FA verification. You must register a callback endpoint in order to approve and complete a token withdrawal. | Triggered when you initiate a withdrawal or contract call using the WaaS API. | Check if the transaction meets expectations, and respond with a success status code (`200` or `201`) and a response body of `ok` or `deny` to indicate transaction approval or rejection. |
-| Webhooks      | Serve as real-time notifications for events such as transaction status updates.  | Triggered when certain events occur such as transaction status or TSS request status changes, based on the event types to which you subscribe.              | Respond with a success status code (`200` or `201`).             |
+| Mechanism | Description | Trigger Condition | Required Actions Upon Receiving the Message | Direction | Required |
+| --- | --- | --- | --- | --- | --- |
+| Callbacks | Serve similarly to a 2FA verification. You must register a callback endpoint in order to approve and complete a token withdrawal. | Triggered when you initiate a withdrawal or contract call using the WaaS API. | Check if the transaction meets expectations, and respond with a success status code (`200` or `201`) and a response body of `ok` or `deny` to indicate transaction approval or rejection. | Cobo WaaS service pushes to your server endpoint. Triggered by your own API call to initiate the operation. | Yes — you must register a callback endpoint to approve and complete token withdrawals and contract calls. Your server must respond with `ok` or `deny`. |
+| Webhooks | Serve as real-time notifications for events such as transaction status updates. | Triggered when certain events occur such as transaction status or TSS request status changes, based on the event types to which you subscribe. | Respond with a success status code (`200` or `201`). | Cobo WaaS service pushes to your server endpoint. Triggered by a subscribed platform event. | No — subscribe only to the event types you need. |
 
 You can view the data of all webhook events and callback messages in your organization on **Cobo Portal** > **Developer**> **Webhook Events** / **Callback Messages**.
+
+<Note>
+The terms *webhook endpoint URL*, *callback endpoint URL*, and *TSS callback URL* refer to three distinct concepts:
+- **Webhook endpoint URL**: the URL you register in Cobo Portal under **Developer** > **WaaS 2.0** > **Webhooks**. The Cobo WaaS service pushes event notifications to this URL.
+- **Callback endpoint URL**: the URL you link to an API key under **Developer** > **WaaS 2.0** > **API Keys**. The Cobo WaaS service pushes withdrawal and contract-call approval requests to this URL.
+- **TSS callback URL**: the `service_address` field under `callback.cb_server_v2` in `cobo-tss-node-config.yaml`. This URL is called by the TSS Node software itself, not the WaaS service, before each MPC signing operation. It is configured in the TSS Node YAML file, not in Cobo Portal.
+
+If you are using MPC Wallets with a server co-signer, see [TSS Node callback mechanism](/v2/guides/mpc-wallets/server-co-signer/callback-server-overview) for details on the TSS callback URL.
+</Note>
 
 ## Handle webhook events and callback messages
 
@@ -35,6 +44,9 @@ Follow the steps listed below to handle webhook events and callback messages sen
     - Respond to the API request.
     - Add other handling logic (if applicable).
 3. Register the endpoint on Cobo Portal.
+
+   For a webhook endpoint, in Cobo Portal, go to **Developer** > **WaaS 2.0** > **Webhooks**, then click **Register Webhook Endpoint**. For a callback endpoint, in Cobo Portal, go to **Developer** > **WaaS 2.0** > **API Keys**, create or edit an API key, and add a callback URL in the configuration modal.
+
     <Note>When registering a webhook endpoint, you need to specify the event types to which you want to subscribe.</Note>
 
 To create an endpoint and implement the handling logic, see [Set up a callback or webhook endpoint](/v2/guides/webhooks-callbacks/set-up-endpoint).
