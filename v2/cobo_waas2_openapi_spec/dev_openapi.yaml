@@ -10382,7 +10382,7 @@ components:
         - DisableAutoFuel
       example: PassiveAutoFuel
       description: |
-        The mode of transaction fee payment using Fee Station. Currently, Fee Station supports eligible transactions made with MPC Wallets and Web3 Wallets on EVM-compatible chains, TRON, and Solana.
+        The mode of transaction fee payment using Fee Station. Currently, Fee Station supports eligible transactions made with MPC Wallets and Web3 Wallets on EVM-compatible chains, TRON, Solana, and Tempo.
         For more details, refer to [Fee Station](https://manuals.cobo.com/en/portal/fee-station/introduction).
 
         - `ProActiveAutoFuel`: Always use Fee Station to pay transaction fees.  
