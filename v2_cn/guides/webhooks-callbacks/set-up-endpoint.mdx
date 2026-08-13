@@ -100,6 +100,37 @@ Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以
 
 如果 Callback Endpoint 没有响应，响应状态码不是 `200` 或 `201`，或响应包体不包含 `ok` 或 `deny`，WaaS 服务将继续重试发送消息。如果重试次数达到 30 次，WaaS 服务将停止发送消息，Callback 消息状态将变为**发送失败**。您可以使用 [Retry callback message](/v2/api-references/developers/retry-callback-message) 来重新发送消息。
 
+### Callback 消息 Payload
+
+Callback 消息的 `data` 字段使用 `Transaction` 对象。该对象表示 Callback Endpoint 必须返回 `ok` 或 `deny` 时的交易状态，因此请勿将其视为最终交易状态。交易后续处理过程中产生的交易 Webhook 事件使用相同的对象。
+
+请参阅 [Transaction 字段](/v2_cn/guides/transactions/transaction-fields)了解完整字段字典，包括 `cobo_id`、`request_id`、`token_id`、`asset_id`、`result`、`fee`、`transaction_hash`、`block_info`、`raw_tx_info` 和 `replacement`。处理 Callback 时，请根据该 Callback 消息中实际提供的值做出决策。如需获取交易的后续状态，请查询交易或处理后续的交易 Webhook 事件。
+
+| 字段 | Callback 阶段 | 后续交易阶段 |
+|------|---------------|--------------|
+| `cobo_id` | 创建交易时填充。 | 后续仍然可用。 |
+| `request_id` | 您的 API 请求创建交易时存在；对于充币和其他没有对应请求的交易，该字段不存在。 | 适用相同条件。 |
+| `token_id` | 全托管钱包、Web3 钱包和 MPC 钱包交易中存在。 | 后续仍然可用。 |
+| `asset_id` | 仅在交易所钱包交易中存在。该字段与 `token_id` 根据钱包类型互斥。 | 后续仍然可用。 |
+| `result` | 仅在 `MessageSign` 交易中存在。 | 其他交易类型在任何阶段均不包含该字段。 |
+| `fee` | 等待签名或广播时未填充。 | 广播后填充。 |
+| `transaction_hash` | 广播前未填充。 | 广播后填充。 |
+| `block_info` | 链上确认前未填充。 | 确认后填充；`MessageSign` 交易始终不包含该字段。 |
+| `raw_tx_info` | 完成广播前组装之前未填充。 | 完成组装后填充；`MessageSign` 交易始终不包含该字段。 |
+| `replacement` | 此时尚不可能存在替代交易，因此未填充。 | 仅当后续 RBF 操作替代该交易时填充。 |
+
+以下 Callback 阶段示例省略尚未填充的字段：
+
+```json
+{"message_id":"callback-001","url":"https://example.com/callback","created_timestamp":1717740300000,"data":{"data_type":"Transaction","transaction_id":"tx-callback-001","cobo_id":"202406070001","request_id":"withdraw-usdt-001","wallet_id":"wallet-mpc-001","type":"Withdrawal","status":"PendingSignature","chain_id":"ETH","token_id":"ETH_USDT","initiator_type":"API","source":{"source_type":"Org-Controlled","wallet_id":"wallet-mpc-001","address":"0x1111111111111111111111111111111111111111"},"destination":{"destination_type":"Address","account_output":{"address":"0x3333333333333333333333333333333333333333","amount":"100"}},"created_timestamp":1717740300000,"updated_timestamp":1717740300000},"status":"Pending"}
+```
+
+广播并确认后，交易 Webhook 可以携带后续字段：
+
+```json
+{"event_id":"event-final-001","url":"https://example.com/webhook","created_timestamp":1717740600000,"type":"wallets.transaction.succeeded","data":{"data_type":"Transaction","transaction_id":"tx-callback-001","cobo_id":"202406070001","request_id":"withdraw-usdt-001","wallet_id":"wallet-mpc-001","type":"Withdrawal","status":"Completed","chain_id":"ETH","token_id":"ETH_USDT","initiator_type":"API","source":{"source_type":"Org-Controlled","wallet_id":"wallet-mpc-001","address":"0x1111111111111111111111111111111111111111"},"destination":{"destination_type":"Address","account_output":{"address":"0x3333333333333333333333333333333333333333","amount":"100"}},"fee":{"fee_type":"EVM_EIP_1559","token_id":"ETH","fee_used":"0.00042","estimated_fee_used":"0.0005"},"transaction_hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","block_info":{"block_number":20123456,"block_timestamp":1717740500000,"block_hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},"raw_tx_info":{"used_nonce":42,"raw_tx":"0x02f8..."},"confirmed_num":12,"confirming_threshold":12,"created_timestamp":1717740300000,"updated_timestamp":1717740600000},"status":"Delivered"}
+```
+
 ### 常见投递失败原因
 
 下表列出了 Callback 消息和 Webhook 事件最常见的投递失败原因及修复方法。

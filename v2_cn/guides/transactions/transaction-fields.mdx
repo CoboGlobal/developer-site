@@ -1,0 +1,126 @@
+---
+title: "Transaction 字段"
+lang: "zh-hans"
+description: "查阅交易 API 操作返回并通过交易 Webhook 事件和 Callback 消息传递的 Transaction 对象。"
+sidebarTitle: "Transaction 字段"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+`Transaction` 对象表示交易在整个生命周期中的信息。交易 API 操作、交易 Webhook 事件和 Callback 消息均使用此对象。
+
+<table class="table-three-cols">
+  <thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>transaction_id</code></td><td>string</td><td>Cobo 为交易分配的唯一标识符。</td></tr>
+    <tr><td><code>cobo_id</code></td><td>string</td><td>可用于跟踪交易的 Cobo ID。</td></tr>
+    <tr><td><code>request_id</code></td><td>string</td><td>您为发起交易的 API 请求提供的唯一标识符。没有对应请求时（例如充币交易），该字段不存在。</td></tr>
+    <tr><td><code>wallet_id</code></td><td>string</td><td>与交易关联的钱包唯一标识符。</td></tr>
+    <tr><td><code>type</code></td><td>string</td><td>交易类型，例如 <code>Deposit</code>、<code>Withdrawal</code>、<code>ContractCall</code> 或 <code>MessageSign</code>。</td></tr>
+    <tr><td><code>status</code></td><td>string</td><td>交易在生命周期中所处的阶段。</td></tr>
+    <tr><td><code>sub_status</code></td><td>string</td><td><code>status</code> 对应的更具体原因或阶段。</td></tr>
+    <tr><td><code>failed_reason</code></td><td>string</td><td>交易失败原因的补充详情。</td></tr>
+    <tr><td><code>chain_id</code></td><td>string</td><td>交易所在区块链的唯一标识符。</td></tr>
+    <tr><td><code>token_id</code></td><td>string</td><td>全托管钱包、Web3 钱包和 MPC 钱包交易中代币在 WaaS 代币目录中的标识符。</td></tr>
+    <tr><td><code>asset_id</code></td><td>string</td><td>关联交易所账户中的资产标识符，仅适用于交易所钱包交易。</td></tr>
+    <tr><td><code>source</code></td><td>object</td><td>交易来源，其结构由 <code>source_type</code> 决定。</td></tr>
+    <tr><td><code>destination</code></td><td>object</td><td>交易目标或签名输入，其结构由 <code>destination_type</code> 决定。</td></tr>
+    <tr><td><code>result</code></td><td>object</td><td><code>MessageSign</code> 交易的签名结果。其他交易类型均不包含该字段。</td></tr>
+    <tr><td><code>fee</code></td><td>object</td><td>网络手续费详情，其结构由 <code>fee_type</code> 决定。该字段在广播后填充，在等待签名或广播时不存在。</td></tr>
+    <tr><td><code>initiator</code></td><td>string</td><td>交易发起方的名称或标识符。</td></tr>
+    <tr><td><code>initiator_type</code></td><td>string</td><td>发起交易所使用的渠道。</td></tr>
+    <tr><td><code>confirmed_num</code></td><td>integer</td><td>交易已获得的确认数。</td></tr>
+    <tr><td><code>confirming_threshold</code></td><td>integer</td><td>Cobo 要求的最低确认数。</td></tr>
+    <tr><td><code>transaction_hash</code></td><td>string</td><td>交易的链上标识符，也称为交易哈希或 <code>txid</code>，仅在广播后填充。</td></tr>
+    <tr><td><code>block_info</code></td><td>object</td><td>已确认区块的编号、时间戳和哈希。在链上确认前以及 <code>MessageSign</code> 交易中，该字段不存在。</td></tr>
+    <tr><td><code>raw_tx_info</code></td><td>object</td><td>构建后的交易数据以及 nonce 或 UTXO 详情。该字段在交易组装完成后填充，在此之前以及 <code>MessageSign</code> 交易中不存在。</td></tr>
+    <tr><td><code>replacement</code></td><td>object</td><td>原交易与替代交易之间的正向或反向关联，仅在存在替代操作时出现。</td></tr>
+    <tr><td><code>category</code></td><td>array of strings</td><td>您用于整理交易的自定义类别。</td></tr>
+    <tr><td><code>description</code></td><td>string</td><td>您提供的交易说明。</td></tr>
+    <tr><td><code>is_loop</code></td><td>boolean</td><td>交易是否通过 Cobo Loop 执行。</td></tr>
+    <tr><td><code>cobo_category</code></td><td>array of strings</td><td>用于标识交易所关联 Cobo 工作流的系统类别。</td></tr>
+    <tr><td><code>extra</code></td><td>array of strings</td><td>JSON 编码的特定业务信息，每一项使用 <code>extra_type</code> 标识其结构。</td></tr>
+    <tr><td><code>fueling_info</code></td><td>object</td><td>与交易关联的 Fee Station 代付详情。</td></tr>
+    <tr><td><code>created_timestamp</code></td><td>integer</td><td>交易创建时间，采用毫秒级 Unix 时间戳。</td></tr>
+    <tr><td><code>updated_timestamp</code></td><td>integer</td><td>交易最近更新时间，采用毫秒级 Unix 时间戳。</td></tr>
+  </tbody>
+</table>
+
+如需查看完整的 `status` 和 `sub_status` 值，请参阅[交易状态和子状态](/v2_cn/guides/transactions/status)。
+
+## `token_id` 与 `asset_id`
+
+`token_id` 是代币在 WaaS 代币目录中的标识符，例如 `ETH`、`ETH_USDT` 或 `BTC`。调用 [List enabled tokens](/v2/api-references/wallets/list-enabled-tokens) 获取您的组织可用的标识符。
+
+`token_id` 在全托管钱包、Web3 钱包和 MPC 钱包交易中填充。`asset_id` 是关联交易所账户中的资产标识符，仅在交易所钱包交易中填充。交易根据钱包类型包含其中一个字段，而不会同时包含两者。这两个字段不可互换。
+
+## `request_id`
+
+`request_id` 仅存在于您通过 API 请求发起的交易中，例如调用交易创建操作时。您可以使用该字段将交易与原始请求关联。对于充币交易，以及 Cobo 在没有收到您对应请求的情况下创建的其他交易，该字段不存在。
+
+## `replacement` 与 RBF 关联
+
+`replacement` 对象用于关联替代操作涉及的交易：
+
+| 字段 | 说明 |
+|-------|------|
+| `replaced_by_type` | 对原交易执行的替代操作：`Drop`、`Resend` 或 `SpeedUp`。 |
+| `replaced_by_transaction_id` | 替代当前交易的新交易的 Cobo 交易 ID。 |
+| `replaced_by_transaction_hash` | 替代当前交易的新交易的链上哈希。 |
+| `replaced_type` | 当前交易替代另一笔交易时使用的替代操作。 |
+| `replaced_transaction_id` | 被当前交易替代的原交易的 Cobo 交易 ID。 |
+| `replaced_transaction_hash` | 被当前交易替代的原交易的链上哈希。 |
+
+如需了解替代操作和状态变化，请参阅 [RBF (Replace-By-Fee) 交易生命周期](/v2_cn/guides/transactions/rbf-transaction-lifecycle)。
+
+只有 `Drop`、`Resend` 或 `SpeedUp` 操作生成的替代交易完成广播后，`replaced_by_transaction_hash` 才会填充。请结合 `replaced_by_transaction_id` 查询该替代交易。
+
+## `cobo_category`
+
+`cobo_category` 由 Cobo 分配，与您提供的 `category` 和 `description` 不同。例如 `AutoFueling`、`BillPayment` 和 `AutoSweep`。如需查看按用途分类的值列表，请参阅 [Cobo 定义的交易类别](/v2_cn/guides/transactions/manage-transactions#cobo-定义的交易类别)。
+
+## 结构化字段和条件字段
+
+### `fee`
+
+`fee` 在交易广播后填充。在等待签名或广播时，该字段不存在。
+
+`fee_type` 根据链的手续费模型决定字段结构：`EVM_EIP_1559`、`EVM_Legacy`、`UTXO`、`Fixed`、`SOL` 或 `FIL`。手续费结构可以包含手续费代币 `token_id`、实际费用 `fee_used` 和预估费用 `estimated_fee_used`。不同链的结构还会包含 gas 价格和用量、UTXO 费率、Solana compute units 或 Filecoin gas 参数。请参阅[预估交易手续费](/v2_cn/guides/transactions/estimate-fees)了解手续费模型。
+
+### `block_info`
+
+`block_info` 在交易广播并获得链上确认后填充。对于待处理交易和 `MessageSign` 交易，该字段不存在。
+
+`block_info` 包含：
+
+| 字段 | 说明 |
+|-------|------|
+| `block_number` | 包含交易的区块编号。 |
+| `block_timestamp` | 区块创建时间，采用毫秒级 Unix 时间戳。 |
+| `block_hash` | 区块哈希。 |
+
+### `raw_tx_info`
+
+`raw_tx_info` 在交易完成广播前组装后填充。在此阶段之前以及 `MessageSign` 交易中，该字段不存在。
+
+`raw_tx_info` 包含构建后的交易数据：
+
+| 字段 | 说明 |
+|-------|------|
+| `used_nonce` | 交易使用的 nonce。 |
+| `selected_utxos` | UTXO 交易选用的输入。每一项可以包含 `tx_hash`、`vout_n`、`token_id`、`address` 和 `value`，以及适用的脚本或对象链详情。 |
+| `raw_tx` | 序列化后的原始交易。 |
+| `unsigned_raw_tx` | 签名前序列化的交易。 |
+| `utxo_changes` | UTXO 找零输出。每一项包含 `address`、`value` 和 `token_id`。 |
+
+### `result`
+
+`result` 仅存在于 `MessageSign` 交易中。对于消息签名结果，`result_type` 为 `Signature`，`signature` 包含原始签名数据。
+
+## 来源与目标
+
+`source` 和 `destination` 是使用判别字段的对象。`source_type` 标识钱包或充币来源，`destination_type` 标识地址、钱包、合约调用、充币目标或消息签名格式。请参阅[交易来源与目标](/v2_cn/guides/transactions/sources-and-destinations)了解每种交易类型支持的完整字段。

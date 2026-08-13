@@ -100,6 +100,37 @@ When your callback endpoint receives a callback message, it should respond with 
 
 If the callback endpoint does not respond, responds with a status code other than `200` or `201`,  or the response body does not contain `ok` or `deny`, the WaaS service will continue to retry sending the message.  If the number of retry attempts reaches 30, the WaaS service will stop sending the message and the callback message status will become `Failed`. You can resend the message by using the [Retry callback message](/v2/api-references/developers/retry-callback-message) operation.
 
+### Callback message payload
+
+A callback message's `data` field uses the `Transaction` object. It represents the transaction at the point when your callback endpoint must return `ok` or `deny`, so do not treat it as the final transaction state. Later transaction webhook events use the same object as the transaction progresses.
+
+Use [Transaction fields](/v2/guides/transactions/transaction-fields) for the complete field dictionary, including `cobo_id`, `request_id`, `token_id`, `asset_id`, `result`, `fee`, `transaction_hash`, `block_info`, `raw_tx_info`, and `replacement`. When processing a callback, base your decision on the values present in that callback message. Retrieve the transaction or process a later transaction webhook event when you need its subsequent state.
+
+| Field | Callback phase | Later transaction phase |
+|-------|----------------|-------------------------|
+| `cobo_id` | Populated when the transaction is created. | Remains available. |
+| `request_id` | Present when your API request created the transaction; absent for deposits and other transactions without your request. | Same condition applies. |
+| `token_id` | Present for Custodial Wallet, Web3 Wallet, and MPC Wallet transactions. | Remains available. |
+| `asset_id` | Present only for Exchange Wallet transactions. It is mutually exclusive with `token_id` by wallet type. | Remains available. |
+| `result` | Present only for `MessageSign` transactions. | Absent for every other transaction type at every stage. |
+| `fee` | Not populated while signature or broadcast is pending. | Populated after broadcast. |
+| `transaction_hash` | Not populated before broadcast. | Populated after broadcast. |
+| `block_info` | Not populated before on-chain confirmation. | Populated after confirmation; never populated for `MessageSign`. |
+| `raw_tx_info` | Not populated before assembly for broadcast. | Populated after assembly; never populated for `MessageSign`. |
+| `replacement` | Not populated because no replacement can exist yet. | Populated only if an RBF operation later replaces the transaction. |
+
+The callback-phase example omits fields that are not yet populated:
+
+```json
+{"message_id":"callback-001","url":"https://example.com/callback","created_timestamp":1717740300000,"data":{"data_type":"Transaction","transaction_id":"tx-callback-001","cobo_id":"202406070001","request_id":"withdraw-usdt-001","wallet_id":"wallet-mpc-001","type":"Withdrawal","status":"PendingSignature","chain_id":"ETH","token_id":"ETH_USDT","initiator_type":"API","source":{"source_type":"Org-Controlled","wallet_id":"wallet-mpc-001","address":"0x1111111111111111111111111111111111111111"},"destination":{"destination_type":"Address","account_output":{"address":"0x3333333333333333333333333333333333333333","amount":"100"}},"created_timestamp":1717740300000,"updated_timestamp":1717740300000},"status":"Pending"}
+```
+
+After broadcast and confirmation, a transaction webhook can carry the later fields:
+
+```json
+{"event_id":"event-final-001","url":"https://example.com/webhook","created_timestamp":1717740600000,"type":"wallets.transaction.succeeded","data":{"data_type":"Transaction","transaction_id":"tx-callback-001","cobo_id":"202406070001","request_id":"withdraw-usdt-001","wallet_id":"wallet-mpc-001","type":"Withdrawal","status":"Completed","chain_id":"ETH","token_id":"ETH_USDT","initiator_type":"API","source":{"source_type":"Org-Controlled","wallet_id":"wallet-mpc-001","address":"0x1111111111111111111111111111111111111111"},"destination":{"destination_type":"Address","account_output":{"address":"0x3333333333333333333333333333333333333333","amount":"100"}},"fee":{"fee_type":"EVM_EIP_1559","token_id":"ETH","fee_used":"0.00042","estimated_fee_used":"0.0005"},"transaction_hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","block_info":{"block_number":20123456,"block_timestamp":1717740500000,"block_hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},"raw_tx_info":{"used_nonce":42,"raw_tx":"0x02f8..."},"confirmed_num":12,"confirming_threshold":12,"created_timestamp":1717740300000,"updated_timestamp":1717740600000},"status":"Delivered"}
+```
+
 ### Common delivery failures
 
 The following table lists the most frequent reasons why callback messages or webhook events fail to deliver, and how to fix them.

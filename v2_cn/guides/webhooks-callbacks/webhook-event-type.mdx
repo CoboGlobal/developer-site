@@ -64,6 +64,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+请参阅 [Transaction Webhook 事件](/v2_cn/guides/webhooks-callbacks/transaction-webhook-events)了解共享 Payload、生命周期信号和 JSON 示例。
+
 
 ### Fee Station 相关事件
 
@@ -133,6 +135,8 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
   </tbody>
 </table>
 
+请参阅 [MPC TSS request Webhook 事件](/v2_cn/guides/webhooks-callbacks/mpc-tss-request-webhook-events)了解共享 Payload、请求类型、状态和 JSON 示例。
+
 ### 钱包与地址管理事件
 
 <table class="table-three-cols">
@@ -155,14 +159,35 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
       <td>已创建新的钱包。</td>
     </tr>
     <tr>
+      <td><code>wallets.updated</code></td>
+      <td><code>WalletInfo</code></td>
+      <td>钱包已更新。</td>
+    </tr>
+    <tr>
       <td><code>mpc_vaults.created</code></td>
       <td><code>MPCVault</code></td>
       <td>已创建新的 MPC Vault。</td>
+    </tr>
+    <tr>
+      <td><code>mpc_vaults.updated</code></td>
+      <td><code>MPCVault</code></td>
+      <td>MPC Vault 已更新。</td>
+    </tr>
+    <tr>
+      <td><code>mpc_vaults.deleted</code></td>
+      <td><code>MPCVault</code></td>
+      <td>MPC Vault 已删除。</td>
     </tr>
   </tbody>
 </table>
 
 <Note>激活 Solana 代币子地址（Associated Token Account）不会触发 `wallets.addresses.created` 事件。为激活该地址而发生的租金转账也不会触发任何 `wallets.transaction.*` 事件，且不会生成充币或交易记录。因此，Solana 代币账户的激活及其租金无法通过 webhook 感知。详情请参阅 [Solana 代币账户租金](/v2_cn/guides/transactions/solana-token-account-rent)。</Note>
+
+### 组织事件
+
+| 事件类型 | 事件数据类型 | 发生时机 |
+|----------|--------------|----------|
+| `organizations.updated` | `Organization` | 组织已更新。Payload 包含用于标识组织的 `org_id` 和 `name`。 |
 
 ### 代币与链管理事件
 
@@ -293,7 +318,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 驱动这些状态变化的案件决策由 `KytScreeningsDecisionsType` 表示，其取值包括 `Approval`、`ApprovalWithAlert`、`Rejection` 和 `ManualReview`。
 
 ## Webhook 事件数据结构
-有关 webhook 事件数据和其数据结构的完整介绍，请参阅 Retrieve event information 操作的响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性或 List all webhook events 操作的响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。
+如需查看字段级说明，请参阅 [Transaction Webhook 事件](/v2_cn/guides/webhooks-callbacks/transaction-webhook-events)和 [MPC TSS request Webhook 事件](/v2_cn/guides/webhooks-callbacks/mpc-tss-request-webhook-events)。如需检查任意事件数据类型的原始 Schema，请参阅 Retrieve event information 操作响应中的 [data](/v2/api-references/developers--webhooks/retrieve-event-information#response-data) 属性或 List all webhook events 操作响应中的 [data.data](/v2/api-references/developers--webhooks/list-all-webhook-events#response-data-data) 属性。
 
 <img src="/v2/images/guides/webhook_data_structure.png" className="screenshot_full_screen" alt="Webhook 数据结构截图" />
 

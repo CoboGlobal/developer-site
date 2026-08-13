@@ -1,0 +1,94 @@
+---
+title: "MPC TSS request webhook events"
+lang: "en"
+description: "Understand the payload and lifecycle signals for wallets.mpc.tss_request.* webhook events."
+sidebarTitle: "MPC TSS request webhook events"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+The `wallets.mpc.tss_request.*` webhook events report Cobo Portal key-generation and reshare operations for MPC Wallets. `KeyGen` creates the organization's first Main Group. `KeyGenFromKeyGroup` derives a new Signing Group or Recovery Group from an existing Main Group. `Recovery` replaces a holder's key share within the Main Group.
+
+## Event lifecycle
+
+<table class="table-three-cols">
+  <thead><tr><th>Event</th><th>Data type</th><th>When it occurs</th></tr></thead>
+  <tbody>
+    <tr><td><code>wallets.mpc.tss_request.created</code></td><td><code>TSSRequest</code></td><td>Fires once when the request is created, before any key-holder interaction.</td></tr>
+    <tr><td><code>wallets.mpc.tss_request.updated</code></td><td><code>TSSRequest</code></td><td>Fires for each subsequent intermediate status change, including key-holder confirmation, key generation, and MPC processing states.</td></tr>
+    <tr><td><code>wallets.mpc.tss_request.succeeded</code></td><td><code>TSSRequest</code></td><td>Fires once when the request reaches the terminal <code>Success</code> status.</td></tr>
+    <tr><td><code>wallets.mpc.tss_request.failed</code></td><td><code>TSSRequest</code></td><td>Fires once when the request reaches a terminal failure state and cannot proceed.</td></tr>
+  </tbody>
+</table>
+
+Intermediate statuses such as `PendingKeyHolderConfirmation`, `KeyHolderConfirmationFailed`, `KeyGenerating`, and `MPCProcessing` are delivered through `updated`, not through terminal events. The initial request state is delivered through `created`; terminal outcomes are delivered through `succeeded` or `failed`.
+
+## Payload reference
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `tss_request_id` | string | The unique identifier of the TSS request. |
+| `source_key_share_holder_group` | object | The existing source group. It is populated for `KeyGenFromKeyGroup` and `Recovery` and absent for `KeyGen`, which has no prior group. |
+| `target_key_share_holder_group_id` | string | The target group for every request type: the new Main Group for `KeyGen`, the derived Signing or Recovery Group for `KeyGenFromKeyGroup`, or the Main Group whose member key share is replaced for `Recovery`. |
+| `type` | string | The request type: `KeyGen`, `KeyGenFromKeyGroup`, or `Recovery`. |
+| `status` | string | The current TSS request lifecycle status. |
+| `description` | string | The description supplied for the TSS request. |
+| `created_timestamp` | integer | The request creation time as a Unix timestamp in milliseconds. |
+
+When provided, `source_key_share_holder_group` contains:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `key_share_holder_group_id` | string | The identifier of the source key share holder group. |
+| `tss_node_ids` | array of strings | The TSS Node IDs participating in creation of the new key share holder group. |
+
+The following examples show all four outcomes. Each object includes every field populated for the represented request.
+
+### Created
+
+```json
+{
+  "event_id": "8f2e919a-6a7b-4a9b-8c1a-4c0b3f5b8b1f",
+  "url": "https://example.com/webhook",
+  "created_timestamp": 1701396866000,
+  "type": "wallets.mpc.tss_request.created",
+  "data": {
+    "data_type": "TSSRequest",
+    "tss_request_id": "20240711114129000132315000003970",
+    "target_key_share_holder_group_id": "fd9519ae-507b-4605-b108-04d4e5ffcdd3",
+    "type": "KeyGen",
+    "status": "PendingKeyHolderConfirmation",
+    "description": "Create the first Main Group",
+    "created_timestamp": 1701396866000
+  },
+  "status": "Delivered"
+}
+```
+
+### Updated
+
+```json
+{"event_id":"event-tss-updated","url":"https://example.com/webhook","created_timestamp":1701396966000,"type":"wallets.mpc.tss_request.updated","data":{"data_type":"TSSRequest","tss_request_id":"20240711114129000132315000003971","source_key_share_holder_group":{"key_share_holder_group_id":"f47ac10b-58cc-4372-a567-0e02b2c3d479","tss_node_ids":["cobo5yb7BNEBwwp5XXedbhnzQfvQtp132W4dH4Jz4x4eDp4KA"]},"target_key_share_holder_group_id":"fd9519ae-507b-4605-b108-04d4e5ffcdd3","type":"KeyGenFromKeyGroup","status":"MPCProcessing","description":"Create a Signing Group","created_timestamp":1701396866000},"status":"Delivered"}
+```
+
+### Succeeded
+
+```json
+{"event_id":"event-tss-succeeded","url":"https://example.com/webhook","created_timestamp":1701397066000,"type":"wallets.mpc.tss_request.succeeded","data":{"data_type":"TSSRequest","tss_request_id":"20240711114129000132315000003971","source_key_share_holder_group":{"key_share_holder_group_id":"f47ac10b-58cc-4372-a567-0e02b2c3d479","tss_node_ids":["cobo5yb7BNEBwwp5XXedbhnzQfvQtp132W4dH4Jz4x4eDp4KA"]},"target_key_share_holder_group_id":"fd9519ae-507b-4605-b108-04d4e5ffcdd3","type":"KeyGenFromKeyGroup","status":"Success","description":"Create a Signing Group","created_timestamp":1701396866000},"status":"Delivered"}
+```
+
+### Failed
+
+```json
+{"event_id":"event-tss-failed","url":"https://example.com/webhook","created_timestamp":1701397166000,"type":"wallets.mpc.tss_request.failed","data":{"data_type":"TSSRequest","tss_request_id":"20240711114129000132315000003972","target_key_share_holder_group_id":"fd9519ae-507b-4605-b108-04d4e5ffcdd4","type":"KeyGen","status":"KeyGeneratingFailed","description":"Create the first Main Group","created_timestamp":1701396866000},"status":"Delivered"}
+```
+
+See [Set up a callback or webhook endpoint](/v2/guides/webhooks-callbacks/set-up-endpoint) for delivery and retry behavior.
+
+## Related guides
+
+- [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type)
