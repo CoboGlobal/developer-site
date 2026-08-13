@@ -23,7 +23,7 @@ headers = {
 ```
 
 - Biz-Api-Key: The API key used for the request. For more details, refer to [API key](#api-key).
-- Biz-Api-Nonce: A random string used as the request nonce.
+- Biz-Api-Nonce: The nonce value for this request. Cobo signing helpers set this to the current Unix timestamp in milliseconds (for example, `1718587017026`). This value must exactly match the `NONCE` component in `str_to_sign`. For details, refer to [Nonce](#nonce).
 - Biz-Api-Signature: The API signature. To learn how to calculate an API signature, see [Calculate an API Signature](#calculate-the-api-signature).
 
 If you are using Cobo's WaaS SDKs, you only need to provide your API secret because the SDKs handles the remaining steps for you.
@@ -137,7 +137,21 @@ The Development and Production environments use **separate Cobo Portals with sep
 
 ## Nonce
 
-In WaaS 2.0 authentication, Nonce refers to the value of the `Biz-Api-Nonce` request header. This can be any random string.
+In WaaS 2.0 authentication, Nonce refers to the value of the `Biz-Api-Nonce` request header. Cobo signing helpers generate it automatically as the current Unix timestamp in milliseconds, such as `1718587017026`.
+
+The value in the `Biz-Api-Nonce` request header must exactly match the `NONCE` component in `str_to_sign`. For example, the following pair is valid because both places use the same millisecond timestamp:
+
+```text
+Biz-Api-Nonce: 1718587017026
+str_to_sign = GET|/v2/transactions/transfer|1718587017026|chain_id=ETH&limit=10|
+```
+
+The following pair is invalid because the request header and `str_to_sign` use different nonce values:
+
+```text
+Biz-Api-Nonce: 1718587017026
+str_to_sign = GET|/v2/transactions/transfer|1718587017027|chain_id=ETH&limit=10|
+```
 
 ## Calculate the API signature
 
