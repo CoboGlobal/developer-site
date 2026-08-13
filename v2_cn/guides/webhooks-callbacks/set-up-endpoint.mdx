@@ -116,6 +116,16 @@ Cobo 不保证事件将按生成顺序交付。例如，创建转账将生成以
 您可以在 Cobo Portal 的**开发者** > **Webhook 事件** / **Callback 消息** > 点击某条记录 > **投递日志**中查看每次投递的响应包体和状态码。
 </Note>
 
+### 恢复遗漏或失败的事件
+
+您可以使用 [List all webhook events](/v2/api-references/developers--webhooks/list-all-webhook-events) 查询指定 Endpoint 最多 30 天的 Webhook 事件历史。请使用此查询窗口检测缺失事件，而不要仅依赖自己的投递日志。
+
+对于特定事件，请使用 [Retrieve event information](/v2/api-references/developers--webhooks/retrieve-event-information) 检查其当前状态和负载，并使用 [List webhook event logs](/v2/api-references/developers--webhooks/list-webhook-event-logs) 查看每次投递尝试。每次重试都会产生一条单独的日志记录。
+
+Endpoint 恢复可访问后，请调用 [Retry event](/v2/api-references/developers--webhooks/retry-event) 恢复停留在 `Retrying` 或 `Failed` 的事件。此操作相当于在 Cobo Portal 上点击 **Retry**。
+
+30 天窗口用于查询投递历史，并不保证交易当前状态与最后投递的事件一致。请始终通过 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 或 [List all transactions](/v2/api-references/transactions/list-all-transactions) 核对权威状态，而不要仅信任最近的 Webhook 负载。
+
 ### 代码示例
 
 要查看如何实现处理逻辑的示例，请参阅 WaaS SDK GitHub 库中的如下文件：

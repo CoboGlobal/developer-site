@@ -46,7 +46,10 @@
                 "pages": [
                   "v2/guides/webhooks-callbacks/introduction",
                   "v2/guides/webhooks-callbacks/set-up-endpoint",
-                  "v2/guides/webhooks-callbacks/webhook-event-type"
+                  "v2/guides/webhooks-callbacks/webhook-event-type",
+                  "v2/guides/webhooks-callbacks/wallets-transaction-payload",
+                  "v2/guides/webhooks-callbacks/wallets-mpc-tss-request-payload",
+                  "v2/guides/webhooks-callbacks/transaction-event-subscriptions"
                 ]
               },
               {
@@ -858,7 +861,10 @@
                 "pages": [
                   "v2_cn/guides/webhooks-callbacks/introduction",
                   "v2_cn/guides/webhooks-callbacks/set-up-endpoint",
-                  "v2_cn/guides/webhooks-callbacks/webhook-event-type"
+                  "v2_cn/guides/webhooks-callbacks/webhook-event-type",
+                  "v2_cn/guides/webhooks-callbacks/wallets-transaction-payload",
+                  "v2_cn/guides/webhooks-callbacks/wallets-mpc-tss-request-payload",
+                  "v2_cn/guides/webhooks-callbacks/transaction-event-subscriptions"
                 ]
               },
               {

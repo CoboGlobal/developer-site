@@ -1,0 +1,167 @@
+---
+title: "Transaction 负载参考"
+lang: "zh-hans"
+description: "wallets.transaction Webhook 负载的字段参考，涵盖充币、提币及其他交易类型。"
+sidebarTitle: "Transaction 负载参考"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 触发条件
+
+| 事件类型 | 发生时机 |
+| --- | --- |
+| `wallets.transaction.created` | 已创建交易记录。对于充币等入账交易，会在链上检测到交易后创建记录；对于提币等出账交易，会在 Cobo 根据请求创建记录后触发。此事件不代表交易已成功。 |
+| `wallets.transaction.updated` | 交易的状态或确认数发生变化。 |
+| `wallets.transaction.succeeded` | 交易已成功完成。 |
+| `wallets.transaction.failed` | 交易失败。 |
+
+这些事件适用于所有交易类型，包括充币、提币、合约调用、消息签名、质押和解除质押。
+
+### 状态到事件的映射
+
+| Transaction 状态 | 额外的终态事件 |
+| --- | --- |
+| `Completed` | `wallets.transaction.succeeded` |
+| `Failed`、`Rejected` 或 `Canceled` | `wallets.transaction.failed` |
+
+除 `wallets.transaction.updated` 外，还会尝试触发对应的终态事件。有关事件类型如何重叠，请参阅[单笔交易的事件重叠](/v2_cn/guides/webhooks-callbacks/webhook-event-type#单笔交易的事件重叠)。
+
+## Webhook 信封
+
+每次投递都包含以下信封。对于这些事件，`data.data_type` 始终为 `Transaction`。
+
+| 字段 | 描述 |
+| --- | --- |
+| `event_id` | 本次投递记录的 UUID，用于对同一事件的重试投递进行去重。 |
+| `url` | 事件投递到的 Endpoint URL。 |
+| `created_timestamp` | 事件触发时间，采用毫秒级 Unix 时间戳。重试时此值不变。 |
+| `type` | Webhook 事件类型。 |
+| `data` | 包含 `data_type` 标识以及位于 `data` 中的交易负载。 |
+| `status` | 此 Endpoint 的投递状态：`Success`、`Retrying` 或 `Failed`。此字段不同于交易业务状态。 |
+| `next_retry_timestamp` | 下次重试时间，采用毫秒级 Unix 时间戳。仅在 `status` 为 `Retrying` 时出现。 |
+| `retries_left` | 剩余投递重试次数。仅在 `status` 为 `Retrying` 时出现。 |
+
+## Transaction 字段
+
+<table class="table-three-cols">
+<thead><tr><th>字段</th><th>类型</th><th>描述</th></tr></thead>
+<tbody>
+<tr><td><code>transaction_id</code></td><td>string</td><td>交易记录的 UUID。</td></tr>
+<tr><td><code>cobo_id</code></td><td>string，可为 null</td><td>Cobo 的交易跟踪 ID。在 Cobo 分配此 ID 前，交易生命周期的早期阶段可能为 <code>null</code>；填充后，可使用此字段在 Cobo Portal 中交叉核对交易。</td></tr>
+<tr><td><code>request_id</code></td><td>string，可为 null</td><td>API 发起交易、RBF 操作或重发时使用的调用方 ID。对于充币或 AutoSweep 等由 Cobo 发起的交易，此字段为 <code>null</code>。</td></tr>
+<tr><td><code>wallet_id</code></td><td>string</td><td>对于 <code>Deposit</code>，表示目标钱包；对于其他交易类型，表示源钱包。</td></tr>
+<tr><td><code>type</code></td><td>string</td><td>交易类型：<code>Deposit</code>、<code>Withdrawal</code>、<code>ContractCall</code>、<code>MessageSign</code>、<code>ExternalSafeTx</code>、<code>Stake</code> 或 <code>Unstake</code>。</td></tr>
+<tr><td><code>status</code></td><td>string</td><td>生命周期状态。请参阅 <a href="/v2_cn/guides/transactions/status">Transaction 状态和子状态</a>。</td></tr>
+<tr><td><code>sub_status</code></td><td>string</td><td><code>status</code> 中更具体的生命周期状态。</td></tr>
+<tr><td><code>failed_reason</code></td><td>string，可选</td><td>审批或签名步骤失败的原因。</td></tr>
+<tr><td><code>chain_id</code></td><td>string，可选</td><td>链上代币交易的链标识。</td></tr>
+<tr><td><code>token_id</code></td><td>string，可选</td><td>链上交易的代币标识，与 <code>asset_id</code> 互斥。</td></tr>
+<tr><td><code>asset_id</code></td><td>string，可选</td><td>Exchange Wallet 交易的资产标识，其余额不与链上 <code>token_id</code> 绑定。此字段与 <code>token_id</code> 互斥。</td></tr>
+<tr><td><code>source</code></td><td>object</td><td>由 <code>source_type</code> 区分的来源，包含钱包 ID、地址或输入 UTXO 等字段。请参阅 <a href="/v2_cn/guides/transactions/sources-and-destinations">Transaction 来源和目标</a>。</td></tr>
+<tr><td><code>destination</code></td><td>object</td><td>由 <code>destination_type</code> 区分的目标，包含钱包 ID、地址、合约信息或 UTXO 输出等字段。请参阅 <a href="/v2_cn/guides/transactions/sources-and-destinations">Transaction 来源和目标</a>。</td></tr>
+<tr><td><code>result</code></td><td>object，可选</td><td>已完成的 <code>MessageSign</code> 交易结果。当前 <code>Signature</code> 结构包含原始 <code>signature</code> 字符串。</td></tr>
+<tr><td><code>fee</code></td><td>object，可选</td><td>费用确定后出现，由 <code>fee_type</code> 区分：<code>EVM_EIP_1559</code>、<code>EVM_Legacy</code>、<code>UTXO</code>、<code>Fixed</code>、<code>SOL</code> 或 <code>FIL</code>。请参阅 <a href="/v2_cn/guides/transactions/estimate-fees">预估交易费用</a>。</td></tr>
+<tr><td><code>confirmed_num</code></td><td>integer，可选</td><td>当前已获得的链上确认数。</td></tr>
+<tr><td><code>confirming_threshold</code></td><td>integer，可选</td><td>链要求的确认数。此字段与 <code>confirmed_num</code> 仅描述确认进度。</td></tr>
+<tr><td><code>transaction_hash</code></td><td>string，可选</td><td>交易广播后出现的链上哈希。</td></tr>
+<tr><td><code>block_info</code></td><td>object，可选</td><td>交易上链后的区块信息：<code>block_number</code>、<code>block_timestamp</code> 和 <code>block_hash</code>。</td></tr>
+<tr><td><code>raw_tx_info</code></td><td>object，可选</td><td>Nonce 和序列化交易数据；对于 UTXO 链，还包含选中的输入与找零输出。请参阅 <a href="#raw-tx-info"><code>raw_tx_info</code></a>。</td></tr>
+<tr><td><code>replacement</code></td><td>object，可选</td><td>RBF 操作替换交易时，原交易和新交易之间的关联。请参阅 <a href="#replacement"><code>replacement</code></a>。</td></tr>
+<tr><td><code>category</code></td><td>array[string]，可选</td><td>您自定义的交易标签。</td></tr>
+<tr><td><code>cobo_category</code></td><td>array[string]，可选</td><td>Cobo 分配的标签，例如 <code>AutoSweep</code>。请参阅 <a href="/v2_cn/guides/transactions/manage-transactions#cobo-defined-categories">Cobo 定义的类别</a>。</td></tr>
+<tr><td><code>description</code></td><td>string，可选</td><td>交易描述。</td></tr>
+<tr><td><code>is_loop</code></td><td>boolean</td><td>转账是否通过 Cobo Loop 而非链上交易执行。</td></tr>
+<tr><td><code>extra</code></td><td>array[string]，可选</td><td>编码为 JSON 字符串的业务结构化数据，例如质押元数据。</td></tr>
+<tr><td><code>fueling_info</code></td><td>object，可选</td><td>Fee Station 为交易提供费用时的注资信息。</td></tr>
+<tr><td><code>timeline</code></td><td>array[object]，可为 null</td><td>交易的生命周期阶段。请参阅 <a href="#timeline"><code>timeline</code></a>。</td></tr>
+<tr><td><code>created_timestamp</code></td><td>integer</td><td>交易创建时间，采用毫秒级 Unix 时间戳。</td></tr>
+<tr><td><code>updated_timestamp</code></td><td>integer</td><td>交易最近更新时间，采用毫秒级 Unix 时间戳。</td></tr>
+</tbody>
+</table>
+
+### `raw_tx_info`
+
+| 字段 | 描述 |
+| --- | --- |
+| `used_nonce` | 交易使用的 Nonce。 |
+| `raw_tx` | 序列化的已签名交易。 |
+| `unsigned_raw_tx` | 序列化的未签名交易。 |
+| `selected_utxos` | UTXO 链交易消耗的输入。 |
+| `utxo_changes` | UTXO 链交易产生的找零输出。 |
+
+### `replacement`
+
+| 字段 | 描述 |
+| --- | --- |
+| `replaced_by_type` | 对原交易执行的替换操作。 |
+| `replaced_by_transaction_id` | 替代原交易的新交易 ID。 |
+| `replaced_by_transaction_hash` | 替代原交易的新交易哈希。 |
+| `replaced_type` | 创建新交易的替换操作。 |
+| `replaced_transaction_id` | 原交易 ID。 |
+| `replaced_transaction_hash` | 原交易哈希。 |
+
+有关完整替换流程，请参阅 [RBF Transaction 生命周期](/v2_cn/guides/transactions/rbf-transaction-lifecycle)；有关 `ReplacedByNewTransaction`，请参阅 [Transaction 状态和子状态](/v2_cn/guides/transactions/status)。
+
+### `timeline`
+
+每个 `timeline` 条目包含：
+
+| 字段 | 类型 | 描述 |
+| --- | --- | --- |
+| `status` | string | 此生命周期阶段所表示的 Transaction 状态。 |
+| `finished` | boolean | 交易是否已完成此生命周期阶段。 |
+| `finished_timestamp` | integer，可为 null | 此阶段的完成时间，采用毫秒级 Unix 时间戳。阶段尚未完成时为 `null`。 |
+
+## 示例
+
+以下示例展示代表性充币和提币场景的完整 `wallets.transaction.updated` 负载。
+
+### EVM 原生币充币
+```json
+{"event_id":"f47ac10b-58cc-4372-a567-0e02b2c3d479","url":"https://example.com/webhooks","created_timestamp":1720698400000,"type":"wallets.transaction.updated","data":{"data_type":"Transaction","data":{"transaction_id":"11111111-1111-4111-8111-111111111111","cobo_id":"202407111141290001","request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"Confirming","sub_status":"PendingBlockConfirmations","chain_id":"ETH","token_id":"ETH","source":{"source_type":"DepositFromAddress","address":"0x1111111111111111111111111111111111111111"},"destination":{"destination_type":"DepositToAddress","address":"0x2222222222222222222222222222222222222222"},"confirmed_num":4,"confirming_threshold":12,"transaction_hash":"0x239861be9a4afe0000000000000000000000000000000000000000000de8ec28","block_info":{"block_number":20344567,"block_timestamp":1720698380000,"block_hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},"is_loop":false,"created_timestamp":1720698300000,"updated_timestamp":1720698400000}},"status":"Success"}
+```
+
+### EVM 代币充币
+```json
+{"event_id":"33333333-3333-4333-8333-333333333333","url":"https://example.com/webhooks","created_timestamp":1720698500000,"type":"wallets.transaction.updated","data":{"data_type":"Transaction","data":{"transaction_id":"44444444-4444-4444-8444-444444444444","cobo_id":"202407111141290002","request_id":null,"wallet_id":"22222222-2222-4222-8222-222222222222","type":"Deposit","status":"Confirming","sub_status":"PendingBlockConfirmations","chain_id":"ETH","token_id":"ETH_USDT","source":{"source_type":"DepositFromAddress","address":"0x3333333333333333333333333333333333333333"},"destination":{"destination_type":"DepositToAddress","address":"0x2222222222222222222222222222222222222222"},"confirmed_num":8,"confirming_threshold":12,"transaction_hash":"0x339861be9a4afe0000000000000000000000000000000000000000000de8ec28","block_info":{"block_number":20344568,"block_timestamp":1720698480000,"block_hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},"is_loop":false,"created_timestamp":1720698450000,"updated_timestamp":1720698500000}},"status":"Success"}
+```
+
+### UTXO 原生币提币
+```json
+{"event_id":"55555555-5555-4555-8555-555555555555","url":"https://example.com/webhooks","created_timestamp":1720698600000,"type":"wallets.transaction.updated","data":{"data_type":"Transaction","data":{"transaction_id":"66666666-6666-4666-8666-666666666666","cobo_id":"202407111141290003","request_id":"withdrawal-example-001","wallet_id":"77777777-7777-4777-8777-777777777777","type":"Withdrawal","status":"Broadcasting","sub_status":"Broadcasting","chain_id":"BTC","token_id":"BTC","source":{"source_type":"Web3","wallet_id":"77777777-7777-4777-8777-777777777777","address":"bc1qsourceexample0000000000000000000000000","included_utxos":[{"tx_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","vout_n":0}]},"destination":{"destination_type":"Address","address":"bc1qdestinationexample00000000000000000000","amount":"0.01000000","utxo_outputs":[{"address":"bc1qdestinationexample00000000000000000000","amount":"0.01000000"}],"change_address":"bc1qchangeexample000000000000000000000000"},"fee":{"fee_type":"UTXO","token_id":"BTC","fee_used":"0.00001000","max_fee_amount":"0.00002000"},"transaction_hash":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","raw_tx_info":{"used_nonce":null,"raw_tx":"0200000001...00000000","unsigned_raw_tx":"0200000001...00000000","selected_utxos":[{"tx_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","vout_n":0}],"utxo_changes":[{"address":"bc1qchangeexample000000000000000000000000","amount":"0.00499000"}]},"category":[],"cobo_category":[],"is_loop":false,"created_timestamp":1720698550000,"updated_timestamp":1720698600000}},"status":"Success"}
+```
+
+### 已替换的 UTXO 提币
+```json
+{"event_id":"88888888-8888-4888-8888-888888888888","url":"https://example.com/webhooks","created_timestamp":1720698700000,"type":"wallets.transaction.updated","data":{"data_type":"Transaction","data":{"transaction_id":"99999999-9999-4999-8999-999999999999","cobo_id":"202407111141290004","request_id":"withdrawal-example-002","wallet_id":"77777777-7777-4777-8777-777777777777","type":"Withdrawal","status":"Failed","sub_status":"ReplacedByNewTransaction","chain_id":"BTC","token_id":"BTC","source":{"source_type":"Web3","wallet_id":"77777777-7777-4777-8777-777777777777","address":"bc1qsourceexample0000000000000000000000000","included_utxos":[{"tx_hash":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","vout_n":1}]},"destination":{"destination_type":"Address","address":"bc1qdestinationexample00000000000000000000","amount":"0.01000000","utxo_outputs":[{"address":"bc1qdestinationexample00000000000000000000","amount":"0.01000000"}],"change_address":"bc1qchangeexample000000000000000000000000"},"fee":{"fee_type":"UTXO","token_id":"BTC","fee_used":"0.00001000","max_fee_amount":"0.00002000"},"transaction_hash":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","raw_tx_info":{"used_nonce":null,"raw_tx":"0200000001...00000000","unsigned_raw_tx":"0200000001...00000000","selected_utxos":[{"tx_hash":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","vout_n":1}],"utxo_changes":[{"address":"bc1qchangeexample000000000000000000000000","amount":"0.00499000"}]},"replacement":{"replaced_by_type":"SpeedUp","replaced_by_transaction_id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","replaced_by_transaction_hash":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},"category":[],"cobo_category":[],"is_loop":false,"created_timestamp":1720698650000,"updated_timestamp":1720698700000}},"status":"Success"}
+```
+
+### TRON 代币提币
+```json
+{"event_id":"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb","url":"https://example.com/webhooks","created_timestamp":1720698800000,"type":"wallets.transaction.updated","data":{"data_type":"Transaction","data":{"transaction_id":"cccccccc-cccc-4ccc-8ccc-cccccccccccc","cobo_id":"202407111141290005","request_id":"withdrawal-example-003","wallet_id":"dddddddd-dddd-4ddd-8ddd-dddddddddddd","type":"Withdrawal","status":"Completed","sub_status":"Completed","chain_id":"TRX","token_id":"TRX_USDT","source":{"source_type":"Org-Controlled","wallet_id":"dddddddd-dddd-4ddd-8ddd-dddddddddddd","address":"TSourceExample1111111111111111111111"},"destination":{"destination_type":"Address","address":"TDestinationExample1111111111111111","amount":"100.000000"},"transaction_hash":"efefefefefefefefefefefefefefefefefefefefefefefefefefefefefef","block_info":{"block_number":63210000,"block_timestamp":1720698780000,"block_hash":"abababababababababababababababababababababababababababababababab"},"category":[],"cobo_category":[],"is_loop":false,"created_timestamp":1720698750000,"updated_timestamp":1720698800000}},"status":"Success"}
+```
+
+### TRON 原生币充币
+```json
+{"event_id":"eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee","url":"https://example.com/webhooks","created_timestamp":1720698900000,"type":"wallets.transaction.updated","data":{"data_type":"Transaction","data":{"transaction_id":"ffffffff-ffff-4fff-8fff-ffffffffffff","cobo_id":"202407111141290006","request_id":null,"wallet_id":"dddddddd-dddd-4ddd-8ddd-dddddddddddd","type":"Deposit","status":"Completed","sub_status":"Completed","chain_id":"TRX","token_id":"TRX","source":{"source_type":"DepositFromAddress","address":"TSourceDepositExample111111111111111"},"destination":{"destination_type":"DepositToAddress","address":"TDestinationDepositExample111111111"},"transaction_hash":"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd","block_info":{"block_number":63210001,"block_timestamp":1720698880000,"block_hash":"bcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc"},"category":[],"cobo_category":[],"is_loop":false,"created_timestamp":1720698850000,"updated_timestamp":1720698900000}},"status":"Success"}
+```
+
+## 字段语义
+
+`data.data` 对象包含上述交易字段。有关 `token_id` 和 `asset_id` 的区别，请参阅 [Transaction 字段](#transaction-字段)。
+
+有关 `cobo_id` 和 `request_id` 在交易生命周期中的可用性，请参阅 [Transaction 字段](#transaction-字段)中的对应条目。`result` 仅用于已完成的 `MessageSign` 交易。`source` 和 `destination` 结构因交易类型而异；请参阅 [Transaction 来源和目标](/v2_cn/guides/transactions/sources-and-destinations)。
+
+替换字段使用相同的 Transaction 结构，并关联原交易和替换交易。同样，当 `cobo_category` 包含 `AutoSweep` 时，该 AutoSweep 交易也使用与其他提币相同的 Transaction 结构。
+
+## 相关指南
+
+- [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)
+- [Transaction 状态和子状态](/v2_cn/guides/transactions/status)
+- [Transaction 来源和目标](/v2_cn/guides/transactions/sources-and-destinations)
+- [RBF Transaction 生命周期](/v2_cn/guides/transactions/rbf-transaction-lifecycle)
+- [Cobo 定义的类别](/v2_cn/guides/transactions/manage-transactions#cobo-defined-categories)
+- [Transaction 事件订阅](/v2_cn/guides/webhooks-callbacks/transaction-event-subscriptions)

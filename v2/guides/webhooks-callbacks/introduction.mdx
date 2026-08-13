@@ -45,6 +45,14 @@ To learn more about event types and event data types, see [Webhook event type an
 
 To manage webhook events using Cobo CLI, refer to the following guides: [Listen and Forward Events](/v2/developer-tools/cobo-cli/listen-and-forward-events), [Trigger Webhook Events](/v2/developer-tools/cobo-cli/trigger-events), and [List Event Types](/v2/developer-tools/cobo-cli/event-types).
 
+## Endpoint scope and reconciliation
+
+Each webhook endpoint is configured once for your organization, with the event types you select at registration and, optionally, a wallet scope limiting which wallets' events it receives. Register or update this scope on Cobo Portal. See [Register a webhook endpoint](https://manuals.cobo.com/en/portal/developer-console/webhooks-create).
+
+Because retries can redeliver the same event, and because both `wallets.transaction.updated` and a terminal event (`succeeded` or `failed`) can describe the same transaction, treat webhook events as notifications rather than the system of record. Deduplicate deliveries using the event's `event_id`. To reconcile the current, authoritative transaction state, call [Get transaction information](/v2/api-references/transactions/get-transaction-information) or [List all transactions](/v2/api-references/transactions/list-all-transactions) using `transaction_id`, or `cobo_id`, `request_id`, or `transaction_hash` when you have one of those identifiers, instead of trusting the last webhook payload alone.
+
+See [Transaction event subscriptions](/v2/guides/webhooks-callbacks/transaction-event-subscriptions) for scenario-level processing guidance.
+
 
 ## Notes on upgrading from WaaS 1.0 to Waas 2.0
 

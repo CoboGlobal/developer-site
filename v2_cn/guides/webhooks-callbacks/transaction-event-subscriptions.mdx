@@ -1,0 +1,55 @@
+---
+title: "Transaction 事件订阅"
+lang: "zh-hans"
+description: "常见交易场景的 Webhook 事件订阅建议，包括充币入账、提币跟踪、AutoSweep 和通过 Cobo Portal 发起的提币。"
+sidebarTitle: "Transaction 事件订阅"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+请针对常见交易流程使用以下订阅和负载检查模式。有关完整结构，请参阅 [Transaction 负载参考](/v2_cn/guides/webhooks-callbacks/wallets-transaction-payload)。
+
+## 充币入账
+
+- 将 `wallets.transaction.succeeded` 作为主要入账信号进行订阅。充币达到 `Completed` 时会触发此事件。
+- 订阅 `wallets.transaction.created` 和 `wallets.transaction.updated` 以跟踪交易检测和确认进度，但不要根据这些通知入账。
+- 订阅 `wallets.transaction.failed` 以检测被拒绝的充币。例如，交易可能为 `status=Rejected`，且 `sub_status=RejectedByCoboKYT` 或 `RejectedByScreeningApp`。请与发送方对账，不要直接丢弃此类交易。
+- 如需独立跟踪 KYT 案件状态，请订阅 `compliance.kyt.screenings.status.updated`。请参阅 [`ComplianceKytScreenings` 事件数据](/v2_cn/guides/webhooks-callbacks/webhook-event-type#compliancekytscreenings-事件数据)。
+
+请使用始终存在的 `transaction_id` 作为交易键，确保余额更新具有幂等性。`cobo_id` 和 `request_id` 均可为 null；填充后，可分别用于交叉核对 Cobo Portal 记录和 API 发起的流程。有关这些字段在交易生命周期中的语义，请参阅 [Transaction 字段](/v2_cn/guides/webhooks-callbacks/wallets-transaction-payload#transaction-字段)。有关使用 `event_id` 进行投递级别去重的信息，请参阅 [Endpoint 范围和对账](/v2_cn/guides/webhooks-callbacks/introduction#endpoint-范围和对账)。如需获取当前状态，请调用 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 或 [List all transactions](/v2/api-references/transactions/list-all-transactions)。
+
+## 提币跟踪
+
+<table class="table-three-cols">
+<thead><tr><th>状态</th><th>事件</th><th>处理方式</th></tr></thead>
+<tbody>
+<tr><td><code>PendingAuthorization</code></td><td><code>created</code>、<code>updated</code></td><td>跟踪交易创建以及授权子状态的变化。</td></tr>
+<tr><td><code>Broadcasting</code></td><td><code>updated</code></td><td>已签名交易正在提交至网络。</td></tr>
+<tr><td><code>Confirming</code></td><td><code>updated</code></td><td>跟踪确认进度，但不要将其视为最终状态。</td></tr>
+<tr><td><code>Completed</code></td><td><code>updated</code>、<code>succeeded</code></td><td>将 <code>succeeded</code> 作为明确的成功终态信号。</td></tr>
+<tr><td><code>Rejected</code></td><td><code>updated</code>、<code>failed</code></td><td>检查 <code>sub_status</code>，例如 <code>RejectedApproverAuth</code>、<code>RejectedBySigner</code> 或 <code>RejectedRiskControlCheck</code>，以识别拒绝来源。</td></tr>
+<tr><td><code>Failed</code></td><td><code>updated</code>、<code>failed</code></td><td>检查 <code>sub_status</code>，例如 <code>FailedSignerTimeout</code>、<code>FailedOnChain</code> 或 <code>ReplacedByNewTransaction</code>，以确定结果。</td></tr>
+</tbody>
+</table>
+
+通过 Cobo Portal 和 API 发起的提币采用相同的状态到事件映射，不存在单独的 Cobo Portal 提币事件类型。请同时订阅 `wallets.transaction.created`、`wallets.transaction.updated`、`wallets.transaction.succeeded` 和 `wallets.transaction.failed`，以接收进度以及审批、拒绝或失败的终态结果。
+
+## AutoSweep 交易
+
+当 `cobo_category` 包含 `AutoSweep` 时，该 AutoSweep 交易与其他交易使用相同的 `wallets.transaction.*` 事件路径和 Transaction 负载，不存在单独的 AutoSweep 事件或负载。请参阅 [Cobo 定义的类别](/v2_cn/guides/transactions/manage-transactions#cobo-defined-categories)。
+
+## 通过 Cobo Portal 发起的提币
+
+通过 Cobo Portal 和 API 发起的提币采用[提币跟踪](#提币跟踪)中的相同状态到事件映射。请使用相同的订阅处理程序处理二者。
+
+## 相关指南
+
+- [Transaction 负载参考](/v2_cn/guides/webhooks-callbacks/wallets-transaction-payload)
+- [TSS request 负载参考](/v2_cn/guides/webhooks-callbacks/wallets-mpc-tss-request-payload)
+- [Transaction 状态和子状态](/v2_cn/guides/transactions/status)
+- [管理交易](/v2_cn/guides/transactions/manage-transactions)
+- [RBF Transaction 生命周期](/v2_cn/guides/transactions/rbf-transaction-lifecycle)

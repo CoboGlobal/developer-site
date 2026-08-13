@@ -288,6 +288,10 @@ After a transaction is approved, it enters the `PendingSignature` status and mus
 A transaction in the `Confirming` status with the sub-status `PendingBlockConfirmations` is waiting for the required number of block confirmations on its chain. This is a normal part of processing and does not mean the transaction is stuck. The required number of confirmations and the expected confirmation time vary by chain.
 </Note>
 
+## Statuses and webhook events
+
+Status and sub-status changes are surfaced through the `wallets.transaction.*` webhook events. `Confirming`, including sub-statuses such as `PendingBlockConfirmations`, is a nonterminal, in-progress status reported through `wallets.transaction.updated` as confirmations accumulate. `Completed` is a terminal status: it is reported through `wallets.transaction.updated` like any other transition and additionally produces a dedicated `wallets.transaction.succeeded` event. This gives you an unambiguous positive completion signal without inspecting `status`. For the full event catalog and subscription guidance, see [Transaction event subscriptions](/v2/guides/webhooks-callbacks/transaction-event-subscriptions).
+
 ## Available actions
 
 You can perform the following actions based on the transaction status:
