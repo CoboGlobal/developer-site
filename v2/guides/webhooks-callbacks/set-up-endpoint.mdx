@@ -19,6 +19,18 @@ First, choose a server environment, such as a cloud service like AWS, Google Clo
 
 After you create the endpoint, you need to implement the logic on the server to handle the webhook events or callback messages, including parsing the API request, verifying the signature, responding to the request and adding other handling logic if necessary.
 
+### Callback message payload
+
+A callback message's `data` field uses the same `Transaction` shape as a transaction webhook event. See [Transaction event payload](/v2/guides/webhooks-callbacks/transaction-events) for the complete field table. The values reflect what is known when your endpoint must return `ok` or `deny`; do not treat the callback as the transaction's final state.
+
+| Field | Population at callback time |
+| --- | --- |
+| `cobo_id` | Can be `null` when Cobo has not yet assigned the tracking identifier. |
+| `asset_id` | Populated for an Exchange Wallet asset when that value is available; otherwise `null`. On-chain wallet transactions use `token_id` instead. |
+| `result` | `null` until a `MessageSign` result is available, and remains `null` for transaction types that do not produce a signing result. |
+
+Other optional fields depend on transaction type and value availability. Use the [Transaction event payload](/v2/guides/webhooks-callbacks/transaction-events) for the full contract and [Transaction field reference](/v2/guides/transactions/transaction-fields) for reconciliation semantics. Retrieve the transaction through the API or process later transaction events when you need its subsequent state.
+
 ### Verify the signature
 
 To prevent unauthorized access, when you receive a webhook event or a callback message, you need to validate the authenticity of the API request by verifying the signature.
@@ -80,11 +92,12 @@ The verification steps are as follows:
 
 Properly responding to webhook events and callback messages is crucial for ensuring that webhooks and callbacks are processed as expected. This section describes the expected response from both webhook and callback endpoints. 
 
-#### Webhook events
+<a id="webhook-events"></a>
+#### Webhook delivery policy
 
 When your webhook endpoint receives a webhook event, it should respond with a status code of `200` or `201` to indicate that the event has been successfully received and processed. Once this response is sent, the WaaS service will stop retrying to send the event and the event status will become `Delivered` on Cobo Portal.
 
-The default timeout for each webhook event is 2 seconds. If the webhook endpoint does not respond or responds with a status code other than `200` or `201`, the WaaS service will continue to retry sending the event. If the number of retry attempts reaches 10 , the WaaS service will stop sending the event and the event status will become `Failed`· You can resend the event by clicking **Retry** on **Cobo Portal** > **Developer** > **WaaS 2.0** > **Webhook Events**.
+The default timeout for each webhook event is 2 seconds. If the webhook endpoint does not respond or responds with a status code other than `200` or `201`, the WaaS service will continue to retry sending the event. If the number of retry attempts reaches 10, the WaaS service will stop sending the event and the event status will become `Failed`. You can resend the event by clicking **Retry** on **Cobo Portal** > **Developer** > **WaaS 2.0** > **Webhook Events**.
 
 Cobo does not guarantee that events will be delivered in the order they are generated. For example, creating a transfer will generate the following events:
 
@@ -94,11 +107,14 @@ Cobo does not guarantee that events will be delivered in the order they are gene
 
 Your endpoint should not assume that events will arrive in this sequence and must handle delivery appropriately.
 
-#### Callback messages
+<a id="callback-messages"></a>
+#### Callback delivery policy
 
-When your callback endpoint receives a callback message, it should respond with a status code of `200` or `201` and a response body of `ok` or `deny` to indicate transaction approval or rejection. Once this response is sent, the WaaS service will stop retrying to send the message and the callback message status will become `Delivered`on Cobo Portal.
+When your callback endpoint receives a callback message, it should respond with a status code of `200` or `201` and a response body of `ok` or `deny` to indicate transaction approval or rejection. Once this response is sent, the WaaS service will stop retrying to send the message and the callback message status will become `Delivered` on Cobo Portal.
 
-If the callback endpoint does not respond, responds with a status code other than `200` or `201`,  or the response body does not contain `ok` or `deny`, the WaaS service will continue to retry sending the message.  If the number of retry attempts reaches 30, the WaaS service will stop sending the message and the callback message status will become `Failed`. You can resend the message by using the [Retry callback message](/v2/api-references/developers/retry-callback-message) operation.
+If the callback endpoint does not respond, responds with a status code other than `200` or `201`, or the response body does not contain `ok` or `deny`, the WaaS service will continue to retry sending the message. If the number of retry attempts reaches 30, the WaaS service will stop sending the message and the callback message status will become `Failed`. You can resend the message by using the [Retry callback message](/v2/api-references/developers/retry-callback-message) operation.
+
+Webhook event and callback message records expose their delivery `status` and retry information. For webhooks, inspect the endpoint-scoped attempts with [List webhook event logs](/v2/api-references/developers--webhooks/list-webhook-event-logs). You can also inspect the response status and body for each webhook or callback attempt through the Portal path below. For a full recovery workflow, see [Recover missed or failed events](/v2/guides/webhooks-callbacks/webhook-operations#recover-missed-or-failed-events) in Webhook and callback operations.
 
 ### Common delivery failures
 
@@ -125,6 +141,10 @@ To see examples of how to implement the handling logic, refer to the following f
 - Go: [server_demo.go](https://github.com/CoboGlobal/cobo-waas2-go-sdk/blob/master/cobo_waas2/demo/server_demo.go)
 
 ## Advanced usage
+
+### Multiple endpoints
+
+When you operate multiple webhook endpoints, or a webhook endpoint together with a callback endpoint, inspect each endpoint's event or message record and endpoint-scoped delivery logs separately. Do not assume that different endpoints share one delivery state. Make every endpoint handler idempotent according to [Important notes](#important-notes).
 
 ### Wallet-level webhook routing
 

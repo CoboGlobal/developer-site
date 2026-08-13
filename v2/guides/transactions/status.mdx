@@ -288,6 +288,16 @@ After a transaction is approved, it enters the `PendingSignature` status and mus
 A transaction in the `Confirming` status with the sub-status `PendingBlockConfirmations` is waiting for the required number of block confirmations on its chain. This is a normal part of processing and does not mean the transaction is stuck. The required number of confirmations and the expected confirmation time vary by chain.
 </Note>
 
+## When to credit a deposit
+
+Treat `Confirming` and its `wallets.transaction.updated` events as progress only. A blockchain deposit in `Confirming` is not yet safe to credit. Its `confirmed_num` must reach `confirming_threshold` before the transaction can complete confirmation processing.
+
+The successful internal outcome is surfaced publicly as the `Completed` status and the [`wallets.transaction.succeeded`](/v2/guides/webhooks-callbacks/transaction-events#walletstransactionsucceeded) event. Credit a deposit after receiving that event, or after verifying `Completed` with [Get transaction information](/v2/api-references/transactions/get-transaction-information) or [List all transactions](/v2/api-references/transactions/list-all-transactions). Make reconciliation idempotent according to the [endpoint handling guidance](/v2/guides/webhooks-callbacks/set-up-endpoint#important-notes).
+
+<Note>
+This crediting guidance applies only to blockchain deposits. It does not apply to `MessageSign` or other transaction types that do not move funds.
+</Note>
+
 ## Available actions
 
 You can perform the following actions based on the transaction status:

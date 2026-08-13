@@ -1,0 +1,38 @@
+---
+title: "Transaction 字段参考"
+lang: "zh-hans"
+description: "通过理解标识、方向字段、替换关联和 Cobo 定义的分类来对账 Transaction。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+本文用于区分外观相似但对账用途不同的 Transaction 字段。完整 Payload 结构请参阅 [Transaction 事件 Payload](/v2_cn/guides/webhooks-callbacks/transaction-events)，方向结构请参阅 [Transaction 来源与目标](/v2_cn/guides/transactions/sources-and-destinations)，替换行为请参阅 [RBF 交易生命周期](/v2_cn/guides/transactions/rbf-transaction-lifecycle)，完整 `cobo_category` 表请参阅[管理交易](/v2_cn/guides/transactions/manage-transactions#cobo-定义的交易类别)。
+
+## 字段字典
+
+| 字段 | 含义和条件 | 建议的对账用途 |
+| --- | --- | --- |
+| `chain_id` | 标识区块链网络。链上交易包含此字段，它与下列资产标识不同。 | 与 `token_id` 配合，用于链相关的处理分发。 |
+| `token_id` | 标识 Cobo 目录中的链上代币。原生资产与合约代币使用不同值；同一经济资产在不同链上也使用不同的 `token_id`。 | 用于代币余额、精度和链上转账处理。 |
+| `asset_id` | 标识 Exchange Wallet 中的资产，该余额不使用链上 `token_id` 表示。 | 用于交易所账户对账；不要将其视为网络标识。 |
+| `request_id` | 客户端请求的幂等和关联标识。充币等没有客户端请求的交易中，此字段为 `null`。 | 将 Webhook 或 API 结果与本地出账请求关联。 |
+| `source` | 由 `source_type` 决定结构。充币时通常表示外部发送方；提币时表示发送钱包。 | 判断方向以及资产移出的账户或地址。 |
+| `destination` | 由 `destination_type` 决定结构。充币时表示收款钱包地址；提币时表示外部目标。 | 判断方向以及接收操作的账户、地址、合约或签名输入。 |
+| `replaced_by_transaction_hash` | 仅在原交易被替换后出现在其 `replacement` 中，指向新交易哈希。 | 从原交易跟踪实际生效的 RBF 交易。 |
+| `cobo_category` | 适用时包含 Cobo 定义的运营分类。高信号值包括 `AutoSweep`、`ComplianceRefund`、`ComplianceIsolate`、`ScreenAppRefund` 和 `ScreenAppIsolate`。 | 根据明确分类处理系统活动，不要从地址推断。 |
+
+## 示例映射
+
+| 资产 | `chain_id` | `token_id` | `asset_id` |
+| --- | --- | --- | --- |
+| Ethereum 原生资产 | `ETH` | `ETH` | `ETH` |
+| Ethereum 上的 USDT | `ETH` | `ETH_USDT` | `USDT` |
+| TRON 原生资产 | `TRON` | `TRON` | `TRON` |
+| TRON 上的 USDT | `TRON` | `TRON_USDT` | `USDT` |
+| Bitcoin | `BTC` | `BTC` | `BTC` |
+
+`asset_id` 列显示对应的 Exchange Wallet 资产标识。Exchange Wallet 交易返回 `asset_id`，而不是链上 `chain_id` 和 `token_id` 组合。

@@ -1,0 +1,43 @@
+---
+title: "Webhook and callback operations"
+lang: "en"
+description: "Handle common webhook and callback scenarios, recover failed deliveries, and reconcile state when delivery history is unavailable."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+Use this guide for operational decisions and recovery. See [Webhook event types](/v2/guides/webhooks-callbacks/webhook-event-type) for the catalog, [Transaction event payload](/v2/guides/webhooks-callbacks/transaction-events) and [MPC TSS request event payload](/v2/guides/webhooks-callbacks/mpc-tss-request-events) for payload contracts, and [Set up a callback or webhook endpoint](/v2/guides/webhooks-callbacks/set-up-endpoint) for endpoint mechanics.
+
+## Common scenarios
+
+| Scenario | What you receive | Recommended handling |
+| --- | --- | --- |
+| Deposit crediting | `created`, progress through `updated`, then `succeeded` or `failed`. | Follow [When to credit a deposit](/v2/guides/transactions/status#when-to-credit-a-deposit). |
+| Withdrawal progress and outcome | `updated` can report `PendingAuthorization`, `PendingSignature`, `Broadcasting`, and `Confirming`; a terminal outcome also produces `succeeded` or `failed`. | Use `updated` for UI progress and terminal events for outcome reconciliation. |
+| Rejected or canceled transaction | `wallets.transaction.failed` for `Failed`, `Rejected`, or `Canceled`, in addition to `updated`. | Use the [failed-event contract](/v2/guides/webhooks-callbacks/transaction-events#walletstransactionfailed) to handle these outcomes consistently. |
+| AutoSweep | A transaction whose `cobo_category` includes `AutoSweep`. | Branch on `cobo_category`; see [Cobo-defined categories](/v2/guides/transactions/manage-transactions#cobo-defined-categories). |
+| Compliance monitoring | Compliance status events and follow-up transactions categorized as `ComplianceRefund`, `ComplianceIsolate`, `ScreenAppRefund`, or `ScreenAppIsolate`. | Track the [compliance events](/v2/guides/webhooks-callbacks/webhook-event-type#compliance-events), then reconcile any categorized transaction independently. |
+| Portal-created activity | Portal-initiated transactions and registrations emit the same subscribed event types as API-initiated activity. | Apply the same event handlers regardless of where the activity was initiated. |
+| Wallet scopes | During endpoint registration, you choose the wallets and event types in scope. | Register only the scopes the endpoint is prepared to process. |
+| Out-of-order delivery | Events can arrive in a different order from their generation order. | Reconstruct state from `status`, `sub_status`, and timestamps, not arrival order. See [Respond to the API request](/v2/guides/webhooks-callbacks/set-up-endpoint#respond-to-the-api-request). |
+| Idempotency | Retries and multiple lifecycle events can repeat a logical state. | Follow the [idempotency guidance](/v2/guides/webhooks-callbacks/set-up-endpoint#important-notes). |
+| API reconciliation | Webhook or callback state is ambiguous, missed, or no longer queryable. | Use [Get transaction information](/v2/api-references/transactions/get-transaction-information) or [List all transactions](/v2/api-references/transactions/list-all-transactions). |
+
+## Recover missed or failed events
+
+1. Find affected webhook events with [List all webhook events](/v2/api-references/developers--webhooks/list-all-webhook-events). Filter by endpoint, `status`, and `type`, and continue with the `before` or `after` cursor. For callbacks, use [List all callback messages](/v2/api-references/developers/list-all-callback-messages).
+2. Inspect each attempt with [List webhook event logs](/v2/api-references/developers--webhooks/list-webhook-event-logs), or open the callback message's delivery logs in Cobo Portal.
+3. Fix the endpoint before resending. Use [Common delivery failures](/v2/guides/webhooks-callbacks/set-up-endpoint#common-delivery-failures) to diagnose common response, reachability, redirect, and TLS failures.
+4. Manual webhook-event retry requires the `WEBHOOK RESEND` permission in Cobo Portal. For a webhook event, click **Retry** in Cobo Portal or call [Retry event](/v2/api-references/developers--webhooks/retry-event). For a callback message, call [Retry callback message](/v2/api-references/developers/retry-callback-message).
+5. Deduplicate the resent delivery by its event or message ID according to the [idempotency guidance](/v2/guides/webhooks-callbacks/set-up-endpoint#important-notes).
+6. Reconcile the final transaction state with [Get transaction information](/v2/api-references/transactions/get-transaction-information) or [List all transactions](/v2/api-references/transactions/list-all-transactions). Successful redelivery confirms receipt, not the transaction outcome.
+
+This workflow applies while the event or message remains available through its list and log operations.
+
+## When history has expired
+
+When an event or callback message is no longer queryable, reconcile current state directly with [Get transaction information](/v2/api-references/transactions/get-transaction-information) or [List all transactions](/v2/api-references/transactions/list-all-transactions). Preserve your own idempotency and correlation records so reconciliation does not depend on delivery history alone.

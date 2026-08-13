@@ -46,13 +46,17 @@
                 "pages": [
                   "v2/guides/webhooks-callbacks/introduction",
                   "v2/guides/webhooks-callbacks/set-up-endpoint",
-                  "v2/guides/webhooks-callbacks/webhook-event-type"
+                  "v2/guides/webhooks-callbacks/webhook-event-type",
+                  "v2/guides/webhooks-callbacks/transaction-events",
+                  "v2/guides/webhooks-callbacks/mpc-tss-request-events",
+                  "v2/guides/webhooks-callbacks/webhook-operations"
                 ]
               },
               {
                 "group": "Transactions",
                 "pages": [
                   "v2/guides/transactions/sources-and-destinations",
+                  "v2/guides/transactions/transaction-fields",
                   "v2/guides/transactions/transfer-routing",
                   "v2/guides/transactions/estimate-fees",
                   "v2/guides/transactions/solana-token-account-rent",
@@ -858,13 +862,17 @@
                 "pages": [
                   "v2_cn/guides/webhooks-callbacks/introduction",
                   "v2_cn/guides/webhooks-callbacks/set-up-endpoint",
-                  "v2_cn/guides/webhooks-callbacks/webhook-event-type"
+                  "v2_cn/guides/webhooks-callbacks/webhook-event-type",
+                  "v2_cn/guides/webhooks-callbacks/transaction-events",
+                  "v2_cn/guides/webhooks-callbacks/mpc-tss-request-events",
+                  "v2_cn/guides/webhooks-callbacks/webhook-operations"
                 ]
               },
               {
                 "group": "交易",
                 "pages": [
                   "v2_cn/guides/transactions/sources-and-destinations",
+                  "v2_cn/guides/transactions/transaction-fields",
                   "v2_cn/guides/transactions/transfer-routing",
                   "v2_cn/guides/transactions/estimate-fees",
                   "v2_cn/guides/transactions/solana-token-account-rent",

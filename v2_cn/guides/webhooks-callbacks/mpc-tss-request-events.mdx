@@ -1,0 +1,71 @@
+---
+title: "MPC TSS request 事件 Payload"
+lang: "zh-hans"
+description: "了解 Portal 密钥生成和重新共享 Webhook 事件共用的 TSSRequest Payload。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+`wallets.mpc.tss_request.*` 事件系列用于报告在 Cobo Portal 发起的 MPC 密钥生成和重新共享请求。四种事件使用相同的 `TSSRequest` Payload。事件目录请参阅 [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)。
+
+## TSSRequest Payload 字段
+
+| 字段 | 类型 | 是否有条件 | 说明 |
+| --- | --- | --- | --- |
+| `tss_request_id` | string | 否 | TSS 请求的唯一标识。 |
+| `source_key_share_holder_group` | object, nullable | 是 | 重新共享请求的现有来源组。初始密钥生成请求不包含此对象。 |
+| `source_key_share_holder_group.key_share_holder_group_id` | string | 父对象存在时 | 来源密钥分片持有人组的标识。 |
+| `source_key_share_holder_group.tss_node_ids` | array of strings | 父对象存在时 | 来源组中参与操作的 TSS Node 标识。 |
+| `target_key_share_holder_group_id` | string | 否 | 请求创建或更新的目标组。 |
+| `type` | string | 否 | 请求类型，例如 `KeyGen` 或 `KeyGenFromKeyGroup`。 |
+| `status` | string | 否 | 请求的当前状态。 |
+| `description` | string, nullable | 是 | 请求附带的描述；未提供时为 `null`。 |
+| `created_timestamp` | integer | 否 | 请求创建时间，Unix 毫秒时间戳。 |
+
+<a id="walletsmpctssrequestcreated"></a>
+## `wallets.mpc.tss_request.created`
+
+请求记录进入初始状态时触发。
+
+### 初始密钥生成示例
+
+```json
+{"tss_request_id":"20260721114129000132315000003970","source_key_share_holder_group":null,"target_key_share_holder_group_id":"11111111-1111-4111-8111-111111111111","type":"KeyGen","status":"PendingKeyHolderConfirmation","description":"Create the first Main Group","created_timestamp":1784563200000}
+```
+
+<a id="walletsmpctssrequestupdated"></a>
+## `wallets.mpc.tss_request.updated`
+
+密钥持有人操作和 MPC 处理期间，请求进入不同中间状态时触发。
+
+### 重新共享更新示例
+
+```json
+{"tss_request_id":"20260721114129000132315000003971","source_key_share_holder_group":{"key_share_holder_group_id":"22222222-2222-4222-8222-222222222222","tss_node_ids":["cobo5yb7BNEBwwp5XXedbhnzQfvQtp132W4dH4Jz4x4eDp4KA"]},"target_key_share_holder_group_id":"33333333-3333-4333-8333-333333333333","type":"KeyGenFromKeyGroup","status":"MPCProcessing","description":null,"created_timestamp":1784563300000}
+```
+
+<a id="walletsmpctssrequestsucceeded"></a>
+## `wallets.mpc.tss_request.succeeded`
+
+请求进入终态 `Success` 时触发。
+
+### 重新共享成功示例
+
+```json
+{"tss_request_id":"20260721114129000132315000003972","source_key_share_holder_group":{"key_share_holder_group_id":"22222222-2222-4222-8222-222222222222","tss_node_ids":["cobo5yb7BNEBwwp5XXedbhnzQfvQtp132W4dH4Jz4x4eDp4KA"]},"target_key_share_holder_group_id":"33333333-3333-4333-8333-333333333333","type":"KeyGenFromKeyGroup","status":"Success","description":null,"created_timestamp":1784563300000}
+```
+
+<a id="walletsmpctssrequestfailed"></a>
+## `wallets.mpc.tss_request.failed`
+
+请求进入 `KeyHolderConfirmationFailed` 或 `KeyGeneratingFailed` 时触发。
+
+### 密钥生成失败示例
+
+```json
+{"tss_request_id":"20260721114129000132315000003973","source_key_share_holder_group":null,"target_key_share_holder_group_id":"11111111-1111-4111-8111-111111111111","type":"KeyGen","status":"KeyGeneratingFailed","description":"Create the first Main Group","created_timestamp":1784563200000}
+```

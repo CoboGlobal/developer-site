@@ -1,0 +1,38 @@
+---
+title: "Transaction field reference"
+lang: "en"
+description: "Reconcile transactions by understanding identifiers, direction fields, replacement links, and Cobo-defined categories."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+## Overview
+
+Use this reference to distinguish transaction fields that look similar but serve different reconciliation purposes. See [Transaction event payload](/v2/guides/webhooks-callbacks/transaction-events) for the complete payload contract, [Transaction sources and destinations](/v2/guides/transactions/sources-and-destinations) for direction shapes, [RBF transaction lifecycle](/v2/guides/transactions/rbf-transaction-lifecycle) for replacement behavior, and [Manage transactions](/v2/guides/transactions/manage-transactions#cobo-defined-categories) for the full `cobo_category` table.
+
+## Field dictionary
+
+| Field | Meaning and conditionality | Preferred reconciliation use |
+| --- | --- | --- |
+| `chain_id` | Identifies the blockchain network. It is present for on-chain transactions and differs from the asset identifiers below. | Use it with `token_id` when routing chain-specific processing. |
+| `token_id` | Identifies an on-chain token in Cobo's catalog. Native assets and contract tokens have different values, and the same economic asset on different chains has different `token_id` values. | Use it for token-specific balances, decimals, and chain transfers. |
+| `asset_id` | Identifies an asset in an Exchange Wallet, where the balance is not represented by an on-chain `token_id`. | Use it for exchange-account reconciliation; do not treat it as a network identifier. |
+| `request_id` | Your idempotency and correlation identifier for a client-initiated request. It is `null` when no client request created the transaction, such as for a deposit. | Match a webhook or API result to the local request that initiated an outbound transaction. |
+| `source` | Describes the origin selected by `source_type`. For a deposit it normally represents the external sender; for a withdrawal it represents the sending wallet. | Determine direction and the account or address from which value moved. |
+| `destination` | Describes the target selected by `destination_type`. For a deposit it identifies the receiving wallet address; for a withdrawal it identifies the external target. | Determine direction and the account, address, contract, or signing input receiving the operation. |
+| `replaced_by_transaction_hash` | Appears in `replacement` only on the original transaction after replacement and points to the new transaction's hash. | Follow the original record to the effective RBF transaction. |
+| `cobo_category` | Contains Cobo-defined operational classifications when applicable. High-signal values include `AutoSweep`, `ComplianceRefund`, `ComplianceIsolate`, `ScreenAppRefund`, and `ScreenAppIsolate`. | Branch on the explicit category instead of inferring system activity from addresses. |
+
+## Example mappings
+
+| Asset | `chain_id` | `token_id` | `asset_id` |
+| --- | --- | --- | --- |
+| Ethereum native asset | `ETH` | `ETH` | `ETH` |
+| USDT on Ethereum | `ETH` | `ETH_USDT` | `USDT` |
+| TRON native asset | `TRON` | `TRON` | `TRON` |
+| USDT on TRON | `TRON` | `TRON_USDT` | `USDT` |
+| Bitcoin | `BTC` | `BTC` | `BTC` |
+
+The `asset_id` column shows the corresponding Exchange Wallet asset identifier. An Exchange Wallet transaction returns `asset_id` instead of the on-chain `chain_id` and `token_id` pair.

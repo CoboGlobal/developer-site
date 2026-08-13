@@ -31,22 +31,22 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </thead>
   <tbody>
     <tr>
-      <td><code>wallets.transaction.created</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/transaction-events#walletstransactioncreated"><code>wallets.transaction.created</code></a></td>
       <td><code>Transaction</code></td>
       <td>A transaction has been detected on the blockchain, generating a transaction record. This event does not indicate that the transaction was successful.</td>
     </tr>
     <tr>
-      <td><code>wallets.transaction.updated</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/transaction-events#walletstransactionupdated"><code>wallets.transaction.updated</code></a></td>
       <td><code>Transaction</code></td>
-      <td>There are changes to a transaction's status or confirmation numbers.<Note>The <code>wallets.transaction.updated</code> event covers the entire lifecycle of a transaction, including creation, completion, and failure. If you want to track every status change, you need only subscribe to this event.</Note></td>
+      <td>There are changes to a transaction's status, confirmation progress, or other transaction data.<Note>A terminal transition produces this event in addition to <code>wallets.transaction.succeeded</code> or <code>wallets.transaction.failed</code>. Subscribe to <code>wallets.transaction.updated</code> to observe every lifecycle change.</Note></td>
     </tr>
     <tr>
-      <td><code>wallets.transaction.succeeded</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/transaction-events#walletstransactionsucceeded"><code>wallets.transaction.succeeded</code></a></td>
       <td><code>Transaction</code></td>
       <td>A transaction has been successfully completed.</td>
     </tr>
     <tr>
-      <td><code>wallets.transaction.failed</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/transaction-events#walletstransactionfailed"><code>wallets.transaction.failed</code></a></td>
       <td><code>Transaction</code></td>
       <td>A transaction failed.</td>
     </tr>
@@ -109,22 +109,22 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </thead>
   <tbody>
     <tr>
-      <td><code>wallets.mpc.tss_request.created</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/mpc-tss-request-events#walletsmpctssrequestcreated"><code>wallets.mpc.tss_request.created</code></a></td>
       <td><code>TSSRequest</code></td>
       <td>A TSS request is created.</td>
     </tr>
     <tr>
-      <td><code>wallets.mpc.tss_request.updated</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/mpc-tss-request-events#walletsmpctssrequestupdated"><code>wallets.mpc.tss_request.updated</code></a></td>
       <td><code>TSSRequest</code></td>
       <td>There are changes to the status of a TSS request.</td>
     </tr>
     <tr>
-      <td><code>wallets.mpc.tss_request.succeeded</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/mpc-tss-request-events#walletsmpctssrequestsucceeded"><code>wallets.mpc.tss_request.succeeded</code></a></td>
       <td><code>TSSRequest</code></td>
       <td>The requested action has been successfully completed.</td>
     </tr>
     <tr>
-      <td><code>wallets.mpc.tss_request.failed</code></td>
+      <td><a href="/v2/guides/webhooks-callbacks/mpc-tss-request-events#walletsmpctssrequestfailed"><code>wallets.mpc.tss_request.failed</code></a></td>
       <td><code>TSSRequest</code></td>
       <td>The requested action failed.</td>
     </tr>
@@ -153,9 +153,24 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
       <td>A new wallet has been created.</td>
     </tr>
     <tr>
+      <td><code>wallets.updated</code></td>
+      <td><code>WalletInfo</code></td>
+      <td>A change to the wallet record has been saved and its current wallet information is available.</td>
+    </tr>
+    <tr>
       <td><code>mpc_vaults.created</code></td>
       <td><code>MPCVault</code></td>
       <td>A new MPC vault has been created.</td>
+    </tr>
+    <tr>
+      <td><code>mpc_vaults.updated</code></td>
+      <td><code>MPCVault</code></td>
+      <td>An existing MPC vault's configuration or metadata has changed.</td>
+    </tr>
+    <tr>
+      <td><code>mpc_vaults.deleted</code></td>
+      <td><code>MPCVault</code></td>
+      <td>An MPC vault has been deleted and is no longer available for wallet operations.</td>
     </tr>
   </tbody>
 </table>

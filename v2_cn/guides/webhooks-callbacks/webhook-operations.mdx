@@ -1,0 +1,43 @@
+---
+title: "Webhook 和 Callback 运营指南"
+lang: "zh-hans"
+description: "处理常见 Webhook 和 Callback 场景、恢复失败投递，并在投递历史不可用时完成对账。"
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
+
+<WaasSkillReminder />
+
+## 概述
+
+本文提供运营决策和恢复流程。事件目录请参阅 [Webhook 事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)，Payload 结构请参阅 [Transaction 事件 Payload](/v2_cn/guides/webhooks-callbacks/transaction-events)和 [MPC TSS request 事件 Payload](/v2_cn/guides/webhooks-callbacks/mpc-tss-request-events)，Endpoint 机制请参阅[设置 Callback 或 Webhook Endpoint](/v2_cn/guides/webhooks-callbacks/set-up-endpoint)。
+
+## 常见场景
+
+| 场景 | 您会收到的内容 | 建议处理方式 |
+| --- | --- | --- |
+| 充币入账 | `created`、通过 `updated` 发送的进度，随后是 `succeeded` 或 `failed`。 | 遵循[何时为充币入账](/v2_cn/guides/transactions/status#何时为充币入账)。 |
+| 提币进度与终态 | `updated` 可报告 `PendingAuthorization`、`PendingSignature`、`Broadcasting` 和 `Confirming`；终态还会产生 `succeeded` 或 `failed`。 | 使用 `updated` 展示进度，使用终态事件对账结果。 |
+| 被拒绝或取消的交易 | `Failed`、`Rejected` 或 `Canceled` 会产生 `wallets.transaction.failed`，同时也会产生 `updated`。 | 按照 [`failed` 事件结构](/v2_cn/guides/webhooks-callbacks/transaction-events#walletstransactionfailed)统一处理这些结果。 |
+| AutoSweep | `cobo_category` 包含 `AutoSweep` 的交易。 | 根据 `cobo_category` 分支处理；请参阅 [Cobo 定义的交易类别](/v2_cn/guides/transactions/manage-transactions#cobo-定义的交易类别)。 |
+| 合规监控 | 合规状态事件，以及分类为 `ComplianceRefund`、`ComplianceIsolate`、`ScreenAppRefund` 或 `ScreenAppIsolate` 的后续交易。 | 跟踪[合规事件](/v2_cn/guides/webhooks-callbacks/webhook-event-type#合规事件)，并单独对账分类交易。 |
+| Portal 创建的活动 | Portal 发起的交易和注册会产生与 API 发起活动相同的已订阅事件类型。 | 无论活动从何处发起，都使用相同的事件处理程序。 |
+| 钱包范围 | 注册 Endpoint 时，您需要选择订阅的钱包和事件类型。 | 仅注册 Endpoint 能够处理的范围。 |
+| 乱序投递 | 事件到达顺序可能与生成顺序不同。 | 根据 `status`、`sub_status` 和时间戳重建状态，不要依赖到达顺序。请参阅[响应 API 请求](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#响应-api-请求)。 |
+| 幂等性 | 重试和多个生命周期事件可能重复同一逻辑状态。 | 遵循[幂等处理说明](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#注意事项)。 |
+| API 对账 | Webhook 或 Callback 状态不明确、遗漏或已无法查询。 | 使用 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 或 [List all transactions](/v2/api-references/transactions/list-all-transactions)。 |
+
+## 恢复遗漏或失败的事件
+
+1. 使用 [List all webhook events](/v2/api-references/developers--webhooks/list-all-webhook-events) 查找受影响的 Webhook 事件。按 Endpoint、`status` 和 `type` 筛选，并使用 `before` 或 `after` 游标继续查询。Callback 请使用 [List all callback messages](/v2/api-references/developers/list-all-callback-messages)。
+2. 使用 [List webhook event logs](/v2/api-references/developers--webhooks/list-webhook-event-logs) 检查每次投递，或在 Cobo Portal 中打开 Callback 消息的投递日志。
+3. 先修复 Endpoint。使用[常见投递失败原因](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#常见投递失败原因)排查响应、可访问性、重定向和 TLS 问题。
+4. 在 Cobo Portal 中手动重试 Webhook 事件需要 `WEBHOOK RESEND` 权限。对于 Webhook 事件，请在 Cobo Portal 中单击 **重新发送**或调用 [Retry event](/v2/api-references/developers--webhooks/retry-event)。对于 Callback 消息，请调用 [Retry callback message](/v2/api-references/developers/retry-callback-message)。
+5. 按照[幂等处理说明](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#注意事项)，根据事件或消息 ID 对重发投递去重。
+6. 使用 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 或 [List all transactions](/v2/api-references/transactions/list-all-transactions) 对账交易终态。重发成功仅表示已收到消息，不表示交易结果。
+
+此流程适用于事件或消息仍可通过列表和日志操作查询的情况。
+
+## 历史记录已过期时
+
+如果事件或 Callback 消息已无法查询，请直接使用 [Get transaction information](/v2/api-references/transactions/get-transaction-information) 或 [List all transactions](/v2/api-references/transactions/list-all-transactions) 对账当前状态。请保留您自己的幂等和关联记录，避免对账仅依赖投递历史。
