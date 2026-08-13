@@ -38,17 +38,17 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
     <tr>
       <td><code>wallets.transaction.updated</code></td>
       <td><code>Transaction</code></td>
-      <td>There are changes to a transaction's status or confirmation numbers.<Note>The <code>wallets.transaction.updated</code> event covers the entire lifecycle of a transaction, including creation, completion, and failure. If you want to track every status change, you need only subscribe to this event.</Note></td>
+      <td>There are changes to a transaction's status or confirmation numbers, including when the transaction reaches a terminal outcome.<Note>See <a href="#how-transaction-events-relate-to-each-other">How transaction events relate to each other</a> below for how this event relates to <code>wallets.transaction.succeeded</code> and <code>wallets.transaction.failed</code>.</Note></td>
     </tr>
     <tr>
       <td><code>wallets.transaction.succeeded</code></td>
       <td><code>Transaction</code></td>
-      <td>A transaction has been successfully completed.</td>
+      <td>A transaction has been successfully completed.<Note>Always accompanied by a <code>wallets.transaction.updated</code> event for the same transition. See <a href="#how-transaction-events-relate-to-each-other">How transaction events relate to each other</a>.</Note></td>
     </tr>
     <tr>
       <td><code>wallets.transaction.failed</code></td>
       <td><code>Transaction</code></td>
-      <td>A transaction failed.</td>
+      <td>A transaction failed.<Note>Always accompanied by a <code>wallets.transaction.updated</code> event for the same transition. See <a href="#how-transaction-events-relate-to-each-other">How transaction events relate to each other</a>.</Note></td>
     </tr>
     <tr>
       <td><code>token.suspended.deposit</code></td>
@@ -62,6 +62,21 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
     </tr>
   </tbody>
 </table>
+
+#### How transaction events relate to each other
+
+| Transaction lifecycle stage | `wallets.transaction.created` | `wallets.transaction.updated` | `wallets.transaction.succeeded` | `wallets.transaction.failed` |
+|---|---|---|---|---|
+| Transaction first detected on-chain | Emitted | — | — | — |
+| A handled status or confirmation-count change (non-terminal) | — | Emitted | — | — |
+| Transaction reaches a terminal successful state | — | Emitted | Emitted | — |
+| Transaction reaches a terminal failed state | — | Emitted | — | Emitted |
+
+Every handled transaction transition, terminal or not, produces a `wallets.transaction.updated` event. When the transition is terminal, Cobo additionally emits `wallets.transaction.succeeded` or `wallets.transaction.failed` alongside that `wallets.transaction.updated` event. `wallets.transaction.succeeded` and `wallets.transaction.failed` are never sent on their own.
+
+Subscribing only to `wallets.transaction.updated` is sufficient to observe every status change in a transaction's lifecycle, including its terminal outcome, so it works well for driving a progress indicator (for example, updating a pending-transaction view as confirmation numbers increase). However, do not treat `wallets.transaction.updated` as an early signal that a transaction has succeeded — it does not by itself confirm the terminal outcome. For actions that depend on the transaction's final result, such as releasing goods or crediting a balance, use the dedicated `wallets.transaction.succeeded` and `wallets.transaction.failed` events.
+
+Because the terminal event and its accompanying `wallets.transaction.updated` event are delivered as two separate webhook notifications, handle them idempotently: key your processing on the transaction identity (for example, `transaction_id`) together with the event type, and skip any event you have already processed for that transaction. Webhook events are not guaranteed to arrive in generation order and may be delivered more than once — see [Respond to the API request](/v2/guides/webhooks-callbacks/set-up-endpoint#webhook-events) for delivery-order behavior and [Important notes](/v2/guides/webhooks-callbacks/set-up-endpoint#%E2%9A%A0%EF%B8%8F%E2%9A%A0%EF%B8%8F%E2%9A%A0%EF%B8%8Fimportant-notes) for duplicate-delivery handling.
 
 ### Fee Station events
 

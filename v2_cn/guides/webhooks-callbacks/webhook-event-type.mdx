@@ -39,17 +39,17 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
     <tr>
       <td><code>wallets.transaction.updated</code></td>
       <td><code>Transaction</code></td>
-      <td>交易的状态或确认数发生变化。<Note>`wallets.transaction.updated` 涵盖交易的整个生命周期，包括创建、完成和失败。如果您想跟踪每个状态变化，订阅此事件即可。</Note></td>
+      <td>交易的状态或确认数发生变化，包括交易达到最终结果时。<Note>下方[交易事件之间的关系](#交易事件之间的关系)说明了此事件与 `wallets.transaction.succeeded` 和 `wallets.transaction.failed` 的关系。</Note></td>
     </tr>
     <tr>
       <td><code>wallets.transaction.succeeded</code></td>
       <td><code>Transaction</code></td>
-      <td>交易已成功完成。</td>
+      <td>交易已成功完成。<Note>此事件总是与同一次流转的 `wallets.transaction.updated` 事件一同触发。参阅[交易事件之间的关系](#交易事件之间的关系)。</Note></td>
     </tr>
     <tr>
       <td><code>wallets.transaction.failed</code></td>
       <td><code>Transaction</code></td>
-      <td>交易失败。</td>
+      <td>交易失败。<Note>此事件总是与同一次流转的 `wallets.transaction.updated` 事件一同触发。参阅[交易事件之间的关系](#交易事件之间的关系)。</Note></td>
     </tr>
     <tr>
       <td><code>token.suspended.deposit</code></td>
@@ -63,6 +63,21 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
     </tr>
   </tbody>
 </table>
+
+#### 交易事件之间的关系
+
+| 交易生命周期阶段 | `wallets.transaction.created` | `wallets.transaction.updated` | `wallets.transaction.succeeded` | `wallets.transaction.failed` |
+|---|---|---|---|---|
+| 首次在链上检测到交易 | 触发 | — | — | — |
+| 已处理的状态或确认数变化（非最终状态） | — | 触发 | — | — |
+| 交易达到最终成功状态 | — | 触发 | 触发 | — |
+| 交易达到最终失败状态 | — | 触发 | — | 触发 |
+
+对于每一次已处理的交易状态流转（无论是否为最终状态），Cobo 都会触发一次 `wallets.transaction.updated` 事件。当该次流转是最终状态时，Cobo 还会在同一次流转中额外触发 `wallets.transaction.succeeded` 或 `wallets.transaction.failed` 事件。`wallets.transaction.succeeded` 和 `wallets.transaction.failed` 不会单独触发。
+
+仅订阅 `wallets.transaction.updated` 即可观察交易生命周期中的每一次状态变化，包括其最终结果，因此适合用于展示交易进度（例如，随着确认数增加更新待确认交易的展示状态）。但请勿将 `wallets.transaction.updated` 视为交易已成功的早期信号——它本身并不能确认最终结果。对于依赖交易最终结果的操作（例如放行商品或为余额入账），请使用专门的 `wallets.transaction.succeeded` 和 `wallets.transaction.failed` 事件。
+
+由于最终事件与同时触发的 `wallets.transaction.updated` 事件是作为两条独立的 webhook 通知投递的，请对它们进行幂等处理：以交易标识（例如 `transaction_id`）结合事件类型作为处理依据，跳过已处理过的同一交易的事件。Webhook 事件不保证按生成顺序到达，也可能重复投递——投递顺序行为请参阅[响应 API 请求](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#webhook-事件)，重复投递的处理方法请参阅[注意事项](/v2_cn/guides/webhooks-callbacks/set-up-endpoint#%E2%9A%A0%EF%B8%8F%E2%9A%A0%EF%B8%8F%E2%9A%A0%EF%B8%8F-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)。
 
 
 ### Fee Station 相关事件
