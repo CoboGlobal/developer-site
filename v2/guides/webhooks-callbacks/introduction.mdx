@@ -45,6 +45,21 @@ To learn more about event types and event data types, see [Webhook event type an
 
 To manage webhook events using Cobo CLI, refer to the following guides: [Listen and Forward Events](/v2/developer-tools/cobo-cli/listen-and-forward-events), [Trigger Webhook Events](/v2/developer-tools/cobo-cli/trigger-events), and [List Event Types](/v2/developer-tools/cobo-cli/event-types).
 
+## Delivery semantics
+
+Review the following rules so you can tell whether a missing notification is expected behavior or a problem to investigate.
+
+- **Event triggers.** A transaction emits webhook events as its status changes. To track the full lifecycle of a transaction with a single subscription, subscribe to `wallets.transaction.updated`, which covers creation, updates, completion, and failure. For the full list of events, see [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+- **Ordering and retries.** Event ordering is not guaranteed, and the same event may be delivered more than once, so deduplicate by a unique identifier. Failed deliveries are retried automatically. See [Retry behavior](/v2/guides/webhooks-callbacks/set-up-endpoint#retry-behavior) and [Delivery guarantees](/v2/guides/webhooks-callbacks/set-up-endpoint#delivery-guarantees).
+
+### No webhook received? Self-diagnosis
+
+If your endpoint does not receive an expected webhook event, work through the following checklist:
+
+1. Confirm that your endpoint subscribes to the relevant event type, in particular `wallets.transaction.updated` for transaction status changes. Call [Get webhook endpoint information](/v2/api-references/developers--webhooks/get-webhook-endpoint-information) to check the endpoint's current `subscribed_events` list. To add or remove event types, call [Update webhook endpoint](/v2/api-references/developers--webhooks/update-webhook-endpoint) with the `subscribed_events` parameter set to the full list of event types you want the endpoint to receive.
+2. Confirm that the event you expect is one the WaaS service emits, using [Webhook event types and data types](/v2/guides/webhooks-callbacks/webhook-event-type).
+3. Inspect the delivery logs on **Cobo Portal** > **Developer** > **WaaS 2.0** > **Webhook Events**, then click the event to view each delivery attempt, its response code, and its response body.
+4. If the event status is `Failed`, first identify and fix the cause using [Common delivery failures](/v2/guides/webhooks-callbacks/set-up-endpoint#common-delivery-failures). Then, from the **Webhook Events** list opened in step 3, click the failed event to open its detail page, click **Retry**, and confirm in the dialog to resend the event. Alternatively, call [Retry event](/v2/api-references/developers--webhooks/retry-event) with the endpoint's `endpoint_id` and the event's `event_id`.
 
 ## Notes on upgrading from WaaS 1.0 to Waas 2.0
 
