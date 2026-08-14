@@ -34,7 +34,7 @@ Canceling a transaction stops it while it is still pending.
 
 You might want to cancel a transaction if it was initiated by mistake, if you need to modify its details, or if it no longer needs to be executed. Canceling prevents the transaction from being processed further.
 
-<Note>This operation only applies to transactions from MPC Wallets and Smart Contract Wallets.</Note>
+<Note>This operation only applies to transactions from MPC Wallets.</Note>
 
 A transaction can be cancelled if its status is either of the following:
 - `Submitted`
@@ -63,13 +63,11 @@ Speeding up a transaction leverages RBF to replace the original transaction with
 
 You might want to speed up a transaction if it is taking too long to be confirmed due to low fees. This is particularly useful in times of network congestion.
 
-<Note>This operation only applies to transactions from Custodial Wallets (Web3 Wallets), MPC Wallets and Smart Contract Wallets. It does not apply to transactions on the following chains: VET, TRON, TVET, SOL, and TON.</Note>
+<Note>This operation only applies to transactions from Custodial Wallets (Web3 Wallets) and MPC Wallets. It does not apply to transactions on the following chains: VET, TRON, TVET, SOL, and TON.</Note>
 
 A transaction can be sped up only if its status is `Broadcasting`.
 
 To speed up a transaction, use the [Speed up transaction](/v2/api-references/transactions/speed-up-transaction) operation. This requires the transaction ID of the transaction you wish to speed up.
-
-<Info>If you speed up a transaction from a Smart Contract Wallet, two RBF transactions will be triggered, one for the transaction from the Smart Contract Wallet, and the other for the transaction from the Delegate.</Info>
 
 ### Drop a transaction
 
@@ -79,15 +77,13 @@ Dropping a transaction leverages RBF to replace the original transaction with a 
 
 You might want to drop a transaction if it was initiated by mistake, if you need to modify its details, or if it no longer needs to be executed but it cannot be canceled.
 
-<Note>This operation only applies to transactions from Custodial Wallets (Web3 Wallets), MPC Wallets and Smart Contract Wallets. It does not apply to transactions on the following chains: VET, TRON, TVET, SOL, and TON.</Note>
+<Note>This operation only applies to transactions from Custodial Wallets (Web3 Wallets) and MPC Wallets. It does not apply to transactions on the following chains: VET, TRON, TVET, SOL, and TON.</Note>
 
 A transaction can be dropped only if its status is `Broadcasting`.
 
 To drop a transaction, use the [Drop transaction](/v2/api-references/transactions/drop-transaction) operation. This requires the transaction ID of the transaction you wish to drop.
 
 When a transaction is being dropped, any subsequent drop or speed up operations will still apply to the original transaction. For example, if a user creates Transaction A and later performs a drop operation on Transaction A using Transaction B, followed by a speed up operation on Transaction B using Transaction C, the speed up operation will still apply to Transaction A, not Transaction B.
-
-<Info>If you drop a transaction from a Smart Contract Wallet, two RBF transactions will be triggered, one for the transaction from the Smart Contract Wallet, and the other for the transaction from the Delegate.</Info>
 
 ## Cobo-defined categories
 
@@ -149,7 +145,6 @@ This field `cobo_category` is defined by Cobo to indicate the logical category o
 | Tokenization | A transaction for managing tokenized assets, such as minting or wrapping tokens, through the Tokenization app. |
 | TokenizationGasSponsor | A transaction where gas fees are sponsored for tokenization-related operations, ensuring the transaction proceeds even if the source address lacks sufficient balance, through the Tokenization app. |
 | TokenSwap | A transaction for token swapping or cross-chain bridging through the Token Swap app. |
-| SafeTxMessage | A message signing transaction initiated by an MPC wallet to authorize a Smart Contract Wallet (Safe\{Wallet\}) transaction. |
 | StellarChangeTrust | A transaction for establishing a trustline on the Stellar network. |
 | NonceAccountSign | A transaction signed using a Solana nonce account, enabling deterministic and replay-safe transaction execution on the Solana network. |
 | FeePayerSign | A transaction where a designated Solana fee payer account covers the transaction fees, separating the fee payment from the main signer or source account. |

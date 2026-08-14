@@ -131,14 +131,7 @@
                 "pages": [
                   "v2/guides/overview/changelog",
                   "v2/guides/overview/upgrade-guide",
-                  "v2/guides/mpc-wallets/get-started-ucw",
-                  {
-                    "group": "Smart Contract Wallets",
-                    "pages": [
-                      "v2/guides/smart-contract-wallets/get-started-scw",
-                      "v2/guides/smart-contract-wallets/automate-farming-rewards-collection"
-                    ]
-                  }
+                  "v2/guides/mpc-wallets/get-started-ucw"
                 ]
               }
             ]
@@ -943,14 +936,7 @@
                 "pages": [
                   "v2_cn/guides/overview/changelog",
                   "v2_cn/guides/overview/upgrade-guide",
-                  "v2_cn/guides/mpc-wallets/get-started-ucw",
-                  {
-                    "group": "智能合约钱包",
-                    "pages": [
-                      "v2_cn/guides/smart-contract-wallets/get-started-scw",
-                      "v2_cn/guides/smart-contract-wallets/automate-farming-rewards-collection"
-                    ]
-                  }
+                  "v2_cn/guides/mpc-wallets/get-started-ucw"
                 ]
               }
             ]
@@ -1596,6 +1582,18 @@
     {
       "source": "/v2_cn/payments-redirect/redirect",
       "destination": "https://www.cobo.com/payments/cn/guides/overview"
+    },
+    {
+      "source": "/v2/guides/smart-contract-wallets/:slug*",
+      "destination": "https://manuals.cobo.com/en/portal/retired-features"
+    },
+    {
+      "source": "/v2_cn/guides/smart-contract-wallets/:slug*",
+      "destination": "https://manuals.cobo.com/cn/portal/retired-features"
+    },
+    {
+      "source": "/v2/api-references/wallets--smart-contract-wallets/:slug*",
+      "destination": "https://manuals.cobo.com/en/portal/retired-features"
     }
   ]
 }

@@ -171,7 +171,7 @@ wallets = api_instance.list_wallets(wallet_type=WalletType.CUSTODIAL).data
         </tr>
         <tr>
             <td>wallet_type</td>
-            <td>(可选)  App 支持的钱包类型。可能的值如下： <ul><li><code>Custodial</code></li><li><code>MPC</code></li><li><code>SmartContract</code></li><li><code>Exchange</code></li><li><code>User-Controlled</code></li><li><code>Org-Controlled</code></li><li><code>Asset</code></li><li><code>Safe{Wallet}</code></li><li><code>Main</code></li></ul> 例如，如果此字段设置为 <code>Custodial, MPC</code>，则用户只能选择这些钱包类型作为 App 可以访问的钱包范围。 <p>如果此字段留空，则用户可以选择任何可用的钱包类型。</p>有关 WaaS 2.0 中的钱包范围的详细信息，请参阅 <a href="https://www.cobo.com/developers/v2/guides/overview/permissions-and-scopes#wallet-scopes">钱包范围</a>。</td>
+            <td>(可选)  App 支持的钱包类型。可能的值如下： <ul><li><code>Custodial</code></li><li><code>MPC</code></li><li><code>Exchange</code></li><li><code>User-Controlled</code></li><li><code>Org-Controlled</code></li><li><code>Asset</code></li><li><code>Main</code></li></ul> 例如，如果此字段设置为 <code>Custodial, MPC</code>，则用户只能选择这些钱包类型作为 App 可以访问的钱包范围。 <p>如果此字段留空，则用户可以选择任何可用的钱包类型。</p>有关 WaaS 2.0 中的钱包范围的详细信息，请参阅 <a href="https://www.cobo.com/developers/v2/guides/overview/permissions-and-scopes#wallet-scopes">钱包范围</a>。</td>
             <td><code>"Custodial", "MPC"</code></td>
         </tr>
         <tr>

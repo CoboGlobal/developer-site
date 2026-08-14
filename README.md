@@ -23,7 +23,7 @@
 ## About Cobo
 Cobo is a trusted leader in digital asset custody and wallet infrastructure solutions. Founded in 2017 by blockchain pioneers, Cobo is trusted by more than 500 organizations worldwide, safeguarding billions of dollars in assets with a zero-incident security track record.
 
-Today, Cobo provides the industry’s only unified digital asset wallet platform that integrates all 4 wallet technologies in one place – Custodial Wallets, MPC Wallets, Smart Contract Wallets, and Exchange Wallets. By combining a comprehensive suite of wallet solutions with advanced risk controls and developer tools, Cobo empowers organizations and developers to innovate and scale with ease.
+Today, Cobo provides the industry’s only unified digital asset wallet platform that integrates multiple wallet technologies in one place – Custodial Wallets, MPC Wallets, and Exchange Wallets. By combining a comprehensive suite of wallet solutions with advanced risk controls and developer tools, Cobo empowers organizations and developers to innovate and scale with ease.
 
 Visit [Cobo](https://www.cobo.com) for more information.
 
@@ -33,7 +33,6 @@ The Developer Hub mainly includes the following resources.:
 
 - **[Custodial Wallets](https://manuals.cobo.com/en/portal/custodial-wallets/introduction)**. Cobo Custodial Wallets are a secure and regulated custodial wallet solution, designed specifically for institutions to manage digital assets. Custodial Wallets take the complexity out of securing your assets by managing the private keys on your behalf. 
 - **[MPC Wallets](https://manuals.cobo.com/en/portal/mpc-wallets/introduction)**. Cobo MPC Wallets leverages advanced Multi-Party Computation (MPC) technology to implement a Threshold Signature Scheme (TSS). Cobo Portal offers two types of MPC Wallets: Organization-Controlled Wallets and User-Controlled Wallets.
-- **[Smart Contract Wallets](https://manuals.cobo.com/en/portal/smart-contract-wallets/introduction)**. Cobo Smart Contract Wallets support a myriad of smart contract wallets, prominently featuring Safe{Wallet} alongside other account abstraction wallets. 
 - **[Exchange Wallets](https://manuals.cobo.com/en/portal/exchange-wallets/introduction)**. Cobo Portal’s Exchange Wallets are your one-stop solution for managing multiple exchange accounts effortlessly.
 
 ## GitHub repository directory

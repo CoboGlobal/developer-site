@@ -24,10 +24,9 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 | Deposit - 交易所钱包之间转账       | DepositFromWallet                                                                              | DepositToWallet          |
 | Deposit - 其他充币交易               | DepositFromAddress                                                                            | DepositToAddress         |
 | Withdrawal - 交易所钱包之间转账    | Main<br />Sub                                                                                    | ExchangeWallet           |
-| Withdrawal - 其他提币交易         | Asset<br />Web3<br />Org-Controlled<br />User-Controlled<br />Safe\{Wallet\}<br />Main<br />Sub                      | Address                  |
-| ContractCall                                      | Org-Controlled<br />User-Controlled<br />Safe\{Wallet\}<br />Web3                                               | EVM_Contract<br />SOL_Contract<br />STELLAR_Contract<br />TRON_Contract             |
+| Withdrawal - 其他提币交易         | Asset<br />Web3<br />Org-Controlled<br />User-Controlled<br />Main<br />Sub                      | Address                  |
+| ContractCall                                      | Org-Controlled<br />User-Controlled<br />Web3                                               | EVM_Contract<br />SOL_Contract<br />STELLAR_Contract<br />TRON_Contract             |
 | MessageSign                                       | Org-Controlled<br />User-Controlled<br />Web3                                                                | EVM_EIP_191_Signature<br />EVM_EIP_712_Signature<br />BTC_BIP_137_Signature<br />BTC_EIP_191_Signature<br />BTC_BIP_322_Signature<br />COSMOS_ADR_36_Signature<br />Raw_Message_Signature |
-| ExternalSafeTx                                    | Safe\{Wallet\}                                                                                   |       EVM_Contract        |
 | Stake                                   | Org-Controlled                                                                                  |    Address          |
 | Unstake                                    | Org-Controlled                                                                                   |    Address          |
 
@@ -38,7 +37,6 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - `Web3`：全托管钱包（Web3 钱包）。
 - `Org-Controlled`：MPC 钱包（机构钱包）。
 - `User-Controlled`：MPC 钱包（终端用户钱包）。
-- `Safe{Wallet}`：智能合约钱包（Safe{Wallet}）。
 - `Main`：交易所钱包（主账户）。
 - `Sub`：交易所钱包（子账户）。
 - `DepositFromAddress`：钱包地址。
