@@ -10,24 +10,6 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 本指南概述了取消、加速和放弃交易的过程。掌握这些技术可以确保您的交易得到及时准确的处理。
 
-## 对交易列表分页
-
-[List all transactions](/v2/api-references/transactions/list-all-transactions) 操作每次返回一页结果。分页由两个独立的游标参数 `before` 和 `after` 控制，它们分别向相反的方向移动分页窗口。`direction` 参数与分页无关，仅控制排序顺序。
-
-- `after`：向前翻到下一页。传入上一个响应的 `pagination` 对象中返回的 `after` 值。
-- `before`：向后翻到上一页。传入上一个响应的 `pagination` 对象中返回的 `before` 值。
-
-首次请求时，请勿包含 `before` 或 `after`。Cobo 会返回第一页，并附带一个 `pagination` 对象，其中包含用于翻页的 `before` 和 `after` 游标值。使用 `limit` 参数设置每页的记录数。
-
-<Note>`direction` 参数是独立的排序控制，不会移动分页窗口。它接受 `ASC`（升序，默认值）或 `DESC`（降序），仅决定记录返回的顺序。向前和向后翻页始终由 `after` 和 `before` 控制。</Note>
-
-### 分页操作步骤
-
-1. 发送首次请求，不带 `before` 和 `after` 参数。响应会返回第一页以及包含 `before`、`after` 和 `total_count` 的 `pagination` 对象。
-2. 要向前翻到下一页，请发送另一个请求，并将 `after` 设置为上一个响应中的 `after` 值。
-3. 要向后翻到上一页，请发送另一个请求，并将 `before` 设置为上一个响应中的 `before` 值。
-4. 当响应返回的 `after` 值为空时，表示您已到达结果的末尾。当响应返回的 `before` 值为空时，表示您已到达结果的开头。
-
 ## 取消交易
 
 取消交易是在交易仍处于待处理状态时停止它。

@@ -708,24 +708,30 @@ public class ListTokenBalancesExample {
 
 ## 6. 自动归集资金（auto-sweep）
 
-自动归集（auto-sweep）会自动将充币地址中的代币归集到指定的归集目标地址，您无需手动从每个充币地址转出资金。要创建自动归集任务，请调用 [Create auto-sweep task](/v2/api-references/autosweep/create-auto-sweep-task)，并指定以下参数：
+自动归集（auto-sweep）会自动将充币地址中的代币归集到指定的归集目标地址，您无需手动从每个充币地址转出资金。要为指定代币创建一次按需归集任务，请调用 [Create auto-sweep task](/v2/api-references/autosweep/create-auto-sweep-task)，并指定以下参数：
 
 - `wallet_id`：您创建的钱包 ID。
 - `token_id`：要归集的代币 ID。
-- `min_balance_threshold`：（可选）地址被归集所需的最低代币余额。余额低于此值的地址将被跳过，可用于过滤粉尘（dust）。系统不提供按地址设置的黑名单；请使用 `min_balance_threshold` 控制最低归集金额。
+- `min_balance_threshold`：（可选）本次归集请求中，地址需达到的最低余额。余额低于此值的地址会被跳过。该阈值仅用于筛选本次请求中纳入考虑的地址余额，不会影响其他执行检查，例如可用 gas、所需手续费、保留余额，或该地址是否已有一笔待处理交易。
 
 <Note>
-归集会将代币从充币地址转出，因此需要链上原生代币支付 gas 费。请确保源充币地址中有足够的原生代币，或已配置 Fee Station 或自动加油（Auto Fueling）来提供 gas。仅达到充币阈值并不会完成归集：如果没有可用的 gas，归集交易将无法广播。当归集无法进行时，原因会显示在任务详情返回的 `failed_reasons` 数组中。
+满足 `min_balance_threshold` 并不能保证一定会创建归集交易。归集会将代币从充币地址转出，因此需要链上原生代币支付 gas 费，请确保源充币地址中有足够的原生代币，或已配置 Fee Station 或自动加油（Auto Fueling）来提供 gas。在创建归集交易之前，Cobo 还会检查所需手续费、保留余额，以及该地址是否已存在待处理交易。当以上任一检查未通过时，原因会显示在任务详情返回的 `failed_reasons` 数组中。
 </Note>
 
 ### 获取归集交易
 
-Create auto-sweep task 会立即返回 `task_id`。此时任务 `status` 为 `Submitted`，`transaction_ids` 数组为空。这是预期行为，并不表示失败。
+Create auto-sweep task 会立即返回 `task_id`，表示请求已被接受并进入异步处理，但这并不保证最终一定会为该请求创建归集交易。
 
-当任务触发一个或多个归集交易后，其状态会变为 `TransactionCreated`，此时 `transaction_ids` 会被填充。要获取交易 ID，请使用 `task_id` 轮询 [Get auto-sweep task details](/v2/api-references/autosweep/get-auto-sweep-task-details)，直到 `status` 变为 `TransactionCreated`。
+请使用 `task_id` 轮询 [Get auto-sweep task details](/v2/api-references/autosweep/get-auto-sweep-task-details)，并同时查看 `status`、`transaction_ids` 和 `failed_reasons`，而不要只依赖其中一个字段：
+
+- `status` 为 `Submitted` 表示任务已被接受，仍在等待交易创建的处理结果；为 `TransactionCreated` 表示该处理已经完成。
+- 当任务处于 `Submitted` 时，`transaction_ids` 为空。当状态变为 `TransactionCreated` 后，`transaction_ids` 仍为空，则表示处理完成但未创建交易，例如在经过 gas、手续费、保留余额或待处理交易等检查后，没有余额符合归集条件——这并不代表已提交但归集失败，也不代表资金已被归集。
+- `failed_reasons` 说明了为何某个地址未能创建归集交易。请将其视为诊断性文本，不要解析具体措辞。
+
+`transaction_ids` 被填充后，这些归集交易仍需在链上得到确认。请使用每个交易 ID 轮询 [Get transaction information](/v2/api-references/transactions/get-transaction-information)，跟踪其最终结果，方式与您跟踪 WaaS 2.0 API 创建的其他交易相同。
 
 ### 时间与生命周期
 
-自动归集基于轮询机制，并非即时执行。归集会在满足触发条件后不久发起，因此充币与归集交易之间存在短暂延迟属于正常现象。无法继续的任务不会一直处于等待状态：长时间缺少 gas 或未完成签名的任务会在超时后自动取消，相关资金会保留在源地址中，您可以稍后重新归集。
+自动归集任务的处理是异步的，并非即时完成，因此从提交 Create auto-sweep task 请求到 `status` 变为 `TransactionCreated` 之间存在短暂延迟属于正常现象。系统并不保证某个任务会在固定时间内、或最终一定会脱离 `Submitted` 状态；请通过轮询 `status`、`transaction_ids` 和 `failed_reasons` 来判断结果。如果归集因故无法进行（例如 gas 不足），相关资金会保留在源地址中，您可以之后为该地址重新提交归集任务。
 
 <Info>对于 EVM 兼容链（如 Ethereum 和 BNB Smart Chain），所有 EVM 链共用同一个地址。因此，当您使用 [List sweep-to addresses](/v2/api-references/autosweep/list-sweep-to-addresses) 列出归集目标地址时，所有 EVM 兼容链只会返回一个地址条目（显示在 Ethereum 下）。请勿期望每条 EVM 链都有单独的地址条目。</Info>

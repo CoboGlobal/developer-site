@@ -703,24 +703,30 @@ public class ListTokenBalancesExample {
 
 ## 6. Sweep funds automatically (auto-sweep)
 
-Auto-sweep automatically consolidates tokens from your deposit addresses into a designated sweep-to address, so that you do not need to move funds out of each deposit address manually. To create an auto-sweep task, call the [Create auto-sweep task](/v2/api-references/autosweep/create-auto-sweep-task) operation and specify the following:
+Auto-sweep automatically consolidates tokens from your deposit addresses into a designated sweep-to address, so that you do not need to move funds out of each deposit address manually. To create an on-demand sweep task for a specific token, call the [Create auto-sweep task](/v2/api-references/autosweep/create-auto-sweep-task) operation and specify the following:
 
 - `wallet_id`: The ID of the wallet you created.
 - `token_id`: The ID of the token to sweep.
-- `min_balance_threshold`: (Optional) The minimum token balance an address must hold to be swept. Addresses holding less than this value are skipped, which lets you filter out dust. There is no per-address blocklist; use `min_balance_threshold` to control the minimum sweep amount.
+- `min_balance_threshold`: (Optional) The minimum balance an address must hold to be eligible for this sweep request. Addresses holding less than this value are skipped. This threshold only filters which address balances are considered for the request; it does not override other execution checks such as available gas, required fees, reserved balances, or an existing pending transaction on the address.
 
 <Note>
-A sweep moves tokens out of a deposit address, which requires native chain coin to pay for gas. Make sure that gas is available either in the source deposit address or through a configured Fee Station or Auto Fueling. Reaching the deposit threshold alone does not complete a sweep: if no gas is available, the sweep cannot be broadcast. When a sweep cannot proceed, the reason is reported in the `failed_reasons` array returned by the task details.
+Meeting `min_balance_threshold` does not by itself guarantee a sweep transaction is created. A sweep moves tokens out of a deposit address, which requires native chain coin to pay for gas, so make sure that gas is available either in the source deposit address or through a configured Fee Station or Auto Fueling. Cobo also checks required fees, reserved balances, and whether the address already has a pending transaction before creating a sweep transaction. When any of these checks prevents a sweep, the reason is reported in the `failed_reasons` array returned by the task details.
 </Note>
 
 ### Retrieve the swept transactions
 
-The Create auto-sweep task operation returns immediately with a `task_id`. At this point the task `status` is `Submitted` and the `transaction_ids` array is empty. This is expected and does not indicate a failure.
+The Create auto-sweep task operation returns immediately with a `task_id`, accepting your request for asynchronous processing. This does not guarantee that a sweep transaction will ultimately be created for the request.
 
-The task transitions to `TransactionCreated` once it triggers one or more sweep transactions, at which point `transaction_ids` is populated. To retrieve the transaction IDs, poll the [Get auto-sweep task details](/v2/api-references/autosweep/get-auto-sweep-task-details) operation with your `task_id` until `status` becomes `TransactionCreated`.
+Poll the [Get auto-sweep task details](/v2/api-references/autosweep/get-auto-sweep-task-details) operation with your `task_id`, and check `status`, `transaction_ids`, and `failed_reasons` together rather than relying on any single field:
+
+- `status` of `Submitted` means the task is accepted and still awaiting its transaction-creation attempt. `TransactionCreated` means that attempt has completed.
+- `transaction_ids` stays empty while the task is `Submitted`. An empty array under `TransactionCreated` means the attempt completed without creating a transaction, for example because no address balance remained eligible after gas, fee, reserve, or pending-transaction checks — not that a sweep was submitted and failed, and not that funds were already swept.
+- `failed_reasons` explains why a sweep could not be created for one or more addresses. Treat these as diagnostic text and do not parse the exact wording.
+
+Once `transaction_ids` is populated, those sweep transactions still need to confirm on-chain. Poll [Get transaction information](/v2/api-references/transactions/get-transaction-information) with each transaction ID to track its final outcome, the same way you would for any other transaction created through the WaaS 2.0 API.
 
 ### Timing and lifecycle
 
-Auto-sweep is poll-based rather than instant. A sweep is initiated shortly after its trigger condition is met, so a short delay between the deposit and the sweep transaction is normal. Tasks that cannot proceed do not stay pending indefinitely: a task that remains without gas or without a signature is automatically cancelled after a timeout, and the affected funds remain in the source address so that you can sweep them again later.
+Auto-sweep task processing is asynchronous rather than instant, so expect a short delay between submitting the Create auto-sweep task request and `status` reaching `TransactionCreated`. There is no fixed schedule that guarantees when, or whether, a given task leaves `Submitted`; rely on polling `status`, `transaction_ids`, and `failed_reasons` to determine the outcome. If a sweep cannot proceed, for example because gas is unavailable, the affected funds remain in the source address and you can submit a new sweep task for that address later.
 
 <Info>For EVM-compatible chains (such as Ethereum and BNB Smart Chain), the same address is used across all EVM chains. As a result, when you list sweep-to addresses with [List sweep-to addresses](/v2/api-references/autosweep/list-sweep-to-addresses), only one address entry (shown under Ethereum) is returned for all EVM-compatible chains. Do not expect a separate entry for each EVM chain.</Info>
