@@ -78,44 +78,26 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
 
 ### 读取交易数据
 
-交易类事件的交易内容位于事件的 `data` 属性中。对手方地址与金额在其中的位置取决于 `data.destination.destination_type`，因此请先读取该字段并据此分支，不要假定固定路径。
+事件数据是一个判别联合：`data.data_type` 决定数据模型，对于交易，`destination.destination_type` 从十五种目标模型中选定一种。使用 SDK 生成的模型反序列化事件，两层判别都会自动完成，得到的对象只暴露该变体实际拥有的字段：
 
-充值（`destination_type` 为 `DepositToAddress`）将两者直接放在 `destination` 下：
+```python
+from cobo_waas2 import WebhookEvent
 
-```json
-{
-  "destination": {
-    "destination_type": "DepositToAddress",
-    "wallet_id": "11111111-1111-4111-8111-111111111111",
-    "wallet_type": "MPC",
-    "wallet_subtype": "Org-Controlled",
-    "address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "amount": "0.0002"
-  }
-}
+event = WebhookEvent.from_json(raw_body)
+transaction = event.data.actual_instance
+destination = transaction.destination.actual_instance
 ```
 
-提币到地址（`destination_type` 为 `Address`）则多嵌套一层，放在 `account_output` 下：
+请优先使用这种方式，而不是从解析后的 JSON 中按固定路径取值。对手方地址与金额在不同交易中的位置并不相同，而且很容易被忽略——开发阶段收到的第一笔交易通常是充值：
 
-```json
-{
-  "destination": {
-    "destination_type": "Address",
-    "account_output": {
-      "address": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "amount": "0.0002"
-    },
-    "force_internal": false,
-    "force_external": false
-  }
-}
-```
+| `destination_type` | 地址与金额位置 |
+| --- | --- |
+| `DepositToAddress` | `destination.address`、`destination.amount` |
+| `Address` | `destination.account_output.address`、`.amount` |
 
 <Warning>
-  两种结构在交易顶层都没有 `address` 或 `amount`。只按其中一种结构编写的处理逻辑会静默漏掉另一种；开发阶段收到的第一笔交易往往是充值，因此这一点很容易被忽略。
+  两种结构在交易顶层都没有 `address` 或 `amount`。按固定路径取值的处理逻辑会静默漏掉所有目标结构不同的交易，而上表两种只是十五种中最常见的两种。
 </Warning>
-
-以上两种是最先遇到的结构。`destination_type` 还有其他取值，例如 `CustodialWallet`、`ExchangeWallet`、各链的合约调用类型与消息签名类型，各自结构不同。建议只处理您的集成预期的类型，其余记录日志，而不要假定其结构。
 
 ### 响应 API 请求
 

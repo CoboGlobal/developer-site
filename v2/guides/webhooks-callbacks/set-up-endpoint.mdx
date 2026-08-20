@@ -78,44 +78,26 @@ The verification steps are as follows:
 
 ### Read the transaction data
 
-For transaction events, the transaction is carried in the `data` property of the event. Where the counterparty address and the amount sit inside it depends on `data.destination.destination_type`, so read that first and branch on it rather than assuming a fixed path.
+The event data is a discriminated union: `data.data_type` selects the data model, and for a transaction, `destination.destination_type` selects one of fifteen destination models. Deserialize the event with the generated model and both are resolved for you, so the object you get exposes exactly the fields that variant has:
 
-A deposit (`destination_type` of `DepositToAddress`) carries them directly under `destination`:
+```python
+from cobo_waas2 import WebhookEvent
 
-```json
-{
-  "destination": {
-    "destination_type": "DepositToAddress",
-    "wallet_id": "11111111-1111-4111-8111-111111111111",
-    "wallet_type": "MPC",
-    "wallet_subtype": "Org-Controlled",
-    "address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "amount": "0.0002"
-  }
-}
+event = WebhookEvent.from_json(raw_body)
+transaction = event.data.actual_instance
+destination = transaction.destination.actual_instance
 ```
 
-A withdrawal to an address (`destination_type` of `Address`) nests them one level deeper, under `account_output`:
+Prefer this over reading fixed paths out of the parsed JSON. The counterparty address and amount do not sit in the same place for every transaction, and the difference is easy to miss because a deposit is usually the first event you receive while developing:
 
-```json
-{
-  "destination": {
-    "destination_type": "Address",
-    "account_output": {
-      "address": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "amount": "0.0002"
-    },
-    "force_internal": false,
-    "force_external": false
-  }
-}
-```
+| `destination_type` | address and amount |
+| --- | --- |
+| `DepositToAddress` | `destination.address`, `destination.amount` |
+| `Address` | `destination.account_output.address`, `.amount` |
 
 <Warning>
-  Neither shape carries a top-level `address` or `amount` on the transaction. Handlers written against only one of the two shapes silently miss the other, which is easy to overlook when the first transaction you receive during development is a deposit.
+  Neither shape carries a top-level `address` or `amount` on the transaction. A handler that reads a fixed path silently misses every transaction whose destination has a different shape, and the two above are only the most common of fifteen.
 </Warning>
-
-The two above are the shapes you meet first. `destination_type` has further values -- among them `CustodialWallet`, `ExchangeWallet`, the per-chain contract-call types and the message-signing types -- each with its own structure. Handle the types your integration expects and log the rest rather than assuming a shape.
 
 ### Respond to the API request
 
