@@ -1,0 +1,186 @@
+---
+openapi: get /recon/statements
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+<RequestExample>
+```python Python
+import cobo_waas2
+from cobo_waas2.models.list_reconciliation_statements200_response import (
+    ListReconciliationStatements200Response,
+)
+from cobo_waas2.rest import ApiException
+from pprint import pprint
+
+# See configuration.py for a list of all supported configurations.
+configuration = cobo_waas2.Configuration(
+    # Replace `<YOUR_PRIVATE_KEY>` with your private key
+    api_private_key="<YOUR_PRIVATE_KEY>",
+    # Select the development environment. To use the production environment, change the URL to https://api.cobo.com/v2.
+    host="https://api.dev.cobo.com/v2",
+)
+# Enter a context with an instance of the API client
+with cobo_waas2.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = cobo_waas2.ReconciliationApi(api_client)
+    start_date = "2026-07-01"
+    end_date = "2026-07-28"
+    wallet_ids = (
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,1ddca562-8434-41c9-8809-d437bad9c868"
+    )
+    token_ids = "ETH_USDT,ETH_USDC"
+    limit = 10
+    before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+    after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+
+    try:
+        # List reconciliation daily statements
+        api_response = api_instance.list_reconciliation_statements(
+            start_date,
+            end_date,
+            wallet_ids=wallet_ids,
+            token_ids=token_ids,
+            limit=limit,
+            before=before,
+            after=after,
+        )
+        print("The response of ReconciliationApi->list_reconciliation_statements:\n")
+        pprint(api_response)
+    except Exception as e:
+        print(
+            "Exception when calling ReconciliationApi->list_reconciliation_statements: %s\n"
+            % e
+        )
+
+```
+```java Java
+// Import classes:
+import com.cobo.waas2.ApiClient;
+import com.cobo.waas2.ApiException;
+import com.cobo.waas2.Configuration;
+import com.cobo.waas2.Env;
+import com.cobo.waas2.api.ReconciliationApi;
+import com.cobo.waas2.model.*;
+import java.time.LocalDate;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    // Select the development environment. To use the production environment, replace `Env.DEV` with
+    // `Env.PROD
+    defaultClient.setEnv(Env.DEV);
+
+    // Replace `<YOUR_PRIVATE_KEY>` with your private key
+    defaultClient.setPrivKey("<YOUR_PRIVATE_KEY>");
+    ReconciliationApi apiInstance = new ReconciliationApi();
+    LocalDate startDate = LocalDate.parse("2026-07-01");
+    LocalDate endDate = LocalDate.parse("2026-07-28");
+    String walletIds =
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479,1ddca562-8434-41c9-8809-d437bad9c868";
+    String tokenIds = "ETH_USDT,ETH_USDC";
+    Integer limit = 10;
+    String before = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1";
+    String after = "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk";
+    try {
+      ListReconciliationStatements200Response result =
+          apiInstance.listReconciliationStatements(
+              startDate, endDate, walletIds, tokenIds, limit, before, after);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling ReconciliationApi#listReconciliationStatements");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+
+```
+```go Go
+package main
+
+import (
+	"context"
+	"fmt"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
+	"os"
+)
+
+func main() {
+	startDate := "2026-07-01"
+	endDate := "2026-07-28"
+	walletIds := "f47ac10b-58cc-4372-a567-0e02b2c3d479,1ddca562-8434-41c9-8809-d437bad9c868"
+	tokenIds := "ETH_USDT,ETH_USDC"
+	limit := int32(10)
+	before := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1"
+	after := "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk"
+
+	configuration := coboWaas2.NewConfiguration()
+	// Initialize the API client
+	apiClient := coboWaas2.NewAPIClient(configuration)
+	ctx := context.Background()
+
+	// Select the development environment. To use the production environment, replace coboWaas2.DevEnv with coboWaas2.ProdEnv
+	ctx = context.WithValue(ctx, coboWaas2.ContextEnv, coboWaas2.DevEnv)
+	// Replace `<YOUR_PRIVATE_KEY>` with your private key
+	ctx = context.WithValue(ctx, coboWaas2.ContextPortalSigner, crypto.Ed25519Signer{
+		Secret: "<YOUR_PRIVATE_KEY>",
+	})
+	resp, r, err := apiClient.ReconciliationAPI.ListReconciliationStatements(ctx).
+		StartDate(startDate).
+		EndDate(endDate).
+		WalletIds(walletIds).
+		TokenIds(tokenIds).
+		Limit(limit).
+		Before(before).
+		After(after).
+		Execute()
+	if err != nil {
+		fmt.Fprintf(
+			os.Stderr,
+			"Error when calling `ReconciliationAPI.ListReconciliationStatements``: %v\n",
+			err,
+		)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListReconciliationStatements`: ListReconciliationStatements200Response
+	fmt.Fprintf(os.Stdout, "Response from `ReconciliationAPI.ListReconciliationStatements`: %v\n", resp)
+}
+
+```
+```javascript JavaScript
+const CoboWaas2 = require("@cobo/cobo-waas2");
+// Initialize the API client
+const apiClient = CoboWaas2.ApiClient.instance;
+// Select the development environment. To use the production environment, replace `Env.DEV` with `Env.PROD`
+apiClient.setEnv(CoboWaas2.Env.DEV);
+// Replace `<YOUR_PRIVATE_KEY>` with your private key
+apiClient.setPrivateKey("<YOUR_PRIVATE_KEY>");
+// Call the API
+const apiInstance = new CoboWaas2.ReconciliationApi();
+const start_date = "2026-07-01";
+const end_date = "2026-07-28";
+const opts = {
+  wallet_ids:
+    "f47ac10b-58cc-4372-a567-0e02b2c3d479,1ddca562-8434-41c9-8809-d437bad9c868",
+  token_ids: "ETH_USDT,ETH_USDC",
+  limit: 10,
+  before: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGmk1",
+  after: "RqeEoTkgKG5rpzqYzg2Hd3szmPoj2cE7w5jWwShz3C1vyGSAk",
+};
+apiInstance.listReconciliationStatements(start_date, end_date, opts).then(
+  (data) => {
+    console.log("API called successfully. Returned data: " + data);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+
+```
+</RequestExample>

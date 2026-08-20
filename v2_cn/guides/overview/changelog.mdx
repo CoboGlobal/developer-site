@@ -12,6 +12,40 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.42.0
+
+此版本于 2026 年 8 月 19 日发布。
+
+### 新功能
+
+- 新增以下 Reconciliation 接口，用于指定客户的稳定币对账：
+  - [获取对账流水](/v2/api-references/reconciliation/get-reconciliation-ledger)
+  - [列出每日对账单](/v2/api-references/reconciliation/list-reconciliation-daily-statements)
+- 新增 [查询账户余额](/v2/api-references/wallets/list-account-balances) 接口，用于在账户模型链上按同一区块状态查询最多 50 组代币/地址余额；每条余额都会返回对应的区块高度。
+- 新增 [获取交易收据](/v2/api-references/transactions/get-transaction-receipt) 接口，用于查询 EVM 交易收据，包括执行状态、区块数据、gas 使用量和原始日志。
+- 增强 [转账代币](/v2/api-references/transactions/transfer-token) 和 [调用智能合约](/v2/api-references/transactions/call-smart-contract) 接口，支持 `fee_level` 和 `transaction_process_type=SignOnly`。仅签名不广播的交易可通过 [广播签名交易](/v2/api-references/transactions/broadcast-signed-transactions) 接口广播上链。
+- 在 [发行代币](/v2/api-references/tokenization/issue-token) 接口中新增 `ERC20Fund` Tokenization 代币标准，支持 ERC-4626 fund/vault 参数、NAV 控制、申购/赎回限制、费率控制和角色权限。
+
+### 兼容性变更
+
+- 交易响应中新增 `transaction_process_type` 字段，Filecoin 交易费用详情中新增 `gas_used` 字段。受影响的接口：
+  - [查询交易详情](/v2/api-references/transactions/get-transaction-information)
+  - [查询交易列表](/v2/api-references/transactions/list-all-transactions)
+- Fee Station Auto-Fuel 支持范围扩大到符合条件的 Web3 Wallet 交易，除 MPC Wallet 交易外也可使用。
+- 移除 Smart Contract Wallet 的 `List Delegates` 接口（`POST /wallets/{wallet_id}/smart_contracts/delegates`）。
+- 在钱包枚举和 Schema 中移除 `SmartContract` 钱包类型和 `Safe{Wallet}` 子类型。受影响的接口：
+  - [创建钱包](/v2/api-references/wallets/create-wallet)
+  - [列出所有钱包](/v2/api-references/wallets/list-all-wallets)
+  - [获取钱包信息](/v2/api-references/wallets/get-wallet-information)
+  - [更新钱包](/v2/api-references/wallets/update-wallet)
+- 从 [转账代币](/v2/api-references/transactions/transfer-token) 和 [调用智能合约](/v2/api-references/transactions/call-smart-contract) 接口中移除 Smart Contract Wallet 来源和 Delegate 相关 Schema。合约调用接口现在仅适用于 EVM-like 链上的 MPC 交易。
+- 移除 `Safe{Wallet}` 交易相关 Schema 支持，包括 `TransactionSourceType=Safe{Wallet}`、`TransactionType=ExternalSafeTx`、`TransactionCoboCategory=SafeTxMessage`、Safe 交易来源 Schema，以及 EIP-712 `safe_tx_extra_data`。
+- 以下接口现在仅适用于 MPC Wallet：
+  - [按地址列出代币余额](/v2/api-references/wallets/list-token-balances-by-address)
+  - [取消交易](/v2/api-references/transactions/cancel-transaction)
+  - [Drop transaction](/v2/api-references/transactions/drop-transaction)
+  - [Speed up transaction](/v2/api-references/transactions/speed-up-transaction)
+
 ## v1.41.0
 
 此版本于 2026 年 8 月 5 日发布。
