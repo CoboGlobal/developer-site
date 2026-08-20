@@ -12,6 +12,40 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.42.0
+
+This version was released on August 19, 2026.
+
+### New features
+
+- Added the following Reconciliation operations for selected-customer stablecoin reconciliation:
+  - [Get reconciliation ledger](/v2/api-references/reconciliation/get-reconciliation-ledger)
+  - [List reconciliation daily statements](/v2/api-references/reconciliation/list-reconciliation-daily-statements)
+- Added [List account balances](/v2/api-references/wallets/list-account-balances) for retrieving up to 50 token/address balances from the same block state on an account-based chain. Each returned balance includes the block number.
+- Added [Get transaction receipt](/v2/api-references/transactions/get-transaction-receipt) for retrieving EVM transaction receipt data, including execution status, block data, gas usage, and raw logs.
+- Enhanced [Transfer token](/v2/api-references/transactions/transfer-token) and [Call smart contract](/v2/api-references/transactions/call-smart-contract) to support `fee_level` and `transaction_process_type=SignOnly`. Sign-only transactions can be broadcast with [Broadcast signed transactions](/v2/api-references/transactions/broadcast-signed-transactions).
+- Added `ERC20Fund` as a tokenization token standard in [Issue token](/v2/api-references/tokenization/issue-token), with ERC-4626 fund/vault parameters, NAV controls, deposit/redemption limits, rate controls, and role permissions.
+
+### Compatibility changes
+
+- Transaction responses now include `transaction_process_type`, and Filecoin transaction fee details now include `gas_used`. Affected operations:
+  - [Get transaction information](/v2/api-references/transactions/get-transaction-information)
+  - [List all transactions](/v2/api-references/transactions/list-all-transactions)
+- Fee Station Auto-Fuel support now includes eligible Web3 Wallet transactions in addition to MPC Wallet transactions.
+- Removed the `List Delegates` operation (`POST /wallets/{wallet_id}/smart_contracts/delegates`) for Smart Contract Wallets.
+- Removed the `SmartContract` wallet type and `Safe{Wallet}` subtype from wallet enums and schemas. Affected operations:
+  - [Create wallet](/v2/api-references/wallets/create-wallet)
+  - [List all wallets](/v2/api-references/wallets/list-all-wallets)
+  - [Get wallet information](/v2/api-references/wallets/get-wallet-information)
+  - [Update wallet](/v2/api-references/wallets/update-wallet)
+- Removed Smart Contract Wallet source/delegate schemas from [Transfer token](/v2/api-references/transactions/transfer-token) and [Call smart contract](/v2/api-references/transactions/call-smart-contract). The contract-call operation is now scoped to MPC transactions on EVM-like chains.
+- Removed `Safe{Wallet}` transaction schema support, including `TransactionSourceType=Safe{Wallet}`, `TransactionType=ExternalSafeTx`, `TransactionCoboCategory=SafeTxMessage`, Safe transaction source schemas, and EIP-712 `safe_tx_extra_data`.
+- The following operations are now applicable to MPC Wallets only:
+  - [List token balances by address](/v2/api-references/wallets/list-token-balances-by-address)
+  - [Cancel transaction](/v2/api-references/transactions/cancel-transaction)
+  - [Drop transaction](/v2/api-references/transactions/drop-transaction)
+  - [Speed up transaction](/v2/api-references/transactions/speed-up-transaction)
+
 ## v1.41.0
 
 This version was released on August 5, 2026.

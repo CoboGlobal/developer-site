@@ -192,6 +192,7 @@
                       "v2/api-references/wallets/get-maximum-transferable-value",
                       "v2/api-references/wallets/list-token-balances-by-address",
                       "v2/api-references/wallets/list-token-balances-by-wallet",
+                      "v2/api-references/wallets/list-account-balances",
                       "v2/api-references/wallets/list-address-balances-by-token",
                       "v2/api-references/wallets/refresh-address-balances-by-token"
                     ]
@@ -294,6 +295,7 @@
                     "pages": [
                       "v2/api-references/transactions/list-all-transactions",
                       "v2/api-references/transactions/get-transaction-information",
+                      "v2/api-references/transactions/get-transaction-receipt",
                       "v2/api-references/transactions/check-cobo-loop-transfers"
                     ]
                   },
@@ -312,6 +314,18 @@
                     "pages": [
                       "v2/api-references/transactions/list-approval-details",
                       "v2/api-references/transactions/list-transaction-templates"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Reconciliation operations",
+                "pages": [
+                  {
+                    "group": "Query reconciliation data",
+                    "pages": [
+                      "v2/api-references/reconciliation/get-reconciliation-ledger",
+                      "v2/api-references/reconciliation/list-reconciliation-daily-statements"
                     ]
                   }
                 ]
