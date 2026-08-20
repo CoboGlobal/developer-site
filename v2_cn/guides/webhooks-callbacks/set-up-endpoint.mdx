@@ -76,6 +76,47 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
     vk.verify(bytes.fromhex(signature), sha256_hash)
     ```
 
+### 读取交易数据
+
+交易类事件的交易内容位于事件的 `data` 属性中。对手方地址与金额在其中的位置取决于 `data.destination.destination_type`，因此请先读取该字段并据此分支，不要假定固定路径。
+
+充值（`destination_type` 为 `DepositToAddress`）将两者直接放在 `destination` 下：
+
+```json
+{
+  "destination": {
+    "destination_type": "DepositToAddress",
+    "wallet_id": "11111111-1111-4111-8111-111111111111",
+    "wallet_type": "MPC",
+    "wallet_subtype": "Org-Controlled",
+    "address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "amount": "0.0002"
+  }
+}
+```
+
+提币到地址（`destination_type` 为 `Address`）则多嵌套一层，放在 `account_output` 下：
+
+```json
+{
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "amount": "0.0002"
+    },
+    "force_internal": false,
+    "force_external": false
+  }
+}
+```
+
+<Warning>
+  两种结构在交易顶层都没有 `address` 或 `amount`。只按其中一种结构编写的处理逻辑会静默漏掉另一种；开发阶段收到的第一笔交易往往是充值，因此这一点很容易被忽略。
+</Warning>
+
+以上两种是最先遇到的结构。`destination_type` 还有其他取值，例如 `CustodialWallet`、`ExchangeWallet`、各链的合约调用类型与消息签名类型，各自结构不同。建议只处理您的集成预期的类型，其余记录日志，而不要假定其结构。
+
 ### 响应 API 请求
 
 正确响应 Webhook 事件和 Callback 消息对于确保 Webhook 和 Callback 按预期处理至关重要。本节描述了 Webhook 和 Callback Endpoint 的预期响应。

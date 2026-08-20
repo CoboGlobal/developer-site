@@ -76,6 +76,47 @@ The verification steps are as follows:
     vk.verify(bytes.fromhex(signature), sha256_hash)
     ```
 
+### Read the transaction data
+
+For transaction events, the transaction is carried in the `data` property of the event. Where the counterparty address and the amount sit inside it depends on `data.destination.destination_type`, so read that first and branch on it rather than assuming a fixed path.
+
+A deposit (`destination_type` of `DepositToAddress`) carries them directly under `destination`:
+
+```json
+{
+  "destination": {
+    "destination_type": "DepositToAddress",
+    "wallet_id": "11111111-1111-4111-8111-111111111111",
+    "wallet_type": "MPC",
+    "wallet_subtype": "Org-Controlled",
+    "address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "amount": "0.0002"
+  }
+}
+```
+
+A withdrawal to an address (`destination_type` of `Address`) nests them one level deeper, under `account_output`:
+
+```json
+{
+  "destination": {
+    "destination_type": "Address",
+    "account_output": {
+      "address": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "amount": "0.0002"
+    },
+    "force_internal": false,
+    "force_external": false
+  }
+}
+```
+
+<Warning>
+  Neither shape carries a top-level `address` or `amount` on the transaction. Handlers written against only one of the two shapes silently miss the other, which is easy to overlook when the first transaction you receive during development is a deposit.
+</Warning>
+
+The two above are the shapes you meet first. `destination_type` has further values -- among them `CustodialWallet`, `ExchangeWallet`, the per-chain contract-call types and the message-signing types -- each with its own structure. Handle the types your integration expects and log the rest rather than assuming a shape.
+
 ### Respond to the API request
 
 Properly responding to webhook events and callback messages is crucial for ensuring that webhooks and callbacks are processed as expected. This section describes the expected response from both webhook and callback endpoints. 
