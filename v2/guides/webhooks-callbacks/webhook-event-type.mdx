@@ -131,10 +131,6 @@ For payment webhook events, please refer to [Order Status and Events](/v2/paymen
   </tbody>
 </table>
 
-<Note>
-These events are sent by Cobo and describe a TSS request as Cobo sees it. They are separate from the event notifications your own TSS Node can push directly to your server, which use the `request.*` event names, are signed with the node's RSA key, and are configured in the node configuration file. Subscribing here does not deliver those. See [TSS Node event notifications](/v2/guides/mpc-wallets/server-co-signer/tss-node-event-notifications).
-</Note>
-
 ### Wallet and address management events
 
 <table class="table-three-cols">
