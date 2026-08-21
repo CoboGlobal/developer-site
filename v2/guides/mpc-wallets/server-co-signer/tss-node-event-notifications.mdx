@@ -1,0 +1,410 @@
+---
+title: "TSS Node event notifications"
+lang: "en"
+sidebarTitle: "Event notifications"
+description: "Configure your TSS Node to push key generation, signing, and resharing events to your own server, and verify them with the node's RSA public key."
+---
+
+import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
+
+<WaasSkillReminder />
+
+Your TSS Node can notify your own server when it finishes an operation such as key generation (KeyGen), key resharing (KeyReshare), signing (KeySign), or key share signing (KeyShareSign). The node sends each notification as an HTTP POST request to the endpoints you configure.
+
+Each message is carried in a JSON Web Token (JWT) signed with RS256. Your receiving server verifies the signature with the node's RSA public key, which confirms that the message came from your node.
+
+<Note>
+These notifications are not the same as Cobo webhook events. Cobo sends `wallets.mpc.tss_request.*` webhook events from the Cobo platform to the endpoint you register in Cobo Portal, and signs them with Cobo's webhook signature. The events on this page are sent by your own TSS Node, use the `request.*` event names, are signed with your node's RSA key, and are configured in the node configuration file. Subscribing to one does not deliver the other. For Cobo webhook events, see [Webhook event types](/v2/guides/webhooks-callbacks/webhook-event-type).
+</Note>
+
+## Before you start
+
+Event notifications use an RSA 2048 key pair. Generate the key pair and store it in the node database before you start the node for the first time:
+
+```bash
+# Generate the key pair and store it in the database
+./tss-node event key create
+
+# Display the public key, which your receiving server uses to verify signatures
+./tss-node event key info
+```
+
+The public key is printed in PEM format. Copy it to your receiving server.
+
+## Configure event notifications
+
+Add or uncomment the `event` section in the TSS Node configuration file, such as `cobo-tss-node-config.yaml`:
+
+```yaml
+event:
+  server:
+    - url: http://your-event-server:11030/v2/event
+  event_types:
+    - request.keygen.succeeded
+    - request.keyreshare.succeeded
+    - request.keysign.succeeded
+    - request.keysharesign.succeeded
+  token_expire_minutes: 2
+  retry_times: 60
+  sleep_seconds: 60
+  request_timeout: 10
+  monitor_interval: 10s
+```
+
+### Top-level parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `server` | list | None | The list of receiving servers. You can configure more than one. |
+| `event_types` | list of strings | `[]`, which sends nothing | The event types to subscribe to. Each server inherits this list unless it defines its own. |
+| `token_expire_minutes` | integer | `2` | The JWT validity period in minutes. Your server rejects the request after the token expires. |
+| `retry_times` | integer | `60` | The maximum number of retries after a failed push. `0` means retry without limit. |
+| `sleep_seconds` | integer | `60` | The wait time in seconds between retries. The interval is fixed, with no exponential backoff. |
+| `request_timeout` | integer | `10` | The timeout in seconds for a single HTTP request. |
+| `proxy` | string | Empty | An optional HTTP proxy address, such as `http://proxy:8080`. |
+| `monitor_interval` | string | Empty, which disables health checks | The health check interval as a Go duration, such as `10s` or `1m`. |
+
+### Per-server parameters
+
+Each entry under `server` inherits the top-level values, and can override any of them.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `url` | string | Required. The target URL for event delivery. |
+| `event_types` | list of strings | The event types this server subscribes to. Inherits the top-level `event_types` when omitted. |
+| `token_expire_minutes` | integer | Overrides the top-level value. |
+| `retry_times` | integer | Overrides the top-level value. |
+| `sleep_seconds` | integer | Overrides the top-level value. |
+| `request_timeout` | integer | Overrides the top-level value. |
+| `proxy` | string | Overrides the top-level value. |
+| `monitor_interval` | string | Overrides the top-level value. |
+
+The following example sends signing events to one server and the full set of events to an audit server, with a longer retry budget for the audit server:
+
+```yaml
+event:
+  token_expire_minutes: 2
+  retry_times: 60
+  sleep_seconds: 30
+  request_timeout: 10
+  monitor_interval: 30s
+  server:
+    - url: http://primary-server:11030/v2/event
+      event_types:
+        - request.keysign.succeeded
+        - request.keysign.failed
+    - url: http://audit-server:11031/v2/event
+      event_types:
+        - request.keygen.succeeded
+        - request.keyreshare.succeeded
+        - request.keysign.succeeded
+        - request.keysharesign.succeeded
+      retry_times: 120
+      sleep_seconds: 60
+```
+
+The same event can go to several servers. Each server keeps its own retry state, so a failure on one server does not affect delivery to another.
+
+## Supported event types
+
+Subscribe only to the event types your integration acts on, so the node does not spend delivery attempts on events you discard.
+
+### KeyGen
+
+| Event type | When it occurs |
+|------------|----------------|
+| `request.keygen.created` | A key generation request is created. |
+| `request.keygen.updated` | The key generation status changes while the operation is in progress. |
+| `request.keygen.succeeded` | Key generation completes successfully. |
+| `request.keygen.failed` | Key generation fails. |
+
+### KeySign
+
+| Event type | When it occurs |
+|------------|----------------|
+| `request.keysign.created` | A signing request is created. |
+| `request.keysign.updated` | The signing status changes while the operation is in progress. |
+| `request.keysign.succeeded` | Signing completes successfully. |
+| `request.keysign.failed` | Signing fails. |
+
+### KeyReshare
+
+| Event type | When it occurs |
+|------------|----------------|
+| `request.keyreshare.created` | A key resharing request is created. |
+| `request.keyreshare.updated` | The resharing status changes while the operation is in progress. |
+| `request.keyreshare.succeeded` | Key resharing completes successfully. |
+| `request.keyreshare.failed` | Key resharing fails. |
+
+### KeyShareSign
+
+| Event type | When it occurs |
+|------------|----------------|
+| `request.keysharesign.created` | A key share signing request is created. |
+| `request.keysharesign.updated` | The key share signing status changes while the operation is in progress. |
+| `request.keysharesign.succeeded` | Key share signing completes successfully. |
+| `request.keysharesign.failed` | Key share signing fails. |
+
+## Request format
+
+The node sends each event as a form-encoded POST request, with the JWT in the `TSS_JWT_MSG` field:
+
+```http
+POST /v2/event HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+TSS_JWT_MSG=<JWT string>
+```
+
+The JWT is signed with RS256, using the RSA 2048 private key stored locally by the node.
+
+The JWT header is:
+
+```json
+{
+  "alg": "RS256",
+  "typ": "JWT"
+}
+```
+
+The JWT payload is:
+
+```json
+{
+  "package_data": "<Base64-encoded event JSON>",
+  "exp": 1700000000,
+  "iss": ""
+}
+```
+
+| Claim | Description |
+|-------|-------------|
+| `package_data` | The event body, serialized to JSON and then Base64-encoded. |
+| `exp` | The expiration time as a Unix timestamp in seconds, equal to the send time plus `token_expire_minutes`. |
+| `iss` | Always an empty string. |
+
+Your server must return `200 OK` or `201 Created`. The node treats every other status code as a failure and retries.
+
+## Event payload
+
+After you decode `package_data`, the event body has the following shape:
+
+```json
+{
+  "event_id": "550e8400-e29b-41d4-a716-446655440000",
+  "event_type": "request.keysign.succeeded",
+  "node_id": "your-node-id",
+  "created_timestamp": 1700000000000,
+  "data": { }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `event_id` | string | The unique event ID as a UUID. Use it to make your handler idempotent, because the same event can arrive more than once. |
+| `event_type` | string | The event type, such as `request.keysign.succeeded`. |
+| `node_id` | string | The ID of the node that produced the event. |
+| `created_timestamp` | int64 | The event creation time as a Unix timestamp in milliseconds. |
+| `data` | object | The event details. The structure depends on `event_type`, as shown below. |
+
+Every `data` object carries `data_type`, `request_id`, `request_type`, `request_status`, `request_detail`, `extra_info`, `failed_reason`, and `result`. The fields inside `request_detail` and `result` differ per operation.
+
+<CodeGroup>
+```json KeyGen
+{
+  "data_type": "KeyGen",
+  "request_id": "req-xxx",
+  "request_type": "KeyGen",
+  "request_status": 3,
+  "request_detail": {
+    "threshold": 2,
+    "curve": 0,
+    "node_ids": ["node1", "node2", "node3"],
+    "task_id": "task-xxx",
+    "biz_task_id": "biz-xxx"
+  },
+  "extra_info": "",
+  "failed_reason": "",
+  "result": {
+    "group_id": "group-xxx",
+    "root_pub_key": "04abcd..."
+  }
+}
+```
+
+```json KeySign
+{
+  "data_type": "KeySign",
+  "request_id": "req-xxx",
+  "request_type": "KeySign",
+  "request_status": 3,
+  "request_detail": {
+    "group_id": "group-xxx",
+    "root_pub_key": "04abcd...",
+    "used_node_ids": ["node1", "node2"],
+    "bip32_path_list": ["m/44/0/0/0/0"],
+    "msg_hash_list": ["abcdef..."],
+    "tweak_list": [],
+    "signature_type": "ecdsa",
+    "tss_protocol": "gg20",
+    "task_id": "task-xxx",
+    "biz_task_id": "biz-xxx"
+  },
+  "extra_info": "",
+  "failed_reason": "",
+  "result": {
+    "signatures": ["sig-hex..."]
+  }
+}
+```
+
+```json KeyReshare
+{
+  "data_type": "KeyReshare",
+  "request_id": "req-xxx",
+  "request_type": "KeyReshare",
+  "request_status": 3,
+  "request_detail": {
+    "old_group_id": "old-group-xxx",
+    "root_pub_key": "04abcd...",
+    "curve": 0,
+    "used_node_ids": ["node1", "node2"],
+    "old_threshold": 2,
+    "new_threshold": 3,
+    "new_node_ids": ["node1", "node2", "node3", "node4"],
+    "task_id": "task-xxx",
+    "biz_task_id": "biz-xxx"
+  },
+  "extra_info": "",
+  "failed_reason": "",
+  "result": {
+    "group_id": "new-group-xxx",
+    "root_pub_key": "04abcd..."
+  }
+}
+```
+
+```json KeyShareSign
+{
+  "data_type": "KeyShareSign",
+  "request_id": "req-xxx",
+  "request_type": "KeyShareSign",
+  "request_status": 3,
+  "request_detail": {
+    "group_id": "group-xxx",
+    "used_node_ids": ["node1", "node2"],
+    "bip32_path_list": ["m/44/0/0/0/0"],
+    "msg_hash_list": ["abcdef..."],
+    "task_id": "task-xxx",
+    "biz_task_id": "biz-xxx"
+  },
+  "extra_info": "",
+  "failed_reason": "",
+  "result": { }
+}
+```
+</CodeGroup>
+
+## Delivery and retries
+
+When a delivery attempt fails, the node waits `sleep_seconds` and tries again, up to `retry_times` attempts. The interval is fixed, so the wait between attempts does not grow.
+
+The following behavior applies to every configured server:
+
+- Setting `retry_times` to `0` retries without limit, until the push succeeds or the node stops.
+- The node writes each event to its database before the first attempt, with the status `pending`. After a restart, it resumes delivery of up to 1000 pending events.
+- After a successful push, the node deletes the event record. After the retry budget is exhausted, it marks the event `failed`.
+
+Because a failed attempt is retried, your server can receive the same event more than once. Deduplicate on `event_id`.
+
+The following table shows how the two retry parameters combine:
+
+| Goal | `retry_times` | `sleep_seconds` | Result |
+|------|---------------|-----------------|--------|
+| Do not lose critical events | `0` | `30` | Retries without limit, at 30-second intervals. |
+| Balance reliability and queue throughput | `60` | `60` | Retries for up to one hour. |
+| Surface delivery problems quickly | `3` | `5` | Gives up early instead of holding the queue. |
+
+## Health checks
+
+When `monitor_interval` is not empty, the node periodically sends a ping request to each event server:
+
+```yaml
+monitor_interval: 30s
+```
+
+A ping request uses the same JWT mechanism as an event, and its `package_data` carries `event_type` set to `ping`. The node retries a failed ping up to two times, at 3-second intervals.
+
+Handle `ping` separately from business events: return `200 OK` and do no further processing.
+
+## Implement a receiving server
+
+Cobo publishes Go and Java event server templates that you can clone and complete with your own business logic:
+
+- Repository: [cobo-mpc-callback-server-v2-template](https://github.com/CoboGlobal/cobo-mpc-callback-server-v2-template)
+- Go implementation: `cobo-mpc-event-server-golang/`
+- Java implementation: `cobo-mpc-event-server-java/`
+
+Both templates follow the same flow:
+
+1. Listen for `POST /v2/event` and read the JWT from the `TSS_JWT_MSG` form field.
+2. Verify the signature with the node's RSA public key, stored at `configs/tss-node-event-pub.key`. Return `400 Bad Request` when verification fails.
+3. Decode the event JSON from the `package_data` claim.
+4. Deserialize it into a `TSSEvent` with the `cobo-waas2` SDK, then dispatch on the event type.
+5. Return `200 OK` on success. Return `200 OK` for `ping` events without further processing.
+
+For implementation details, see the `README.md` and source of each template in the repository.
+
+## Recommended configuration
+
+The following configuration keeps critical events from being dropped, and sets `token_expire_minutes` above `request_timeout` so a token does not expire before the request times out:
+
+```yaml
+event:
+  server:
+    - url: https://your-event-receiver/v2/event
+  event_types:
+    - request.keygen.succeeded
+    - request.keygen.failed
+    - request.keysign.succeeded
+    - request.keysign.failed
+    - request.keyreshare.succeeded
+    - request.keyreshare.failed
+    - request.keysharesign.succeeded
+    - request.keysharesign.failed
+  token_expire_minutes: 5
+  retry_times: 0
+  sleep_seconds: 30
+  request_timeout: 10
+  monitor_interval: 60s
+```
+
+The node generates a new JWT for each retry, so raise `token_expire_minutes` when you use a long `sleep_seconds`.
+
+## FAQ
+
+<AccordionGroup>
+<Accordion title="How do I get the public key for signature verification?">
+Run `./tss-node event key info` on the node. The command prints the public key in PEM format. Configure that key on your receiving server.
+</Accordion>
+
+<Accordion title="Can the same event be delivered more than once?">
+Yes. The node retries when the network fails or when your server does not return `200 OK` or `201 Created`. Deduplicate on `event_id`, which is a UUID.
+</Accordion>
+
+<Accordion title="Are undelivered events lost when the node restarts?">
+No. The node writes each event to its database with the status `pending` before the first delivery attempt, and resumes delivery after a restart.
+</Accordion>
+
+<Accordion title="What is the difference between setting retry_times to 0 and omitting it?">
+Setting `retry_times` to `0` retries without limit. Omitting it applies the default of `60`.
+</Accordion>
+
+<Accordion title="What value should I use for token_expire_minutes?">
+Use a value between 2 and 5 minutes, and keep it above `request_timeout` so the token does not expire before the request times out. Raise it further when `sleep_seconds` is large, because the node generates a new JWT for each retry.
+</Accordion>
+
+<Accordion title="Can I configure more than one receiving server?">
+Yes. Add an entry per server under `server`. Each server receives events and retries independently.
+</Accordion>
+</AccordionGroup>
