@@ -90,7 +90,8 @@
                           "v2/guides/mpc-wallets/server-co-signer/tss-node-network-environments",
                           "v2/guides/mpc-wallets/server-co-signer/tss-node-server-environments",
                           "v2/guides/mpc-wallets/server-co-signer/tss-node-deployment",
-                          "v2/guides/mpc-wallets/server-co-signer/tss-node-update"
+                          "v2/guides/mpc-wallets/server-co-signer/tss-node-update",
+              "v2/guides/mpc-wallets/server-co-signer/tss-node-event-notifications"
                         ]
                       },
                       {
@@ -909,7 +910,8 @@
                           "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-network-environments",
                           "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-server-environments",
                           "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-deployment",
-                          "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-update"
+                          "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-update",
+              "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-event-notifications"
                         ]
                       },
                       {
