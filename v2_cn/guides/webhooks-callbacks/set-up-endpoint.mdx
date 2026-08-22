@@ -76,6 +76,29 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
     vk.verify(bytes.fromhex(signature), sha256_hash)
     ```
 
+### 读取交易数据
+
+事件数据是一个判别联合：`data.data_type` 决定数据模型，对于交易，`destination.destination_type` 从十五种目标模型中选定一种。使用 SDK 生成的模型反序列化事件，两层判别都会自动完成，得到的对象只暴露该变体实际拥有的字段：
+
+```python
+from cobo_waas2 import WebhookEvent
+
+event = WebhookEvent.from_json(raw_body)
+transaction = event.data.actual_instance
+destination = transaction.destination.actual_instance
+```
+
+请优先使用这种方式，而不是从解析后的 JSON 中按固定路径取值。对手方地址与金额在不同交易中的位置并不相同，而且很容易被忽略——开发阶段收到的第一笔交易通常是充值：
+
+| `destination_type` | 地址与金额位置 |
+| --- | --- |
+| `DepositToAddress` | `destination.address`、`destination.amount` |
+| `Address` | `destination.account_output.address`、`.amount` |
+
+<Warning>
+  两种结构在交易顶层都没有 `address` 或 `amount`。按固定路径取值的处理逻辑会静默漏掉所有目标结构不同的交易，而上表两种只是十五种中最常见的两种。
+</Warning>
+
 ### 响应 API 请求
 
 正确响应 Webhook 事件和 Callback 消息对于确保 Webhook 和 Callback 按预期处理至关重要。本节描述了 Webhook 和 Callback Endpoint 的预期响应。

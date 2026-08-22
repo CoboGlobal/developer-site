@@ -76,6 +76,29 @@ The verification steps are as follows:
     vk.verify(bytes.fromhex(signature), sha256_hash)
     ```
 
+### Read the transaction data
+
+The event data is a discriminated union: `data.data_type` selects the data model, and for a transaction, `destination.destination_type` selects one of fifteen destination models. Deserialize the event with the generated model and both are resolved for you, so the object you get exposes exactly the fields that variant has:
+
+```python
+from cobo_waas2 import WebhookEvent
+
+event = WebhookEvent.from_json(raw_body)
+transaction = event.data.actual_instance
+destination = transaction.destination.actual_instance
+```
+
+Prefer this over reading fixed paths out of the parsed JSON. The counterparty address and amount do not sit in the same place for every transaction, and the difference is easy to miss because a deposit is usually the first event you receive while developing:
+
+| `destination_type` | address and amount |
+| --- | --- |
+| `DepositToAddress` | `destination.address`, `destination.amount` |
+| `Address` | `destination.account_output.address`, `.amount` |
+
+<Warning>
+  Neither shape carries a top-level `address` or `amount` on the transaction. A handler that reads a fixed path silently misses every transaction whose destination has a different shape, and the two above are only the most common of fifteen.
+</Warning>
+
 ### Respond to the API request
 
 Properly responding to webhook events and callback messages is crucial for ensuring that webhooks and callbacks are processed as expected. This section describes the expected response from both webhook and callback endpoints. 
