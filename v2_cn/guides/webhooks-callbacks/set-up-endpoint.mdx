@@ -76,6 +76,19 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
     vk.verify(bytes.fromhex(signature), sha256_hash)
     ```
 
+### 读取事件
+
+验证签名之后，请使用 SDK 生成的模型反序列化事件，而不是从解析后的 JSON 中取值：
+
+```python
+from cobo_waas2 import WebhookEvent
+
+event = WebhookEvent.from_json(raw_body)
+transaction = event.data.actual_instance
+```
+
+事件载荷是一个判别联合——`data_type` 决定数据模型，交易的 `destination_type` 决定其目标模型——因此像 `destination["address"]` 这样的固定路径只对部分交易成立。模型会自动判定变体，并返回带有该变体字段的对象。完整的处理示例见本页「代码示例」一节。
+
 ### 响应 API 请求
 
 正确响应 Webhook 事件和 Callback 消息对于确保 Webhook 和 Callback 按预期处理至关重要。本节描述了 Webhook 和 Callback Endpoint 的预期响应。

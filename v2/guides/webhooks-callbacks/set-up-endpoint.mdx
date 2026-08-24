@@ -76,6 +76,19 @@ The verification steps are as follows:
     vk.verify(bytes.fromhex(signature), sha256_hash)
     ```
 
+### Read the event
+
+After verifying the signature, deserialize the event with the generated model rather than reading values out of the parsed JSON:
+
+```python
+from cobo_waas2 import WebhookEvent
+
+event = WebhookEvent.from_json(raw_body)
+transaction = event.data.actual_instance
+```
+
+The payload is a discriminated union — `data_type` selects the data model, and a transaction's `destination_type` selects its destination model — so a fixed path such as `destination["address"]` holds for some transactions and not for others. The model resolves the variant and hands you an object carrying that variant's fields. See [Code samples](#code-samples) for complete handlers.
+
 ### Respond to the API request
 
 Properly responding to webhook events and callback messages is crucial for ensuring that webhooks and callbacks are processed as expected. This section describes the expected response from both webhook and callback endpoints. 
