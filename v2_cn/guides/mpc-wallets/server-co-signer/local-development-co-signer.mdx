@@ -1,0 +1,104 @@
+---
+title: "在开发机上运行协签节点"
+lang: "zh-CN"
+description: "为开发与测试搭建本地 TSS Node——一台笔记本即可，无需公网入站访问，端到端约七分钟。"
+---
+
+Org-Controlled MPC vault 需要在 Cobo 之外再有一个私钥分片持有者。生产环境
+应部署加固的服务器协签节点；开发与测试用您自己的机器就够了。本地 TSS Node
+以单个 Docker 容器运行，只发起出站连接（无需公网 URL、无需入站端口），从零
+到可用钱包约七分钟——且每一步都可以通过代码完成，整个流程支持无人值守。
+
+<Note>
+此处生成的私钥分片保存在您机器上的 `db/secrets.db` 中，以您的密码加密。
+数据库文件与密码合起来就是私钥分片：请同时备份两者，并把由笔记本协签的
+钱包视为开发钱包，而非生产钱包。
+</Note>
+
+## 前置条件
+
+- 已安装并运行 Docker（macOS 上 Docker Desktop 即可）
+- 具备 MPC 钱包权限的 Cobo API key
+- Cobo CLI >= 0.1.10（`pip install cobo-cli`），用于下文的一条命令路径
+
+## 路径 A：Cobo CLI（推荐）
+
+```bash
+# 密码文件：16-32 个字符；与备份一同妥善保存
+printf '%s' 'YourStrongPassphraseHere' > ~/.cobo/tss-node.key && chmod 600 ~/.cobo/tss-node.key
+
+cobo --env prod node init  --key-file ~/.cobo/tss-node.key
+cobo --env prod node start --key-file ~/.cobo/tss-node.key
+cobo --env prod node status
+```
+
+`init` 会打印下一步需要的节点 ID。尚未加入任何私钥分片持有者组的节点会被
+中继拒绝（"not bound to any app"）——`status` 会说明这是入组前的预期状态，
+不是故障。中继环境跟随 CLI 环境：`--env prod` 连接生产中继，`--env dev`
+连接开发中继。
+
+如果所在网络有拦截 TLS 的企业代理，在 `start` 时加上
+`--ca-bundle /path/to/proxy-ca.pem`。
+
+## 路径 B：直接使用官方部署包
+
+按照[部署服务器协签节点](/v2_cn/guides/mpc-wallets/server-co-signer/tss-node-deployment)
+操作，在开发机上做两处调整：
+
+1. 用 `--key-file` 非交互式提供密码（见该页的非交互式初始化一节）——
+   管道喂入密码不可用。
+2. 启动前先创建生产环境配置：
+   `printf 'env: production\n' > configs/cobo-tss-node-config.yaml`
+
+## 绑定节点并生成密钥——全程 API
+
+1. 用 [Create vault](/v2/api-references/wallets--mpc-wallets/create-vault)
+   创建 vault：
+
+```json
+{"name": "Dev Vault", "vault_type": "Org-Controlled"}
+```
+
+2. 用 [Create key share holder group](/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group)
+   创建包含您节点 ID 的持有者组。Cobo 会自动补位为第一持有者：
+
+```json
+{
+  "key_share_holder_group_type": "MainGroup",
+  "participants": 2,
+  "threshold": 2,
+  "key_share_holders": [
+    {"name": "dev machine", "type": "API",
+     "tss_node_id": "<your node id>", "signer": true}
+  ]
+}
+```
+
+3. 用 [Create TSS request](/v2/api-references/wallets--mpc-wallets/create-tss-request)
+   发起密钥生成仪式，轮询至 `status` 为 `Success`（双方在线时约 20 秒）：
+
+```json
+{"type": "KeyGen", "target_key_share_holder_group_id": "<group id>"}
+```
+
+创建持有者组即完成节点注册——没有单独的注册步骤。节点日志会出现
+`TSS Node registration accepted`，`cobo node status` 显示已连上中继。
+
+枚举值大小写精确：持有者类型是 `API`（缩写词全大写，与 API 中的 `MPC`、
+`UTXO` 一致），组类型是 `MainGroup`。
+
+## 密钥生成之后
+
+- vault 下会**自动创建默认钱包**，并自动生成主网地址（ETH、BTC、SOL）。
+  测试网地址需显式创建——例如在钱包的创建地址操作上传入
+  `{"chain_id": "SETH", "count": 1}`。
+- **测试币空投仅发生在组织的第一个 vault**；之后的 vault 不会有空投——
+  请从您的第一个钱包转入资金。
+- 签名需要节点在线；收款不需要（地址由服务端从 vault 根公钥派生）。
+
+## 停止与恢复
+
+```bash
+cobo node stop    # 容器移除；私钥分片保留在 db/secrets.db
+cobo node start --key-file ~/.cobo/tss-node.key   # 以同一身份恢复
+```

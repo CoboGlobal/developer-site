@@ -152,6 +152,16 @@ TSS Node 默认配置为连接到开发环境，因此不需要额外的配置�
 
 要开始，请创建 `cobo-tss-node-config.yaml.template` 的副本，并将其重命名为 `cobo-tss-node-config.yaml`。将新文件粘贴到 `configs` 目录中。有关说明，请参阅 [配置 TSS Node ](/v2_cn/guides/mpc-wallets/server-co-signer/appendix#configure-the-tss-node)。请记住，在修改配置文件后重新启动 TSS Node 包。
 
+连接生产环境的最小配置只有一行：
+
+```
+printf 'env: production\n' > configs/cobo-tss-node-config.yaml
+```
+
+<Warning>
+节点连错环境的中继时不会报任何错误——它只是永远不会在另一个环境创建的 vault 中上线，针对该 vault 的密钥生成会无限等待。如果您的 API 调用指向 `https://api.cobo.com`，请在启动节点前设置 `env: production`。
+</Warning>
+
 ### 启动脚本
 
 TSS Node 包包含一个启动脚本 `tss-node.sh`，用于：
@@ -215,6 +225,20 @@ INFO[2023-01-13T05:12:11Z] 完成初始化 TSS Node 密钥和数据
 - 节点 ID 将自动生成（例如 `cobo73VA6C6WvofPg8tWYmqvdUF1cPYhd7EmGUxTexz5HCzYe`），并作为 TSS Node 的唯一标识符。
 - TSS Node Callback 私钥将自动生成，用于验证与 TSS Node Callback 服务器的通信，并打印出相应的公钥。
 
+### 非交互式初始化（自动化、CI、AI agent）
+
+上文的密码输入需要交互式终端：通过管道向 `init` 喂入密码会直接报错（`cannot attach stdin to a TTY-enabled container`），向 `start` 喂入则会静默挂起。无人值守环境请改用密码文件——TSS Node 程序在每个命令上都支持全局 `--key-file` 参数：
+
+```
+# 密码文件：16-32 个字符；与备份一同妥善保存
+./tss-node.sh init --key-file /path/to/password.txt
+./tss-node.sh start --key-file /path/to/password.txt
+```
+
+<Warning>
+密码文件与 `db/secrets.db` 合起来就是私钥分片：请同时备份两者，丢失任何一个即丢失分片。不要把密码本身作为命令行参数传入——机器上的其他用户可以读取进程参数。
+</Warning>
+
 ## 启动 TSS Node 
 
 执行以下命令来启动 TSS Node ：
@@ -261,7 +285,11 @@ INFO[2023-01-13T05:15:10Z] 开始注册服务
 
 ## 创建私钥分片持有者组
 
-您现在可以继续创建持有者组，请参阅 [通过 Cobo Portal 创建持有者组](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-overview)。
+您现在可以创建包含此 TSS Node ID 的私钥分片持有者组——通过 [Create key share holder group](/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group) 操作，或[在 Cobo Portal 上创建](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-overview)。没有单独的注册步骤：持有者组创建成功时，节点即自动完成注册。
+
+<Note>
+在持有者组存在之前，中继会以 "node ... is not bound to any app" 拒绝节点连接，节点会持续重试。这是该步骤之前的预期状态，不是故障。
+</Note>
 
 创建持有者组后，注册状态将更新为以下内容：
 

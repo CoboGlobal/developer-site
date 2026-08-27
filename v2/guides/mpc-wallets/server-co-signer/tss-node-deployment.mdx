@@ -153,7 +153,17 @@ The default config file is `configs/cobo-tss-node-config.yaml.template`.
 
 The TSS Node is configured to connect to the development environment by default, requiring no additional config file for it to run. However, if you wish to connect to the production environment, manual modification of the config file is necessary. 
 
-To initiate this, create a duplicate of `cobo-tss-node-config.yaml.template`, renaming it as cobo-tss-node-config.yaml. Paste the new file into the `configs` directory. For instructions, please refer to [Configure the TSS Node](/v2/guides/mpc-wallets/server-co-signer/appendix#configure-the-tss-node). Remember to restart the TSS Node package once the config file is modified.
+To initiate this, create a duplicate of `cobo-tss-node-config.yaml.template`, renaming it as cobo-tss-node-config.yaml. Paste the new file into the `configs` directory. For instructions, please refer to [Configure the TSS Node](/v2/guides/mpc-wallets/server-co-signer/appendix#configure-the-tss-node).
+
+To connect to the production environment, the minimal config file is one line:
+
+```
+printf 'env: production\n' > configs/cobo-tss-node-config.yaml
+```
+
+<Warning>
+A node connected to the wrong environment's relay reports no error — it simply never comes online for a vault created in the other environment, and a key generation targeting that vault waits indefinitely. If your API calls go to `https://api.cobo.com`, set `env: production` before starting the node.
+</Warning> Remember to restart the TSS Node package once the config file is modified.
 
 ### Startup script
 
@@ -219,6 +229,20 @@ Execution Workflow:
 - The TSS Node callback private key, which is a private key for authenticating the communication with the TSS Node callback server, will be automatically generated and the corresponding public key will be printed.
 
 
+### Non-interactive initialization (automation, CI, AI agents)
+
+The password prompts above require an interactive terminal: piping the password into `init` fails (`cannot attach stdin to a TTY-enabled container`), and piping it into `start` hangs. For unattended environments, supply the password from a file instead — the TSS Node binary accepts a global `--key-file` flag on every command:
+
+```
+# password file: 16-32 characters; keep it with your backups
+./tss-node.sh init --key-file /path/to/password.txt
+./tss-node.sh start --key-file /path/to/password.txt
+```
+
+<Warning>
+The password file and `db/secrets.db` together are the key share: back both up, and losing either loses the share. Do not pass the password itself as a command-line argument — other users on the machine can read process arguments.
+</Warning>
+
 ## Start the TSS Node 
 
 Execute the following command to start the TSS Node:
@@ -265,7 +289,12 @@ At this stage, the TSS Node is ready to be included in a key share holder group.
 
 ## Create a key share holder group
 
-You can now proceed with [creating a holder group through Cobo Portal](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-overview) with this TSS Node. 
+You can now create a key share holder group carrying this TSS Node's ID — via the [Create key share holder group](/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group) operation, or [on Cobo Portal](https://manuals.cobo.com/en/portal/mpc-wallets/ocw/holder-group-overview). There is no separate registration step: the node registers itself as a side effect of the group being created.
+
+<Note>
+Until the group exists, the relay refuses the node's connection with "node ... is not bound to any app" and the node keeps retrying. That is the expected state before this step, not an error.
+</Note>
+
 
 Upon successful creation of the holder group, the registration status will be updated to the following:
 

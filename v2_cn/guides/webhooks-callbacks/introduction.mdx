@@ -37,7 +37,7 @@ Callback 和 webhook 在您的业务操作中具有不同的用途。
 3. 在 Cobo Portal 上注册Endpoint。
     <Note>注册 Webhook Endpoint 时，您需要指定要订阅的事件类型。</Note>
 
-要创建Endpoint并实现处理逻辑，请参阅 [设置Callback或 Webhook Endpoint](/v2_cn/guides/webhooks-callbacks/set-up-endpoint)。
+要创建Endpoint并实现处理逻辑——包括签名验证算法（对 `raw_body|timestamp` 做双重 SHA-256 后以 Ed25519 验证）——请参阅 [设置Callback或 Webhook Endpoint](/v2_cn/guides/webhooks-callbacks/set-up-endpoint)。
 
 要注册Endpoint，请参阅 [注册 Webhook Endpoint](https://manuals.cobo.com/cn/portal/developer-console/webhooks-create) 和 [注册Callback Endpoint](https://manuals.cobo.com/cn/portal/developer-console/callbacks-register)。
 
