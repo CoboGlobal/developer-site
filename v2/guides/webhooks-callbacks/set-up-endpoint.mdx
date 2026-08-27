@@ -38,6 +38,14 @@ The verification steps are as follows:
     timestamp = request.headers.get("BIZ_TIMESTAMP")
     ```
 
+    <Note>
+    Every header is sent in two spellings: `BIZ_TIMESTAMP` and `BIZ-TIMESTAMP` (likewise `BIZ_RESP_SIGNATURE` and `BIZ-RESP-SIGNATURE`). This is deliberate: many reverse proxies — nginx by default — silently drop HTTP headers containing underscores, so behind such a proxy only the hyphenated variants arrive. Read whichever is present:
+
+    ```python
+    timestamp = request.headers.get("BIZ_TIMESTAMP") or request.headers.get("BIZ-TIMESTAMP")
+    ```
+    </Note>
+
 2. Retrieve the signature. 
 
     Fetch the signature value from the request header.
@@ -75,6 +83,10 @@ The verification steps are as follows:
     # Verify the signature against the computed message hash.
     vk.verify(bytes.fromhex(signature), sha256_hash)
     ```
+
+<Tip>
+API responses are signed with the same Ed25519 scheme and the same per-environment key, carried in the same headers. You can therefore prove your verifier against a genuine Cobo signature by running it on any API response — no endpoint registration and no waiting for a real delivery.
+</Tip>
 
 ### Read the event
 

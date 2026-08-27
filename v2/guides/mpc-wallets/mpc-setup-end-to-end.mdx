@@ -1,0 +1,104 @@
+---
+title: "MPC wallet setup, end to end"
+lang: "en"
+description: "The complete path from nothing to a usable Org-Controlled MPC wallet: vault, key share holder group, key generation, wallet, address — and what happens automatically at each step."
+---
+
+Setting up an Org-Controlled MPC wallet is four API calls plus one key
+ceremony. This page walks the whole chain once, states what each step
+produces, and names the automatic behaviors — the parts that are easy to
+miss when assembling the flow from individual API reference pages.
+
+```
+vault ──► key share holder group ──► key generation ──► default wallet (automatic) ──► address
+```
+
+## 1. Create a vault
+
+Use [Create vault](/v2/api-references/wallets--mpc-wallets/create-vault):
+
+```json
+{"name": "My Vault", "vault_type": "Org-Controlled"}
+```
+
+This produces a vault whose `root_pubkeys` is empty — the vault has no keys
+yet and cannot hold wallets until key generation completes.
+
+## 2. Create the key share holder group
+
+Use [Create key share holder group](/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group):
+
+```json
+{
+  "key_share_holder_group_type": "MainGroup",
+  "participants": 2,
+  "threshold": 2,
+  "key_share_holders": [
+    {"name": "my co-signer", "type": "API",
+     "tss_node_id": "cobo...", "signer": true}
+  ]
+}
+```
+
+- Cobo is **prepended automatically** as the first holder; list only your
+  own holders. `participants` counts all holders including Cobo.
+- The threshold must be at least 2 — a single-party group is rejected.
+- Holder `type` is one of `Cobo`, `Mobile`, `API` (exact case; `API` is an
+  acronym). `Mobile` means a phone running Cobo Guard, and every signature
+  will need that phone; `API` means a TSS Node you run — see
+  [Run a co-signer on your development machine](/v2/guides/mpc-wallets/server-co-signer/local-development-co-signer)
+  for a local one.
+- Creating the group **is** the node's registration: a TSS Node listed here
+  stops being refused by the relay ("not bound to any app") the moment the
+  group exists. The group starts in `status: New`.
+
+## 3. Run the key generation ceremony
+
+Use [Create TSS request](/v2/api-references/wallets--mpc-wallets/create-tss-request):
+
+```json
+{"type": "KeyGen", "target_key_share_holder_group_id": "<group id>"}
+```
+
+All holders must be online (the holder group listing shows `online` per
+holder). Poll the request until it finishes:
+
+```
+status: KeyGenerating → MPCProcessing → Success
+```
+
+Typical duration with both parties online is about 20 seconds. On success
+the vault carries two `root_pubkeys` (SECP256K1 and ED25519) and the group
+becomes `Valid`.
+
+## 4. What happens automatically after key generation
+
+- **A default wallet is created** under the vault — you do not need to
+  create the first wallet yourself.
+- The default wallet comes with **mainnet addresses** (ETH, BTC, SOL)
+  already generated. Testnet addresses are not created automatically.
+- **Test-token airdrops apply only to the first vault** of an organization.
+  A second vault's default wallet starts empty — fund it yourself; waiting
+  for an airdrop there waits forever.
+
+## 5. Addresses
+
+Create additional addresses on the wallet's address-creation operation, for
+example a Sepolia address:
+
+```json
+{"chain_id": "SETH", "count": 1}
+```
+
+Address derivation is server-side from the vault's root public key:
+**receiving works even while your co-signer is offline**. Signing
+(withdrawals, message signing) requires the signer holders to be online.
+
+## Failure modes worth knowing
+
+| Symptom | Meaning |
+| --- | --- |
+| Relay refuses the node: "not bound to any app" | Normal before step 2 — create the holder group |
+| Key generation stuck in `KeyGenerating` | A holder is offline, or the node is connected to the other environment's relay — no error is reported for this; check the node config's `env:` |
+| `400` "Invalid enum value for: ..." | Enum case is exact; the error lists the allowed values |
+| Vault has `root_pubkeys: []` | Key generation has not run — creating a group does not start it |

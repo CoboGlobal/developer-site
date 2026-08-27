@@ -37,7 +37,7 @@ Follow the steps listed below to handle webhook events and callback messages sen
 3. Register the endpoint on Cobo Portal.
     <Note>When registering a webhook endpoint, you need to specify the event types to which you want to subscribe.</Note>
 
-To create an endpoint and implement the handling logic, see [Set up a callback or webhook endpoint](/v2/guides/webhooks-callbacks/set-up-endpoint).
+To create an endpoint and implement the handling logic — including the signature verification algorithm (Ed25519 over a double SHA-256 of `raw_body|timestamp`) — see [Set up a callback or webhook endpoint](/v2/guides/webhooks-callbacks/set-up-endpoint).
 
 To register the endpoint, see [Register a webhook endpoint](https://manuals.cobo.com/en/portal/developer-console/webhooks-create) and [Register a callback endpoint](https://manuals.cobo.com/en/portal/developer-console/callbacks-register).
 

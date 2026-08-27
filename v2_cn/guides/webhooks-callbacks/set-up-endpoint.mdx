@@ -38,6 +38,14 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
     timestamp = request.headers.get("BIZ_TIMESTAMP")
     ```
 
+    <Note>
+    每个请求头都会以两种拼写发送：`BIZ_TIMESTAMP` 与 `BIZ-TIMESTAMP`（签名头同理：`BIZ_RESP_SIGNATURE` 与 `BIZ-RESP-SIGNATURE`）。这是有意为之：许多反向代理（如 nginx 的默认配置）会静默丢弃含下划线的 HTTP 头，经过此类代理后只有连字符版本能到达。请任读其一：
+
+    ```python
+    timestamp = request.headers.get("BIZ_TIMESTAMP") or request.headers.get("BIZ-TIMESTAMP")
+    ```
+    </Note>
+
 2. 获取签名。
 
     从请求头中获取签名值。
@@ -75,6 +83,10 @@ Ed25519 签名是基于 HTTP 请求包体的原始字节精确计算的。您必
     # Verify the signature against the computed message hash.
     vk.verify(bytes.fromhex(signature), sha256_hash)
     ```
+
+<Tip>
+API 响应使用同一套 Ed25519 签名方案与同一把环境公钥，且携带相同的请求头。因此您可以拿任意一个 API 响应来验证自己的验签器是否能通过 Cobo 的真实签名——无需注册 Endpoint，也无需等待真实推送。
+</Tip>
 
 ### 读取事件
 

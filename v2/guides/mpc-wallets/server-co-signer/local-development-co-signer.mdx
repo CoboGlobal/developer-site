@@ -1,0 +1,113 @@
+---
+title: "Run a co-signer on your development machine"
+lang: "en"
+description: "Set up a local TSS Node for development and testing — a laptop is enough, no public inbound access, about seven minutes end to end."
+---
+
+An Org-Controlled MPC vault needs a second key share holder alongside Cobo.
+For production you will deploy a hardened server co-signer; for development
+and testing, your own machine is enough. A local TSS Node runs as a single
+Docker container, makes only outbound connections (no public URL, no inbound
+ports), and takes about seven minutes from nothing to a usable wallet — with
+every step callable from code, so the whole flow also works unattended.
+
+<Note>
+The key share generated here lives on your machine, encrypted in
+`db/secrets.db` with your password. The database file and the password
+together are the key share: back both up, and treat a wallet co-signed by a
+laptop as a development wallet, not a production one.
+</Note>
+
+## Prerequisites
+
+- Docker installed and running (Docker Desktop on macOS is fine)
+- A Cobo API key with MPC wallet permissions
+- Cobo CLI >= 0.1.10 (`pip install cobo-cli`) for the one-command path below
+
+## Path A: Cobo CLI (recommended)
+
+```bash
+# password file: 16-32 characters; keep it with your backups
+printf '%s' 'YourStrongPassphraseHere' > ~/.cobo/tss-node.key && chmod 600 ~/.cobo/tss-node.key
+
+cobo --env prod node init  --key-file ~/.cobo/tss-node.key
+cobo --env prod node start --key-file ~/.cobo/tss-node.key
+cobo --env prod node status
+```
+
+`init` prints the node ID you will need next. The relay refuses a node that
+is not yet in any key share holder group ("not bound to any app") — `status`
+explains this as the expected pre-bind state, not an error. The relay
+environment follows your CLI environment: `--env prod` connects to the
+production relay, `--env dev` to development.
+
+Behind a corporate proxy that intercepts TLS, add
+`--ca-bundle /path/to/proxy-ca.pem` to `start`.
+
+## Path B: the official package directly
+
+Follow [Deploy a server co-signer](/v2/guides/mpc-wallets/server-co-signer/tss-node-deployment)
+with two adjustments for a development machine:
+
+1. Use `--key-file` for a non-interactive password (see the non-interactive
+   section on that page) — piped stdin does not work.
+2. Create the production config before starting:
+   `printf 'env: production\n' > configs/cobo-tss-node-config.yaml`
+
+## Bind the node and generate keys — all over the API
+
+1. Create a vault with [Create vault](/v2/api-references/wallets--mpc-wallets/create-vault):
+
+```json
+{"name": "Dev Vault", "vault_type": "Org-Controlled"}
+```
+
+2. Create a key share holder group carrying your node ID with
+   [Create key share holder group](/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group).
+   Cobo is added automatically as the first holder:
+
+```json
+{
+  "key_share_holder_group_type": "MainGroup",
+  "participants": 2,
+  "threshold": 2,
+  "key_share_holders": [
+    {"name": "dev machine", "type": "API",
+     "tss_node_id": "<your node id>", "signer": true}
+  ]
+}
+```
+
+3. Run the key generation ceremony with
+   [Create TSS request](/v2/api-references/wallets--mpc-wallets/create-tss-request)
+   and poll it until `status` is `Success` (about 20 seconds with both
+   parties online):
+
+```json
+{"type": "KeyGen", "target_key_share_holder_group_id": "<group id>"}
+```
+
+Creating the group is what registers the node — there is no separate
+registration step. Your node's log shows `TSS Node registration accepted`
+and `cobo node status` reports "connected to the relay".
+
+Enum values are exact: the holder type is `API` (an acronym, all caps, like
+`MPC` and `UTXO` elsewhere in the API), the group type `MainGroup`.
+
+## After key generation
+
+- A default wallet is created automatically under the vault, with mainnet
+  addresses (ETH, BTC, SOL) generated. For testnets, create the address
+  explicitly — for example `{"chain_id": "SETH", "count": 1}` on the
+  wallet's address-creation operation.
+- Test-token airdrops apply only to the first vault of an organization;
+  later vaults receive none — fund them from your first wallet.
+- Signing requires the node to be running; receiving does not (addresses
+  derive from the vault's root public key server-side).
+
+## Stopping and resuming
+
+```bash
+cobo node stop    # container removed; the key share stays in db/secrets.db
+cobo node start --key-file ~/.cobo/tss-node.key   # same identity resumes
+```

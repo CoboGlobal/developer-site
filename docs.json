@@ -79,10 +79,12 @@
               {
                 "group": "MPC Wallets",
                 "pages": [
+                  "v2/guides/mpc-wallets/mpc-setup-end-to-end",
                   {
                     "group": "Server co-signers",
                     "pages": [
                       "v2/guides/mpc-wallets/server-co-signer/tss-node-overview",
+                      "v2/guides/mpc-wallets/server-co-signer/local-development-co-signer",
                       {
                         "group": "Deploy and configure a server co-signer",
                         "pages": [
@@ -91,7 +93,7 @@
                           "v2/guides/mpc-wallets/server-co-signer/tss-node-server-environments",
                           "v2/guides/mpc-wallets/server-co-signer/tss-node-deployment",
                           "v2/guides/mpc-wallets/server-co-signer/tss-node-update",
-              "v2/guides/mpc-wallets/server-co-signer/tss-node-event-notifications"
+                          "v2/guides/mpc-wallets/server-co-signer/tss-node-event-notifications"
                         ]
                       },
                       {
@@ -899,10 +901,12 @@
               {
                 "group": "MPC 钱包",
                 "pages": [
+                  "v2_cn/guides/mpc-wallets/mpc-setup-end-to-end",
                   {
                     "group": "服务端签名人",
                     "pages": [
                       "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-overview",
+                      "v2_cn/guides/mpc-wallets/server-co-signer/local-development-co-signer",
                       {
                         "group": "部署和配置服务端签名人",
                         "pages": [
@@ -911,7 +915,7 @@
                           "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-server-environments",
                           "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-deployment",
                           "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-update",
-              "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-event-notifications"
+                          "v2_cn/guides/mpc-wallets/server-co-signer/tss-node-event-notifications"
                         ]
                       },
                       {

@@ -1,0 +1,94 @@
+---
+title: "MPC 钱包开通全流程"
+lang: "zh-CN"
+description: "从零到可用 Org-Controlled MPC 钱包的完整路径：vault、私钥分片持有者组、密钥生成、钱包、地址——以及每一步自动发生的行为。"
+---
+
+开通一个 Org-Controlled MPC 钱包是四次 API 调用加一场密钥仪式。本页把完整
+链路走一遍，说明每一步的产出，并点明那些自动发生的行为——从零散的 API
+参考页拼装流程时最容易漏掉的部分。
+
+```
+vault ──► 私钥分片持有者组 ──► 密钥生成 ──► 默认钱包（自动） ──► 地址
+```
+
+## 1. 创建 vault
+
+使用 [Create vault](/v2/api-references/wallets--mpc-wallets/create-vault)：
+
+```json
+{"name": "My Vault", "vault_type": "Org-Controlled"}
+```
+
+产出的 vault 中 `root_pubkeys` 为空——此时 vault 还没有密钥，在密钥生成
+完成前无法承载钱包。
+
+## 2. 创建私钥分片持有者组
+
+使用 [Create key share holder group](/v2/api-references/wallets--mpc-wallets/create-key-share-holder-group)：
+
+```json
+{
+  "key_share_holder_group_type": "MainGroup",
+  "participants": 2,
+  "threshold": 2,
+  "key_share_holders": [
+    {"name": "my co-signer", "type": "API",
+     "tss_node_id": "cobo...", "signer": true}
+  ]
+}
+```
+
+- Cobo 会**自动补位**为第一持有者；您只需列出自己的持有者。`participants`
+  的计数包含 Cobo。
+- 门限至少为 2——单方持有者组会被拒绝。
+- 持有者 `type` 取值为 `Cobo`、`Mobile`、`API`（大小写精确；`API` 是缩写
+  词）。`Mobile` 表示运行 Cobo Guard 的手机，此后每笔签名都需要该手机；
+  `API` 表示您自行运行的 TSS Node——本地运行方式见
+  [在开发机上运行协签节点](/v2_cn/guides/mpc-wallets/server-co-signer/local-development-co-signer)。
+- 创建持有者组**就是**节点注册：列入组中的 TSS Node 在组创建成功的一刻
+  即不再被中继拒绝（"not bound to any app"）。组的初始 `status` 为 `New`。
+
+## 3. 运行密钥生成仪式
+
+使用 [Create TSS request](/v2/api-references/wallets--mpc-wallets/create-tss-request)：
+
+```json
+{"type": "KeyGen", "target_key_share_holder_group_id": "<group id>"}
+```
+
+所有持有者必须在线（持有者组查询会逐个显示 `online`）。轮询请求直至完成：
+
+```
+status: KeyGenerating → MPCProcessing → Success
+```
+
+双方在线时通常约 20 秒。成功后 vault 携带两条曲线的 `root_pubkeys`
+（SECP256K1 与 ED25519），持有者组变为 `Valid`。
+
+## 4. 密钥生成后自动发生的行为
+
+- **自动创建默认钱包**——第一个钱包不需要您自己建。
+- 默认钱包自带**主网地址**（ETH、BTC、SOL）。测试网地址不会自动生成。
+- **测试币空投仅发生在组织的第一个 vault**。第二个及之后的 vault 默认钱包
+  是空的——请自行注入资金；在那里等空投会永远等下去。
+
+## 5. 地址
+
+在钱包的创建地址操作上补建地址，例如 Sepolia 地址：
+
+```json
+{"chain_id": "SETH", "count": 1}
+```
+
+地址由服务端从 vault 根公钥派生：**协签节点离线时收款照常可用**。签名
+（提币、消息签名）则需要 signer 持有者在线。
+
+## 常见状态速查
+
+| 现象 | 含义 |
+| --- | --- |
+| 中继拒绝节点："not bound to any app" | 第 2 步之前的正常状态——创建持有者组即解除 |
+| 密钥生成停在 `KeyGenerating` | 有持有者离线，或节点连的是另一个环境的中继——这种情况不会报错；检查节点配置的 `env:` |
+| `400` "Invalid enum value for: ..." | 枚举大小写精确；报错会列出全部合法值 |
+| vault 的 `root_pubkeys` 为空 | 密钥生成尚未运行——创建持有者组不会自动触发它 |
