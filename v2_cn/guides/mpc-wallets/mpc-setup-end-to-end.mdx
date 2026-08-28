@@ -12,6 +12,17 @@ description: "从零到可用 Org-Controlled MPC 钱包的完整路径：vault�
 vault ──► 私钥分片持有者组 ──► 密钥生成 ──► 默认钱包（自动） ──► 地址
 ```
 
+<Warning>
+**开始之前：您需要有自己的协签方。** 私钥分片持有者组至少需要两个持有者
+且门限为 2，而 Cobo 自己的持有者不会单独签名——因此其中一个持有者必须是
+您自己的：运行 Cobo Guard 的手机（`Mobile`），或您自行运行的 TSS Node
+（`API`）。下面的 API 调用无法替您创建它。
+
+开发场景下，在笔记本上运行自己的节点只需几分钟：见
+[在开发机上运行协签节点](/v2_cn/guides/mpc-wallets/server-co-signer/local-development-co-signer)。
+请先完成该步骤，拿到节点 ID 后再回到本页。
+</Warning>
+
 ## 1. 创建 vault
 
 使用 [Create vault](/v2/api-references/wallets--mpc-wallets/create-vault)：
@@ -19,6 +30,8 @@ vault ──► 私钥分片持有者组 ──► 密钥生成 ──► 默认
 ```json
 {"name": "My Vault", "vault_type": "Org-Controlled"}
 ```
+
+vault 名称中不能包含 `+`、`-`、`=`、`@` 这几个字符。
 
 产出的 vault 中 `root_pubkeys` 为空——此时 vault 还没有密钥，在密钥生成
 完成前无法承载钱包。
@@ -41,7 +54,7 @@ vault ──► 私钥分片持有者组 ──► 密钥生成 ──► 默认
 
 - Cobo 会**自动补位**为第一持有者；您只需列出自己的持有者。`participants`
   的计数包含 Cobo。
-- 门限至少为 2——单方持有者组会被拒绝。
+- 门限必须为 2——单方持有者组会被拒绝。
 - 持有者 `type` 取值为 `Cobo`、`Mobile`、`API`（大小写精确；`API` 是缩写
   词）。`Mobile` 表示运行 Cobo Guard 的手机，此后每笔签名都需要该手机；
   `API` 表示您自行运行的 TSS Node——本地运行方式见
