@@ -13,6 +13,18 @@ miss when assembling the flow from individual API reference pages.
 vault ──► key share holder group ──► key generation ──► default wallet (automatic) ──► address
 ```
 
+<Warning>
+**Before you start: you need a co-signer of your own.** A key share holder
+group needs at least two holders and a threshold of 2, and Cobo's own holder
+does not sign on its own — so one of the holders must be yours, either a
+phone running Cobo Guard (`Mobile`) or a TSS Node you run (`API`). The API
+calls below cannot create one for you.
+
+For development, running your own node takes a few minutes on a laptop:
+see [Run a co-signer on your development machine](/v2/guides/mpc-wallets/server-co-signer/local-development-co-signer).
+Do that first, then come back with its node ID.
+</Warning>
+
 ## 1. Create a vault
 
 Use [Create vault](/v2/api-references/wallets--mpc-wallets/create-vault):
@@ -20,6 +32,8 @@ Use [Create vault](/v2/api-references/wallets--mpc-wallets/create-vault):
 ```json
 {"name": "My Vault", "vault_type": "Org-Controlled"}
 ```
+
+Vault names reject the characters `+`, `-`, `=` and `@`.
 
 This produces a vault whose `root_pubkeys` is empty — the vault has no keys
 yet and cannot hold wallets until key generation completes.
