@@ -11486,7 +11486,7 @@ components:
             amount:
               type: string
               description: |
-                The transfer amount. For example, if you trade 1.5 BTC, then the value is `1.5`.
+                The transfer amount, provided as a decimal string (for example, `1.5`). The value must be positive and must convert to a positive base-unit (smallest denomination) amount. The number of decimal places must not exceed the token's `decimal` value, which you can retrieve by calling [Get token information](https://www.cobo.com/developers/v2/api-references/wallets/get-token-information). For withdrawals from external Custodial Wallets, the amount must also meet or exceed the token's `dust_threshold` (minimum withdrawal amount) where applicable. If the amount fails format or conversion validation, the API may return error code `2006` with an `error_message` such as `account_output.amount invalid` or `Invalid parameter: account_output.amount.`. Precision, positivity, or dust-threshold failures may surface as different amount-specific errors depending on the wallet path.
               example: '1.5'
         utxo_outputs:
           type: array
