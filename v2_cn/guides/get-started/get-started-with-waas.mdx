@@ -18,9 +18,9 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ## 设置账户
 
-按照[快速入门](https://manuals.cobo.com/cn/portal/quick-start-guide)中的说明设置您的 Cobo 账户并创建您的团队。如果团队已经创建，请让您的团队管理员邀请您加入团队。
+请确认 Cobo 销售团队已为您开通 Cobo 账户和团队。如需申请，请参阅[获取 Cobo Portal 访问权限](https://manuals.cobo.com/cn/portal/sign-up)。如果要加入现有团队，请让团队管理员邀请您。
 
-<Note>本指南的所有示例都使用开发环境。请在开发环境 https://portal.dev.cobo.com/ 中创建您的团队。</Note>
+<Note>本指南的所有示例均使用开发环境。继续前，请确认销售团队已为您的团队开通开发环境访问权限。</Note>
 
 ## 生成 API Key 和 API Secret
 
@@ -168,7 +168,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
 
 您已成功发送 API 请求并接收响应。但是，在您创建钱包、进行交易或实现其他功能之前，还有一些事情要做。
 
-- 要开始使用钱包，您必须购买付费套餐或激活免费版套餐（如有）。要了解定价计划、账单与付款的详细信息，请参阅[账单与支付简介](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。
+- 要开始使用钱包，您的组织必须开通有效的付费套餐。要了解定价计划、账单与付款的详细信息，请参阅[账单与支付简介](https://manuals.cobo.com/cn/portal/bills-and-payments/introduction)。
 - 要从您的钱包中提取代币，您必须首先设置 Callback Endpoint 以接收和批准提币请求。强烈建议您同时设置 Webhook Endpoint 以接收有关交易状态更新和其他重要事件的实时通知。要了解如何设置和注册 Webhook 和 Callback Endpoint，请参阅 [Webhook 和 Callback 介绍](/v2_cn/guides/webhooks-callbacks/introduction)。
 
 ## 另请参阅

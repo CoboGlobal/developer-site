@@ -1542,8 +1542,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Free Trial",
-      "href": "https://www.cobo.com/lp/14-day-free-trial-cobo?utm_term=developer_freetrial.nav"
+      "label": "Contact Sales",
+      "href": "https://www.cobo.com/book-demo/?utm_source=developer-site&utm_medium=product&utm_campaign=contact-sales"
     }
   },
   "footer": {

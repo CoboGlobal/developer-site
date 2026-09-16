@@ -10,7 +10,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
 <WaasSkillReminder />
 
 The WaaS 2.0 API provides two environments serving different purposes. It is recommended that you use the development environment to test your new features first before deploying them to the production environment.
-Direct registration for a free trial grants you immediate access to the Production Environment. There is no need to switch to the development environment; both your integration testing and official usage will be conducted within the production environment.
+Cobo Portal supports sign-in only. To create a new account and organization, [contact Cobo Sales](https://www.cobo.com/book-demo/?utm_source=developer-site&utm_medium=product&utm_campaign=contact-sales). After access is provisioned, sign in to the environment assigned to your organization.
 
 |                 | **Development environment**                                  | **Production environment**                                   |
 | --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -18,7 +18,7 @@ Direct registration for a free trial grants you immediate access to the Producti
 | API base URL    | https://api.dev.cobo.com/v2                                  | https://api.cobo.com/v2                                      |
 | Cobo Portal URL | https://portal.dev.cobo.com/                                 | https://portal.cobo.com/                                     |
 | Testnets        | Supported                                                    | Supported                                                    |
-| Pricing         | Free to use                                                  | Paid. For details, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
+| Access and pricing | Provisioned by Cobo Sales for eligible organizations      | An active paid plan is required. For details, see [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction). |
 
 <Warning>
 API keys are **environment-specific**. Keys registered in the Development environment (`portal.dev.cobo.com`) are only valid for the Development API host (`api.dev.cobo.com`), and keys registered in the Production environment (`portal.cobo.com`) are only valid for the Production API host (`api.cobo.com`). Using a key from the wrong environment returns HTTP 401 / error code 2024 with the message `Your API key is not registered in this environment. Development and Production environments use separate API keys.` Register your API key in the matching Cobo Portal for the environment you are calling.

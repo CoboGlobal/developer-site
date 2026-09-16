@@ -18,9 +18,9 @@ If you choose to use a WaaS SDK instead of manually writing the API requests, yo
 
 ## Set up an account
 
-Follow the instructions in [Set up your account and organization](https://manuals.cobo.com/en/portal/quick-start-guide) to set up your Cobo account and create your organization. If an organization has already been set up, ask your organization admin to invite you to join the organization.
+Make sure Cobo Sales has provisioned your Cobo account and organization. To request access, see [Get access to Cobo Portal](https://manuals.cobo.com/en/portal/sign-up). If you are joining an existing organization, ask its admin to invite you.
 
-<Note>This guide uses the development environment in all of its examples. Please create your organization in the development environment at https://portal.dev.cobo.com/.</Note>
+<Note>This guide uses the development environment in all examples. Make sure Sales has provisioned development environment access for your organization before continuing.</Note>
 
 ## Generate an API key and an API secret
 
@@ -169,7 +169,7 @@ with cobo_waas2.ApiClient(configuration) as api_client:
 
 You have successfully sent an API request and received a response. However, there are still a few things to do before you can create a wallet, make a transaction, or implement other features.
 
-- To start using a wallet, you must purchase a pricing plan or activate a trial plan if it is available. To learn about pricing plans and bills and payments, refer to [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction).
+- To start using a wallet, your organization must have an active paid pricing plan. To learn about pricing plans and bills and payments, refer to [Introduction to Bills & Payments](https://manuals.cobo.com/en/portal/bills-and-payments/introduction).
 - To withdraw tokens from your wallet, you must first set up a callback endpoint to receive and approve withdrawal requests. It is highly recommended that you also set up a webhook endpoint to receive real-time notifications regarding transaction status updates and other events of your concern. To learn how to set up and register webhook and callback endpoints, refer to [Introduction to webhooks and callbacks](/v2/guides/webhooks-callbacks/introduction).
 
 
