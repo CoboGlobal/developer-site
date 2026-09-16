@@ -20,15 +20,15 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 | 交易类型                                   | 交易来源类型                                                                                     | 交易目的地类型            |
 |----------------------------------------------------|-------------------------------------------------------------------------------------------------|--------------------------|
-| Deposit - [Cobo Loop](https://manuals.cobo.com/cn/portal/custodial-wallets/cobo-loop) 转账       | DepositFromLoop                                                                                | DepositToAddress         |
-| Deposit - 交易所钱包之间转账       | DepositFromWallet                                                                              | DepositToWallet          |
-| Deposit - 其他充币交易               | DepositFromAddress                                                                            | DepositToAddress         |
-| Withdrawal - 交易所钱包之间转账    | Main<br />Sub                                                                                    | ExchangeWallet           |
-| Withdrawal - 其他提币交易         | Asset<br />Web3<br />Org-Controlled<br />User-Controlled<br />Main<br />Sub                      | Address                  |
-| ContractCall                                      | Org-Controlled<br />User-Controlled<br />Web3                                               | EVM_Contract<br />SOL_Contract<br />STELLAR_Contract<br />TRON_Contract             |
-| MessageSign                                       | Org-Controlled<br />User-Controlled<br />Web3                                                                | EVM_EIP_191_Signature<br />EVM_EIP_712_Signature<br />BTC_BIP_137_Signature<br />BTC_EIP_191_Signature<br />BTC_BIP_322_Signature<br />COSMOS_ADR_36_Signature<br />Raw_Message_Signature |
-| Stake                                   | Org-Controlled                                                                                  |    Address          |
-| Unstake                                    | Org-Controlled                                                                                   |    Address          |
+| Deposit - [Cobo Loop](https://manuals.cobo.com/cn/portal/custodial-wallets/cobo-loop) 转账       | `DepositFromLoop`                                                                                | `DepositToAddress`         |
+| Deposit - 交易所钱包之间转账       | `DepositFromWallet`                                                                              | `DepositToWallet`          |
+| Deposit - 其他充币交易               | `DepositFromAddress`                                                                            | `DepositToAddress`         |
+| Withdrawal - 交易所钱包之间转账    | `Main`<br />`Sub`                                                                                    | `ExchangeWallet`           |
+| Withdrawal - 其他提币交易         | `Asset`<br />`Web3`<br />`Org-Controlled`<br />`User-Controlled`<br />`Main`<br />`Sub`                      | `Address`                  |
+| ContractCall                                      | `Org-Controlled`<br />`User-Controlled`<br />`Web3`                                               | `EVM_Contract`<br />`SOL_Contract`<br />`STELLAR_Contract`<br />`TRON_Contract`<br />`SUI_Contract`             |
+| MessageSign                                       | `Org-Controlled`<br />`User-Controlled`<br />`Web3`                                                                | `EVM_EIP_191_Signature`<br />`EVM_EIP_712_Signature`<br />`BTC_BIP_137_Signature`<br />`BTC_EIP_191_Signature`<br />`BTC_BIP_322_Signature`<br />`COSMOS_ADR_36_Signature`<br />`Raw_Message_Signature` |
+| Stake                                   | `Org-Controlled`                                                                                  |    `Address`          |
+| Unstake                                    | `Org-Controlled`                                                                                   |    `Address`          |
 
 ## 交易来源类型
 
@@ -75,8 +75,9 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - `ExchangeWallet`：交易所钱包。
 - `EVM_Contract`：EVM 链智能合约。
 - `SOL_Contract`：Solana 链智能合约。
-- `Stellar_Contract`: Stellar 链智能合约。
+- `STELLAR_Contract`: Stellar 链智能合约。
 - `TRON_Contract`: TRON 链智能合约。
+- `SUI_Contract`：Sui 链智能合约。
 - `EVM_EIP_191_Signature`：EVM EIP-191 签名。更多详情，请参阅 [签名数据标准](https://eips.ethereum.org/EIPS/eip-191)。
 - `EVM_EIP_712_Signature`：EVM EIP-712 签名。更多详情，请参阅 [类型化结构数据哈希和签名](https://eips.ethereum.org/EIPS/eip-712)。
 - `BTC_BIP_137_Signature`：BTC BIP-137 签名。更多详情，请参阅 [BIP-137](https://github.com/bitcoin/bips/blob/master/bip-0137.mediawiki)。
