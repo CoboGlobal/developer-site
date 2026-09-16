@@ -9,6 +9,27 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 <WaasSkillReminder />
 
+## v0.12.20
+
+- 支持 Lindell V2 签名协议。
+- 新增 `prime info` / `prime gen` 子命令：管理预生成安全素数池（`info` 无需密码、支持 `--json`；`gen <count>` 同步补齐或追加素数）。
+- 新增 `cleanup primes` / `cleanup sessions` 子命令：清理过期素数与已完成 session，支持 `--dry-run`，删除后自动 vacuum 回收磁盘。
+- 优化安全素数生成并发，加快素数池预热。
+- 节点执行命令前先校验数据库密码，降低误操作风险。
+- 升级安全依赖。
+- 修复长连接安全问题。
+
+## v0.12.9
+
+- 新增 CAW 模式支持：节点全链路支持 CAW / UCW 设置。
+
+## v0.12.2
+
+- 新增 `--ucw` 启动参数：节点以 UCW 模式连接专用长连接。
+- 修复 TSS 节点 panic 问题。
+- 提升长连接稳定性。
+- 修复若干 TSS 安全问题。
+
 ## v0.11.1
 
 - 升级依赖，解决安全问题。
