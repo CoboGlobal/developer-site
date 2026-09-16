@@ -9,6 +9,27 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder.mdx';
 
 <WaasSkillReminder />
 
+## v0.12.20
+
+- Added support for the Lindell V2 signature protocol.
+- Added `prime info` / `prime gen` subcommands to manage the pre-generated safe prime pool (`info` requires no password and supports `--json`; `gen <count>` tops up or appends primes synchronously).
+- Added `cleanup primes` / `cleanup sessions` subcommands to clean up expired primes and completed sessions, with `--dry-run` support; disk space is automatically reclaimed via vacuum after deletion.
+- Optimized safe prime generation concurrency to speed up prime pool warm-up.
+- The node now validates the database password before executing commands, reducing the risk of accidental operations.
+- Upgraded security dependencies.
+- Fixed persistent connection security issues.
+
+## v0.12.9
+
+- Added CAW mode support: the node now supports CAW/UCW settings end-to-end.
+
+## v0.12.2
+
+- Added the `--ucw` startup flag: the node connects via a dedicated persistent connection in UCW mode.
+- Fixed a TSS Node panic issue.
+- Improved persistent connection stability.
+- Fixed several TSS security issues.
+
 ## v0.11.1
 
 - Upgrade dependencies to resolve security issues.
