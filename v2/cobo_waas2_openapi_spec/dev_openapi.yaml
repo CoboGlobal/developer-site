@@ -4944,7 +4944,7 @@ paths:
       description: |
         This operation retrieves balance changes for the specified source account. Each balance change includes the source information, token ID, changed amount, account balances before and after the change, flow direction, and creation time.
 
-        You need to specify `source_account`. Currently, use `developer` as the source account. You can use pagination parameters to control the response size, and filter balance changes by `token_id`, `flow_direction`, `min_created_timestamp`, `max_created_timestamp`, `source_type`, or `source_id`.
+        You need to specify `source_account`. If the source account is a merchant account, provide the merchant's ID (e.g., "M1001"). If the source account is the developer account, use the string `"developer"`. You can use pagination parameters to control the response size, and filter balance changes by `token_id`, `flow_direction`, `min_created_timestamp`, `max_created_timestamp`, `source_type`, or `source_id`.
 
         <Note>When specifying `source_id`, you must also specify `source_type`.</Note>
 
@@ -11256,7 +11256,7 @@ components:
           format: uuid
           example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
         result:
-          $ref: '#/components/schemas/ApprovalResult'
+          $ref: '#/components/schemas/ApprovalTransactionResult'
         approval_result_code:
           type: integer
           description: Integer value representing the result of the approval.
@@ -17591,8 +17591,8 @@ components:
       properties:
         country:
           type: string
-          description: The country.
-          example: HK
+          description: 'The country, in ISO 3166-1 alpha-3 format.'
+          example: HKG
         state:
           type: string
           description: The state or province.
@@ -24579,10 +24579,13 @@ components:
       name: source_account
       in: query
       required: true
-      description: 'The source account for which to retrieve balance changes. Currently, use `developer`.'
+      description: |
+        The source account for which to retrieve balance changes.
+        - If the source account is a merchant account, provide the merchant's ID (e.g., "M1001").
+        - If the source account is the developer account, use the string `"developer"`.
       schema:
         type: string
-      example: developer
+      example: M1001
     PaymentBalanceChangesTokenIdOptionalParam:
       name: token_id
       in: query
