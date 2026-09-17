@@ -12,6 +12,14 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.44.0
+
+此版本于 2026 年 9 月 16 日发布。
+
+### 兼容性变更
+
+- [列出审批详情](/v2/api-references/transactions/list-approval-details) 接口响应的 `address_owner`、`spender` 和 `approver` 字段中，`user_details[].result` 新增支持 `Pending`，此前支持 `Approved` 和 `Rejected`。
+
 ## v1.43.0
 
 此版本于 2026 年 9 月 2 日发布。
