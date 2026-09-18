@@ -2,6 +2,7 @@
 title: Get Balances List
 api: GET /v1/custody/mpc/list_balances/ 
 description: <Note>This content applies to WaaS 1.0 only. We highly recommend that you upgrade to [WaaS 2.0](https://www.cobo.com/developers/v2/guides/overview/introduction).</Note> This endpoint returns a JSON response with a list of token assets and their balances for a given MPC wallet. The response includes the total count of token assets, as well as information about each asset, such as the coin code, chain code, display code, and balance. Additionally, if any of the token assets are NFTs, the response will include information about the NFT, such as the NFT code, token ID, and contract address.
+noindex: true
 ---
 #### Request
 <ParamField query="coin" type="String" >Coin code of the token asset to retrieve.</ParamField>

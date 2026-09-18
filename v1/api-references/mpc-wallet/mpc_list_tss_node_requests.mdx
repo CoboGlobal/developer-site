@@ -2,6 +2,7 @@
 title: Get Tss Node Requests List
 api: GET /v1/custody/mpc/list_tss_node_requests/ 
 description: <Note>This content applies to WaaS 1.0 only. We highly recommend that you upgrade to [WaaS 2.0](https://www.cobo.com/developers/v2/guides/overview/introduction).</Note> This endpoint returns a JSON response containing a list of TSS (Threshold Signature Scheme) requests with their metadata. The requests can be filtered by request type and status. The metadata includes the COBO ID, request type, status, failed reason (if any), and additional information specific to the request type (e.g., threshold and node IDs for key generation requests).
+noindex: true
 ---
 #### Request
 <ParamField query="request_type" type="Int" >Request type(KEYGEN type: 1, KEYRESHARE type: 2)</ParamField>

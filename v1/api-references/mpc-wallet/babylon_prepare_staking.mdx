@@ -3,6 +3,7 @@ title: Babylon Prepare Staking
 api: POST /v1/custody/mpc/babylon/prepare_staking/
 contentType: multipart/form-data
 description: <Note>This content applies to WaaS 1.0 only. We highly recommend that you upgrade to [WaaS 2.0](https://www.cobo.com/developers/v2/guides/overview/introduction).</Note> This endpoint is used to create a pre-signed staking transaction, accepting parameters such as `request_id`, `stake_info`, `fee_rate`, and `max_staking_fee`. Please note that a successfully created staking transaction will not be broadcast automatically; you need to call the [Babylon Broadcast Staking Transaction](/developers/api-references/mpc-wallet/babylon_broadcast_staking_transaction) endpoint to broadcast it.
+noindex: true
 ---
 
 #### Request

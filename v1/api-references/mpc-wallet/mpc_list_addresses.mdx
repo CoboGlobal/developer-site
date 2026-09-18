@@ -2,6 +2,7 @@
 title: Get Addresses List
 api: GET /v1/custody/mpc/list_addresses/ 
 description: <Note>This content applies to WaaS 1.0 only. We highly recommend that you upgrade to [WaaS 2.0](https://www.cobo.com/developers/v2/guides/overview/introduction).</Note> This endpoint returns a JSON response containing a list of wallet addresses and their associated information. The endpoint takes in a chain code and optional parameters for pagination and sorting. The response includes the total count of addresses and a list of addresses with their respective ID, address, encoding, and HD path.
+noindex: true
 ---
 #### Request
 <ParamField query="chain_code" type="String" required>Chain code of the wallet addresses.</ParamField>

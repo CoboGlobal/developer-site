@@ -2,6 +2,7 @@
 title: Get Internal Address Info
 api: "GET /v1/custody/internal_address_info/"
 description: '<Note>This content applies to WaaS 1.0 only. We highly recommend that you upgrade to [WaaS 2.0](https://www.cobo.com/developers/v2/guides/overview/introduction).</Note> This endpoint returns information about whether a given address is an internal address or not. If the address is internal, it also returns the name of the organization and wallet associated with the address. The endpoint takes three parameters: `coin`, `address`, and `memo` (optional). If the address contains a `|` character, the address is split into two parts: the address itself and the memo. Otherwise, the memo parameter is used. The endpoint requires authentication.'
+noindex: true
 ---
 
 <Note>To check if the address available for Loop transaction.
