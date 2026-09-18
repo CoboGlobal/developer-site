@@ -89,3 +89,11 @@ The transaction destination types are as follows:
 - `Raw_Message_Signature`: A raw message signature.
 - `DepositToAddress`: A wallet address.
 - `DepositToWallet`: An Exchange Wallet.
+
+### Address destination amount
+
+When you call [Transfer token](/v2/api-references/transactions/transfer-token), the `account_output.amount` in an Address destination must be a decimal amount string (for example, `1.5`) that converts to a positive base-unit amount. The decimal precision must not exceed the token's `decimal` value, which you can retrieve by calling [Get token information](/v2/api-references/wallets/get-token-information).
+
+For external Custodial Wallet withdrawals, the amount must also meet or exceed the token's `dust_threshold` (minimum withdrawal amount). Retrieve `dust_threshold` by calling [Get token information](/v2/api-references/wallets/get-token-information).
+
+If `account_output.amount` fails validation, the API may return error code `2006` with an `error_message` such as `account_output.amount invalid` or `Invalid parameter: account_output.amount.` For external Custodial Wallet withdrawals, precision, positivity, or `dust_threshold` failures may return amount-specific errors instead of `2006`, depending on the wallet path.
