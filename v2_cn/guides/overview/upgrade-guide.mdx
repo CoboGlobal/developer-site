@@ -17,7 +17,7 @@ WaaS 2.0 相较于 WaaS 1.0 进行了重大升级，面向支付、代币化、�
 
 升级到 **WaaS 2.0** 的三大核心价值：
 
-- **功能更强大**：新增支付解决方案、Tokenization、Fee Station、自动归集、Travel Rule 等功能模块。
+- **功能更强大**：新增支付解决方案、Tokenization、费用中心、自动归集、Travel Rule 等功能模块。
 - **开发更高效**：API 架构统一，实现相同功能所需调用的接口更少，降低系统集成与维护复杂度。
 - **运维更完善**：Webhook 升级，支持更多事件类型，并提供日志、重试、模拟测试等能力，提升可观测性和调试效率。
 
@@ -28,7 +28,7 @@ WaaS 2.0 相较于 WaaS 1.0 进行了重大升级，面向支付、代币化、�
 | 升级维度           | WaaS 1.0                                                                                                                             | WaaS 2.0                                                                                                                                   |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | **API 架构** | **按钱包类型划分**：相同业务功能需分别调用不同 API 操作。例如：<ul><li>全托管钱包提币与 MPC 钱包提币需要使用不同的 API 操作</li><li>按不同 ID（如交易哈希、交易 ID、内部 ID）查询交易，也需分别调用不同的 API 操作</li></ul> | **按用户场景聚合**：相同业务功能只需调用单一 API 操作即可完成。例如：<ul><li>使用[代币转账](/v2/api-references/transactions/transfer-token)操作即可实现所有钱包类型的充值与提现</li><li>[交易查询](/v2/api-references/transactions/list-all-transactions)也统一为单一 API 操作，可通过任意 ID 获取结果</li></ul> |
-| **新增功能模块**     | N/A      | <ul><li> [支付](/v2_cn/payments/overview)：一套完整的加密货币支付综合解决方案</li><li> [Tokenization](/v2/api-references/tokenization/issue-token)：发行并管理链上代币化资产</li><li> [Fee Station](/v2/api-references/feestation/get-fee-station-transaction-information)：Gas 费代付与统一成本结算</li><li> [自动归集](/v2/api-references/autosweep/create-auto-sweep-task)：自动发起代币归集</li><li> [Travel Rule](/v2/api-references/travelrule/submit-travel-rule-information-for-deposits)：满足更多合规要求</li><li> [Cobo Portal Apps](/v2_cn/apps/introduction)：满足 Cobo Portal Apps 的开发需求 </li></ul> |
+| **新增功能模块**     | N/A      | <ul><li> [支付](/v2_cn/payments/overview)：一套完整的加密货币支付综合解决方案</li><li> [Tokenization](/v2/api-references/tokenization/issue-token)：发行并管理链上代币化资产</li><li> [费用中心](/v2/api-references/feestation/get-fee-station-transaction-information)：Gas 费代付与统一成本结算</li><li> [自动归集](/v2/api-references/autosweep/create-auto-sweep-task)：自动发起代币归集</li><li> [Travel Rule](/v2/api-references/travelrule/submit-travel-rule-information-for-deposits)：满足更多合规要求</li><li> [Cobo Portal Apps](/v2_cn/apps/introduction)：满足 Cobo Portal Apps 的开发需求 </li></ul> |
 | **Webhook 机制** | 仅支持交易状态变动通知  | <ul><li> **支持更多[事件类型](/v2_cn/guides/webhooks-callbacks/webhook-event-type)**：支持交易、钱包、地址、余额、TSS 等事件通知</li><li> **自带[调试](/v2/api-references/developers--webhooks/trigger-test-event)功能**：提供日志、失败重试、模拟测试等功能</li></ul> |
 | **开发者工具**      | 提供基础 SDK | 在 SDK 基础上，提供多样开发者工具： <ul><li>[Cobo CLI](/v2_cn/developer-tools/cobo-cli)：命令行工具，支持快速调试与测试</li><li>[UI Toolkit](/v2_cn/developer-tools/uitoolkit-intro)：预构建 UI 组件，加速应用开发</li></ul> |
 

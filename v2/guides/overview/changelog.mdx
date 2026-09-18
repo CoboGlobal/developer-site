@@ -432,7 +432,7 @@ This version was released on July 30, 2025.
 
 ### Improvements
 
-- Added `UsePortalPreference` as a new option to the `AutoFuelType` enum for [Fee Station](https://manuals.cobo.com/en/portal/fee-station/introduction) transactions. This option allows you to use payment preferences set on Cobo Portal instead of specifying the mode of transaction fee payment in each API call.
+- Added `UsePortalPreference` as a new option to the `AutoFuelType` enum for [Fee Station](https://manuals.cobo.com/en/portal/billing-center/introduction) transactions. This option allows you to use payment preferences set on Cobo Portal instead of specifying the mode of transaction fee payment in each API call.
 - The `destination` property in the [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee#contractcall) request for contract calls is now optional.
 - Added a maximum length limit of 65,000 characters for the `calldata` field in the [Call smart contract](/v2/api-references/transactions/call-smart-contract#body-destination-calldata) operation (EVM contract calls).
 
@@ -527,7 +527,7 @@ This version was released on April 23, 2025.
 ### New Features
 
 - Added a batch of operations for payment scenarios, including pay-in orders, refund, settlements, merchants, bank accounts, and exchange rates, to support comprehensive payment workflows.
-- Added the [Estimate fee for Fee Station transaction](/v2/api-references/feestation/estimate-fee-for-fee-station-transaction) operation to estimate the gas fee for top-up transactions sent by [Fee Station](https://manuals.cobo.com/en/portal/fee-station/introduction).
+- Added the [Estimate fee for Fee Station transaction](/v2/api-references/feestation/estimate-fee-for-fee-station-transaction) operation to estimate the gas fee for top-up transactions sent by [Fee Station](https://manuals.cobo.com/en/portal/billing-center/introduction).
 - Added the following operations to support token listing via self-service submission:
   - [Create token listing request](/v2/api-references/wallets/create-token-listing-request)
   - [List token listing requests](/v2/api-references/wallets/list-token-listing-requests)
@@ -707,7 +707,7 @@ This version was released on December 19, 2024.
 - Added the [Create claim activity](/v2/api-references/stakings/create-claim-activity) operation for claiming staking rewards.
 - Added a new version of the [Estimate staking fees](/v2/api-references/stakings/estimate-staking-fees-v2) operation with improved functionality.
 - Added support for staking in the CORE protocol.
-- Added the `auto_fuel` property to the request payloads of the following operations to enable the use of [Fee Station](https://manuals.cobo.com/en/portal/fee-station/introduction) for automatic transaction fee payment:
+- Added the `auto_fuel` property to the request payloads of the following operations to enable the use of [Fee Station](https://manuals.cobo.com/en/portal/billing-center/introduction) for automatic transaction fee payment:
   - [Transfer token](/v2/api-references/transactions/transfer-token)
   - [Call smart contract](/v2/api-references/transactions/call-smart-contract)
   - [Speed up transaction](/v2/api-references/transactions/speed-up-transaction)

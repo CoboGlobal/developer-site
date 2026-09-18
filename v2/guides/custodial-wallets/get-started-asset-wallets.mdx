@@ -710,7 +710,7 @@ Auto-sweep automatically consolidates tokens from your deposit addresses into a 
 - `min_balance_threshold`: (Optional) The minimum token balance an address must hold to be swept. Addresses holding less than this value are skipped, which lets you filter out dust. There is no per-address blocklist; use `min_balance_threshold` to control the minimum sweep amount.
 
 <Note>
-A sweep moves tokens out of a deposit address, which requires native chain coin to pay for gas. Make sure that gas is available either in the source deposit address or through a configured Fee Station or Auto Fueling. Reaching the deposit threshold alone does not complete a sweep: if no gas is available, the sweep cannot be broadcast. When a sweep cannot proceed, the reason is reported in the `failed_reasons` array returned by the task details.
+A sweep moves tokens out of a deposit address, which requires native chain coin to pay for gas. Make sure that gas is available either in the source deposit address or through a configured Billing Center or Auto Fueling. Reaching the deposit threshold alone does not complete a sweep: if no gas is available, the sweep cannot be broadcast. When a sweep cannot proceed, the reason is reported in the `failed_reasons` array returned by the task details.
 </Note>
 
 ### Retrieve the swept transactions

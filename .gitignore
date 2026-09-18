@@ -4,3 +4,4 @@
 build_scripts/*
 scripts/*
 
+.claude/

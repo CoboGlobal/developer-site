@@ -432,7 +432,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 ### 改进
 
-- 为 [Fee Station](https://manuals.cobo.com/en/portal/fee-station/introduction) 交易的 `AutoFuelType` 枚举新增了 `UsePortalPreference` 选项。此选项允许您使用在 Cobo Portal 上设置的支付偏好，而无需在每个 API 调用中指定某种交易费用支付模式。
+- 为 [Fee Station](https://manuals.cobo.com/en/portal/billing-center/introduction) 交易的 `AutoFuelType` 枚举新增了 `UsePortalPreference` 选项。此选项允许您使用在 Cobo Portal 上设置的支付偏好，而无需在每个 API 调用中指定某种交易费用支付模式。
 - 在 `EstimateContractCallFeeParams` 模型中，将 `destination` 参数设为可选。
 - 为 [Call smart contract](/v2/api-references/transactions/call-smart-contract#body-destination-calldata) 操作（EVM 合约调用）新增了 `calldata` 字段的最大长度限制，为 65,000 字符。
 
@@ -525,7 +525,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 ### 新功能
 
 - 添加了支付场景的一系列操作，包括支付订单、退款、结算、商户、银行账户和汇率，以支持完整的支付流程。
-- 添加了[估算 Fee Station 交易费用](/v2/api-references/feestation/estimate-fee-for-fee-station-transaction) 操作，用于估算 [Fee Station](https://manuals.cobo.com/cn/portal/fee-station/introduction) 发起的充值交易的 Gas 费。
+- 添加了[估算 Fee Station 交易费用](/v2/api-references/feestation/estimate-fee-for-fee-station-transaction) 操作，用于估算 [Fee Station](https://manuals.cobo.com/cn/portal/billing-center/introduction) 发起的充值交易的 Gas 费。
 - 添加了以下操作以支持通过自助提交上币请求：
   - [创建上币请求](/v2/api-references/wallets/create-token-listing-request)
   - [列出所有上币请求](/v2/api-references/wallets/list-token-listing-requests)
@@ -702,7 +702,7 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - 添加了[创建领取活动](/v2/api-references/stakings/create-claim-activity)操作，用于领取质押奖励。
 - 添加了[估算质押费用](/v2/api-references/stakings/estimate-staking-fees-v2)操作的新版本，功能得到改进。
 - 添加了对 CORE 协议质押的支持。
-- 在以下操作的请求负载中添加了 `auto_fuel` 属性，以启用[Fee station](https://manuals.cobo.com/cn/portal/fee-station/introduction)进行自动交易费用支付：
+- 在以下操作的请求负载中添加了 `auto_fuel` 属性，以启用[Fee station](https://manuals.cobo.com/cn/portal/billing-center/introduction)进行自动交易费用支付：
   - [转账代币](/v2/api-references/transactions/transfer-token)
   - [调用智能合约](/v2/api-references/transactions/call-smart-contract)
   - [加速交易](/v2/api-references/transactions/speed-up-transaction)

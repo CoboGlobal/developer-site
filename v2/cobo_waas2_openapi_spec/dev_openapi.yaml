@@ -1608,6 +1608,8 @@ paths:
         <Note>If you make transfers from Custodial Wallets (Asset Wallets) and Exchange Wallets, do not set the fee-related properties, as they will not take effects.</Note>
 
         <Note>You can transfer tokens to multiple addresses only if you use MPC Wallets as the transaction source. To do this, you should use the <code>utxo_outputs</code> property to specify the destination addresses.</Note>
+
+        You can have [Billing Center](https://manuals.cobo.com/en/portal/billing-center/introduction) pay the on-chain transaction fee, so that the source address does not need to hold the chain's gas token. Use the `auto_fuel` property to control this behavior.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1633,6 +1635,8 @@ paths:
         You need to provide details such as the source address, destination address, and the calldata. You can specify the fee-related properties to limit the transaction fee, or specify the `fee_level` property to let Cobo calculate the transaction fee based on the selected fee level. A transaction request for tracking is returned upon successful operation.
 
         <Note>Currently, this operation only applies to the transactions from MPC Wallets on the blockchains that have a similar architecture to Ethereum.</Note>
+
+        You can have [Billing Center](https://manuals.cobo.com/en/portal/billing-center/introduction) pay the on-chain transaction fee, so that the source address does not need to hold the chain's gas token. Use the `auto_fuel` property to control this behavior.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1814,6 +1818,8 @@ paths:
         Resending a transaction is a high‑risk operation. Ensure that the original transaction has not been broadcast to the blockchain, has already expired, and will never be confirmed. Otherwise, the same transaction may be confirmed on‑chain twice.
 
         <Note>This operation only applies to transactions from MPC Wallets in the SOL token.</Note>
+
+        You can have [Billing Center](https://manuals.cobo.com/en/portal/billing-center/introduction) pay the on-chain transaction fee, so that the source address does not need to hold the chain's gas token. Use the `auto_fuel` property to control this behavior.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1901,6 +1907,8 @@ paths:
         <Note>This operation only applies to transactions from MPC Wallets. It does not apply to transactions on the following chains: VET, TRON, TVET, SOL, and TON.</Note>
 
         You can use the `address` or `included_utxos` properties in the request body to specify the address or UTXOs that will cover the transaction fee. Generally, the transaction fee is paid by the original transaction's source. If that source's balance is insufficient, the specified address or UTXOs can be used to cover the fee.
+
+        You can have [Billing Center](https://manuals.cobo.com/en/portal/billing-center/introduction) pay the on-chain transaction fee, so that the source address does not need to hold the chain's gas token. Use the `auto_fuel` property to control this behavior.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -1930,6 +1938,8 @@ paths:
         A transaction can be sped up only if its status is `Broadcasting`.
 
         <Note>This operation only applies to transactions from MPC Wallets. It does not apply to transactions on the following chains: VET, TRON, TVET, SOL, and TON.</Note>
+
+        You can have [Billing Center](https://manuals.cobo.com/en/portal/billing-center/introduction) pay the on-chain transaction fee, so that the source address does not need to hold the chain's gas token. Use the `auto_fuel` property to control this behavior.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -3536,9 +3546,9 @@ paths:
       tags:
         - FeeStation
       operationId: list_fee_station_addresses
-      summary: List Fee Station addresses
+      summary: List Billing Center addresses
       description: |
-        This operation retrieves a list of deposit addresses of your Fee Station, including the chain ID, address, and additional information. You can filter the result by chain ID and address.
+        This operation retrieves a list of deposit addresses of your Billing Center, including the chain ID, address, and additional information. You can filter the result by chain ID and address.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -3561,9 +3571,9 @@ paths:
       tags:
         - FeeStation
       operationId: list_token_balances_for_fee_station
-      summary: List Fee Station token balances
+      summary: List Billing Center token balances
       description: |
-        The operation retrieves a list of token balances within your Fee Station.
+        The operation retrieves a list of token balances within your Billing Center.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -3585,9 +3595,9 @@ paths:
       tags:
         - FeeStation
       operationId: list_fee_station_transactions
-      summary: List all Fee Station transactions
+      summary: List all Billing Center transactions
       description: |
-        This operation retrieves all Fee Station transactions under your organization.
+        This operation retrieves all Billing Center transactions under your organization.
 
         You can filter the results by request ID, Cobo ID, transaction ID, transaction hash, type, status, and timestamp. You can also paginate and sort your query results.
       security:
@@ -3624,9 +3634,9 @@ paths:
       tags:
         - FeeStation
       operationId: get_fee_station_transaction_by_id
-      summary: Get Fee Station transaction information
+      summary: Get Billing Center transaction information
       description: |
-        This operation retrieves detailed information about a specified Fee Station transaction record, such as the transaction status, source address, destination address, and timestamp.
+        This operation retrieves detailed information about a specified Billing Center transaction record, such as the transaction status, source address, destination address, and timestamp.
       security:
         - CoboAuth: []
         - OAuth2:
@@ -3645,7 +3655,7 @@ paths:
       operationId: estimate_fee_station_fee
       summary: Estimate transaction fee
       description: |
-        <Note>This operation is **deprecated** and retained only for backward compatibility. Use [Check Fee Station usage](https://www.cobo.com/developers/v2/api-references/feestation/check-fee-station-usage) for all new integrations.</Note>
+        <Note>This operation is **deprecated** and retained only for backward compatibility. Use [Check Billing Center usage](https://www.cobo.com/developers/v2/api-references/feestation/check-fee-station-usage) for all new integrations.</Note>
 
         This operation estimates the transaction fee of a token transfer based on the fee model that the chain uses, considering factors such as network congestion and transaction complexity.
 
@@ -3670,9 +3680,9 @@ paths:
       tags:
         - FeeStation
       operationId: list_fee_station_fiat_transactions
-      summary: List Fee Station fiat transactions
+      summary: List Billing Center fiat transactions
       description: |
-        This operation retrieves all Fee Station fiat transactions under your organization.
+        This operation retrieves all Billing Center fiat transactions under your organization.
 
         You can filter the results by request IDs, transaction IDs, transaction type, and created timestamp. You can also paginate your query results.
       security:
@@ -3699,17 +3709,17 @@ paths:
       tags:
         - FeeStation
       operationId: check_fee_station_usage
-      summary: Check Fee Station usage
+      summary: Check Billing Center usage
       description: |
-        This operation evaluates Fee Station usage for the current transaction. 
+        This operation evaluates Billing Center usage for the current transaction. 
 
-        It determines whether Fee station can be used, checks if the Fee Station balance is sufficient, and returns a breakdown of the amounts involved, including any portion that must be covered by the user or sponsored in USD stablecoin.
+        It determines whether Billing Center can be used, checks if the Billing Center balance is sufficient, and returns a breakdown of the amounts involved, including any portion that must be covered by the user or sponsored in USD stablecoin.
       security:
         - CoboAuth: []
         - OAuth2:
             - transaction.estimate_fee
       requestBody:
-        description: The request body for evaluating Fee Station usage.
+        description: The request body for evaluating Billing Center usage.
         content:
           application/json:
             schema:
@@ -6499,7 +6509,7 @@ paths:
       description: |
         This operation creates an auto-sweep task for the specified wallet and token. The task triggers transactions to sweep the full balance of the specified token to the configured sweep-to address.
 
-        <Note>A sweep requires native chain coin to pay for gas. The gas must be available either in the source (deposit) address, or supplied by a configured Fee Station or Auto-Fuel. Reaching the deposit threshold alone does not trigger a sweep. If no gas is available, the sweep is blocked (for example, with an insufficient-balance error) or the Fee Station quota check fails. When a sweep is blocked, the reason is reported in the `failed_reasons` array of the auto-sweep task.</Note>
+        <Note>A sweep requires native chain coin to pay for gas. The gas must be available either in the source (deposit) address, or supplied by a configured Billing Center or Auto-Fuel. Reaching the deposit threshold alone does not trigger a sweep. If no gas is available, the sweep is blocked (for example, with an insufficient-balance error) or the Billing Center quota check fails. When a sweep is blocked, the reason is reported in the `failed_reasons` array of the auto-sweep task.</Note>
 
         <Info>This operation is asynchronous. When the task is created, it is returned with `status` set to `Submitted` and an empty `transaction_ids` array; this is expected and does not indicate a failure. The `transaction_ids` array is populated only after `status` becomes `TransactionCreated`. To retrieve the transaction IDs, poll [Get auto-sweep task details](https://www.cobo.com/developers/v2/api-references/autosweep/get-auto-sweep-task-details) using the returned `task_id` until the status changes.</Info>
       security:
@@ -9075,11 +9085,11 @@ components:
           description: |
             The transaction category defined by Cobo. Possible values include: 
             - `AutoSweep`: An auto-sweep transaction.
-            - `AutoFueling`: A transaction where Fee Station pays transaction fees to an address within your wallet.
+            - `AutoFueling`: A transaction where Billing Center pays transaction fees to an address within your wallet.
             - `AutoFuelingRefund`: A refund for an auto-fueling transaction.
-            - `BillPayment`: A transaction to pay Cobo bills through Fee Station.
+            - `BillPayment`: A transaction to pay Cobo bills through Billing Center.
             - `BillRefund`: A refund for a previously made bill payment.
-            - `CommissionFeeCharge`: A transaction to charge commission fees via Fee Station.
+            - `CommissionFeeCharge`: A transaction to charge commission fees via Billing Center.
             - `CommissionFeeRefund`: A refund of previously charged commission fees.
         extra:
           type: array
@@ -9725,7 +9735,7 @@ components:
     TransactionFeeStationWalletSource:
       type: object
       description: The information about the transaction source.
-      title: Fee Station
+      title: Billing Center
       required:
         - source_type
         - wallet_id
@@ -10760,17 +10770,26 @@ components:
         - DisableAutoFuel
       example: PassiveAutoFuel
       description: |
-        The mode of transaction fee payment using Fee Station. Currently, Fee Station supports eligible transactions made with MPC Wallets and Web3 Wallets on EVM-compatible chains, TRON, and Solana.
-        For more details, refer to [Fee Station](https://manuals.cobo.com/en/portal/fee-station/introduction).
+        Whether Billing Center pays the on-chain transaction fee for this transaction, and under what condition.
 
-        - `ProActiveAutoFuel`: Always use Fee Station to pay transaction fees.  
-        - `PassiveAutoFuel`: Use Fee Station only when the source address balance is insufficient to cover transaction fees.  
-        - `UsePortalPreference`: Use fueling strategy based on the Portal configuration.  
-        - `DisableAutoFuel`: Do not use Fee Station for transaction fee payment under any circumstances.  
+        On-chain fees are charged in a chain's gas token, which is usually not the token you are sending. Without Billing Center, the source address must hold that gas token or the transaction fails. When Billing Center covers the fee, the source address does not need to hold any gas token.
 
-        If this parameter is **not specified**, it defaults to the behavior of `UsePortalPreference`.
+        For more details, refer to [Billing Center](https://manuals.cobo.com/en/portal/billing-center/introduction).
 
-        **Note**: TRON and Solana do not support `PassiveAutoFuel` due to their fee delegation mechanisms.
+        **Accepted values**
+
+        - `ProActiveAutoFuel`: Always have Billing Center pay the fee, without touching the gas token in the source address.
+        - `PassiveAutoFuel`: Use the gas token in the source address when it is sufficient; otherwise have Billing Center pay the fee.
+        - `UsePortalPreference`: Follow the per-chain sponsorship rules configured on Cobo Portal, under **Billing Center** > **Settings**.
+        - `DisableAutoFuel`: Never use Billing Center. The transaction pays its fee from the source address and fails if the balance is insufficient.
+
+        If this parameter is **not specified**, it defaults to `UsePortalPreference`.
+
+        **Support and limitations**
+
+        - Applies to transactions from MPC Wallets and Custodial Wallets (Web3 Wallets) on EVM-compatible chains, TRON, Solana, and Tempo. Other chains, such as BTC, are not supported, and the source address must hold the fee itself.
+        - TRON, Solana, and Tempo do not support `PassiveAutoFuel` due to their fee delegation mechanisms.
+        - The per-chain sponsorship rules on Cobo Portal apply only to API transactions that pass `UsePortalPreference`. They do not affect transfers initiated from the Cobo Portal interface.
     SkipCheckType:
       type: string
       enum:
@@ -10894,7 +10913,7 @@ components:
           example: b0530b27-104f-4338-87de-de01500326ea
         main_transaction_id:
           type: string
-          description: The UUID of the parent (main) transaction that this record is associated with. Set only when the current record is a gas/fee transaction initiated by Fee Station; omit for main transactions.
+          description: The UUID of the parent (main) transaction that this record is associated with. Set only when the current record is a gas/fee transaction initiated by Billing Center; omit for main transactions.
           format: uuid
           example: b0530b27-104f-4338-87de-de01500326ea
     TransactionCoboCategory:
@@ -10947,9 +10966,9 @@ components:
       description: |
         The transaction category defined by Cobo. Possible values include: 
           - `AutoSweep`: An auto-sweep transaction.
-          - `AutoFueling`: A transaction where Fee Station automatically pays transaction fees for eligible MPC Wallet and Web3 Wallet transactions.
+          - `AutoFueling`: A transaction where Billing Center automatically pays transaction fees for eligible MPC Wallet and Web3 Wallet transactions.
           - `AutoFuelingRefund`: A refund for an auto-fueling transaction.
-          - `BillPayment`: A transaction to pay Cobo bills through Fee Station.
+          - `BillPayment`: A transaction to pay Cobo bills through Billing Center.
           - `BillRefund`: A refund for a previously made bill payment.
           - `CommissionFeeCharge`: A transaction for commission-fee users that charges the commission fee incurred from various services.
           - `CommissionFeeRefund`: A refund of previously charged commission fees.
@@ -10978,8 +10997,8 @@ components:
           - `TokenSwap`: A transaction for token swapping or cross-chain bridging.
           - `NonceAccountSign`: A transaction signed using a **Solana nonce account**, enabling deterministic and replay-safe transaction execution on the Solana network.  
           - `FeePayerSign`: A transaction where a **designated Solana fee payer account** covers the transaction fees, separating the fee payment from the main signer or source account.
-          - `GasFeeSponsor`: A transaction where Fee Station pays the on-chain gas fee in USD stablecoin.
-          - `GasFeeSponsorRefund`: A transaction that refunds gas fees previously sponsored and paid by Fee Station.
+          - `GasFeeSponsor`: A transaction where Billing Center pays the on-chain gas fee in USD stablecoin.
+          - `GasFeeSponsorRefund`: A transaction that refunds gas fees previously sponsored and paid by Billing Center.
           - `WalletConnect`: A transaction initiated by walletconnect.
           - `JustLendReceiverPrecharge`: A TRX transfer to the receiver address to activate it and compensate for bandwidth fees before the main transaction executes.
           - `JustLendEnergyRental`: A contract call to JustLend's rentResource() to rent TRON energy for the main transaction execution.
@@ -15958,7 +15977,7 @@ components:
           - `Withdrawal`: A withdrawal transaction.
     FeeStationTransfer:
       type: object
-      description: The information about a Fee Station top-up transaction.
+      description: The information about a Billing Center top-up transaction.
       required:
         - token_id
       properties:
@@ -15993,12 +16012,12 @@ components:
         - CoboOperationStation
       example: CoboOperationStation
       description: |
-        The Fee Station mode used for automatic gas payment:
-        - `FeeStation`: The user uses their own Fee Station balance to cover the gas fee. 
+        The Billing Center mode used for automatic gas payment:
+        - `FeeStation`: The user uses their own Billing Center balance to cover the gas fee. 
         - `CoboOperationStation`: Cobo covers the gas fee on behalf of the user.
     FeeStationCheckFeeStationUsage:
       type: object
-      description: The information for evaluating Fee Station usage.
+      description: The information for evaluating Billing Center usage.
       required:
         - request_id
         - estimated_fee_amount
@@ -16024,7 +16043,7 @@ components:
           example: ETH
         estimated_fee_amount:
           type: string
-          description: 'The estimated transaction fee required for this transfer, before applying any Fee Station rules.'
+          description: 'The estimated transaction fee required for this transfer, before applying any Billing Center rules.'
           example: '0.0021'
         from_address:
           type: string
@@ -16056,17 +16075,17 @@ components:
           example: ETH
         balance:
           type: string
-          description: The current token balance available in Fee Station.
+          description: The current token balance available in Billing Center.
           example: '0.0021'
         gas_station_type:
           $ref: '#/components/schemas/FeeStationGasStationType'
         is_fee_station_applicable:
           type: boolean
-          description: Indicates whether Fee Station is applied for this transfer request.
+          description: Indicates whether Billing Center is applied for this transfer request.
           example: true
         is_balance_sufficient:
           type: boolean
-          description: 'If Fee Station is used, indicates whether its balance is sufficient to cover the required gas fee.'
+          description: 'If Billing Center is used, indicates whether its balance is sufficient to cover the required gas fee.'
           example: false
         total_fee_amount:
           type: string
@@ -16074,7 +16093,7 @@ components:
           example: '0.0021'
         is_sponsor_applicable:
           type: boolean
-          description: Indicates whether USD stablecoin sponsorship is applied when the Fee Station balance is insufficient.
+          description: Indicates whether USD stablecoin sponsorship is applied when the Billing Center balance is insufficient.
           example: true
         sponsored_fee_amount:
           type: string
@@ -24043,7 +24062,7 @@ components:
       in: query
       required: false
       description: |
-        A list of transaction types for Fee Station, separated by comma. Possible values include: 
+        A list of transaction types for Billing Center, separated by comma. Possible values include: 
           - `Deposit`: A deposit transaction.
           - `Withdrawal`: A withdrawal transaction.
       schema:
@@ -26376,7 +26395,7 @@ components:
                   chain_id: ETH
                   transaction_id: Test-transaction-id
     estimateFeeStationFeeBody:
-      description: The information about a Fee Station top-up transaction.
+      description: The information about a Billing Center top-up transaction.
       content:
         application/json:
           schema:
