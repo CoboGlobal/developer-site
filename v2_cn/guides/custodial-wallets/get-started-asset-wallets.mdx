@@ -715,7 +715,7 @@ public class ListTokenBalancesExample {
 - `min_balance_threshold`：（可选）地址被归集所需的最低代币余额。余额低于此值的地址将被跳过，可用于过滤粉尘（dust）。系统不提供按地址设置的黑名单；请使用 `min_balance_threshold` 控制最低归集金额。
 
 <Note>
-归集会将代币从充币地址转出，因此需要链上原生代币支付 gas 费。请确保源充币地址中有足够的原生代币，或已配置 Fee Station 或自动加油（Auto Fueling）来提供 gas。仅达到充币阈值并不会完成归集：如果没有可用的 gas，归集交易将无法广播。当归集无法进行时，原因会显示在任务详情返回的 `failed_reasons` 数组中。
+归集会将代币从充币地址转出，因此需要链上原生代币支付 gas 费。请确保源充币地址中有足够的原生代币，或已配置 费用中心或自动加油（Auto Fueling）来提供 gas。仅达到充币阈值并不会完成归集：如果没有可用的 gas，归集交易将无法广播。当归集无法进行时，原因会显示在任务详情返回的 `failed_reasons` 数组中。
 </Note>
 
 ### 获取归集交易
