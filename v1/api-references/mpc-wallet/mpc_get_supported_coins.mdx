@@ -2,6 +2,7 @@
 title: Get Supported Coins
 api: GET /v1/custody/mpc/get_supported_coins/ 
 description: <Note>This content applies to WaaS 1.0 only. We highly recommend that you upgrade to [WaaS 2.0](https://www.cobo.com/developers/v2/guides/overview/introduction).</Note> This endpoint returns a JSON response containing a list of supported coins for a given chain. The response includes the coin code, display code, description, decimal, deposit and withdraw availability, and confirming threshold.
+noindex: true
 ---
 #### Request
 <ParamField query="chain_code" type="String" required>Chain code for which to retrieve supported coins.</ParamField>

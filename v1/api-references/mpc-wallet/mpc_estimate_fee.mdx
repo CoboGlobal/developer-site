@@ -3,6 +3,7 @@ title: Get Estimate Fee
 api: POST /v1/custody/mpc/estimate_fee/
 contentType: multipart/form-data
 description: <Note>This content applies to WaaS 1.0 only. We highly recommend that you upgrade to [WaaS 2.0](https://www.cobo.com/developers/v2/guides/overview/introduction).</Note> This endpoint will simulate a transaction based on the parameters, and obtain the transaction fee from the blockchain. It takes in various parameters such as the coin code, amount, address, gas price, gas limit, fee, and extra parameters. The response includes the fee amount in different levels such as slow, average, fast, and custom. The custom fee corresponds to the fee or gas_price parameter.
+noindex: true
 ---
 
 <Tip> FAQ：[How do I query the withdraw fees?](/v1/faqs/coin-management#how-do-i-query-the-withdrawal-fees)</Tip>
