@@ -86,3 +86,11 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 - `Raw_Message_Signature`：原始消息签名。
 - `DepositToAddress`：钱包地址。
 - `DepositToWallet`：交易所钱包。
+
+### Address 目的地金额
+
+调用 [Transfer token](/v2/api-references/transactions/transfer-token) 时，Address 目的地中的 `account_output.amount` 必须是十进制金额字符串（例如 `1.5`），且转换后的基本单位金额必须为正数。小数位数不得超过代币的 `decimal` 值，该值可通过 [Get token information](/v2/api-references/wallets/get-token-information) 获取。
+
+对于外部全托管钱包（Custodial Wallet）提币，金额还须满足代币的 `dust_threshold`（最低提币金额）要求，该值同样可通过 [Get token information](/v2/api-references/wallets/get-token-information) 获取。
+
+若 `account_output.amount` 未通过校验，API 可能返回错误码 `2006`，`error_message` 示例为 `account_output.amount invalid` 或 `Invalid parameter: account_output.amount.`。对于外部全托管钱包提币，金额精度、正数校验或 `dust_threshold` 校验失败时，也可能返回 amount 相关的特定错误码而非 `2006`，具体取决于钱包路径。

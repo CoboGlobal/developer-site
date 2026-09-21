@@ -10,7 +10,7 @@
 |---|---|---|
 | 1000 | 内部服务器错误。此错误可能由多个问题引起，包括 [Org Access Tokens](/v2/apps/org-access-tokens) 过期。 | 检查您的服务器配置设置，包括 Org Access Tokens 是否已过期，然后稍后重试。 |
 | 1003, 2003 | 请求中缺少一个或多个必填参数。 | `error_message` 字段会指出具体缺失的参数。请找到该参数，在所调用接口的 API 参考中确认哪些参数为必填，补充后重试。 |
-| 1006, 2006 | 一个或多个参数格式无效或包含不支持的值。 | `error_message` 字段会指出未通过校验的参数。请在所调用接口的 API 参考中确认该参数的预期类型、格式和允许值，修正后重试。 |
+| 1006, 2006 | 一个或多个参数格式无效或包含不支持的值。 | `error_message` 字段会指出未通过校验的参数。请在所调用接口的 API 参考中确认该参数的预期类型、格式和允许值，修正后重试。若 `error_message` 指出的参数为 `account_output.amount`，请参见 [Address 目的地金额](/v2_cn/guides/transactions/sources-and-destinations) 了解金额格式、代币精度、正数要求及适用的全托管钱包 `dust_threshold` 要求。 |
 | 2000 | 处理过程中发生内部错误。 | 此为 Cobo 侧的临时错误。请稍后重试。如果错误持续出现，请联系 Cobo 支持团队（[help@cobo.com](mailto:help@cobo.com)），并提供响应中的 `error_id` 以便排查问题。 |
 | 2021 | 请求的 API 接口未实现或当前不可用。 | 请对照 API 参考确认请求路径和 HTTP 方法与目标接口完全一致（多余的斜杠或错误的方法也会返回此错误）。如果均正确，则该接口可能暂时不可用，请采用指数退避策略在短暂延迟后重试。 |
 | 2024 | API key 认证失败。 | <ul><li>若 `error_message` 为 `Your API key is not registered in this environment...`：您使用的 API key 注册在错误的环境中，请切换到正确的 API Host 并使用对应环境的 API key。参见[环境](/v2_cn/guides/overview/environments)。</li><li>若 `error_message` 为 `Your API key is not yet activated...` 或 `Api key is not activated`：请在 Cobo Guard 中完成 Admin 审批以激活该 API key。</li><li>若 `error_message` 提示 IP 白名单问题：请将服务器的出口 IP 加入 Cobo Portal 中该 API key 的 IP 白名单。</li><li>签名失败时，请确认签名串格式为 `METHOD\|PATH\|NONCE\|PARAMS\|BODY`，其中 NONCE 必须与 `Biz-Api-Nonce` 请求头一致。参见[身份验证](/v2_cn/guides/overview/cobo-auth)。</li></ul>详情请参见[注册 API 密钥](https://manuals.cobo.com/cn/portal/developer-console/create-api-key)。 |
