@@ -12,6 +12,20 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.45.0
+
+此版本于 2026 年 10 月 14 日发布。
+
+### 新功能
+
+- [调用智能合约](/v2/api-references/transactions/call-smart-contract) 接口新增 `SUI_Contract` 目标类型，支持 Sui AddressBalance 赎回和退款操作，并支持 `AddressBalance`、`AddressBalanceRedeem` 和 `AddressBalanceRefund` 合约参数。
+
+### 兼容性变更
+
+- [查询交易列表](/v2/api-references/transactions/list-all-transactions) 响应和交易 Webhook 负载新增支持 `AdditionalInformationRequired` 交易 `sub_status` 枚举值。
+- [估算交易费用](/v2/api-references/transactions/estimate-transaction-fee) 接口响应新增可返回 Solana 关联代币账户创建租金 `rent_amount`；`base_fee` 以 lamport 为单位返回。
+- [转账代币](/v2/api-references/transactions/transfer-token) 接口新增支持在 Tempo 上使用 Auto-Fuel；Tempo 上仍不支持 `PassiveAutoFuel`。
+
 ## v1.44.0
 
 此版本于 2026 年 9 月 16 日发布。
