@@ -12,6 +12,20 @@ This changelog details all additions and changes to the WaaS 2.0 API. You can do
 
 For changes specific to payment-related operations, please refer to the [Release history](/v2/payments/changelog) of the payment solution.
 
+## v1.45.0
+
+This version was released on October 14, 2026.
+
+### New features
+
+- Added the `SUI_Contract` destination to [Call smart contract](/v2/api-references/transactions/call-smart-contract) for Sui AddressBalance redemption and refund operations. The destination supports the `AddressBalance`, `AddressBalanceRedeem`, and `AddressBalanceRefund` contract parameters.
+
+### Compatibility changes
+
+- [List all transactions](/v2/api-references/transactions/list-all-transactions) responses and transaction webhook payloads now support the `AdditionalInformationRequired` transaction `sub_status` value.
+- [Estimate transaction fee](/v2/api-references/transactions/estimate-transaction-fee) responses can now include `rent_amount` for Solana associated token account creation rent. The `base_fee` value is expressed in lamports.
+- [Transfer token](/v2/api-references/transactions/transfer-token) now supports Auto-Fuel on Tempo. `PassiveAutoFuel` remains unsupported on Tempo.
+
 ## v1.44.0
 
 This version was released on September 16, 2026.

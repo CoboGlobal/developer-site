@@ -8397,7 +8397,7 @@ components:
       properties:
         base_fee:
           type: string
-          description: A fixed fee, in lamports, charged per signature. The default is 5,000 per signature.
+          description: 'A fixed fee, in lamports, charged per signature. The default is 5,000 per signature.'
           example: '5000'
         rent_amount:
           type: string
@@ -8990,6 +8990,7 @@ components:
             - $ref: '#/components/schemas/TransactionBIP322Destination'
             - $ref: '#/components/schemas/TransactionCosmosAdr36Destination'
             - $ref: '#/components/schemas/TransactionStellarDestination'
+            - $ref: '#/components/schemas/TransactionSuiDestination'
             - $ref: '#/components/schemas/TransactionTronContractDestination'
           discriminator:
             propertyName: destination_type
@@ -9009,6 +9010,7 @@ components:
               DepositToAddress: '#/components/schemas/TransactionDepositToAddressDestination'
               DepositToWallet: '#/components/schemas/TransactionDepositToWalletDestination'
               STELLAR_Contract: '#/components/schemas/TransactionStellarDestination'
+              SUI_Contract: '#/components/schemas/TransactionSuiDestination'
               TRON_Contract: '#/components/schemas/TransactionTronContractDestination'
         result:
           $ref: '#/components/schemas/TransactionResult'
@@ -9324,6 +9326,7 @@ components:
         - PendingCoboKYTCheck
         - RejectedByCoboKYT
         - PendingCoboTravelRuleCheck
+        - AdditionalInformationRequired
       example: PendingDoubleCheck
       description: |
         The transaction sub-status. For more details, please refer to [Transaction statuses and sub-statuses](https://www.cobo.com/developers/v2/guides/transactions/status).
@@ -9761,6 +9764,7 @@ components:
         - EVM_Contract
         - SOL_Contract
         - STELLAR_Contract
+        - SUI_Contract
         - COSMOS_Contract
         - TRON_Contract
         - EVM_EIP_191_Signature
@@ -10093,6 +10097,18 @@ components:
       example: ChangeTrust
       description: |
         Operations to manage trustlines on the Stellar network.
+    TransactionSuiDestination:
+      title: SUI_Contract
+      type: object
+      description: 'The information about the transaction destination type `SUI_Contract`. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.'
+      required:
+        - destination_type
+        - contract_param
+      properties:
+        destination_type:
+          $ref: '#/components/schemas/TransactionDestinationType'
+        contract_param:
+          $ref: '#/components/schemas/SuiContractCallContractParam'
     TransactionSolContractAccount:
       title: SOL Instruction Account
       type: object
@@ -11827,6 +11843,7 @@ components:
         - STELLAR_Contract
         - TRON_Contract
         - COSMOS_Contract
+        - SUI_Contract
       example: EVM_Contract
       description: |
         The type of the contract format. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.
@@ -12052,6 +12069,64 @@ components:
       example: ChangeTrust
       description: |
         Operations to manage trustlines on the Stellar network.
+    SuiContractCallDestination:
+      title: SUI_Contract
+      type: object
+      description: 'The information about the transaction destination. Refer to [Transaction sources and destinations](https://www.cobo.com/developers/v2/guides/transactions/sources-and-destinations) for a detailed introduction about the supported sources and destinations for each transaction type.'
+      required:
+        - destination_type
+        - contract_param
+      properties:
+        destination_type:
+          $ref: '#/components/schemas/ContractCallDestinationType'
+        contract_param:
+          $ref: '#/components/schemas/SuiContractCallContractParam'
+    SuiContractCallContractType:
+      type: string
+      enum:
+        - AddressBalance
+      example: AddressBalance
+      description: |
+        The type of the SUI contract type.
+    SuiContractCallContractParam:
+      oneOf:
+        - $ref: '#/components/schemas/SuiContractCallAddressBalanceParam'
+      discriminator:
+        propertyName: contract_type
+        mapping:
+          AddressBalance: '#/components/schemas/SuiContractCallAddressBalanceParam'
+    SuiContractCallAddressBalanceParam:
+      title: Sui_AddressBalance_Param
+      type: object
+      description: Parameters related to SUI address balance operations
+      required:
+        - contract_type
+        - token_id
+        - operation_type
+      properties:
+        contract_type:
+          $ref: '#/components/schemas/SuiContractCallContractType'
+        token_id:
+          type: string
+          description: 'The token ID, which is the unique identifier of a token.'
+          example: SUI
+        operation_type:
+          $ref: '#/components/schemas/SuiContractCallAddressBalanceOperationType'
+        txid:
+          type: string
+          description: |
+            The transaction hash of the deposit to return. Required when `operation_type` is `AddressBalanceRefund`, and must be omitted otherwise. The destination address is resolved from this deposit and cannot be specified.
+          example: 5YajS3ewacVwd1aE7Qkk7sXsstmwwMUiNCeQx22wkGXZ
+    SuiContractCallAddressBalanceOperationType:
+      type: string
+      enum:
+        - AddressBalanceRedeem
+        - AddressBalanceRefund
+      example: AddressBalanceRedeem
+      description: |
+        Address balance operations.
+        - `AddressBalanceRedeem`: Move the address balance into a coin object held by the same address.
+        - `AddressBalanceRefund`: Return a specific deposit from the address balance to the address that sent it.
     ContractCallDestination:
       oneOf:
         - $ref: '#/components/schemas/EvmContractCallDestination'
@@ -12059,6 +12134,7 @@ components:
         - $ref: '#/components/schemas/StellarContractCallDestination'
         - $ref: '#/components/schemas/TronContractCallDestination'
         - $ref: '#/components/schemas/CosmosContractCallDestination'
+        - $ref: '#/components/schemas/SuiContractCallDestination'
       discriminator:
         propertyName: destination_type
         mapping:
@@ -12067,6 +12143,7 @@ components:
           STELLAR_Contract: '#/components/schemas/StellarContractCallDestination'
           TRON_Contract: '#/components/schemas/TronContractCallDestination'
           COSMOS_Contract: '#/components/schemas/CosmosContractCallDestination'
+          SUI_Contract: '#/components/schemas/SuiContractCallDestination'
     ContractCallParams:
       type: object
       description: The information about a transaction that interacts with a smart contract
@@ -12399,6 +12476,12 @@ components:
             - PaymentBankWithdrawal
             - PaymentBulkSend
             - PaymentBulkSendItem
+            - PaymentTopUpUpdate
+            - PaymentOrderUpdate
+            - PaymentRefundUpdate
+            - PaymentPayoutUpdate
+            - PaymentBulkSendUpdate
+            - PaymentBulkSendItemUpdate
             - PaymentAccountBalanceUpdate
             - BalanceUpdateInfo
             - SuspendedToken
@@ -12428,6 +12511,12 @@ components:
             - `PaymentBankWithdrawal`: The payment bank withdrawal event data.
             - `PaymentBulkSend`: The payment bulk send event data.
             - `PaymentBulkSendItem`: The payment bulk send item event data.
+            - `PaymentTopUpUpdate`: The payment top-up update event data.
+            - `PaymentOrderUpdate`: The payment order update event data.
+            - `PaymentRefundUpdate`: The payment refund update event data.
+            - `PaymentPayoutUpdate`: The payment payout update event data.
+            - `PaymentBulkSendUpdate`: The payment bulk send update event data.
+            - `PaymentBulkSendItemUpdate`: The payment bulk send item update event data.
             - `PaymentAccountBalanceUpdate`: The Payments account balance updated event data, including account information and balance change details.
             - `BalanceUpdateInfo`: The balance update event data.
             - `SuspendedToken`: The token suspension event data.
@@ -12458,6 +12547,12 @@ components:
         - $ref: '#/components/schemas/PaymentBankWithdrawalEvent'
         - $ref: '#/components/schemas/PaymentBulkSendEvent'
         - $ref: '#/components/schemas/PaymentBulkSendItemEvent'
+        - $ref: '#/components/schemas/PaymentTopUpUpdateEventData'
+        - $ref: '#/components/schemas/PaymentOrderUpdateEventData'
+        - $ref: '#/components/schemas/PaymentRefundUpdateEventData'
+        - $ref: '#/components/schemas/PaymentPayoutUpdateEventData'
+        - $ref: '#/components/schemas/PaymentBulkSendUpdateEventData'
+        - $ref: '#/components/schemas/PaymentBulkSendItemUpdateEventData'
         - $ref: '#/components/schemas/PaymentAccountBalanceUpdateEventData'
         - $ref: '#/components/schemas/ComplianceDispositionUpdateEventData'
         - $ref: '#/components/schemas/ComplianceKytScreeningsUpdateEventData'
@@ -12486,6 +12581,12 @@ components:
           PaymentBankWithdrawal: '#/components/schemas/PaymentBankWithdrawalEvent'
           PaymentBulkSend: '#/components/schemas/PaymentBulkSendEvent'
           PaymentBulkSendItem: '#/components/schemas/PaymentBulkSendItemEvent'
+          PaymentTopUpUpdate: '#/components/schemas/PaymentTopUpUpdateEventData'
+          PaymentOrderUpdate: '#/components/schemas/PaymentOrderUpdateEventData'
+          PaymentRefundUpdate: '#/components/schemas/PaymentRefundUpdateEventData'
+          PaymentPayoutUpdate: '#/components/schemas/PaymentPayoutUpdateEventData'
+          PaymentBulkSendUpdate: '#/components/schemas/PaymentBulkSendUpdateEventData'
+          PaymentBulkSendItemUpdate: '#/components/schemas/PaymentBulkSendItemUpdateEventData'
           PaymentAccountBalanceUpdate: '#/components/schemas/PaymentAccountBalanceUpdateEventData'
           ComplianceDisposition: '#/components/schemas/ComplianceDispositionUpdateEventData'
           ComplianceKytScreenings: '#/components/schemas/ComplianceKytScreeningsUpdateEventData'
@@ -12793,6 +12894,460 @@ components:
               type: integer
               description: 'The updated time of the bulk send item, represented as a UNIX timestamp in seconds.'
               example: 1744689600
+    PaymentTopUpUpdateEventData:
+      title: Payment Top-up Update Event Data
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - type: object
+          required:
+            - transaction_id
+            - merchant_id
+            - payer_id
+            - status
+            - amount
+            - topup_address
+            - created_timestamp
+            - updated_timestamp
+            - custom_payer_id
+            - screening_mode
+            - tx_hash
+            - source_address
+            - message
+            - failed_reason
+          properties:
+            transaction_id:
+              type: string
+              description: The incoming Payment transaction ID.
+              example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
+            merchant_id:
+              type: string
+              description: The merchant ID associated with the top-up.
+              example: M1001
+            payer_id:
+              type: string
+              description: The payer ID generated by Cobo.
+              example: P20250415T0310056d7aa
+            custom_payer_id:
+              type: string
+              nullable: true
+              description: 'Unique customer identifier on the merchant side, used to allocate a dedicated top-up address'
+              example: O20250304-P1001-1001
+            status:
+              $ref: '#/components/schemas/PaymentPayInStatus'
+            screening_mode:
+              $ref: '#/components/schemas/PaymentScreeningMode'
+            amount:
+              $ref: '#/components/schemas/PaymentAssetAmount'
+            tx_hash:
+              type: string
+              nullable: true
+              description: The blockchain transaction hash.
+              example: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+            topup_address:
+              type: string
+              description: The dedicated top-up address that received the funds.
+              example: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'
+            source_address:
+              type: string
+              nullable: true
+              description: The source address of the incoming transaction.
+              example: '0x1234567890abcdef1234567890abcdef12345678'
+            message:
+              type: string
+              nullable: true
+              description: The action prompt for an `ActionRequired` status.
+              example: Additional information is required before these funds can be credited.
+            failed_reason:
+              $ref: '#/components/schemas/PaymentFailedReason'
+            created_timestamp:
+              type: integer
+              format: int64
+              description: 'The created time of the top-up, represented as a UNIX timestamp in seconds.'
+              example: 1744689000
+            updated_timestamp:
+              type: integer
+              format: int64
+              description: 'The updated time of the top-up, represented as a UNIX timestamp in seconds.'
+              example: 1744689100
+    PaymentOrderUpdateEventData:
+      title: Payment Order Update Event Data
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - type: object
+          required:
+            - order_id
+            - psp_order_code
+            - merchant_id
+            - status
+            - receive_address
+            - expired_at
+            - requested_amount
+            - credited_amount
+            - outstanding_amount
+            - transactions
+            - created_timestamp
+            - updated_timestamp
+            - merchant_order_code
+            - notice_type
+          properties:
+            order_id:
+              $ref: '#/components/schemas/OrderId'
+            psp_order_code:
+              type: string
+              description: A unique reference code assigned by the developer to identify this order in their system.
+              example: P20250415001
+            merchant_id:
+              type: string
+              description: The merchant ID associated with the order.
+              example: M1001
+            merchant_order_code:
+              type: string
+              nullable: true
+              description: A unique reference code assigned by the merchant to identify this order in their system.
+              example: M20250415001
+            status:
+              $ref: '#/components/schemas/OrderStatus'
+            notice_type:
+              $ref: '#/components/schemas/PaymentOrderNoticeType'
+            receive_address:
+              type: string
+              description: The recipient wallet address for the payment transaction.
+              example: '0x1234567890abcdef1234567890abcdef12345678'
+            expired_at:
+              type: integer
+              format: int64
+              description: 'The expiration time of the pay-in order, represented as a UNIX timestamp in seconds.'
+              example: 1744693600
+            requested_amount:
+              description: The requested amount.
+              allOf:
+                - $ref: '#/components/schemas/PaymentAssetAmount'
+            credited_amount:
+              description: The credited amount.
+              allOf:
+                - $ref: '#/components/schemas/PaymentAssetAmount'
+            outstanding_amount:
+              description: The outstanding amount.
+              allOf:
+                - $ref: '#/components/schemas/PaymentAssetAmount'
+            transactions:
+              type: array
+              description: The incoming transactions associated with the order.
+              items:
+                $ref: '#/components/schemas/PaymentOrderDeposit'
+            created_timestamp:
+              type: integer
+              format: int64
+              description: 'The created time of the order, represented as a UNIX timestamp in seconds.'
+              example: 1744690000
+            updated_timestamp:
+              type: integer
+              format: int64
+              description: 'The updated time of the order, represented as a UNIX timestamp in seconds.'
+              example: 1744690100
+    PaymentRefundUpdateEventData:
+      title: Payment Refund Update Event Data
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - type: object
+          required:
+            - refund_id
+            - status
+            - requested_amount
+            - refund_type
+            - created_timestamp
+            - updated_timestamp
+            - order_id
+            - merchant_id
+            - request_id
+            - to_address
+            - tx_hash
+            - initiator
+            - commission_fee
+            - failed_reason
+          properties:
+            refund_id:
+              type: string
+              description: The refund order ID.
+              example: R20250415-M1001-1001
+            order_id:
+              type: string
+              nullable: true
+              description: Unique identifier of a single order
+              example: O20250304-M1001-1001
+            merchant_id:
+              type: string
+              nullable: true
+              description: The merchant ID associated with the refund.
+              example: M1001
+            request_id:
+              type: string
+              nullable: true
+              description: The request ID for the refund request.
+              example: 123e4567-e89b-12d3-a456-426614174004
+            to_address:
+              type: string
+              nullable: true
+              description: The recipient wallet address for the refund.
+              example: '0x9876543210abcdef1234567890abcdef12345678'
+            status:
+              $ref: '#/components/schemas/RefundStatus'
+            requested_amount:
+              $ref: '#/components/schemas/PaymentAssetAmount'
+            tx_hash:
+              type: string
+              nullable: true
+              description: The blockchain transaction hash.
+              example: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+            refund_type:
+              $ref: '#/components/schemas/RefundType'
+            initiator:
+              type: string
+              nullable: true
+              description: The initiator of the refund order.
+              example: ak_test_*********************
+            commission_fee:
+              $ref: '#/components/schemas/PaymentCommissionFeeTotal'
+            failed_reason:
+              $ref: '#/components/schemas/PaymentFailedReason'
+            created_timestamp:
+              type: integer
+              format: int64
+              description: 'The created time of the refund order, represented as a UNIX timestamp in seconds.'
+              example: 1744690400
+            updated_timestamp:
+              type: integer
+              format: int64
+              description: 'The updated time of the refund order, represented as a UNIX timestamp in seconds.'
+              example: 1744690500
+    PaymentPayoutUpdateEventData:
+      title: Payment Payout Update Event Data
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - type: object
+          required:
+            - payout_id
+            - request_id
+            - source_account
+            - status
+            - requested_amounts
+            - failed_amounts
+            - requested_target
+            - transactions
+            - created_timestamp
+            - updated_timestamp
+            - initiator
+            - remark
+            - commission_fee
+            - failed_reason
+            - actual_payout_amounts
+          properties:
+            payout_id:
+              type: string
+              description: The payout ID generated by Cobo.
+              example: 123e4567-e89b-12d3-a456-426614174004
+            request_id:
+              type: string
+              description: The request ID for the payout.
+              example: 123e4567-e89b-12d3-a456-426614174005
+            source_account:
+              $ref: '#/components/schemas/PaymentSourceAccount'
+            status:
+              $ref: '#/components/schemas/PaymentPayoutStatus'
+            requested_amounts:
+              type: array
+              description: The amounts requested from the source account.
+              items:
+                $ref: '#/components/schemas/PaymentAssetAmount'
+            failed_amounts:
+              type: array
+              description: The failed amounts in the source assets.
+              items:
+                $ref: '#/components/schemas/PaymentAssetAmount'
+            requested_target:
+              $ref: '#/components/schemas/PaymentPayoutRequestedTarget'
+            transactions:
+              type: array
+              description: The transactions created for the payout.
+              items:
+                $ref: '#/components/schemas/PaymentPayoutTransaction'
+            actual_payout_amounts:
+              type: array
+              description: The amounts actually delivered to the recipient.
+              items:
+                $ref: '#/components/schemas/PaymentAssetOrFiatAmount'
+            initiator:
+              type: string
+              nullable: true
+              description: The initiator of the payout.
+              example: ak_test_*********************
+            commission_fee:
+              $ref: '#/components/schemas/PaymentCommissionFeeTotal'
+            remark:
+              type: string
+              nullable: true
+              description: The remark for the payout.
+              example: Create payouts for customer 123
+            failed_reason:
+              $ref: '#/components/schemas/PaymentFailedReason'
+            created_timestamp:
+              type: integer
+              format: int64
+              description: 'The created time of the payout, represented as a UNIX timestamp in seconds.'
+              example: 1744690700
+            updated_timestamp:
+              type: integer
+              format: int64
+              description: 'The updated time of the payout, represented as a UNIX timestamp in seconds.'
+              example: 1744690800
+    PaymentBulkSendUpdateEventData:
+      title: Payment Bulk Send Update Event Data
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - type: object
+          required:
+            - bulk_send_id
+            - source_account
+            - execution_mode
+            - status
+            - item_count
+            - failed_item_count
+            - not_executed_item_count
+            - requested_amounts
+            - completed_amounts
+            - failed_amounts
+            - created_timestamp
+            - updated_timestamp
+            - request_id
+            - description
+            - commission_fee
+            - failed_reason
+          properties:
+            bulk_send_id:
+              type: string
+              description: The bulk send ID.
+              example: 123e4567-e89b-12d3-a456-426614174003
+            request_id:
+              type: string
+              nullable: true
+              description: The request ID.
+              example: 123e4567-e89b-12d3-a456-426614174004
+            source_account:
+              $ref: '#/components/schemas/PaymentSourceAccount'
+            execution_mode:
+              $ref: '#/components/schemas/PaymentBulkSendExecutionMode'
+            status:
+              $ref: '#/components/schemas/PaymentBulkSendStatus'
+            item_count:
+              type: integer
+              description: The total number of items in the bulk send.
+              example: 1000
+            failed_item_count:
+              type: integer
+              description: The number of failed items.
+              example: 60
+            not_executed_item_count:
+              type: integer
+              description: The number of items not executed.
+              example: 40
+            requested_amounts:
+              type: array
+              description: The requested amounts aggregated by asset.
+              items:
+                $ref: '#/components/schemas/PaymentAssetAmount'
+            completed_amounts:
+              type: array
+              description: The amounts of completed items aggregated by asset.
+              items:
+                $ref: '#/components/schemas/PaymentAssetAmount'
+            failed_amounts:
+              type: array
+              description: The amounts of failed and not-executed items aggregated by asset.
+              items:
+                $ref: '#/components/schemas/PaymentAssetAmount'
+            description:
+              type: string
+              nullable: true
+              description: The description for the entire bulk send batch.
+              example: Monthly vendor payments - January 2024
+            commission_fee:
+              $ref: '#/components/schemas/PaymentCommissionFeeTotal'
+            failed_reason:
+              $ref: '#/components/schemas/PaymentFailedReason'
+            created_timestamp:
+              type: integer
+              format: int64
+              description: 'The created time of the bulk send, represented as a UNIX timestamp in seconds.'
+              example: 1744691000
+            updated_timestamp:
+              type: integer
+              format: int64
+              description: 'The updated time of the bulk send, represented as a UNIX timestamp in seconds.'
+              example: 1744691100
+    PaymentBulkSendItemUpdateEventData:
+      title: Payment Bulk Send Item Update Event Data
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventDataType'
+        - type: object
+          required:
+            - bulk_send_item_id
+            - bulk_send_id
+            - status
+            - requested_amount
+            - receiving_address
+            - source_account
+            - created_timestamp
+            - updated_timestamp
+            - request_id
+            - tx_hash
+            - description
+            - failed_reason
+          properties:
+            bulk_send_item_id:
+              type: string
+              description: The bulk send item ID.
+              example: 123e4567-e89b-12d3-a456-426614174003
+            bulk_send_id:
+              type: string
+              description: The ID of the bulk send that contains this item.
+              example: 123e4567-e89b-12d3-a456-426614174004
+            request_id:
+              type: string
+              nullable: true
+              description: The request ID for the item.
+              example: 123e4567-e89b-12d3-a456-426614174005
+            status:
+              $ref: '#/components/schemas/PaymentBulkSendItemStatus'
+            requested_amount:
+              $ref: '#/components/schemas/PaymentAssetAmount'
+            receiving_address:
+              type: string
+              description: The receiving address of the payout item.
+              example: '0x1234567890abcdef1234567890abcdef12345678'
+            tx_hash:
+              type: string
+              nullable: true
+              description: The blockchain transaction hash.
+              example: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+            source_account:
+              $ref: '#/components/schemas/PaymentSourceAccount'
+            description:
+              type: string
+              nullable: true
+              description: The description of the payout item.
+              example: 'Invoice #INV-2024-001'
+            failed_reason:
+              $ref: '#/components/schemas/PaymentFailedReason'
+            created_timestamp:
+              type: integer
+              format: int64
+              description: 'The created time of the bulk send item, represented as a UNIX timestamp in seconds.'
+              example: 1744691250
+            updated_timestamp:
+              type: integer
+              format: int64
+              description: 'The updated time of the bulk send item, represented as a UNIX timestamp in seconds.'
+              example: 1744691350
     PaymentAccountBalanceUpdateEventData:
       title: Payment account balance updated Event Data
       description: |-
@@ -12943,6 +13498,12 @@ components:
         - payment.charge.status.updated
         - payment.bulk_send.status.updated
         - payment.bulk_send.item.status.updated
+        - payment.topup.updated
+        - payment.order.updated
+        - payment.refund.updated
+        - payment.payout.updated
+        - payment.bulk_send.updated
+        - payment.bulk_send.item.updated
         - payment.transaction.external.created
         - payment.transaction.external.completed
         - payment.transaction.settlement_network.created
@@ -17367,6 +17928,16 @@ components:
         fee_amount:
           type: string
           description: 'The amount of the commission fee charged by Cobo for operations such as pay-ins and payouts, in USD.'
+    PaymentCommissionFeeTotal:
+      type: object
+      nullable: true
+      required:
+        - fee_amount
+      properties:
+        fee_amount:
+          type: string
+          description: The commission fee amount.
+          example: '0.1'
     OtcFee:
       type: object
       required:
@@ -19623,6 +20194,258 @@ components:
         - When the account is a merchant account, this is the merchant ID (merchant code), which you can retrieve by calling [List all merchants](https://www.cobo.com/developers/v2/api-references/payment/list-all-merchants).
         - When the account is the developer account, use `developer`.
       example: M1001
+    PaymentSourceAccount:
+      type: string
+      description: 'The Payments account from which the funds are debited: the merchant ID for a merchant account, or `developer` for the developer account.'
+      example: M1001
+    PaymentCustomPayerId:
+      type: string
+      description: 'Unique customer identifier on the merchant side, used to allocate a dedicated top-up address.'
+      example: O20250304-P1001-1001
+    PaymentAssetAmount:
+      type: object
+      description: A cryptocurrency asset amount.
+      required:
+        - amount
+        - token_id
+        - chain_id
+      properties:
+        amount:
+          type: string
+          description: 'The amount of the asset, represented as a decimal string.'
+          example: '100.00'
+        token_id:
+          type: string
+          description: The token ID of the asset.
+          example: ETH_USDC
+        chain_id:
+          type: string
+          description: The chain ID of the asset.
+          example: ETH
+    PaymentAssetOrFiatAmount:
+      type: object
+      required:
+        - amount_type
+        - amount
+      properties:
+        amount_type:
+          type: string
+          enum:
+            - Crypto
+            - Fiat
+          description: The amount representation type.
+          example: Crypto
+        amount:
+          type: string
+          description: 'The amount, represented as a decimal string.'
+          example: '100.00'
+        token_id:
+          type: string
+          description: The token ID of the asset. This field is present when `amount_type` is `Crypto`.
+          example: ETH_USDC
+        chain_id:
+          type: string
+          description: The chain ID of the asset. This field is present when `amount_type` is `Crypto`.
+          example: ETH
+        currency:
+          type: string
+          description: The fiat currency code. This field is present when `amount_type` is `Fiat`.
+          example: USD
+      description: An amount represented either as a cryptocurrency asset or a fiat currency.
+    PaymentFailedReason:
+      type: object
+      nullable: true
+      description: The structured failure reason.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: |
+            The failure code.
+          example: transaction.rejected_by_policy
+        message:
+          type: string
+          description: The failure message.
+          example: The transaction was rejected by a transaction policy.
+    PaymentPayInStatus:
+      type: string
+      enum:
+        - Detected
+        - PendingScreening
+        - ActionRequired
+        - Completed
+        - Failed
+      example: Detected
+      description: |
+        The business status of a pay-in transaction:
+        - `Detected`: The incoming transaction has been detected but the funds are not yet available.
+        - `PendingScreening`: The incoming transaction is awaiting a screening result.
+        - `ActionRequired`: Action from the customer is required before processing can continue.
+        - `Completed`: The funds are available for the corresponding Payments business object.
+        - `Failed`: The incoming transaction cannot be credited.
+    PaymentScreeningMode:
+      type: string
+      nullable: true
+      enum:
+        - CoboKyt
+        - IntegratedVendor
+        - CustomVendor
+      example: CoboKyt
+      description: The screening service that reviews the incoming transaction
+    PaymentOrderNoticeType:
+      type: string
+      nullable: true
+      enum:
+        - PaymentUpdated
+        - PaymentFailed
+        - LatePaymentReceived
+      example: PaymentUpdated
+      description: |
+        The reason an order update is sent when the order's primary status does not change:
+        - `PaymentUpdated`: A related incoming transaction requires customer action.
+        - `PaymentFailed`: A related incoming transaction failed and cannot be credited to the order.
+        - `LatePaymentReceived`: An incoming transaction was completed after the order had already reached a terminal status.
+    PaymentOrderDeposit:
+      type: object
+      required:
+        - transaction_id
+        - tx_hash
+        - amount
+        - source_address
+        - status
+        - is_late
+        - screening_mode
+        - message
+        - failed_reason
+      properties:
+        transaction_id:
+          type: string
+          description: The incoming Payment transaction ID.
+          example: aff0e1cb-15b2-4e1f-9b9d-a9133715986f
+        tx_hash:
+          type: string
+          nullable: true
+          description: The blockchain transaction hash.
+          example: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+        amount:
+          $ref: '#/components/schemas/PaymentAssetAmount'
+        source_address:
+          type: string
+          nullable: true
+          description: The source address of the incoming transaction.
+          example: '0x1234567890abcdef1234567890abcdef12345678'
+        status:
+          $ref: '#/components/schemas/PaymentPayInStatus'
+        screening_mode:
+          $ref: '#/components/schemas/PaymentScreeningMode'
+        is_late:
+          type: boolean
+          description: Whether the incoming transaction completed after the order reached a terminal status.
+          example: false
+        message:
+          type: string
+          nullable: true
+          description: The action prompt for an `ActionRequired` status.
+          example: Additional information is required before these funds can be credited.
+        failed_reason:
+          $ref: '#/components/schemas/PaymentFailedReason'
+    PaymentPayoutTransactionResult:
+      type: string
+      nullable: true
+      enum:
+        - Completed
+        - Failed
+      example: Completed
+      description: |
+        The result of a payout transaction:
+        - `Completed`: The transaction completed successfully.
+        - `Failed`: The transaction did not complete successfully.
+    PaymentPayoutTransaction:
+      type: object
+      required:
+        - transaction_id
+        - amount
+        - tx_hash
+        - result
+        - failed_reason
+      properties:
+        transaction_id:
+          type: string
+          description: The WaaS transaction ID.
+          example: 3f9c1d72-8b45-4e6a-9c13-7d2e5a8f4b60
+        amount:
+          description: The transaction amount.
+          allOf:
+            - $ref: '#/components/schemas/PaymentAssetAmount'
+        tx_hash:
+          type: string
+          nullable: true
+          description: The blockchain transaction hash.
+          example: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+        result:
+          $ref: '#/components/schemas/PaymentPayoutTransactionResult'
+        failed_reason:
+          $ref: '#/components/schemas/PaymentFailedReason'
+    PaymentPayoutAddressTarget:
+      type: object
+      required:
+        - target_type
+        - address
+        - chain_id
+      properties:
+        target_type:
+          type: string
+          enum:
+            - Address
+          description: The type of the payout target.
+          example: Address
+        address:
+          type: string
+          description: The recipient address.
+          example: '0x9876543210abcdef1234567890abcdef12345678'
+        chain_id:
+          type: string
+          description: The chain ID of the recipient address.
+          example: ETH
+    PaymentPayoutBankAccountTarget:
+      type: object
+      required:
+        - target_type
+        - bank_account_id
+      properties:
+        target_type:
+          type: string
+          enum:
+            - BankAccount
+          description: The type of the payout target.
+          example: BankAccount
+        bank_account_id:
+          type: string
+          description: The recipient bank account ID.
+          example: 123e4567-e89b-12d3-a456-426614174003
+        account_alias:
+          type: string
+          description: The alias of the recipient bank account.
+          example: Main Payout Account
+        bank_name:
+          type: string
+          description: The recipient bank name.
+          example: ABC Bank
+        currency:
+          type: string
+          description: The currency of the recipient bank account.
+          example: USD
+    PaymentPayoutRequestedTarget:
+      oneOf:
+        - $ref: '#/components/schemas/PaymentPayoutAddressTarget'
+        - $ref: '#/components/schemas/PaymentPayoutBankAccountTarget'
+      discriminator:
+        propertyName: target_type
+        mapping:
+          Address: '#/components/schemas/PaymentPayoutAddressTarget'
+          BankAccount: '#/components/schemas/PaymentPayoutBankAccountTarget'
     PaymentBalanceFlowDirection:
       type: string
       enum:
@@ -19647,6 +20470,7 @@ components:
         - Allocation
         - SettlementNetwork
         - BulkSend
+        - OnrampIn
       example: OrderIn
       description: |
         The source type of the balance change. Possible values include:
@@ -19661,6 +20485,7 @@ components:
         - `Allocation`: Balance change from an allocation.
         - `SettlementNetwork`: Balance change from the settlement network.
         - `BulkSend`: Balance change from a bulk send.
+        - `OnrampIn`: Balance change from an onramp.
     PaymentBalanceChange:
       type: object
       required:
@@ -22530,9 +23355,7 @@ components:
           description: |
             A list of unique custom payer IDs required to create top-up addresses.
           items:
-            type: string
-            description: 'Unique customer identifier on the merchant side, used to allocate a dedicated top-up address.'
-            example: O20250304-P1001-1001
+            $ref: '#/components/schemas/PaymentCustomPayerId'
     SweepToAddress:
       type: object
       description: Information about the sweep-to address.

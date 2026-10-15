@@ -163,7 +163,8 @@ printf 'env: production\n' > configs/cobo-tss-node-config.yaml
 
 <Warning>
 A node connected to the wrong environment's relay reports no error — it simply never comes online for a vault created in the other environment, and a key generation targeting that vault waits indefinitely. If your API calls go to `https://api.cobo.com`, set `env: production` before starting the node.
-</Warning> Remember to restart the TSS Node package once the config file is modified.
+</Warning> 
+Remember to restart the TSS Node package once the config file is modified.
 
 ### Startup script
 
