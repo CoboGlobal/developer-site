@@ -4071,7 +4071,10 @@ paths:
         - Payment
       operationId: submit_merchant_kyc
       summary: Submit merchant KYC
+      deprecated: true
       description: |
+        <Note>This operation has been deprecated. Please use [Create fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/create-fiat-entry-kyc) to create KYC information and [Update fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/update-fiat-entry-kyc) to update KYC information instead.</Note>
+
         This operation submits KYC information for a specified merchant.
 
         You need to provide the merchant type, country, and industry.
@@ -4102,7 +4105,10 @@ paths:
         - Payment
       operationId: get_merchant_kyc
       summary: Get merchant KYC
+      deprecated: true
       description: |
+        <Note>This operation has been deprecated. Please use [Get fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/get-fiat-entry-kyc) instead.</Note>
+
         This operation retrieves the KYC submission for a specified merchant.
 
         The merchant ID can be retrieved by calling [List all merchants](https://www.cobo.com/developers/v2/api-references/payment/list-all-merchants).
@@ -4119,6 +4125,116 @@ paths:
           $ref: '#/components/responses/badRequestError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /payments/fiat_entry_kyc:
+    post:
+      tags:
+        - Payment
+      operationId: create_fiat_entry_kyc
+      summary: Create fiat entry KYC
+      description: |
+        This operation creates KYC information for a fiat entry.
+
+        You need to provide the merchant type, country, and industry.
+        Provide either `company_info` or `individual_info`:
+        - `company_info`: Required for company merchants.
+        - `individual_info`: Required for individual merchants.
+
+        After a successful creation, use the returned `fiat_entry_kyc_id` when calling
+        [Update fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/update-fiat-entry-kyc)
+        or [Create destination](https://www.cobo.com/developers/v2/api-references/payment/create-destination).
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.create
+      requestBody:
+        $ref: '#/components/requestBodies/createFiatEntryKycBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/createFiatEntryKycResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    get:
+      tags:
+        - Payment
+      operationId: list_fiat_entry_kyc
+      summary: List all fiat entry KYC
+      description: |
+        This operation retrieves all fiat entry KYC records under your organization.
+
+        You can filter results by KYC statuses and use pagination parameters to control the response size.
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.read
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/beforeParam'
+        - $ref: '#/components/parameters/afterParam'
+        - $ref: '#/components/parameters/FiatEntryKycStatusesParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/listFiatEntryKycResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  '/payments/fiat_entry_kyc/{fiat_entry_kyc_id}':
+    get:
+      tags:
+        - Payment
+      operationId: get_fiat_entry_kyc
+      summary: Get fiat entry KYC
+      description: |
+        This operation retrieves information about a specified fiat entry KYC.
+
+        The fiat entry KYC ID can be retrieved by calling
+        [List all fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/list-all-fiat-entry-kyc).
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.read
+      parameters:
+        - $ref: '#/components/parameters/FiatEntryKycIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/getFiatEntryKycResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    put:
+      tags:
+        - Payment
+      operationId: update_fiat_entry_kyc
+      summary: Update fiat entry KYC
+      description: |
+        This operation updates KYC information for a specified fiat entry KYC ID.
+
+        The fiat entry KYC ID can be retrieved by calling
+        [List all fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/list-all-fiat-entry-kyc)
+        or [Create fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/create-fiat-entry-kyc).
+
+        All fields are optional. Omitted fields keep their existing values.
+        You can pass empty values to clear a field.
+
+        <Note>If the fiat entry KYC status is `Disabled`, this operation cannot be used to update KYC information.</Note>
+      security:
+        - CoboAuth: []
+        - OAuth2:
+            - payment_merchant.update
+      parameters:
+        - $ref: '#/components/parameters/FiatEntryKycIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/updateFiatEntryKycBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/updateFiatEntryKycResponse'
+        4XX:
+          $ref: '#/components/responses/badRequestError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /payments/files:
     post:
       tags:
@@ -4129,10 +4245,11 @@ paths:
       description: |
         <Note>This operation has been deprecated. Please use [Upload file v2](https://www.cobo.com/developers/v2/api-references/payment/upload-file-v2) instead.</Note>
 
-        This operation uploads a file for payment-related use cases, such as merchant KYC attachments.
+        This operation uploads a file for payment-related use cases, such as fiat entry KYC attachments.
 
         You need to specify the file to upload. After a successful upload, use the returned AWS file link in `file_id` when calling
-        [Submit merchant KYC](https://www.cobo.com/developers/v2/api-references/payment/submit-merchant-kyc).
+        [Create fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/create-fiat-entry-kyc)
+        or [Update fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/update-fiat-entry-kyc).
         The returned file link expires at the time specified by `expired_timestamp`.
       security:
         - CoboAuth: []
@@ -4154,10 +4271,11 @@ paths:
       operationId: upload_payment_file_v2
       summary: Upload file v2
       description: |
-        This operation uploads a file for payment-related use cases, such as merchant KYC attachments.
+        This operation uploads a file for payment-related use cases, such as fiat entry KYC attachments.
 
         You need to encode the file content in Base64 and include it in the JSON request body together with the original file name. After a successful upload, use the returned AWS file link in `file_id` when calling
-        [Submit merchant KYC](https://www.cobo.com/developers/v2/api-references/payment/submit-merchant-kyc).
+        [Create fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/create-fiat-entry-kyc)
+        or [Update fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/update-fiat-entry-kyc).
         The returned file link expires at the time specified by `expired_timestamp`.
       security:
         - CoboAuth: []
@@ -5287,6 +5405,11 @@ paths:
       summary: Create destination
       description: |
         This operation creates a [destination](https://www.cobo.com/payments/en/guides/destinations).
+
+        You can link the destination to a merchant ID or a fiat entry KYC ID.
+        The fiat entry KYC ID can be retrieved by calling
+        [Create fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/create-fiat-entry-kyc)
+        or [List all fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/list-all-fiat-entry-kyc).
       security:
         - CoboAuth: []
         - OAuth2:
@@ -5321,6 +5444,7 @@ paths:
         - $ref: '#/components/parameters/DestinationTypeOptionalParam'
         - $ref: '#/components/parameters/CountryOptionalParam'
         - $ref: '#/components/parameters/MerchantIdsParam'
+        - $ref: '#/components/parameters/FiatEntryKycIdsParam'
       responses:
         '200':
           $ref: '#/components/responses/listDestinationsResponse'
@@ -8392,6 +8516,22 @@ components:
           type: string
           description: 'The estimated fee required for submitting the transaction data to L1 (Layer 1), measured in wei.'
           example: '1000000000000'
+    FeeFallback:
+      type: object
+      description: The fallback information of an estimated transaction fee.
+      properties:
+        fallback:
+          type: boolean
+          description: |
+            Whether the estimated transaction fee is generated by Cobo's fallback mechanism. Cobo uses the fallback mechanism when a normal fee estimation cannot be completed, for example when the blockchain node fails to estimate the gas limit.
+            - `true`: The returned `gas_limit` is produced by Cobo's internal fallback strategy instead of a node estimation. It can differ significantly from the gas units that the transaction actually consumes, and a transaction submitted with this value may fail. Check `fallback_reason` and use the value with caution.
+            - `false`: The returned fee values are generated by a normal fee estimation.
+          example: true
+        fallback_reason:
+          type: string
+          description: |
+            The reason why Cobo's fallback mechanism was used, such as the error message returned by the blockchain node. This property is returned only when `fallback` is `true`.
+          example: 'execution reverted: ERC20: transfer amount exceeds balance'
     SOLBase:
       type: object
       properties:
@@ -8496,6 +8636,7 @@ components:
             - $ref: '#/components/schemas/EvmEip1559FeeBasePrice'
             - $ref: '#/components/schemas/FeeGasLimit'
             - $ref: '#/components/schemas/FeeReserved'
+            - $ref: '#/components/schemas/FeeFallback'
         recommended:
           required:
             - max_fee_per_gas
@@ -8505,6 +8646,7 @@ components:
             - $ref: '#/components/schemas/EvmEip1559FeeBasePrice'
             - $ref: '#/components/schemas/FeeGasLimit'
             - $ref: '#/components/schemas/FeeReserved'
+            - $ref: '#/components/schemas/FeeFallback'
         fast:
           required:
             - max_fee_per_gas
@@ -8514,6 +8656,7 @@ components:
             - $ref: '#/components/schemas/EvmEip1559FeeBasePrice'
             - $ref: '#/components/schemas/FeeGasLimit'
             - $ref: '#/components/schemas/FeeReserved'
+            - $ref: '#/components/schemas/FeeFallback'
     EstimatedEvmLegacyFee:
       type: object
       description: |
@@ -8540,6 +8683,7 @@ components:
             - $ref: '#/components/schemas/EvmLegacyFeeBasePrice'
             - $ref: '#/components/schemas/FeeGasLimit'
             - $ref: '#/components/schemas/FeeReserved'
+            - $ref: '#/components/schemas/FeeFallback'
         recommended:
           required:
             - gas_price
@@ -8548,6 +8692,7 @@ components:
             - $ref: '#/components/schemas/EvmLegacyFeeBasePrice'
             - $ref: '#/components/schemas/FeeGasLimit'
             - $ref: '#/components/schemas/FeeReserved'
+            - $ref: '#/components/schemas/FeeFallback'
         fast:
           required:
             - gas_price
@@ -8556,6 +8701,7 @@ components:
             - $ref: '#/components/schemas/EvmLegacyFeeBasePrice'
             - $ref: '#/components/schemas/FeeGasLimit'
             - $ref: '#/components/schemas/FeeReserved'
+            - $ref: '#/components/schemas/FeeFallback'
     EstimatedUtxoFee:
       type: object
       description: |
@@ -18002,7 +18148,8 @@ components:
           items:
             type: string
           example:
-            - E-commerce
+            - Intangible Goods & Service
+            - 'Websites, IT & Software'
         company_info:
           $ref: '#/components/schemas/MerchantKycCompanyInfo'
         individual_info:
@@ -18057,7 +18204,8 @@ components:
           items:
             type: string
           example:
-            - E-commerce
+            - Intangible Goods & Service
+            - 'Websites, IT & Software'
         company_info:
           $ref: '#/components/schemas/MerchantKycCompanyInfo'
         individual_info:
@@ -18157,7 +18305,7 @@ components:
           format: uuid
           description: |
             The file ID of the uploaded file, which you can retrieve by calling
-            [Upload file](https://www.cobo.com/developers/v2/api-references/payment/upload-file).
+            [Upload file v2](https://www.cobo.com/developers/v2/api-references/payment/upload-file-v2).
           example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         file_type:
           $ref: '#/components/schemas/MerchantKycCompanyAttachmentFileType'
@@ -18171,7 +18319,7 @@ components:
           type: string
           description: |
             The AWS file link of the uploaded file, which you can retrieve by calling
-            [Upload file](https://www.cobo.com/developers/v2/api-references/payment/upload-file).
+            [Upload file v2](https://www.cobo.com/developers/v2/api-references/payment/upload-file-v2).
           example: 'https://example-bucket.s3.us-east-1.amazonaws.com/uploads/id_card_front.jpg'
         file_type:
           $ref: '#/components/schemas/MerchantKycPersonAttachmentFileType'
@@ -18322,6 +18470,371 @@ components:
           description: The ultimate beneficial owner information.
           items:
             $ref: '#/components/schemas/MerchantKycPersonInfo'
+        online_store_url:
+          type: string
+          description: The online store URL. Required when merchant type is B2B.
+          example: 'https://example.com/store'
+    CreateFiatEntryKyc:
+      type: object
+      required:
+        - merchant_type
+        - country
+        - industry
+      properties:
+        merchant_type:
+          $ref: '#/components/schemas/FiatEntryKycMerchantType'
+        country:
+          $ref: '#/components/schemas/FiatEntryKycCountry'
+        industry:
+          type: array
+          description: The industry categories of the fiat entry KYC.
+          items:
+            type: string
+          example:
+            - Intangible Goods & Service
+            - 'Websites, IT & Software'
+        company_info:
+          $ref: '#/components/schemas/FiatEntryKycCompanyInfo'
+        individual_info:
+          $ref: '#/components/schemas/FiatEntryKycPersonInfo'
+    UpdateFiatEntryKyc:
+      type: object
+      description: |
+        The request body to update fiat entry KYC information.
+
+        All fields are optional. Omitted fields keep their existing values.
+        You can pass empty values to clear a field.
+      properties:
+        merchant_type:
+          $ref: '#/components/schemas/FiatEntryKycMerchantType'
+        country:
+          $ref: '#/components/schemas/FiatEntryKycCountry'
+        industry:
+          type: array
+          description: The industry categories of the fiat entry KYC.
+          items:
+            type: string
+          example:
+            - Intangible Goods & Service
+            - 'Websites, IT & Software'
+        company_info:
+          $ref: '#/components/schemas/FiatEntryKycCompanyInfo'
+        individual_info:
+          $ref: '#/components/schemas/FiatEntryKycPersonInfo'
+    FiatEntryKyc:
+      type: object
+      required:
+        - fiat_entry_kyc_id
+        - status
+      properties:
+        fiat_entry_kyc_id:
+          type: string
+          format: uuid
+          description: The fiat entry KYC ID.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        status:
+          $ref: '#/components/schemas/FiatEntryKycStatus'
+    FiatEntryKycDetail:
+      type: object
+      required:
+        - fiat_entry_kyc_id
+        - status
+        - merchant_type
+        - country
+        - industry
+        - created_timestamp
+      properties:
+        fiat_entry_kyc_id:
+          type: string
+          format: uuid
+          description: The fiat entry KYC ID.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        status:
+          $ref: '#/components/schemas/FiatEntryKycStatus'
+        merchant_type:
+          $ref: '#/components/schemas/FiatEntryKycMerchantType'
+        country:
+          $ref: '#/components/schemas/FiatEntryKycCountry'
+        industry:
+          type: array
+          description: The industry categories of the fiat entry KYC.
+          items:
+            type: string
+          example:
+            - Intangible Goods & Service
+            - 'Websites, IT & Software'
+        email:
+          type: string
+          description: The email address.
+          example: user@example.com
+        phone:
+          type: string
+          description: The phone number.
+          example: '+85212345678'
+        company_info:
+          $ref: '#/components/schemas/FiatEntryKycCompanyInfo'
+        individual_info:
+          $ref: '#/components/schemas/FiatEntryKycPersonInfo'
+        created_timestamp:
+          type: integer
+          format: int64
+          description: The creation timestamp in Unix seconds.
+          example: 1744689600
+        updated_timestamp:
+          type: integer
+          format: int64
+          description: The last update timestamp in Unix seconds.
+          example: 1744689600
+    FiatEntryKycStatus:
+      type: string
+      enum:
+        - PendingReview
+        - Completed
+        - Failed
+        - Disabled
+      example: PendingReview
+      description: |
+        The fiat entry KYC status. Possible values include:
+        - `PendingReview`: The fiat entry KYC is pending review.
+        - `Completed`: The fiat entry KYC has been completed.
+        - `Failed`: The fiat entry KYC has failed.
+        - `Disabled`: The fiat entry KYC is disabled and cannot be updated.
+    FiatEntryKycMerchantType:
+      type: string
+      enum:
+        - B2B
+        - B2C
+      example: B2B
+      description: |
+        The merchant type. Possible values include:
+        - `B2B`: Business-to-business merchant.
+        - `B2C`: Business-to-consumer merchant.
+    FiatEntryKycCountry:
+      type: string
+      description: 'The country/region of the fiat entry KYC, in ISO 3166-1 alpha-3 format.'
+      example: HKG
+    FiatEntryKycCompanyType:
+      type: string
+      enum:
+        - Corporation
+        - Partnership
+        - IICH
+        - Limited Company
+        - Others
+      example: Corporation
+      description: The company type.
+    FiatEntryKycCompanyAttachmentFileType:
+      type: string
+      enum:
+        - BI
+        - BR
+        - CI
+        - NNC1
+        - NAR
+        - SSC
+        - AOA
+        - Other
+        - BAP
+        - ANNUAL_RETURN
+        - PLATFORM_SCREENSHOT
+        - BUSINESS_DOCUMENT
+      example: BR
+      description: The company attachment file type.
+    FiatEntryKycPersonAttachmentFileType:
+      type: string
+      enum:
+        - PRC_ID_Emblem
+        - PRC_ID_Portrait
+        - OIC
+        - PP
+        - FIC
+        - HK_RP
+        - HK_MTP
+        - HK_PP
+        - HK_PID
+        - HKM_RP
+        - HK/Mac_MTP
+        - BACK
+        - ID_Hand
+        - POA
+      example: PRC_ID_Emblem
+      description: The person attachment file type.
+    FiatEntryKycCompanyAttachment:
+      type: object
+      required:
+        - file_id
+        - file_type
+      properties:
+        file_id:
+          type: string
+          format: uuid
+          description: |
+            The file ID of the uploaded file, which you can retrieve by calling
+            [Upload file v2](https://www.cobo.com/developers/v2/api-references/payment/upload-file-v2).
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        file_type:
+          $ref: '#/components/schemas/FiatEntryKycCompanyAttachmentFileType'
+    FiatEntryKycPersonAttachment:
+      type: object
+      required:
+        - file_id
+        - file_type
+      properties:
+        file_id:
+          type: string
+          description: |
+            The AWS file link of the uploaded file, which you can retrieve by calling
+            [Upload file v2](https://www.cobo.com/developers/v2/api-references/payment/upload-file-v2).
+          example: 'https://example-bucket.s3.us-east-1.amazonaws.com/uploads/id_card_front.jpg'
+        file_type:
+          $ref: '#/components/schemas/FiatEntryKycPersonAttachmentFileType'
+    FiatEntryKycAddress:
+      type: object
+      required:
+        - country
+        - state
+        - city
+        - postcode
+        - line1
+      properties:
+        country:
+          type: string
+          description: The country.
+          example: HK
+        state:
+          type: string
+          description: The state or province.
+          example: Hong Kong
+        city:
+          type: string
+          description: The city.
+          example: Hong Kong
+        postcode:
+          type: string
+          description: The postal code.
+          example: '999077'
+        line1:
+          type: string
+          description: The address line.
+          example: 1 Example Street
+    FiatEntryKycPersonInfo:
+      type: object
+      required:
+        - name
+        - name_en
+        - id_number
+        - date_of_birth
+        - issue_date
+        - expiration_date
+        - attachments
+        - residential_address
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          description: The name or title of an identification document.
+          example: 张三
+        name_en:
+          type: string
+          maxLength: 64
+          description: The English-language equivalent of the identification document's name.
+          example: Zhang San
+        id_number:
+          type: string
+          maxLength: 64
+          description: The unique identification number associated with the identification document.
+          example: '110101199001011234'
+        date_of_birth:
+          type: string
+          maxLength: 64
+          description: |
+            The date of birth of the individual, usually in the format YYYYMMDD.
+          example: '20290322'
+        issue_date:
+          type: string
+          maxLength: 64
+          description: |
+            The issue date refers to the date when a document, such as an identification card or passport,
+            was officially issued or granted, usually in the format YYYYMMDD.
+          example: '20290322'
+        expiration_date:
+          type: string
+          maxLength: 64
+          description: |
+            The expiration date refers to the date when a document, such as an identification card or passport,
+            is no longer valid or legally usable, usually in the format YYYYMMDD.
+          example: '20290322'
+        attachments:
+          type: array
+          description: |
+            Additional files or documents associated with a message or record to provide extra information or context.
+          items:
+            $ref: '#/components/schemas/FiatEntryKycPersonAttachment'
+        residential_address:
+          $ref: '#/components/schemas/FiatEntryKycAddress'
+    FiatEntryKycCompanyInfo:
+      type: object
+      required:
+        - company_type
+        - listed
+        - attachments
+        - operation_address
+        - identify_no
+        - company_name
+        - company_name_en
+        - establish_date
+        - commencement_date
+        - valid_period
+        - register_address
+        - legal_info
+        - ubo_infos
+      properties:
+        company_type:
+          $ref: '#/components/schemas/FiatEntryKycCompanyType'
+        listed:
+          type: boolean
+          description: Whether the company is listed.
+          example: false
+        attachments:
+          type: array
+          description: The attachments of the company.
+          items:
+            $ref: '#/components/schemas/FiatEntryKycCompanyAttachment'
+        operation_address:
+          $ref: '#/components/schemas/FiatEntryKycAddress'
+        identify_no:
+          type: string
+          description: The company identification number.
+          example: '12345678'
+        company_name:
+          type: string
+          description: The company name in local language.
+          example: 示例有限公司
+        company_name_en:
+          type: string
+          description: The company name in English.
+          example: Example Limited
+        establish_date:
+          type: string
+          description: The establishment date of the company.
+          example: '20290322'
+        commencement_date:
+          type: string
+          description: The commencement date of the company.
+          example: '20290322'
+        valid_period:
+          type: string
+          description: The valid period of the company registration.
+          example: '20290322'
+        register_address:
+          $ref: '#/components/schemas/FiatEntryKycAddress'
+        legal_info:
+          $ref: '#/components/schemas/FiatEntryKycPersonInfo'
+        ubo_infos:
+          type: array
+          description: The ultimate beneficial owner information.
+          items:
+            $ref: '#/components/schemas/FiatEntryKycPersonInfo'
         online_store_url:
           type: string
           description: The online store URL. Required when merchant type is B2B.
@@ -18847,6 +19360,11 @@ components:
           type: string
           description: The ID of the merchant linked to the destination.
           example: M1001
+        fiat_entry_kyc_id:
+          type: string
+          format: uuid
+          description: The fiat entry KYC ID linked to the destination.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         created_timestamp:
           type: integer
           description: 'The created time of the destination, represented as a UNIX timestamp in seconds.'
@@ -18993,7 +19511,7 @@ components:
       description: |
         The file ID of the contract document (e.g., cooperation agreement) that proves
         the business relationship between you and the beneficiary, which you can retrieve by calling
-        [Upload file](https://www.cobo.com/developers/v2/api-references/payment/upload-file).
+        [Upload file v2](https://www.cobo.com/developers/v2/api-references/payment/upload-file-v2).
       example: f47ac10b-58cc-4372-a567-0e02b2c3d479
     CreateWalletAddress:
       type: object
@@ -19234,6 +19752,11 @@ components:
           type: string
           description: The ID of the merchant linked to the destination.
           example: M1001
+        fiat_entry_kyc_id:
+          type: string
+          format: uuid
+          description: The fiat entry KYC ID linked to the destination.
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
         created_timestamp:
           type: integer
           description: 'The created time of the destination, represented as a UNIX timestamp in seconds.'
@@ -25001,6 +25524,38 @@ components:
       schema:
         type: string
       example: M1001
+    FiatEntryKycIdPathParam:
+      name: fiat_entry_kyc_id
+      in: path
+      required: true
+      description: |
+        The fiat entry KYC ID, which you can retrieve by calling
+        [List all fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/list-all-fiat-entry-kyc).
+      schema:
+        type: string
+        format: uuid
+      example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+    FiatEntryKycIdsParam:
+      name: fiat_entry_kyc_ids
+      in: query
+      required: false
+      description: A list of fiat entry KYC IDs to query.
+      schema:
+        type: string
+      example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,c9bf9e57-1685-4c89-bafb-ff5af830be8a'
+    FiatEntryKycStatusesParam:
+      name: statuses
+      in: query
+      required: false
+      description: |
+        A list of fiat entry KYC statuses, separated by comma. Possible values include:
+        - `PendingReview`: The fiat entry KYC is pending review.
+        - `Completed`: The fiat entry KYC has been completed.
+        - `Failed`: The fiat entry KYC has failed.
+        - `Disabled`: The fiat entry KYC is disabled and cannot be updated.
+      schema:
+        type: string
+      example: 'PendingReview,Completed'
     MerchantIdsParam:
       name: merchant_ids
       in: query
@@ -26375,6 +26930,27 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SubmitMerchantKyc'
+    createFiatEntryKycBody:
+      description: |
+        The request body to create fiat entry KYC information.
+
+        Provide either `company_info` or `individual_info`:
+        - `company_info`: Required for company merchants.
+        - `individual_info`: Required for individual merchants.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateFiatEntryKyc'
+    updateFiatEntryKycBody:
+      description: |
+        The request body to update fiat entry KYC information.
+
+        All fields are optional. Omitted fields keep their existing values.
+        You can pass empty values to clear a field.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateFiatEntryKyc'
     uploadPaymentFileBody:
       description: The request body to upload a file.
       content:
@@ -26820,6 +27396,13 @@ components:
                 type: string
                 description: The ID of the merchant linked to the destination.
                 example: M1001
+              fiat_entry_kyc_id:
+                type: string
+                format: uuid
+                description: |
+                  The fiat entry KYC ID linked to the destination, which you can retrieve by calling
+                  [List all fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/list-all-fiat-entry-kyc).
+                example: f47ac10b-58cc-4372-a567-0e02b2c3d479
               country:
                 type: string
                 description: 'The country of the destination, in ISO 3166-1 alpha-3 format.'
@@ -26852,6 +27435,13 @@ components:
                 type: string
                 description: The ID of the merchant linked to the destination.
                 example: M1001
+              fiat_entry_kyc_id:
+                type: string
+                format: uuid
+                description: |
+                  The fiat entry KYC ID linked to the destination, which you can retrieve by calling
+                  [List all fiat entry KYC](https://www.cobo.com/developers/v2/api-references/payment/list-all-fiat-entry-kyc).
+                example: f47ac10b-58cc-4372-a567-0e02b2c3d479
               country:
                 type: string
                 description: 'The country of the destination, in ISO 3166-1 alpha-3 format.'
@@ -28967,6 +29557,37 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/MerchantKycSubmission'
+    createFiatEntryKycResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FiatEntryKyc'
+    listFiatEntryKycResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FiatEntryKyc'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    getFiatEntryKycResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FiatEntryKycDetail'
+    updateFiatEntryKycResponse:
+      description: The request was successful.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FiatEntryKyc'
     uploadPaymentFileResponse:
       description: The request was successful.
       content:
