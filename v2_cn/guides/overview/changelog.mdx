@@ -12,6 +12,14 @@ import WaasSkillReminder from '/snippets/waas_skill_reminder_cn.mdx';
 
 有关支付相关操作的变更，请参阅支付解决方案的[发布历史](/v2_cn/payments/changelog)。
 
+## v1.46.0
+
+此版本于 2026 年 10 月 27 日发布。
+
+### 兼容性变更
+
+- [估算交易费用](/v2/api-references/transactions/estimate-transaction-fee)、[估算兑换费用](/v2/api-references/swaps/estimate-swap-fee) 和 [估算代币化操作费用](/v2/api-references/tokenization/estimate-tokenization-operation-fee) 接口响应中，EIP-1559 和 Legacy 手续费预估新增 `fallback` 和 `fallback_reason` 字段，用于表明是否使用 Cobo 的回退手续费预估及其原因。
+
 ## v1.45.0
 
 此版本于 2026 年 10 月 14 日发布。
